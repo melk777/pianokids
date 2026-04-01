@@ -73,25 +73,24 @@ export default function PlayPage() {
     : [];
 
   // Start game
-  const startGame = () => {
+  const startGame = async () => {
     if (!song) return;
 
-    // Init audio on user gesture
-    if (audioEnabled) {
-      audio.init();
-    }
+    // ALWAYS init audio context (needed for clock sync even if sound is off)
+    // This must happen inside a user gesture handler (click) — Chrome/Safari policy
+    await audio.init();
 
     setIsPlaying(true);
     setGameState("playing");
 
-    // Schedule accompaniment notes
+    // Schedule accompaniment notes via Web Audio absolute scheduling
+    const LEAD_IN = 2.0; // 2 seconds lead-in before song starts
+    const startAt = audio.getCurrentTime() + LEAD_IN;
+    audioStartTimeRef.current = startAt;
+
     if (audioEnabled) {
       accompanimentScheduled.current = true;
       const accNotes = getAccompanimentNotes(song.notes, difficulty);
-      
-      const LEAD_IN = 2.0; // 2 seconds lead-in before song starts
-      const startAt = audio.getCurrentTime() + LEAD_IN;
-      audioStartTimeRef.current = startAt;
 
       accNotes.forEach((note) => {
         audio.scheduleAccompaniment(
@@ -101,9 +100,6 @@ export default function PlayPage() {
           note.velocity ?? 0.5
         );
       });
-    } else {
-      // If audio is disabled, we still need a start time reference
-      audioStartTimeRef.current = audio.getCurrentTime() + 2.0;
     }
   };
 
@@ -296,7 +292,6 @@ export default function PlayPage() {
             >
               <PianoPlayer
                 notes={filteredNotes}
-                bpm={song.bpm}
                 difficulty={difficulty}
                 activeNotes={activeNotes}
                 isPlaying={isPlaying}

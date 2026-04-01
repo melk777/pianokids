@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useEffect, useCallback } from "react";
 import type { SongNote } from "@/lib/songs";
 import { midiNoteToName } from "@/hooks/useMIDI";
 import type { Difficulty } from "@/lib/songFilters";
@@ -11,7 +10,6 @@ import { TIMING_WINDOWS } from "@/lib/songFilters";
 
 interface PianoPlayerProps {
   notes: SongNote[];            // Pre-filtered by difficulty
-  bpm: number;
   difficulty: Difficulty;
   activeNotes: Map<number, { note: number; velocity: number; timestamp: number }>;
   isPlaying: boolean;
@@ -25,24 +23,36 @@ interface PianoPlayerProps {
 /* ── Constants ───────────────────────────────────────── */
 
 const VIEWPORT_SECONDS = 4;
-const HIT_ZONE_Y = 85;
+const HIT_ZONE_PERCENT = 0.85;
 
 /* ── Colors (Neon/Cyberpunk Hand-specific) ───────────── */
 
 const COLORS = {
-  rightHand: "rgba(0,234,255,0.55)",       // Cyan / Blue
+  rightHandFill: "rgba(0, 234, 255, 0.55)",       // Cyan / Blue
   rightHandStroke: "#00EAFF",
-  leftHand: "rgba(16,185,129,0.55)",       // Emerald / Green
+  leftHandFill: "rgba(16, 185, 129, 0.55)",       // Emerald / Green
   leftHandStroke: "#10B981",
-  
-  hitNormal: "rgba(255,255,255,0.7)",      // White flash for hit
+
+  hitNormal: "rgba(255, 255, 255, 0.7)",          // White flash for hit
   hitStroke: "#FFFFFF",
-  
-  comboGlow: "rgba(252,211,77,0.8)",       // Amber/Gold
-  missed: "rgba(255,0,229,0)",             // Opacity 0 to fade out
-  hitZoneLine: "rgba(255,255,255,0.3)",
-  grid: "rgba(255,255,255,0.025)",
+
+  comboGlow: "rgba(252, 211, 77, 0.8)",           // Amber/Gold
+  missedFill: "rgba(255, 0, 229, 0.3)",           // Magenta fade
+  missedStroke: "#FF00E5",
+
+  hitZoneLine: "rgba(255, 255, 255, 0.3)",
+  grid: "rgba(255, 255, 255, 0.04)",
+  textDim: "rgba(255, 255, 255, 0.65)",
+  textFaded: "rgba(255, 255, 255, 0.15)",
 };
+
+/* ── Visual Effect Interface ── */
+interface VisualEffect {
+  id: number;
+  note: number;
+  type: "hit" | "miss" | "perfect";
+  startTime: number;
+}
 
 /* ── Component ───────────────────────────────────────── */
 
@@ -57,63 +67,329 @@ export default function PianoPlayer({
   onNoteHit,
   onNoteMiss,
 }: PianoPlayerProps) {
-  // We decouple rendering from React state for zero-lag 60fps
-  const [renderTrigger, setRenderTrigger] = useState(0);
-  
-  const [score, setScore] = useState(0);
-  const [combo, setCombo] = useState(0);
-  const [hits, setHits] = useState(0);
-  const [misses, setMisses] = useState(0);
-  const [hitEffects, setHitEffects] = useState<
-    { id: number; note: number; type: "hit" | "miss" | "perfect"; time: number }[]
-  >([]);
-  
-  // Game states kept in refs to avoid re-renders during the loop
-  const gameTimeRef = useRef(0);
-  const startTimeRef = useRef<number | null>(null);
-  const hitNotesRef = useRef<Set<number>>(new Set());
-  const missedNotesRef = useRef<Set<number>>(new Set());
-  const animFrameRef = useRef<number>(0);
-  const effectIdRef = useRef(0);
-  const timingWindow = TIMING_WINDOWS[difficulty];
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Initialize state when songs change
+  // Core Game State (Refs — NO React State so NO re-renders during gameplay!)
+  const stateRef = useRef({
+    score: 0,
+    combo: 0,
+    hits: 0,
+    misses: 0,
+    startTime: null as number | null,
+    gameTime: 0,
+    hitNotes: new Set<number>(),
+    missedNotes: new Set<number>(),
+    effects: [] as VisualEffect[],
+    effectId: 0,
+  });
+
+  const animFrameRef = useRef<number>(0);
+  const timingWindow = TIMING_WINDOWS[difficulty];
+  const lastActiveNotesState = useRef<string>("");
+
+  // Refs para os elementos de HUD (atualização fora do React DOM Tree)
+  const scoreUIRef = useRef<HTMLParagraphElement>(null);
+  const comboUIRef = useRef<HTMLParagraphElement>(null);
+  const accuracyUIRef = useRef<HTMLParagraphElement>(null);
+
+  // Initialize/Reset State
   useEffect(() => {
-    setScore(0);
-    setCombo(0);
-    setHits(0);
-    setMisses(0);
-    hitNotesRef.current = new Set();
-    missedNotesRef.current = new Set();
-    startTimeRef.current = null;
-    gameTimeRef.current = 0;
-    setRenderTrigger(prev => prev + 1);
+    stateRef.current = {
+      score: 0,
+      combo: 0,
+      hits: 0,
+      misses: 0,
+      startTime: null,
+      gameTime: 0,
+      hitNotes: new Set(),
+      missedNotes: new Set(),
+      effects: [],
+      effectId: 0,
+    };
+    lastActiveNotesState.current = "";
+    
+    // Atualizar HUD para zero
+    if (scoreUIRef.current) scoreUIRef.current.innerText = "0";
+    if (comboUIRef.current) {
+      comboUIRef.current.innerText = "0x";
+      comboUIRef.current.className = "text-xl font-bold tabular-nums relative z-10 transition-colors text-white/30";
+    }
+    if (accuracyUIRef.current) accuracyUIRef.current.innerText = "100%";
   }, [notes]);
 
-  // ── High Performance Render Loop ──────────────────
+  // Função auxiliar para atualizar as pontuações na DOM
+  const updateHUD = useCallback(() => {
+    const s = stateRef.current;
+    
+    if (scoreUIRef.current) {
+      scoreUIRef.current.innerText = s.score.toLocaleString();
+    }
+    
+    if (comboUIRef.current) {
+      comboUIRef.current.innerText = `${s.combo}x`;
+      const isLegendary = s.combo >= 25;
+      const isStreak = s.combo >= 10;
+      
+      comboUIRef.current.className = `text-xl font-bold tabular-nums relative z-10 transition-colors ${
+        isLegendary
+          ? "text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.7)]"
+          : isStreak
+          ? "text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+          : s.combo > 0
+          ? "text-white"
+          : "text-white/30"
+      }`;
+    }
+    
+    if (accuracyUIRef.current) {
+      const total = s.hits + s.misses;
+      const acc = total > 0 ? Math.round((s.hits / total) * 100) : 100;
+      accuracyUIRef.current.innerText = `${acc}%`;
+    }
+  }, []);
+
+  // ── Render Loop (Canvas Imperativa O(1)) ────────────────
   useEffect(() => {
-    if (!isPlaying) {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-      return;
-    }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: false }); // alpha: false otimiza BG preto
+    if (!ctx) return;
 
-    if (startTimeRef.current === null) {
-      startTimeRef.current = getAudioTime();
-    }
+    // Ajuste de DPI/Retina Display
+    const dpr = window.devicePixelRatio || 1;
+    let width = canvas.clientWidth;
+    let height = canvas.clientHeight;
+    
+    const resizeCanvas = () => {
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+    
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
+    // Pré-cálculo das faixas (Lanes)
+    const allMidis = Array.from(new Set(notes.map((n) => n.midi))).sort((a, b) => a - b);
+    const laneCount = allMidis.length || 1;
+    const getNoteX = (midi: number, w: number) => {
+      const idx = allMidis.indexOf(midi);
+      const laneSpace = w / laneCount;
+      return idx >= 0 ? idx * laneSpace : 0;
+    };
+    
+    const HIT_Y = height * HIT_ZONE_PERCENT;
+    const SPEED_PX_PER_SEC = height / VIEWPORT_SECONDS;
+
+    // LOOP PRINCIPAL
     const tick = () => {
-      // THE ONLY SOURCE OF TRUTH: Web Audio Context clock
+      if (!isPlaying) {
+        // Se parado mas com estado sujo, desenha a tela inicial (vazia ou pausada)
+        ctx.fillStyle = "#0A0A0A"; // BG Black
+        ctx.fillRect(0, 0, width, height);
+        
+        ctx.fillStyle = COLORS.hitZoneLine;
+        ctx.fillRect(0, HIT_Y, width, 1.5);
+        if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+        return;
+      }
+
+      const state = stateRef.current;
+
+      if (state.startTime === null) {
+        state.startTime = getAudioTime();
+      }
+
       const rawAudioTime = getAudioTime();
-      // Calculate how long since play started
-      const elapsed = rawAudioTime - (startTimeRef.current || rawAudioTime);
-      gameTimeRef.current = elapsed;
+      const elapsed = rawAudioTime - (state.startTime || rawAudioTime);
+      state.gameTime = elapsed;
 
-      // Force React to render once per frame (lightweight because of O(1) DOM)
-      setRenderTrigger(prev => (prev + 1) % 100);
+      // Limpar Canvas
+      ctx.fillStyle = "#09090B"; // Zinc 950 bg
+      ctx.fillRect(0, 0, width, height);
 
-      // Check for song end
+      // --- 1. Grade (Lanes) ---
+      const laneW = width / laneCount;
+      ctx.strokeStyle = COLORS.grid;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= laneCount; i++) {
+        ctx.moveTo(i * laneW, 0);
+        ctx.lineTo(i * laneW, height);
+      }
+      ctx.stroke();
+
+      // --- 2. Hit Zone Line ---
+      const gradient = ctx.createLinearGradient(0, HIT_Y - 20, 0, HIT_Y);
+      gradient.addColorStop(0, "rgba(255,255,255,0)");
+      gradient.addColorStop(0.5, "rgba(255,255,255,0.03)");
+      gradient.addColorStop(1, "rgba(255,255,255,0)");
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, HIT_Y - 20, width, 20);
+
+      ctx.strokeStyle = COLORS.hitZoneLine;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, HIT_Y);
+      ctx.lineTo(width, HIT_Y);
+      ctx.stroke();
+      
+      // Labels de nota na base
+      ctx.font = "12px var(--font-geist-mono), monospace";
+      ctx.textAlign = "center";
+      ctx.fillStyle = COLORS.textFaded;
+      allMidis.forEach((midi, i) => {
+        ctx.fillText(midiNoteToName(midi), i * laneW + laneW / 2, height - 10);
+      });
+
+      // --- 3. Atualizar Cleanup de Passos (Tiros Perdidos) ---
+      const missedSet = state.missedNotes;
+      const hitSet = state.hitNotes;
+      
+      let missesAdded = false;
+
+      notes.forEach((ns, i) => {
+        if (hitSet.has(i) || missedSet.has(i)) return;
+        if (elapsed > ns.time + timingWindow) {
+          missedSet.add(i);
+          state.combo = 0;
+          state.misses += 1;
+          missesAdded = true;
+          onNoteMiss?.(ns.midi);
+          
+          state.effects.push({
+            id: state.effectId++,
+            note: ns.midi,
+            type: "miss",
+            startTime: rawAudioTime,
+          });
+        }
+      });
+      
+      if (missesAdded) updateHUD();
+
+      // --- 4. Renderizar Notas Dinamicamente O(1) ---
+      for (let i = 0; i < notes.length; i++) {
+        const ns = notes[i];
+        
+        // Posição Core
+        const timeDiff = ns.time - elapsed;
+        const noteHeight = Math.max((ns.duration * SPEED_PX_PER_SEC), 4);
+        const yPos = HIT_Y - (timeDiff * SPEED_PX_PER_SEC) - noteHeight;
+        
+        // Cull estrito: Só processar nota se estiver cruzando a tela visual -> [-NoteHeight Até ViewHeight]
+        if (yPos + noteHeight < -50 || yPos > height + 50) {
+          continue; // Pule notas que estão fora da tela (Zero Lag garantido)
+        }
+
+        const xPos = getNoteX(ns.midi, width) + laneW * 0.1;
+        const rectW = laneW * 0.8;
+        
+        const isHit = hitSet.has(i);
+        const isMiss = missedSet.has(i);
+        const isLeft = ns.hand === "left";
+        
+        let fill = isLeft ? COLORS.leftHandFill : COLORS.rightHandFill;
+        let stroke = isLeft ? COLORS.leftHandStroke : COLORS.rightHandStroke;
+        let alpha = 1.0;
+        let shadowColor = "transparent";
+        let shadowBlur = 0;
+
+        if (isHit) {
+          fill = state.combo >= 10 ? COLORS.comboGlow : COLORS.hitNormal;
+          stroke = COLORS.hitStroke;
+          shadowColor = stroke;
+          shadowBlur = 10;
+          alpha = Math.max(0, 1 - (elapsed - ns.time) * 4); // Fast Fade Out
+        } else if (isMiss) {
+          fill = COLORS.missedFill;
+          stroke = COLORS.missedStroke;
+          alpha = Math.max(0, 0.5 - (elapsed - ns.time)); // Super Fast Fade Out na base
+        }
+
+        if (alpha <= 0) continue;
+
+        ctx.globalAlpha = Math.min(Math.max(alpha, 0), 1);
+        ctx.shadowColor = shadowBlur > 0 ? shadowColor : "transparent";
+        ctx.shadowBlur = shadowBlur;
+        
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 1.5;
+
+        // Desenhar bloco de nota
+        ctx.beginPath();
+        ctx.roundRect(xPos, yPos, rectW, noteHeight, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.shadowBlur = 0; // reset shadow for text
+
+        if (!isHit && !isMiss && noteHeight > 10) {
+          ctx.fillStyle = COLORS.textDim;
+          ctx.font = "bold 13px var(--font-geist-mono), monospace";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(midiNoteToName(ns.midi), xPos + rectW / 2, yPos + noteHeight / 2);
+        }
+      }
+
+      ctx.globalAlpha = 1.0;
+
+      // --- 5. Renderizar Efeitos Visuais (Partículas) ---
+      const activeEffects: VisualEffect[] = [];
+      
+      for (const eff of state.effects) {
+        const effAge = rawAudioTime - eff.startTime;
+        if (effAge > 0.6) continue; // Morre em 600ms
+        
+        activeEffects.push(eff);
+        
+        const isMiss = eff.type === "miss";
+        const isPerf = eff.type === "perfect";
+        
+        const tScale = Math.min(effAge * 4, 1); // 0 -> 1 rapidamente
+        const opacity = Math.max(0, 1 - effAge * 1.5);
+        
+        const baseX = getNoteX(eff.note, width) + laneW / 2;
+        const baseY = HIT_Y - (effAge * 80); // Sobe enquanto dissolve
+        
+        ctx.globalAlpha = opacity;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = `bold ${16 + tScale * 14}px sans-serif`;
+        
+        // Efeito Néon
+        ctx.shadowBlur = 15;
+        if (isPerf) {
+          ctx.fillStyle = "#34D399"; // Emerald 400
+          ctx.shadowColor = "rgba(52,211,153,0.8)";
+          ctx.fillText("★", baseX, baseY);
+        } else if (isMiss) {
+          ctx.fillStyle = "#FF00E5"; // Magenta
+          ctx.shadowColor = "rgba(255,0,229,0.8)";
+          ctx.fillText("✗", baseX, baseY);
+        } else {
+          ctx.fillStyle = "#34D399";
+          ctx.shadowColor = "rgba(52,211,153,0.5)";
+          ctx.fillText("✓", baseX, baseY);
+        }
+      }
+      state.effects = activeEffects; // Garbage collect effects array
+
+      ctx.globalAlpha = 1.0;
+      ctx.shadowBlur = 0;
+
+      // Fim do loop - Checar se música acabou
       const lastNote = notes[notes.length - 1];
       if (lastNote && elapsed > lastNote.time + lastNote.duration + 2) {
+        // Envia score final e dispara encerramento limpo
+        const total = state.hits + state.misses;
+        const accuracy = total > 0 ? (state.hits / total) * 100 : 100;
+        onScoreUpdate?.(state.score, state.combo, accuracy);
         onSongEnd?.();
         return;
       }
@@ -122,281 +398,89 @@ export default function PianoPlayer({
     };
 
     animFrameRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animFrameRef.current);
-  }, [isPlaying, getAudioTime, notes, onSongEnd]);
 
-  // ── MIDI Input matching (Polling against gameTimeRef) ──
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD]);
+
+  // ── Input Binding Dinâmico via MIDI (Sincrono e Fora do JSX) ──
   useEffect(() => {
     if (!isPlaying) return;
-    const gt = gameTimeRef.current;
+    
+    // Hash state detection para não rodar desnecessariamente se for a mesma nota segurada
+    const activeStateHash = Array.from(activeNotes.entries())
+      .map(([k, v]) => `${k}-${v.velocity}`)
+      .join("|");
+      
+    if (activeStateHash === lastActiveNotesState.current) return;
+    lastActiveNotesState.current = activeStateHash;
+
+    const s = stateRef.current;
+    let uiChanged = false;
 
     activeNotes.forEach((midiNote) => {
-      // Find the first eligible note that matches the key
+      // Find eligible note
       const matchIdx = notes.findIndex((ns, i) => {
-        if (hitNotesRef.current.has(i) || missedNotesRef.current.has(i)) return false;
+        if (s.hitNotes.has(i) || s.missedNotes.has(i)) return false;
         if (ns.midi !== midiNote.note) return false;
-        return Math.abs(gt - ns.time) <= timingWindow;
+        return Math.abs(s.gameTime - ns.time) <= timingWindow;
       });
 
       if (matchIdx !== -1) {
-        hitNotesRef.current.add(matchIdx);
-        const matched = notes[matchIdx];
+        s.hitNotes.add(matchIdx);
+        const ns = notes[matchIdx];
 
-        setCombo((c) => {
-          const newCombo = c + 1;
-          const comboMultiplier = Math.floor(newCombo / 5) + 1;
-          setScore((s) => s + 100 * comboMultiplier);
-          
-          // Visual effect
-          const eid = effectIdRef.current++;
-          const effectType = newCombo >= 10 ? "perfect" : "hit";
-          setHitEffects((prev) => [...prev, { id: eid, note: matched.midi, type: effectType, time: Date.now() }]);
-          setTimeout(() => setHitEffects((prev) => prev.filter((e) => e.id !== eid)), 800);
-          
-          return newCombo;
+        s.combo += 1;
+        const comboMultiplier = Math.floor(s.combo / 5) + 1;
+        s.score += 100 * comboMultiplier;
+        s.hits += 1;
+        uiChanged = true;
+
+        s.effects.push({
+          id: s.effectId++,
+          note: ns.midi,
+          type: s.combo >= 10 ? "perfect" : "hit",
+          startTime: getAudioTime(),
         });
-        
-        setHits((h) => h + 1);
-        onNoteHit?.(matched.midi, matched.duration, matched.velocity ?? 0.8);
+
+        onNoteHit?.(ns.midi, ns.duration, ns.velocity ?? 0.8);
       }
     });
-  }, [activeNotes, isPlaying, timingWindow, onNoteHit, notes]); // activeNotes reference changes on press
 
-  // ── Missed notes cleanup (O(1) Memory check during render trigger) ──
-  useEffect(() => {
-    if (!isPlaying) return;
-    const gt = gameTimeRef.current;
+    if (uiChanged) updateHUD();
+  }, [activeNotes, isPlaying, timingWindow, onNoteHit, notes, updateHUD, getAudioTime]);
 
-    notes.forEach((ns, i) => {
-      if (hitNotesRef.current.has(i) || missedNotesRef.current.has(i)) return;
-      if (gt > ns.time + timingWindow) {
-        missedNotesRef.current.add(i);
-        setCombo(0);
-        setMisses((m) => m + 1);
-        onNoteMiss?.(ns.midi);
-        
-        const eid = effectIdRef.current++;
-        setHitEffects((prev) => [...prev, { id: eid, note: ns.midi, type: "miss", time: Date.now() }]);
-        setTimeout(() => setHitEffects((prev) => prev.filter((e) => e.id !== eid)), 600);
-      }
-    });
-  }, [renderTrigger, isPlaying, timingWindow, onNoteMiss, notes]);
 
-  // ── Report score ──────────────────────────────────
-  const reportScore = useCallback(() => {
-    const total = hits + misses;
-    const accuracy = total > 0 ? (hits / total) * 100 : 100;
-    onScoreUpdate?.(score, combo, accuracy);
-  }, [hits, misses, score, combo, onScoreUpdate]);
-
-  useEffect(() => {
-    reportScore();
-  }, [reportScore]);
-
-  // ── Viewport-windowed rendering (Cleanup / Cull) ──
-  const allMidis = Array.from(new Set(notes.map((n) => n.midi))).sort((a, b) => a - b);
-  const laneWidth = allMidis.length > 0 ? 100 / allMidis.length : 10;
-
-  function getNoteX(midi: number): number {
-    const idx = allMidis.indexOf(midi);
-    return idx >= 0 ? idx * laneWidth : 0;
-  }
-
-  const speedMultiplier = 1 / VIEWPORT_SECONDS; // Speed derived from viewport constant
-
-  // Filter notes that are completely outside the visible area
-  const visibleNotes = notes.map((ns, i) => ({ ...ns, index: i })).filter((ns) => {
-    const gt = gameTimeRef.current;
-    // Posição Y calculada exatamente como requisitado: y = (time - audioTime) * speed
-    const timeDiff = ns.time - gt;
-    const normalizedPos = timeDiff * speedMultiplier; 
-    const y = HIT_ZONE_Y - normalizedPos * HIT_ZONE_Y;
-    const noteHeight = Math.max((ns.duration * speedMultiplier) * HIT_ZONE_Y, 2);
-    
-    // Cull strict: Remove from DOM if below screen (y > 110)
-    return y + noteHeight > -10 && y < 110;
-  });
-
-  const comboTier = combo >= 25 ? "legendary" : combo >= 10 ? "streak" : "normal";
-
+  // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-white/[0.06] bg-black/40 backdrop-blur-sm">
-      <svg
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        className="w-full h-full"
-      >
-        {/* Background grid */}
-        {allMidis.map((_, i) => (
-          <line
-            key={`grid-${i}`}
-            x1={i * laneWidth} y1={0}
-            x2={i * laneWidth} y2={100}
-            stroke={COLORS.grid}
-            strokeWidth={0.15}
-          />
-        ))}
+    <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-white/[0.06] bg-black/40 backdrop-blur-sm pointer-events-none">
+      
+      {/* ── Tela de Rendereização de Alta Performance O(1) ── */}
+      <canvas
+        ref={canvasRef}
+        className="block w-full h-full pointer-events-none"
+      />
 
-        <defs>
-          <linearGradient id="hitZoneGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="40%" stopColor="rgba(255,255,255,0.03)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-          <filter id="hitGlow">
-            <feGaussianBlur stdDeviation="1" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        <rect x={0} y={HIT_ZONE_Y - 4} width={100} height={8} fill="url(#hitZoneGradient)" />
-        <line x1={0} y1={HIT_ZONE_Y} x2={100} y2={HIT_ZONE_Y} stroke={COLORS.hitZoneLine} strokeWidth={0.25} />
-
-        {/* ── Falling notes (Culling & Rendering) ── */}
-        {visibleNotes.map((ns) => {
-          const gt = gameTimeRef.current;
-          const timeDiff = ns.time - gt;
-          const y = HIT_ZONE_Y - (timeDiff * speedMultiplier) * HIT_ZONE_Y;
-          const noteHeight = Math.max((ns.duration * speedMultiplier) * HIT_ZONE_Y, 2);
-
-          const isLeftHand = ns.hand === "left";
-          const isHit = hitNotesRef.current.has(ns.index);
-          const isMissed = missedNotesRef.current.has(ns.index);
-
-          // Cores por mão (Direita = Azul, Esquerda = Verde)
-          let fill = isLeftHand ? COLORS.leftHand : COLORS.rightHand;
-          let strokeColor = isLeftHand ? COLORS.leftHandStroke : COLORS.rightHandStroke;
-          let filterAttr = "none";
-          let opacity = 1;
-
-          // Ciclo de vida: Opacity 0 quando morre. Brilha ao acertar.
-          if (isHit) {
-            fill = comboTier === "normal" ? COLORS.hitNormal : COLORS.comboGlow;
-            strokeColor = COLORS.hitStroke;
-            filterAttr = "url(#hitGlow)";
-            // Fades out immediately starting after hit
-            opacity = Math.max(0, 1 - (gt - ns.time) * 3);
-          } else if (isMissed) {
-            fill = COLORS.missed;
-            strokeColor = COLORS.missed;
-            opacity = Math.max(0, 0.4 - (gt - ns.time)); // Fade out out of bounds
-          }
-
-          if (opacity <= 0) return null; // Complete cleanup before culling completely
-
-          return (
-            <g key={ns.index}>
-              <rect
-                x={getNoteX(ns.midi) + laneWidth * 0.08}
-                y={y}
-                width={laneWidth * 0.84}
-                height={noteHeight}
-                rx={0.5}
-                fill={fill}
-                stroke={strokeColor}
-                strokeWidth={0.15}
-                opacity={opacity}
-                filter={filterAttr}
-                className="transition-opacity duration-200"
-              />
-              {/* Oculta o texto se a nota foi tocada ou está muito pequena */}
-              {!isHit && !isMissed && noteHeight > 3 && (
-                <text
-                  x={getNoteX(ns.midi) + laneWidth / 2}
-                  y={y + noteHeight / 2 + 0.7}
-                  textAnchor="middle"
-                  fontSize="1.6"
-                  fill="white"
-                  opacity={0.65}
-                  fontFamily="var(--font-geist-mono)"
-                >
-                  {midiNoteToName(ns.midi)}
-                </text>
-              )}
-            </g>
-          );
-        })}
-
-        {/* Lane labels */}
-        {allMidis.map((midi, i) => (
-          <text
-            key={`label-${midi}`}
-            x={i * laneWidth + laneWidth / 2}
-            y={98}
-            textAnchor="middle"
-            fontSize="1.5"
-            fill="rgba(255,255,255,0.15)"
-            fontFamily="var(--font-geist-mono)"
-          >
-            {midiNoteToName(midi)}
-          </text>
-        ))}
-      </svg>
-
-      {/* ── Hit effects overlay ── */}
-      <AnimatePresence>
-        {hitEffects.map((effect) => (
-          <motion.div
-            key={effect.id}
-            className="absolute pointer-events-none"
-            style={{
-              top: `${HIT_ZONE_Y}%`,
-              left: `${getNoteX(effect.note) + laneWidth / 2}%`,
-              transform: "translate(-50%, -50%)",
-            }}
-            initial={{ opacity: 1, scale: 0.8 }}
-            animate={{ opacity: 0, scale: 2.5, y: -40 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <span
-              className={`text-sm font-bold ${
-                effect.type === "perfect"
-                  ? "text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.8)]"
-                  : effect.type === "hit"
-                  ? "text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-                  : "text-magenta drop-shadow-[0_0_8px_rgba(255,0,229,0.5)]"
-              }`}
-            >
-              {effect.type === "miss" ? "✗" : effect.type === "perfect" ? "★" : "✓"}
-            </span>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-
+      {/* ── HUD de Score Desacoplada do React Lifecycle ── */}
       <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
         <div className="glass rounded-xl px-4 py-2 border border-white/[0.06]">
           <p className="text-[10px] text-white/35 uppercase tracking-wider">Pontuação</p>
-          <p className="text-xl font-bold tabular-nums text-white">{score.toLocaleString()}</p>
+          <p ref={scoreUIRef} className="text-xl font-bold tabular-nums text-white">0</p>
         </div>
 
         <div className="glass rounded-xl px-4 py-2 text-center border border-white/[0.06] relative overflow-hidden">
-          {comboTier !== "normal" && (
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-transparent to-emerald-500/10 animate-pulse" />
-          )}
           <p className="text-[10px] text-white/35 uppercase tracking-wider relative z-10">Combo</p>
-          <p
-            className={`text-xl font-bold tabular-nums relative z-10 transition-colors ${
-              comboTier === "legendary"
-                ? "text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.7)]"
-                : comboTier === "streak"
-                ? "text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]"
-                : combo > 0
-                ? "text-white"
-                : "text-white/30"
-            }`}
-          >
-            {combo}x
+          <p ref={comboUIRef} className="text-xl font-bold tabular-nums relative z-10 transition-colors text-white/30">
+            0x
           </p>
         </div>
 
         <div className="glass rounded-xl px-4 py-2 text-right border border-white/[0.06]">
           <p className="text-[10px] text-white/35 uppercase tracking-wider">Precisão</p>
-          <p className="text-xl font-bold text-white tabular-nums">
-            {hits + misses > 0 ? Math.round((hits / (hits + misses)) * 100) : 100}%
+          <p ref={accuracyUIRef} className="text-xl font-bold text-white tabular-nums">
+            100%
           </p>
         </div>
       </div>

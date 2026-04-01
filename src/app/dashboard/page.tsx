@@ -61,16 +61,8 @@ export default function Dashboard() {
     }
   };
 
-  const handlePortal = async () => {
-    try {
-      const res = await fetch("/api/stripe/portal", { method: "POST" });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (err) {
-      console.error("Portal error:", err);
-    }
+  const handlePortal = () => {
+    router.push("/dashboard/membership");
   };
 
   const actionCards = [

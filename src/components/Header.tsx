@@ -18,7 +18,7 @@ import {
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -35,20 +35,7 @@ export default function Header() {
     }
   };
 
-  const handlePortal = async () => {
-    setPortalLoading(true);
-    try {
-      const res = await fetch("/api/stripe/portal", { method: "POST" });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (err) {
-      console.error("Portal error:", err);
-    } finally {
-      setPortalLoading(false);
-    }
-  };
+
 
   /* ── Shared styles ────────────────────────────── */
   const navLinkClass =
@@ -114,14 +101,10 @@ export default function Header() {
                 Dashboard
               </Link>
 
-              <button
-                onClick={handlePortal}
-                disabled={portalLoading}
-                className={navLinkClass}
-              >
+              <Link href="/dashboard/membership" className={navLinkClass}>
                 <CreditCard className="w-3.5 h-3.5" />
-                {portalLoading ? "Carregando..." : "Gerenciar Assinatura"}
-              </button>
+                Gerenciar Assinatura
+              </Link>
 
               <div className="ml-2">
                 <UserButton
@@ -201,17 +184,14 @@ export default function Header() {
                     Dashboard
                   </Link>
 
-                  <button
-                    onClick={() => {
-                      setMobileOpen(false);
-                      handlePortal();
-                    }}
-                    disabled={portalLoading}
+                  <Link
+                    href="/dashboard/membership"
+                    onClick={() => setMobileOpen(false)}
                     className={mobileLinkClass}
                   >
                     <CreditCard className="w-4 h-4 text-cyan" />
-                    {portalLoading ? "Carregando..." : "Gerenciar Assinatura"}
-                  </button>
+                    Gerenciar Assinatura
+                  </Link>
 
                   <div className="px-4 py-3 flex items-center gap-3">
                     <UserButton
