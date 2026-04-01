@@ -29,6 +29,7 @@ export default function RootLayout({
     // Estratégia de carregamento seguro: Usamos aparência minimalista para eliminar overheads
     <ClerkProvider
       localization={ptBR}
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_Y2xlcmsua2V5LnZhbGlkYXRpb24k"}
       appearance={{
         variables: { colorBackground: '#0a0a0a', colorText: '#ffffff', colorPrimary: '#00eaff' }
       }}
