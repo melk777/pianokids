@@ -30,7 +30,7 @@ export const songs: Song[] = [
     difficulty: "Fácil",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "https://images.unsplash.com/photo-1549488344-c09ab0ac2528?auto=format&fit=crop&q=80&w=400&h=400",
+    coverUrl: "/images/covers/brilha_brilha_1775056322794.png",
     bpm: 100,
     duration: 24,
     notes: [
@@ -78,7 +78,7 @@ export const songs: Song[] = [
     difficulty: "Fácil",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&q=80&w=400&h=400",
+    coverUrl: "/images/covers/dona_aranha_1775056352751.png",
     bpm: 110,
     duration: 16,
     notes: [
@@ -121,7 +121,7 @@ export const songs: Song[] = [
     difficulty: "Médio",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "https://images.unsplash.com/photo-1558584673-c83ddfa78cc4?auto=format&fit=crop&q=80&w=400&h=400",
+    coverUrl: "/images/covers/ode_alegria_1775056393157.png",
     bpm: 120,
     duration: 18,
     notes: [
@@ -175,7 +175,7 @@ export const songs: Song[] = [
     difficulty: "Difícil",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&q=80&w=400&h=400",
+    coverUrl: "/images/covers/fur_elise_1775056434348.png",
     bpm: 130,
     duration: 180,
     notes: [
