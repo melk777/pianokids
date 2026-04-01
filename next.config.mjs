@@ -1,10 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Mover para dentro de experimental remove o aviso (warning) do terminal
-    experimental: {
-        serverExternalPackages: ["stripe"],
-    },
-
     // Headers de segurança (boa prática para produção)
     async headers() {
         return [
