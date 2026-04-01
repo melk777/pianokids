@@ -18,6 +18,8 @@ interface PianoPlayerProps {
   onSongEnd?: () => void;
   onNoteHit?: (midi: number, duration: number, velocity: number) => void;
   onNoteMiss?: (midi: number) => void;
+  startNote?: number;           // physical piano start note
+  endNote?: number;             // physical piano end note
 }
 
 /* ── Constants ───────────────────────────────────────── */
@@ -46,6 +48,9 @@ const COLORS = {
   textFaded: "rgba(255, 255, 255, 0.15)",
 };
 
+/* ── Functions ───────────────────────────────────────── */
+const isBlackKey = (midi: number) => [1, 3, 6, 8, 10].includes(midi % 12);
+
 /* ── Visual Effect Interface ── */
 interface VisualEffect {
   id: number;
@@ -66,6 +71,8 @@ export default function PianoPlayer({
   onSongEnd,
   onNoteHit,
   onNoteMiss,
+  startNote = 48,
+  endNote = 76,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -75,7 +82,6 @@ export default function PianoPlayer({
     combo: 0,
     hits: 0,
     misses: 0,
-    startTime: null as number | null,
     gameTime: 0,
     hitNotes: new Set<number>(),
     missedNotes: new Set<number>(),
@@ -99,7 +105,6 @@ export default function PianoPlayer({
       combo: 0,
       hits: 0,
       misses: 0,
-      startTime: null,
       gameTime: 0,
       hitNotes: new Set(),
       missedNotes: new Set(),
@@ -171,13 +176,26 @@ export default function PianoPlayer({
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Pré-cálculo das faixas (Lanes)
-    const allMidis = Array.from(new Set(notes.map((n) => n.midi))).sort((a, b) => a - b);
-    const laneCount = allMidis.length || 1;
-    const getNoteX = (midi: number, w: number) => {
-      const idx = allMidis.indexOf(midi);
-      const laneSpace = w / laneCount;
-      return idx >= 0 ? idx * laneSpace : 0;
+    // Pré-cálculo da Física do Teclado (Lanes idênticas ao Piano físico)
+    const whiteNotes: number[] = [];
+    for (let i = startNote; i <= endNote; i++) {
+        if (!isBlackKey(i)) whiteNotes.push(i);
+    }
+    
+    const laneW = width / whiteNotes.length;
+    
+    // Calcula o centro exato do X de cada nota (seja branca ou preta)
+    const getNoteRect = (midi: number) => {
+        if (!isBlackKey(midi)) {
+            const idx = whiteNotes.indexOf(midi);
+            return { x: idx * laneW, w: laneW, isBlack: false };
+        } else {
+            const prevWhite = midi - 1;
+            const idx = whiteNotes.indexOf(prevWhite);
+            const w = laneW * 0.55;
+            const x = (idx + 1) * laneW - (w / 2);
+            return { x, w, isBlack: true };
+        }
     };
     
     const HIT_Y = height * HIT_ZONE_PERCENT;
@@ -198,24 +216,21 @@ export default function PianoPlayer({
 
       const state = stateRef.current;
 
-      if (state.startTime === null) {
-        state.startTime = getAudioTime();
-      }
-
+      // Sincronia ABSOLUTA com áudio. (Não usar StartTime diff).
       const rawAudioTime = getAudioTime();
-      const elapsed = rawAudioTime - (state.startTime || rawAudioTime);
+      // getAudioTime already subtracts audioStartTimeRef, representing exact game seconds.
+      const elapsed = rawAudioTime;
       state.gameTime = elapsed;
 
       // Limpar Canvas
       ctx.fillStyle = "#09090B"; // Zinc 950 bg
       ctx.fillRect(0, 0, width, height);
 
-      // --- 1. Grade (Lanes) ---
-      const laneW = width / laneCount;
+      // --- 1. Grade (Lanes Brancas Divisórias idênticas as teclas) ---
       ctx.strokeStyle = COLORS.grid;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      for (let i = 0; i <= laneCount; i++) {
+      for (let i = 0; i <= whiteNotes.length; i++) {
         ctx.moveTo(i * laneW, 0);
         ctx.lineTo(i * laneW, height);
       }
@@ -237,12 +252,12 @@ export default function PianoPlayer({
       ctx.lineTo(width, HIT_Y);
       ctx.stroke();
       
-      // Labels de nota na base
+      // Labels de nota na base apenas para The White Keys para imersão
       ctx.font = "12px var(--font-geist-mono), monospace";
       ctx.textAlign = "center";
       ctx.fillStyle = COLORS.textFaded;
-      allMidis.forEach((midi, i) => {
-        ctx.fillText(midiNoteToName(midi), i * laneW + laneW / 2, height - 10);
+      whiteNotes.forEach((midi, i) => {
+        ctx.fillText(midiNoteToName(midi).replace(/\d/, ""), i * laneW + laneW / 2, height - 10);
       });
 
       // --- 3. Atualizar Cleanup de Passos (Tiros Perdidos) ---
@@ -285,8 +300,10 @@ export default function PianoPlayer({
           continue; // Pule notas que estão fora da tela (Zero Lag garantido)
         }
 
-        const xPos = getNoteX(ns.midi, width) + laneW * 0.1;
-        const rectW = laneW * 0.8;
+        const rectInfo = getNoteRect(ns.midi);
+        // Small padding inside the key lane
+        const xPos = rectInfo.x + rectInfo.w * 0.1;
+        const rectW = rectInfo.w * 0.8;
         
         const isHit = hitSet.has(i);
         const isMiss = missedSet.has(i);
@@ -354,7 +371,8 @@ export default function PianoPlayer({
         const tScale = Math.min(effAge * 4, 1); // 0 -> 1 rapidamente
         const opacity = Math.max(0, 1 - effAge * 1.5);
         
-        const baseX = getNoteX(eff.note, width) + laneW / 2;
+        const effRect = getNoteRect(eff.note);
+        const baseX = effRect.x + effRect.w / 2;
         const baseY = HIT_Y - (effAge * 80); // Sobe enquanto dissolve
         
         ctx.globalAlpha = opacity;
