@@ -307,10 +307,10 @@ export default function PianoPlayer({
         
         const isHit = hitSet.has(i);
         const isMiss = missedSet.has(i);
-        const isLeft = ns.hand === "left";
         
-        let fill = isLeft ? COLORS.leftHandFill : COLORS.rightHandFill;
-        let stroke = isLeft ? COLORS.leftHandStroke : COLORS.rightHandStroke;
+        // Cores Didáticas: Brancas -> Fundo Branco. Pretas (Sustenidos) -> Fundo Preto.
+        let fill = rectInfo.isBlack ? "rgba(24, 24, 27, 0.95)" : "rgba(250, 250, 250, 0.95)";
+        let stroke = rectInfo.isBlack ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.8)";
         let alpha = 1.0;
         let shadowColor = "transparent";
         let shadowBlur = 0;
@@ -335,22 +335,30 @@ export default function PianoPlayer({
         
         ctx.fillStyle = fill;
         ctx.strokeStyle = stroke;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = rectInfo.isBlack ? 1 : 1.5;
 
-        // Desenhar bloco de nota
+        // Desenhar bloco de nota usando coordenadas sub-pixel (mas bordas visuais fiéis)
         ctx.beginPath();
         ctx.roundRect(xPos, yPos, rectW, noteHeight, 4);
         ctx.fill();
-        ctx.stroke();
+        if (stroke !== "transparent") ctx.stroke();
 
         ctx.shadowBlur = 0; // reset shadow for text
 
         if (!isHit && !isMiss && noteHeight > 10) {
-          ctx.fillStyle = COLORS.textDim;
+          // Contraste para a letra: Se o bloco for preto, letra branca. Se bloco for branco, letra preta.
+          ctx.fillStyle = rectInfo.isBlack ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)";
           ctx.font = "bold 13px var(--font-geist-mono), monospace";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(midiNoteToName(ns.midi), xPos + rectW / 2, yPos + noteHeight / 2);
+          
+          // Math.round AQUI evita o 'shivering/pulsating' da engine de Anti-Aliasing do Canvas 
+          // quando o texto tenta ser renderizado em linhas decimais movendo pra baixo rapidamente.
+          const textX = Math.round(xPos + rectW / 2);
+          const textY = Math.round(yPos + noteHeight / 2);
+          
+          // Replace \d remove o número da oitava (ex: C4 -> C), deixando mais didático pras crianças
+          ctx.fillText(midiNoteToName(ns.midi).replace(/\d/, ""), textX, textY);
         }
       }
 
