@@ -11,7 +11,7 @@ export const getStripe = (): Stripe => {
       );
     }
     stripeInstance = new Stripe(key, {
-      apiVersion: "2025-01-27.acacia",
+      apiVersion: "2026-03-25.dahlia",
       typescript: true,
     });
   }

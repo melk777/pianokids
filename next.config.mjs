@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Permite que o Stripe SDK seja importado no server sem warnings de peer deps
-    serverExternalPackages: ["stripe"],
+    // Mover para dentro de experimental remove o aviso (warning) do terminal
+    experimental: {
+        serverExternalPackages: ["stripe"],
+    },
 
     // Headers de segurança (boa prática para produção)
     async headers() {
@@ -24,8 +26,7 @@ const nextConfig = {
         ];
     },
 
-    // Redireciona /dashboard para login se não autenticado (Clerk faz isso no middleware,
-    // mas deixar aqui como fallback é boa prática)
+    // Redireciona /dashboard para login se não autenticado
     async redirects() {
         return [];
     },
