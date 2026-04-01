@@ -9,22 +9,17 @@ import { TIMING_WINDOWS } from "@/lib/songFilters";
 
 /* ── Types ───────────────────────────────────────────── */
 
-interface WaterfallGameProps {
+interface PianoPlayerProps {
   notes: SongNote[];            // Pre-filtered by difficulty
   bpm: number;
   difficulty: Difficulty;
   activeNotes: Map<number, { note: number; velocity: number; timestamp: number }>;
   isPlaying: boolean;
+  getAudioTime: () => number;   // Sync exactly with AudioContext.currentTime
   onScoreUpdate?: (score: number, combo: number, accuracy: number) => void;
   onSongEnd?: () => void;
   onNoteHit?: (midi: number, duration: number, velocity: number) => void;
   onNoteMiss?: (midi: number) => void;
-}
-
-interface NoteState extends SongNote {
-  id: number;
-  hit: boolean;
-  missed: boolean;
 }
 
 /* ── Constants ───────────────────────────────────────── */
@@ -32,93 +27,93 @@ interface NoteState extends SongNote {
 const VIEWPORT_SECONDS = 4;
 const HIT_ZONE_Y = 85;
 
-/* ── Colors (Neon/Cyberpunk) ─────────────────────────── */
+/* ── Colors (Neon/Cyberpunk Hand-specific) ───────────── */
 
 const COLORS = {
-  note: "rgba(0,234,255,0.55)",
-  noteStroke: "#00EAFF",
-  hitNormal: "rgba(16,185,129,0.7)",       // emerald
-  hitStroke: "#10B981",
-  hitGlow: "rgba(16,185,129,0.5)",
-  comboGlow: "rgba(16,185,129,0.8)",
-  missed: "rgba(255,0,229,0.2)",
-  missedStroke: "rgba(255,0,229,0.4)",
-  hitZone: "rgba(0,234,255,0.15)",
-  hitZoneLine: "rgba(0,234,255,0.3)",
+  rightHand: "rgba(0,234,255,0.55)",       // Cyan / Blue
+  rightHandStroke: "#00EAFF",
+  leftHand: "rgba(16,185,129,0.55)",       // Emerald / Green
+  leftHandStroke: "#10B981",
+  
+  hitNormal: "rgba(255,255,255,0.7)",      // White flash for hit
+  hitStroke: "#FFFFFF",
+  
+  comboGlow: "rgba(252,211,77,0.8)",       // Amber/Gold
+  missed: "rgba(255,0,229,0)",             // Opacity 0 to fade out
+  hitZoneLine: "rgba(255,255,255,0.3)",
   grid: "rgba(255,255,255,0.025)",
-  leftHand: "rgba(168,85,247,0.5)",        // purple for LH
-  leftHandStroke: "#A855F7",
 };
 
 /* ── Component ───────────────────────────────────────── */
 
-export default function WaterfallGame({
+export default function PianoPlayer({
   notes,
-  bpm,
   difficulty,
   activeNotes,
   isPlaying,
+  getAudioTime,
   onScoreUpdate,
   onSongEnd,
   onNoteHit,
   onNoteMiss,
-}: WaterfallGameProps) {
-  const [gameTime, setGameTime] = useState(0);
+}: PianoPlayerProps) {
+  // We decouple rendering from React state for zero-lag 60fps
+  const [renderTrigger, setRenderTrigger] = useState(0);
+  
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
-  const [, setMaxCombo] = useState(0);
   const [hits, setHits] = useState(0);
   const [misses, setMisses] = useState(0);
-  const [noteStates, setNoteStates] = useState<NoteState[]>([]);
   const [hitEffects, setHitEffects] = useState<
     { id: number; note: number; type: "hit" | "miss" | "perfect"; time: number }[]
   >([]);
-  const [metronomeBeat, setMetronomeBeat] = useState(false);
-
-  const startTimeRef = useRef<number>(0);
+  
+  // Game states kept in refs to avoid re-renders during the loop
+  const gameTimeRef = useRef(0);
+  const startTimeRef = useRef<number | null>(null);
+  const hitNotesRef = useRef<Set<number>>(new Set());
+  const missedNotesRef = useRef<Set<number>>(new Set());
   const animFrameRef = useRef<number>(0);
-  const processedNotesRef = useRef<Set<number>>(new Set());
   const effectIdRef = useRef(0);
-  const lastBeatRef = useRef(0);
   const timingWindow = TIMING_WINDOWS[difficulty];
 
-  // Initialize note states when notes change
+  // Initialize state when songs change
   useEffect(() => {
-    setNoteStates(
-      notes.map((n, i) => ({ ...n, id: i, hit: false, missed: false }))
-    );
     setScore(0);
     setCombo(0);
-    setMaxCombo(0);
     setHits(0);
     setMisses(0);
-    setGameTime(0);
-    processedNotesRef.current = new Set();
-    lastBeatRef.current = 0;
+    hitNotesRef.current = new Set();
+    missedNotesRef.current = new Set();
+    startTimeRef.current = null;
+    gameTimeRef.current = 0;
+    setRenderTrigger(prev => prev + 1);
   }, [notes]);
 
-  // ── Game loop ─────────────────────────────────────
+  // ── High Performance Render Loop ──────────────────
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying) {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      return;
+    }
 
-    startTimeRef.current = performance.now() / 1000 - gameTime;
-    const beatInterval = 60 / bpm;
+    if (startTimeRef.current === null) {
+      startTimeRef.current = getAudioTime();
+    }
 
     const tick = () => {
-      const now = performance.now() / 1000 - startTimeRef.current;
-      setGameTime(now);
+      // THE ONLY SOURCE OF TRUTH: Web Audio Context clock
+      const rawAudioTime = getAudioTime();
+      // Calculate how long since play started
+      const elapsed = rawAudioTime - (startTimeRef.current || rawAudioTime);
+      gameTimeRef.current = elapsed;
 
-      // Metronome pulse
-      const beatNum = Math.floor(now / beatInterval);
-      if (beatNum > lastBeatRef.current) {
-        lastBeatRef.current = beatNum;
-        setMetronomeBeat(true);
-        setTimeout(() => setMetronomeBeat(false), 120);
-      }
+      // Force React to render once per frame (lightweight because of O(1) DOM)
+      setRenderTrigger(prev => (prev + 1) % 100);
 
-      // Song end check
+      // Check for song end
       const lastNote = notes[notes.length - 1];
-      if (lastNote && now > lastNote.time + lastNote.duration + 2) {
+      if (lastNote && elapsed > lastNote.time + lastNote.duration + 2) {
         onSongEnd?.();
         return;
       }
@@ -128,73 +123,64 @@ export default function WaterfallGame({
 
     animFrameRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animFrameRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlaying, notes, bpm, onSongEnd]);
+  }, [isPlaying, getAudioTime, notes, onSongEnd]);
 
-  // ── MIDI input matching ───────────────────────────
+  // ── MIDI Input matching (Polling against gameTimeRef) ──
   useEffect(() => {
     if (!isPlaying) return;
+    const gt = gameTimeRef.current;
 
     activeNotes.forEach((midiNote) => {
-      const matchIdx = noteStates.findIndex((ns) => {
-        if (ns.hit || ns.missed || processedNotesRef.current.has(ns.id)) return false;
+      // Find the first eligible note that matches the key
+      const matchIdx = notes.findIndex((ns, i) => {
+        if (hitNotesRef.current.has(i) || missedNotesRef.current.has(i)) return false;
         if (ns.midi !== midiNote.note) return false;
-        return Math.abs(gameTime - ns.time) <= timingWindow;
+        return Math.abs(gt - ns.time) <= timingWindow;
       });
 
       if (matchIdx !== -1) {
-        const matched = noteStates[matchIdx];
-        processedNotesRef.current.add(matched.id);
+        hitNotesRef.current.add(matchIdx);
+        const matched = notes[matchIdx];
 
-        setNoteStates((prev) =>
-          prev.map((ns) => (ns.id === matched.id ? { ...ns, hit: true } : ns))
-        );
-
-        const newCombo = combo + 1;
-        const comboMultiplier = Math.floor(newCombo / 5) + 1;
-        const noteScore = 100 * comboMultiplier;
-
-        setScore((s) => s + noteScore);
-        setCombo(newCombo);
-        setMaxCombo((m) => Math.max(m, newCombo));
+        setCombo((c) => {
+          const newCombo = c + 1;
+          const comboMultiplier = Math.floor(newCombo / 5) + 1;
+          setScore((s) => s + 100 * comboMultiplier);
+          
+          // Visual effect
+          const eid = effectIdRef.current++;
+          const effectType = newCombo >= 10 ? "perfect" : "hit";
+          setHitEffects((prev) => [...prev, { id: eid, note: matched.midi, type: effectType, time: Date.now() }]);
+          setTimeout(() => setHitEffects((prev) => prev.filter((e) => e.id !== eid)), 800);
+          
+          return newCombo;
+        });
+        
         setHits((h) => h + 1);
-
-        // Fire audio callback
         onNoteHit?.(matched.midi, matched.duration, matched.velocity ?? 0.8);
-
-        // Visual effect
-        const eid = effectIdRef.current++;
-        const effectType = newCombo >= 10 ? "perfect" : "hit";
-        setHitEffects((prev) => [...prev, { id: eid, note: matched.midi, type: effectType, time: Date.now() }]);
-        setTimeout(() => setHitEffects((prev) => prev.filter((e) => e.id !== eid)), 800);
       }
     });
-  }, [activeNotes, isPlaying, gameTime, noteStates, combo, timingWindow, onNoteHit]);
+  }, [activeNotes, isPlaying, timingWindow, onNoteHit, notes]); // activeNotes reference changes on press
 
-  // ── Missed notes check ────────────────────────────
+  // ── Missed notes cleanup (O(1) Memory check during render trigger) ──
   useEffect(() => {
     if (!isPlaying) return;
+    const gt = gameTimeRef.current;
 
-    setNoteStates((prev) =>
-      prev.map((ns) => {
-        if (ns.hit || ns.missed || processedNotesRef.current.has(ns.id)) return ns;
-        if (gameTime > ns.time + timingWindow) {
-          processedNotesRef.current.add(ns.id);
-          setCombo(0);
-          setMisses((m) => m + 1);
-
-          onNoteMiss?.(ns.midi);
-
-          const eid = effectIdRef.current++;
-          setHitEffects((prev) => [...prev, { id: eid, note: ns.midi, type: "miss", time: Date.now() }]);
-          setTimeout(() => setHitEffects((prev) => prev.filter((e) => e.id !== eid)), 600);
-
-          return { ...ns, missed: true };
-        }
-        return ns;
-      })
-    );
-  }, [gameTime, isPlaying, timingWindow, onNoteMiss]);
+    notes.forEach((ns, i) => {
+      if (hitNotesRef.current.has(i) || missedNotesRef.current.has(i)) return;
+      if (gt > ns.time + timingWindow) {
+        missedNotesRef.current.add(i);
+        setCombo(0);
+        setMisses((m) => m + 1);
+        onNoteMiss?.(ns.midi);
+        
+        const eid = effectIdRef.current++;
+        setHitEffects((prev) => [...prev, { id: eid, note: ns.midi, type: "miss", time: Date.now() }]);
+        setTimeout(() => setHitEffects((prev) => prev.filter((e) => e.id !== eid)), 600);
+      }
+    });
+  }, [renderTrigger, isPlaying, timingWindow, onNoteMiss, notes]);
 
   // ── Report score ──────────────────────────────────
   const reportScore = useCallback(() => {
@@ -207,14 +193,7 @@ export default function WaterfallGame({
     reportScore();
   }, [reportScore]);
 
-  // ── Viewport-windowed rendering ───────────────────
-  const visibleNotes = noteStates.filter((ns) => {
-    const y = getNoteY(ns.time, gameTime);
-    const noteHeight = Math.max((ns.duration / VIEWPORT_SECONDS) * HIT_ZONE_Y, 2);
-    return y + noteHeight > -10 && y < 110;
-  });
-
-  // Lane mapping from visible+nearby notes (use ALL notes for stable layout)
+  // ── Viewport-windowed rendering (Cleanup / Cull) ──
   const allMidis = Array.from(new Set(notes.map((n) => n.midi))).sort((a, b) => a - b);
   const laneWidth = allMidis.length > 0 ? 100 / allMidis.length : 10;
 
@@ -223,18 +202,25 @@ export default function WaterfallGame({
     return idx >= 0 ? idx * laneWidth : 0;
   }
 
-  function getNoteY(noteTime: number, gt: number): number {
-    const timeDiff = noteTime - gt;
-    const normalizedPos = timeDiff / VIEWPORT_SECONDS;
-    return HIT_ZONE_Y - normalizedPos * HIT_ZONE_Y;
-  }
+  const speedMultiplier = 1 / VIEWPORT_SECONDS; // Speed derived from viewport constant
 
-  // ── Combo tier ────────────────────────────────────
+  // Filter notes that are completely outside the visible area
+  const visibleNotes = notes.map((ns, i) => ({ ...ns, index: i })).filter((ns) => {
+    const gt = gameTimeRef.current;
+    // Posição Y calculada exatamente como requisitado: y = (time - audioTime) * speed
+    const timeDiff = ns.time - gt;
+    const normalizedPos = timeDiff * speedMultiplier; 
+    const y = HIT_ZONE_Y - normalizedPos * HIT_ZONE_Y;
+    const noteHeight = Math.max((ns.duration * speedMultiplier) * HIT_ZONE_Y, 2);
+    
+    // Cull strict: Remove from DOM if below screen (y > 110)
+    return y + noteHeight > -10 && y < 110;
+  });
+
   const comboTier = combo >= 25 ? "legendary" : combo >= 10 ? "streak" : "normal";
 
   return (
     <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-white/[0.06] bg-black/40 backdrop-blur-sm">
-      {/* SVG Waterfall */}
       <svg
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
@@ -251,20 +237,12 @@ export default function WaterfallGame({
           />
         ))}
 
-        {/* Hit zone glow */}
         <defs>
           <linearGradient id="hitZoneGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(0,234,255,0)" />
-            <stop offset="40%" stopColor="rgba(0,234,255,0.03)" />
-            <stop offset="100%" stopColor="rgba(0,234,255,0)" />
+            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="40%" stopColor="rgba(255,255,255,0.03)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </linearGradient>
-          <filter id="noteGlow">
-            <feGaussianBlur stdDeviation="0.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
           <filter id="hitGlow">
             <feGaussianBlur stdDeviation="1" result="blur" />
             <feMerge>
@@ -277,34 +255,40 @@ export default function WaterfallGame({
         <rect x={0} y={HIT_ZONE_Y - 4} width={100} height={8} fill="url(#hitZoneGradient)" />
         <line x1={0} y1={HIT_ZONE_Y} x2={100} y2={HIT_ZONE_Y} stroke={COLORS.hitZoneLine} strokeWidth={0.25} />
 
-        {/* ── Falling notes (viewport-windowed) ── */}
+        {/* ── Falling notes (Culling & Rendering) ── */}
         {visibleNotes.map((ns) => {
-          const y = getNoteY(ns.time, gameTime);
-          const noteHeight = Math.max((ns.duration / VIEWPORT_SECONDS) * HIT_ZONE_Y, 2);
+          const gt = gameTimeRef.current;
+          const timeDiff = ns.time - gt;
+          const y = HIT_ZONE_Y - (timeDiff * speedMultiplier) * HIT_ZONE_Y;
+          const noteHeight = Math.max((ns.duration * speedMultiplier) * HIT_ZONE_Y, 2);
 
           const isLeftHand = ns.hand === "left";
+          const isHit = hitNotesRef.current.has(ns.index);
+          const isMissed = missedNotesRef.current.has(ns.index);
 
-          let fill = isLeftHand ? COLORS.leftHand : COLORS.note;
-          let strokeColor = isLeftHand ? COLORS.leftHandStroke : COLORS.noteStroke;
-          let filterAttr = "url(#noteGlow)";
+          // Cores por mão (Direita = Azul, Esquerda = Verde)
+          let fill = isLeftHand ? COLORS.leftHand : COLORS.rightHand;
+          let strokeColor = isLeftHand ? COLORS.leftHandStroke : COLORS.rightHandStroke;
+          let filterAttr = "none";
           let opacity = 1;
 
-          if (ns.hit) {
-            fill = comboTier === "normal"
-              ? COLORS.hitNormal
-              : COLORS.comboGlow;
+          // Ciclo de vida: Opacity 0 quando morre. Brilha ao acertar.
+          if (isHit) {
+            fill = comboTier === "normal" ? COLORS.hitNormal : COLORS.comboGlow;
             strokeColor = COLORS.hitStroke;
             filterAttr = "url(#hitGlow)";
-            opacity = 0.6;
-          } else if (ns.missed) {
+            // Fades out immediately starting after hit
+            opacity = Math.max(0, 1 - (gt - ns.time) * 3);
+          } else if (isMissed) {
             fill = COLORS.missed;
-            strokeColor = COLORS.missedStroke;
-            filterAttr = "none";
-            opacity = 0.3;
+            strokeColor = COLORS.missed;
+            opacity = Math.max(0, 0.4 - (gt - ns.time)); // Fade out out of bounds
           }
 
+          if (opacity <= 0) return null; // Complete cleanup before culling completely
+
           return (
-            <g key={ns.id}>
+            <g key={ns.index}>
               <rect
                 x={getNoteX(ns.midi) + laneWidth * 0.08}
                 y={y}
@@ -313,12 +297,13 @@ export default function WaterfallGame({
                 rx={0.5}
                 fill={fill}
                 stroke={strokeColor}
-                strokeWidth={0.12}
+                strokeWidth={0.15}
                 opacity={opacity}
                 filter={filterAttr}
+                className="transition-opacity duration-200"
               />
-              {/* Note label */}
-              {!ns.hit && !ns.missed && noteHeight > 3 && (
+              {/* Oculta o texto se a nota foi tocada ou está muito pequena */}
+              {!isHit && !isMissed && noteHeight > 3 && (
                 <text
                   x={getNoteX(ns.midi) + laneWidth / 2}
                   y={y + noteHeight / 2 + 0.7}
@@ -382,30 +367,12 @@ export default function WaterfallGame({
         ))}
       </AnimatePresence>
 
-      {/* ── Combo streak banner ── */}
-      <AnimatePresence>
-        {comboTier === "legendary" && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-          >
-            <span className="text-2xl font-black text-emerald-400 tracking-widest uppercase drop-shadow-[0_0_20px_rgba(16,185,129,0.6)] animate-pulse select-none">
-              PERFECT STREAK
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Score HUD ── */}
       <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
         <div className="glass rounded-xl px-4 py-2 border border-white/[0.06]">
           <p className="text-[10px] text-white/35 uppercase tracking-wider">Pontuação</p>
-          <p className="text-xl font-bold text-cyan tabular-nums">{score.toLocaleString()}</p>
+          <p className="text-xl font-bold tabular-nums text-white">{score.toLocaleString()}</p>
         </div>
 
-        {/* Combo with glow tiers */}
         <div className="glass rounded-xl px-4 py-2 text-center border border-white/[0.06] relative overflow-hidden">
           {comboTier !== "normal" && (
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-transparent to-emerald-500/10 animate-pulse" />
@@ -432,37 +399,6 @@ export default function WaterfallGame({
             {hits + misses > 0 ? Math.round((hits / (hits + misses)) * 100) : 100}%
           </p>
         </div>
-      </div>
-
-      {/* ── Visual Metronome ── */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 pointer-events-none">
-        <div
-          className={`w-2.5 h-2.5 rounded-full transition-all duration-100 ${
-            metronomeBeat
-              ? "bg-cyan scale-150 shadow-[0_0_12px_rgba(0,234,255,0.6)]"
-              : "bg-white/10 scale-100"
-          }`}
-        />
-        <span className="text-[10px] text-white/20 font-mono tabular-nums">
-          {bpm} BPM
-        </span>
-        <div
-          className={`w-2.5 h-2.5 rounded-full transition-all duration-100 ${
-            metronomeBeat
-              ? "bg-cyan scale-150 shadow-[0_0_12px_rgba(0,234,255,0.6)]"
-              : "bg-white/10 scale-100"
-          }`}
-        />
-      </div>
-
-      {/* ── Difficulty badge ── */}
-      <div className="absolute bottom-4 right-4 pointer-events-none">
-        <span className={`text-[10px] font-medium uppercase tracking-widest ${
-          difficulty === "pro" ? "text-magenta/50" :
-          difficulty === "medium" ? "text-cyan/50" : "text-emerald-400/50"
-        }`}>
-          {difficulty === "pro" ? "PRO" : difficulty === "medium" ? "MÉDIO" : "INICIANTE"}
-        </span>
       </div>
     </div>
   );

@@ -16,9 +16,11 @@ function midiToFreq(midi: number): number {
 interface AudioEngineReturn {
   /** Initialize the audio context (must call on user gesture) */
   init: () => void;
-  /** Play a note on Channel A (accompaniment) */
-  playAccompaniment: (midi: number, duration: number, velocity?: number) => void;
-  /** Play a note on Channel B (student) */
+  /** Get current audio context time in seconds */
+  getCurrentTime: () => number;
+  /** Play an accompaniment note at a specific absolute time in the future */
+  scheduleAccompaniment: (midi: number, startTime: number, duration: number, velocity?: number) => void;
+  /** Play a note on Channel B (student) immediately */
   playStudent: (midi: number, duration: number, velocity?: number) => void;
   /** Reward: ramp Channel B volume to max */
   rewardHit: () => void;
@@ -58,12 +60,17 @@ export function useAudioEngine(): AudioEngineReturn {
     }
   }, []);
 
+  const getCurrentTime = useCallback(() => {
+    return ctxRef.current?.currentTime || 0;
+  }, []);
+
   /**
    * Play a piano-like tone using OscillatorNode + GainNode envelope (ADSR-ish)
    */
   const playNote = useCallback(
     (
       midi: number,
+      startTime: number,
       duration: number,
       destinationGain: GainNode | null,
       velocity = 0.8
@@ -72,7 +79,8 @@ export function useAudioEngine(): AudioEngineReturn {
       if (!ctx || !destinationGain) return;
 
       const freq = midiToFreq(midi);
-      const now = ctx.currentTime;
+      // Safety bound: don't schedule notes in the past
+      const now = Math.max(startTime, ctx.currentTime);
       const noteVol = velocity * 0.4; // scale down to avoid clipping
 
       // Fundamental oscillator (triangle = warmer than sine, less harsh than square)
@@ -91,25 +99,17 @@ export function useAudioEngine(): AudioEngineReturn {
       // Attack
       envelope.gain.linearRampToValueAtTime(noteVol, now + 0.015);
       // Decay → sustain
-      envelope.gain.exponentialRampToValueAtTime(
-        noteVol * 0.5,
-        now + 0.15
-      );
+      envelope.gain.exponentialRampToValueAtTime(noteVol * 0.5, now + 0.15);
+      
       // Release
       const releaseTime = Math.min(duration, 2);
-      envelope.gain.exponentialRampToValueAtTime(
-        0.001,
-        now + releaseTime + 0.3
-      );
+      envelope.gain.exponentialRampToValueAtTime(0.001, now + releaseTime + 0.3);
 
       // Second harmonic envelope (softer)
       const envelope2 = ctx.createGain();
       envelope2.gain.setValueAtTime(0, now);
       envelope2.gain.linearRampToValueAtTime(noteVol * 0.15, now + 0.01);
-      envelope2.gain.exponentialRampToValueAtTime(
-        0.001,
-        now + releaseTime * 0.6
-      );
+      envelope2.gain.exponentialRampToValueAtTime(0.001, now + releaseTime * 0.6);
 
       // Wiring
       osc.connect(envelope);
@@ -119,22 +119,25 @@ export function useAudioEngine(): AudioEngineReturn {
 
       osc.start(now);
       osc2.start(now);
+      
+      // Stop oscillators slightly after full release to clear memory
       osc.stop(now + releaseTime + 0.5);
       osc2.stop(now + releaseTime + 0.5);
     },
     []
   );
 
-  const playAccompaniment = useCallback(
-    (midi: number, duration: number, velocity = 0.6) => {
-      playNote(midi, duration, channelAGain.current, velocity);
+  const scheduleAccompaniment = useCallback(
+    (midi: number, startTime: number, duration: number, velocity = 0.6) => {
+      playNote(midi, startTime, duration, channelAGain.current, velocity);
     },
     [playNote]
   );
 
   const playStudent = useCallback(
     (midi: number, duration: number, velocity = 0.9) => {
-      playNote(midi, duration, channelBGain.current, velocity);
+      if (!ctxRef.current) return;
+      playNote(midi, ctxRef.current.currentTime, duration, channelBGain.current, velocity);
     },
     [playNote]
   );
@@ -171,7 +174,8 @@ export function useAudioEngine(): AudioEngineReturn {
 
   return {
     init,
-    playAccompaniment,
+    getCurrentTime,
+    scheduleAccompaniment,
     playStudent,
     rewardHit,
     penaltyMiss,

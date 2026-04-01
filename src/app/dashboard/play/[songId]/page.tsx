@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
-import WaterfallGame from "@/components/WaterfallGame";
+import PianoPlayer from "@/components/PianoPlayer";
 import Piano from "@/components/Piano";
 import { useMIDI } from "@/hooks/useMIDI";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
@@ -41,7 +41,7 @@ export default function PlayPage() {
 
   // Accompaniment scheduler
   const accompanimentScheduled = useRef(false);
-  const accompanimentTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const audioStartTimeRef = useRef<number>(0);
 
   const handleScoreUpdate = useCallback((score: number, combo: number, accuracy: number) => {
     setFinalScore({ score, combo, accuracy });
@@ -50,7 +50,6 @@ export default function PlayPage() {
   const handleSongEnd = useCallback(() => {
     setIsPlaying(false);
     setGameState("ended");
-    accompanimentTimers.current.forEach(clearTimeout);
   }, []);
 
   // Audio callbacks from game engine
@@ -89,16 +88,22 @@ export default function PlayPage() {
     if (audioEnabled) {
       accompanimentScheduled.current = true;
       const accNotes = getAccompanimentNotes(song.notes, difficulty);
-      const timers: ReturnType<typeof setTimeout>[] = [];
+      
+      const LEAD_IN = 2.0; // 2 seconds lead-in before song starts
+      const startAt = audio.getCurrentTime() + LEAD_IN;
+      audioStartTimeRef.current = startAt;
 
       accNotes.forEach((note) => {
-        const timer = setTimeout(() => {
-          audio.playAccompaniment(note.midi, note.duration, note.velocity ?? 0.5);
-        }, note.time * 1000);
-        timers.push(timer);
+        audio.scheduleAccompaniment(
+          note.midi,
+          startAt + note.time,
+          note.duration,
+          note.velocity ?? 0.5
+        );
       });
-
-      accompanimentTimers.current = timers;
+    } else {
+      // If audio is disabled, we still need a start time reference
+      audioStartTimeRef.current = audio.getCurrentTime() + 2.0;
     }
   };
 
@@ -106,14 +111,13 @@ export default function PlayPage() {
     setIsPlaying(false);
     setGameState("idle");
     setFinalScore({ score: 0, combo: 0, accuracy: 100 });
-    accompanimentTimers.current.forEach(clearTimeout);
     accompanimentScheduled.current = false;
+    audio.destroy(); // destroy and recreate context to instantly stop any scheduled sounds
   };
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      accompanimentTimers.current.forEach(clearTimeout);
       audio.destroy();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -290,12 +294,13 @@ export default function PlayPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
             >
-              <WaterfallGame
+              <PianoPlayer
                 notes={filteredNotes}
                 bpm={song.bpm}
                 difficulty={difficulty}
                 activeNotes={activeNotes}
                 isPlaying={isPlaying}
+                getAudioTime={() => audio.getCurrentTime() - audioStartTimeRef.current}
                 onScoreUpdate={handleScoreUpdate}
                 onSongEnd={handleSongEnd}
                 onNoteHit={handleNoteHit}
