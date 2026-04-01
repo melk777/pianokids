@@ -7,6 +7,9 @@ import { Music, Star, BarChart3, ChevronDown } from "lucide-react";
 
 import Header from "@/components/Header";
 import HeroAnimation from "@/components/HeroAnimation";
+import PartnerMarquee from "@/components/PartnerMarquee";
+import TestimonialsCarousel from "@/components/TestimonialsCarousel";
+import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
 import { useMIDI } from "@/hooks/useMIDI";
 
@@ -62,7 +65,7 @@ export default function Home() {
 
     const data = await res.json();
 
-    // Usuário não autenticado → redireciona para login
+    // Usuário não autenticado → redireciona para cadastro
     if (res.status === 401 && data.redirect) {
       router.push(data.redirect);
       return;
@@ -229,8 +232,11 @@ export default function Home() {
           </motion.div>
         </section>
 
+        {/* ── Partner Logos Marquee ────────────────── */}
+        <PartnerMarquee />
+
         {/* ── Features Section ──────────────────────── */}
-        <section className="py-32 px-6">
+        <section className="py-24 px-6">
           <div className="max-w-5xl mx-auto">
             <motion.div
               initial={{ y: 30, opacity: 0 }}
@@ -288,8 +294,11 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── Testimonials Carousel ──────────────────── */}
+        <TestimonialsCarousel />
+
         {/* ── Pricing Section ───────────────────────── */}
-        <section id="pricing" className="py-32 px-6 scroll-mt-20">
+        <section id="pricing" className="py-24 px-6 scroll-mt-20">
           <div className="max-w-3xl mx-auto">
             <motion.div
               initial={{ y: 30, opacity: 0 }}
@@ -328,6 +337,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ── FAQ Accordion ──────────────────────────── */}
+        <FAQ />
 
         {/* ── Footer ────────────────────────────────── */}
         <footer className="border-t border-white/5 py-12 px-6">

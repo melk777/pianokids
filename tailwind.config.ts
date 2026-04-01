@@ -26,6 +26,8 @@ const config: Config = {
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
         "slide-up": "slide-up 0.5s ease-out",
         "fade-in": "fade-in 0.8s ease-out",
+        "slideDown": "slideDown 0.3s ease-out",
+        "slideUp": "slideUp 0.25s ease-out",
       },
       keyframes: {
         float: {
@@ -43,6 +45,14 @@ const config: Config = {
         "fade-in": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
+        },
+        slideDown: {
+          from: { height: "0", opacity: "0" },
+          to: { height: "var(--radix-accordion-content-height)", opacity: "1" },
+        },
+        slideUp: {
+          from: { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          to: { height: "0", opacity: "0" },
         },
       },
     },

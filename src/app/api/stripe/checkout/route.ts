@@ -9,12 +9,12 @@ export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
 
-    // ── Se o usuário NÃO está logado, retorna redirect para login ──
+    // ── Se o usuário NÃO está logado, retorna redirect para cadastro ──
     if (!userId) {
       return NextResponse.json(
         {
-          redirect: "/sign-in",
-          message: "Faça login antes de assinar um plano.",
+          redirect: "/sign-up",
+          message: "Crie uma conta antes de assinar um plano.",
         },
         { status: 401 }
       );

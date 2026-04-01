@@ -1,52 +1,67 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import { getStripe } from "@/lib/stripe";
-
-// Importar PLANS só no server — nunca re-exportar para o client
-const PLAN_PRICE_IDS: Record<string, string | undefined> = {
-  monthly: process.env.STRIPE_MONTHLY_PRICE_ID,
-  yearly: process.env.STRIPE_YEARLY_PRICE_ID,
-};
 
 export const dynamic = "force-dynamic";
 
+/**
+ * POST /api/stripe/portal
+ * Gera uma sessão do Stripe Billing Portal para o usuário logado
+ * gerenciar sua assinatura (trocar cartão, cancelar, etc).
+ */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json() as { planKey?: string };
-    const { planKey } = body;
+    const { userId } = await auth();
 
-    if (!planKey || !(planKey in PLAN_PRICE_IDS)) {
+    if (!userId) {
       return NextResponse.json(
-        { error: "Plano inválido." },
-        { status: 400 }
-      );
-    }
-
-    const priceId = PLAN_PRICE_IDS[planKey];
-    if (!priceId) {
-      return NextResponse.json(
-        { error: `Price ID para o plano "${planKey}" não configurado. Adicione STRIPE_${planKey.toUpperCase()}_PRICE_ID nas variáveis de ambiente.` },
-        { status: 500 }
+        { error: "Não autenticado." },
+        { status: 401 }
       );
     }
 
     const stripe = getStripe();
-    const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${req.nextUrl.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.nextUrl.origin}/#pricing`,
-      metadata: { planKey },
-    });
 
-    if (!session.url) {
-      throw new Error("Stripe não retornou uma URL de checkout.");
+    // Buscar customer pelas subscriptions ativas (via checkout sessions)
+    // Listamos sessions recentes e encontramos a que pertence ao userId
+    const sessions = await stripe.checkout.sessions.list({ limit: 100 });
+
+    let customerId: string | undefined;
+
+    for (const session of sessions.data) {
+      if (
+        session.client_reference_id === userId ||
+        session.metadata?.clerkUserId === userId
+      ) {
+        if (session.customer) {
+          customerId =
+            typeof session.customer === "string"
+              ? session.customer
+              : session.customer.id;
+        }
+        break;
+      }
     }
 
-    return NextResponse.json({ url: session.url });
+    if (!customerId) {
+      return NextResponse.json(
+        {
+          error:
+            "Nenhuma assinatura encontrada. Assine um plano antes de gerenciar.",
+        },
+        { status: 404 }
+      );
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${req.nextUrl.origin}/dashboard`,
+    });
+
+    return NextResponse.json({ url: portalSession.url });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Erro interno no servidor.";
-    console.error("[stripe/checkout] Error:", message);
+    const message = err instanceof Error ? err.message : "Erro interno";
+    console.error("Stripe portal error:", message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
