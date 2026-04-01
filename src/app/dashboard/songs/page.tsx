@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
 import { songs } from "@/lib/songs";
 
 const difficultyColors: Record<string, string> = {
@@ -14,7 +14,7 @@ const difficultyColors: Record<string, string> = {
 export default function SongsPage() {
   return (
     <main className="min-h-screen bg-black">
-      <Navbar />
+      <Header />
 
       <div className="pt-28 pb-20 px-6 max-w-4xl mx-auto">
         {/* Back + Header */}

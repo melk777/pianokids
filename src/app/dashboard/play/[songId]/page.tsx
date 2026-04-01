@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
 import WaterfallGame from "@/components/WaterfallGame";
 import Piano from "@/components/Piano";
 import { useMIDI } from "@/hooks/useMIDI";
@@ -43,7 +43,7 @@ export default function PlayPage() {
   if (!song) {
     return (
       <main className="min-h-screen bg-black flex items-center justify-center">
-        <Navbar />
+        <Header />
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Música não encontrada</h1>
           <Link href="/dashboard/songs" className="btn-secondary">
@@ -56,7 +56,7 @@ export default function PlayPage() {
 
   return (
     <main className="min-h-screen bg-black">
-      <Navbar />
+      <Header />
 
       <div className="pt-24 pb-12 px-6 max-w-5xl mx-auto">
         {/* Header */}

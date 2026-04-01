@@ -4,7 +4,8 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/api/stripe/webhook",   // ← webhook nunca pode ter Clerk auth (sem cookie)
+  "/api/stripe/webhook",    // ← webhook nunca pode ter Clerk auth (sem cookie)
+  "/api/stripe/checkout",   // ← checkout faz auth própria e retorna 401 JSON
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

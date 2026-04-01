@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
 import Piano from "@/components/Piano";
 import { useMIDI, midiNoteToName } from "@/hooks/useMIDI";
 
@@ -13,7 +13,7 @@ export default function PracticePage() {
 
   return (
     <main className="min-h-screen bg-black">
-      <Navbar />
+      <Header />
 
       <div className="pt-28 pb-20 px-6 max-w-5xl mx-auto">
         {/* Back + Header */}
