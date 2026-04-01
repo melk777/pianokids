@@ -143,8 +143,11 @@ export default function Dashboard() {
                       
                       {/* Play / Lock Button */}
                       {isLocked ? (
-                        <div className="shrink-0 w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-                          <Lock className="w-5 h-5 text-white/30" />
+                        <div 
+                          onClick={() => router.push("/#pricing")}
+                          className="shrink-0 w-12 h-12 rounded-full bg-white/5 flex items-center justify-center cursor-pointer hover:bg-magenta/20 transition-all border border-magenta/20 group/lock"
+                        >
+                          <Lock className="w-5 h-5 text-white/30 group-hover/lock:text-magenta transition-colors" />
                         </div>
                       ) : (
                         <Link href={`/dashboard/play/${song.id}`} className="shrink-0">
@@ -189,13 +192,19 @@ export default function Dashboard() {
 
                 {/* Locked Module Suggestion */}
                 {!subStatus.isSubscribed && !subStatus.loading && (
-                  <div className="glass p-4 rounded-xl flex items-center gap-4 border border-magenta/20 bg-magenta/5 mt-4">
-                    <div className="shrink-0 w-12 h-12 rounded-full bg-magenta/10 flex items-center justify-center">
+                  <div className="glass p-5 rounded-xl flex items-center gap-4 border border-magenta/20 bg-magenta/5 mt-4 group">
+                    <div className="shrink-0 w-12 h-12 rounded-full bg-magenta/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Crown className="w-5 h-5 text-magenta" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-base font-medium text-white/90 mb-1">Desbloquear Catálogo</h4>
-                      <p className="text-xs text-white/60">Assine o plano Pro para acessar todas as músicas.</p>
+                      <h4 className="text-base font-medium text-white/90 mb-0.5">Desbloquear Catálogo</h4>
+                      <p className="text-xs text-white/50 mb-3">Assine o plano Pro para acessar todas as músicas.</p>
+                      <button 
+                        onClick={() => router.push("/#pricing")}
+                        className="text-xs font-semibold text-magenta hover:text-magenta/80 transition-colors flex items-center gap-1"
+                      >
+                        Ver planos premium <ChevronRight className="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
                 )}

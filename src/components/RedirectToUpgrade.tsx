@@ -30,11 +30,23 @@ export default function RedirectToUpgrade() {
         </div>
         
         <h2 className="text-2xl font-bold mb-3">Acesso Restrito</h2>
-        <p className="text-white/60 mb-6">
+        <p className="text-white/60 mb-8 px-4">
           Essa área é exclusiva para alunos do plano PianoKids Pro. Você será redirecionado para os planos em instantes...
         </p>
 
-        <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => router.push("/#pricing")}
+          className="w-full py-3.5 bg-gradient-to-r from-cyan to-magenta text-white font-bold rounded-xl mb-6 shadow-[0_0_20px_rgba(0,234,255,0.2)] hover:shadow-[0_0_30px_rgba(0,234,255,0.4)] transition-all"
+        >
+          Ver Planos Premium
+        </motion.button>
+
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+          <span className="text-xs text-white/40 font-medium uppercase tracking-widest">Carregando...</span>
+        </div>
       </motion.div>
     </div>
   );
