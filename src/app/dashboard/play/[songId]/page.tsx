@@ -11,7 +11,7 @@ import PianoPlayer from "@/components/PianoPlayer";
 import Piano from "@/components/Piano";
 import { useMIDI } from "@/hooks/useMIDI";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
-import { getSongById } from "@/lib/songs";
+import { getSongById, type Song } from "@/lib/songs";
 import {
   type Difficulty,
   DIFFICULTY_LABELS,
@@ -31,7 +31,11 @@ export default function PlayPage() {
   const params = useParams();
   const router = useRouter();
   const songId = params.songId as string;
-  const song = getSongById(songId);
+  const isFreePlay = songId === "freeplay";
+  
+  const song: Song | undefined = isFreePlay 
+      ? { id: "freeplay", title: "Prática Livre", artist: "Sintetizador Livre", category: "Extra" as "Para Iniciantes", isPremium: false, difficulty: "Fácil", duration: 0, bpm: 120, coverUrl: "", notes: [] }
+      : getSongById(songId);
 
   const { isConnected, activeNotes, connect, error } = useMIDI();
   const audio = useAudioEngine();
@@ -211,46 +215,51 @@ export default function PlayPage() {
                 {/* ── Difficulty Selector ── */}
                 <div className="mb-8">
                   <p className="text-xs uppercase tracking-widest text-white/30 mb-4 font-medium">
-                    Selecione a dificuldade
+                    {isFreePlay ? "Modo de Teclado" : "Selecione a Dificuldade"}
                   </p>
-                  <div className="inline-flex items-center rounded-xl bg-white/[0.03] border border-white/[0.06] p-1 gap-1">
-                    {(["beginner", "medium", "pro"] as Difficulty[]).map((d) => (
-                      <button
-                        key={d}
-                        onClick={() => setDifficulty(d)}
-                        className={`relative flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
-                          difficulty === d
-                            ? `${DIFFICULTY_COLORS[d]} bg-white/[0.06] shadow-lg`
-                            : "text-white/35 hover:text-white/60"
-                        }`}
-                      >
-                        {difficulty === d && (
-                          <motion.div
-                            layoutId="difficulty-bg"
-                            className={`absolute inset-0 rounded-lg border ${
-                              d === "pro"
-                                ? "border-magenta/30 bg-magenta/5"
-                                : d === "medium"
-                                ? "border-cyan/30 bg-cyan/5"
-                                : "border-emerald-400/30 bg-emerald-400/5"
-                            }`}
-                            transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-                          />
-                        )}
-                        <span className="relative z-10 flex items-center gap-2">
-                          {DIFFICULTY_ICONS[d]}
-                          {DIFFICULTY_LABELS[d]}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                  
+                  {!isFreePlay && (
+                    <div className="inline-flex items-center rounded-xl bg-white/[0.03] border border-white/[0.06] p-1 gap-1">
+                      {(["beginner", "medium", "pro"] as Difficulty[]).map((d) => (
+                        <button
+                          key={d}
+                          onClick={() => setDifficulty(d)}
+                          className={`relative flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                            difficulty === d
+                              ? `${DIFFICULTY_COLORS[d]} bg-white/[0.06] shadow-lg`
+                              : "text-white/35 hover:text-white/60"
+                          }`}
+                        >
+                          {difficulty === d && (
+                            <motion.div
+                              layoutId="difficulty-bg"
+                              className={`absolute inset-0 rounded-lg border ${
+                                d === "pro"
+                                  ? "border-magenta/30 bg-magenta/5"
+                                  : d === "medium"
+                                  ? "border-cyan/30 bg-cyan/5"
+                                  : "border-emerald-400/30 bg-emerald-400/5"
+                              }`}
+                              transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                            />
+                          )}
+                          <span className="relative z-10 flex items-center gap-2">
+                            {DIFFICULTY_ICONS[d]}
+                            {DIFFICULTY_LABELS[d]}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
                   {/* Note count preview */}
-                  <p className="mt-3 text-xs text-white/25">
-                    {filteredNotes.length} notas neste nível
-                    {difficulty === "beginner" && " · apenas mão direita"}
-                    {difficulty === "pro" && " · janela de tempo reduzida"}
-                  </p>
+                  {!isFreePlay && (
+                    <p className="mt-3 text-xs text-white/25">
+                      {filteredNotes.length} notas neste nível
+                      {difficulty === "beginner" && " · apenas mão direita"}
+                      {difficulty === "pro" && " · janela de tempo reduzida"}
+                    </p>
+                  )}
                 </div>
 
                 <h2 className="text-xl font-semibold mb-3">Pronto para tocar?</h2>
@@ -304,6 +313,7 @@ export default function PlayPage() {
                 onSongEnd={handleSongEnd}
                 onNoteHit={handleNoteHit}
                 onNoteMiss={handleNoteMiss}
+                isFreePlay={isFreePlay}
               />
 
               {/* Piano at bottom */}

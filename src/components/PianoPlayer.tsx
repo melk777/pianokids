@@ -20,6 +20,7 @@ interface PianoPlayerProps {
   onNoteMiss?: (midi: number) => void;
   startNote?: number;           // physical piano start note
   endNote?: number;             // physical piano end note
+  isFreePlay?: boolean;         // Modo infinito livre (Sandbox) sem notas.
 }
 
 /* ── Constants ───────────────────────────────────────── */
@@ -84,6 +85,7 @@ export default function PianoPlayer({
   onNoteMiss,
   startNote = 48,
   endNote = 76,
+  isFreePlay = false,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -465,14 +467,16 @@ export default function PianoPlayer({
       ctx.shadowBlur = 0;
 
       // Fim do loop - Checar se música acabou
-      const lastNote = notes[notes.length - 1];
-      if (lastNote && elapsed > lastNote.time + lastNote.duration + 2) {
-        // Envia score final e dispara encerramento limpo
-        const total = state.hits + state.misses;
-        const accuracy = total > 0 ? (state.hits / total) * 100 : 100;
-        onScoreUpdate?.(state.score, state.combo, accuracy);
-        onSongEnd?.();
-        return;
+      if (!isFreePlay) {
+        const lastNote = notes[notes.length - 1];
+        if (lastNote && elapsed > lastNote.time + lastNote.duration + 2) {
+          // Envia score final e dispara encerramento limpo
+          const total = state.hits + state.misses;
+          const accuracy = total > 0 ? (state.hits / total) * 100 : 100;
+          onScoreUpdate?.(state.score, state.combo, accuracy);
+          onSongEnd?.();
+          return;
+        }
       }
 
       animFrameRef.current = requestAnimationFrame(tick);
@@ -484,7 +488,7 @@ export default function PianoPlayer({
       window.removeEventListener("resize", resizeCanvas);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote]);
+  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay]);
 
   // ── Input Binding Dinâmico via MIDI (Sincrono e Fora do JSX) ──
   useEffect(() => {
@@ -502,36 +506,53 @@ export default function PianoPlayer({
     let uiChanged = false;
 
     activeNotes.forEach((midiNote) => {
-      // Find eligible note
-      const matchIdx = notes.findIndex((ns, i) => {
-        if (s.hitNotes.has(i) || s.missedNotes.has(i)) return false;
-        if (ns.midi !== midiNote.note) return false;
-        return Math.abs(s.gameTime - ns.time) <= timingWindow;
-      });
-
-      if (matchIdx !== -1) {
-        s.hitNotes.add(matchIdx);
-        const ns = notes[matchIdx];
-
-        s.combo += 1;
-        const comboMultiplier = Math.floor(s.combo / 5) + 1;
-        s.score += 100 * comboMultiplier;
-        s.hits += 1;
-        uiChanged = true;
-
-        s.effects.push({
-          id: s.effectId++,
-          note: ns.midi,
-          type: s.combo >= 10 ? "perfect" : "hit",
-          startTime: getAudioTime(),
+      if (isFreePlay) {
+         // No Modo Livre, ignora buscar as notas da música, só joga confetes instantaneamente
+         const isAlreadyHitThisFrame = s.effects.some(e => e.note === midiNote.note && (getAudioTime() - e.startTime) < 0.1);
+         
+         if (!isAlreadyHitThisFrame) {
+            s.score += 10;
+            uiChanged = true;
+            s.effects.push({
+              id: s.effectId++,
+              note: midiNote.note,
+              type: "perfect",
+              startTime: getAudioTime(),
+            });
+            onNoteHit?.(midiNote.note, 0.5, midiNote.velocity ?? 0.8);
+         }
+      } else {
+        // Find eligible note para Acertos Normais
+        const matchIdx = notes.findIndex((ns, i) => {
+          if (s.hitNotes.has(i) || s.missedNotes.has(i)) return false;
+          if (ns.midi !== midiNote.note) return false;
+          return Math.abs(s.gameTime - ns.time) <= timingWindow;
         });
 
-        onNoteHit?.(ns.midi, ns.duration, ns.velocity ?? 0.8);
+        if (matchIdx !== -1) {
+          s.hitNotes.add(matchIdx);
+          const ns = notes[matchIdx];
+
+          s.combo += 1;
+          const comboMultiplier = Math.floor(s.combo / 5) + 1;
+          s.score += 100 * comboMultiplier;
+          s.hits += 1;
+          uiChanged = true;
+
+          s.effects.push({
+            id: s.effectId++,
+            note: ns.midi,
+            type: s.combo >= 10 ? "perfect" : "hit",
+            startTime: getAudioTime(),
+          });
+
+          onNoteHit?.(ns.midi, ns.duration, ns.velocity ?? 0.8);
+        }
       }
     });
 
     if (uiChanged) updateHUD();
-  }, [activeNotes, isPlaying, timingWindow, onNoteHit, notes, updateHUD, getAudioTime]);
+  }, [activeNotes, isPlaying, timingWindow, onNoteHit, notes, updateHUD, getAudioTime, isFreePlay]);
 
 
   // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.

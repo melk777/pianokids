@@ -30,6 +30,45 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
 
   return (
     <div className="flex flex-col gap-12 mt-8">
+      {/* ── Modo Prática Livre Especial ── */}
+      <div className="flex flex-col">
+        <h2 className="text-xl md:text-2xl font-bold text-magenta mb-4 px-2 flex items-center gap-2">
+          Modos de Treino Extracurriculares
+        </h2>
+        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-4 pb-4 px-2">
+          <Link
+            href={`/dashboard/play/freeplay`}
+            className="flex-none w-56 md:w-[28rem] snap-start group relative transition-transform duration-300 hover:scale-[1.02]"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="relative rounded-2xl overflow-hidden aspect-[16/9] md:aspect-[21/9] bg-zinc-900 border border-magenta/30 shadow-[0_0_30px_rgba(255,0,229,0.15)] group-hover:shadow-[0_0_50px_rgba(255,0,229,0.3)] transition-all"
+            >
+              {/* Background animado em CSS */}
+              <div className="absolute inset-0 bg-gradient-to-r from-magenta/20 via-cyan/20 to-emerald-500/20 opacity-50 group-hover:opacity-100 transition-opacity duration-1000 bg-[length:200%_auto] animate-gradient" />
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-6">
+                <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-magenta/20 text-magenta-400 border border-magenta/30 w-fit mb-2">
+                  Sandbox Infinito
+                </span>
+                <h3 className="text-2xl font-bold text-white mb-1">Prática Livre</h3>
+                <p className="text-sm text-white/70 max-w-sm hidden md:block">
+                  Toque qualquer música sem regras. O piano virtual responderá livremente às suas teclas reais!
+                </p>
+              </div>
+
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="w-16 h-16 rounded-full bg-magenta/30 border border-magenta/50 text-magenta-300 flex items-center justify-center backdrop-blur-md shadow-2xl">
+                  <Play size={28} className="ml-1" />
+                </div>
+              </div>
+            </motion.div>
+          </Link>
+        </div>
+      </div>
+
       {categories.map((category, catIndex) => {
         const categorySongs = songs.filter((s) => s.category === category);
 

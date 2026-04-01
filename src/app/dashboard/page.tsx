@@ -5,14 +5,12 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { songs } from "@/lib/songs";
 import { useState, useEffect } from "react";
-import * as Progress from "@radix-ui/react-progress";
 import {
   Play,
   Lock,
   Crown,
   ChevronRight,
   Music,
-  Keyboard,
   Star,
   Loader2,
   Wifi,
@@ -64,25 +62,6 @@ export default function Dashboard() {
   const handlePortal = () => {
     router.push("/dashboard/membership");
   };
-
-  const actionCards = [
-    {
-      title: "Explorar Músicas",
-      description: "Pratique com foco e precisão.",
-      href: "/dashboard/songs",
-      icon: <Music className="w-6 h-6" />,
-      gradient: "from-cyan/20 to-cyan/5",
-      borderGlow: "hover:shadow-[0_0_30px_rgba(0,234,255,0.15)]",
-    },
-    {
-      title: "Prática Livre",
-      description: "Toque livremente no piano visual.",
-      href: "/dashboard/practice",
-      icon: <Keyboard className="w-6 h-6" />,
-      gradient: "from-magenta/20 to-magenta/5",
-      borderGlow: "hover:shadow-[0_0_30px_rgba(255,0,229,0.15)]",
-    },
-  ];
 
   /* ── Greeting based on time of day ── */
   const getGreeting = () => {
@@ -221,167 +200,99 @@ export default function Dashboard() {
                 </div>
               </motion.div>
 
-              {/* ── Quick Actions ── */}
+              {/* ── Giant Redirect Card ── */}
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="grid sm:grid-cols-2 gap-4"
               >
-                {actionCards.map((card) => (
-                  <Link
-                    href={card.href}
-                    key={card.title}
-                    className="block group outline-none"
-                  >
-                    <div
-                      className={`relative p-6 rounded-2xl glass glass-hover transition-all duration-500 ${card.borderGlow} flex flex-col justify-between h-full min-h-[160px]`}
-                    >
-                      <div
-                        className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                      />
-
-                      <div className="relative z-10 flex items-start justify-between mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white/50 group-hover:text-white transition-colors duration-300">
-                          {card.icon}
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-cyan group-hover:translate-x-1 transition-all duration-300" />
+                <Link href="/dashboard/songs" className="block group outline-none">
+                  <div className="relative p-8 rounded-3xl glass glass-hover transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,234,255,0.15)] flex flex-col justify-between overflow-hidden">
+                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan/20 to-magenta/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    <div className="relative z-10 flex items-center justify-between mb-6">
+                      <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-white/50 group-hover:text-cyan transition-colors duration-300">
+                        <Music className="w-8 h-8" />
                       </div>
-
-                      <div className="relative z-10">
-                        <h3 className="text-xl font-semibold mb-1 group-hover:text-white transition-colors">
-                          {card.title}
-                        </h3>
-                        <p className="text-sm text-white/40 group-hover:text-white/60 transition-colors line-clamp-2">
-                          {card.description}
-                        </p>
-                      </div>
+                      <ChevronRight className="w-8 h-8 text-white/20 group-hover:text-cyan group-hover:translate-x-2 transition-all duration-300" />
                     </div>
-                  </Link>
-                ))}
+
+                    <div className="relative z-10 w-full max-w-lg">
+                      <h3 className="text-3xl font-bold mb-2 group-hover:text-white transition-colors">
+                        Explorar Biblioteca
+                      </h3>
+                      <p className="text-base text-white/50 group-hover:text-white/70 transition-colors">
+                        Acesse todo o nosso acervo de músicas infantis e clássicas prontas para tocar. 
+                        Inclui o novo modo Prática Livre!
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               </motion.div>
 
-              {/* ── Unlocked Lessons ── */}
+              {/* ── Gamification: Meu Progresso ── */}
               <motion.section
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-semibold">
-                    Lições Disponíveis
-                  </h2>
-                  <span className="text-sm font-medium text-cyan bg-cyan/10 px-3 py-1 rounded-full">
-                    {subStatus.isSubscribed ? songs.length : 1} liberadas
-                  </span>
+                  <h2 className="text-2xl font-semibold">Meu Progresso</h2>
                 </div>
 
-                <div className="space-y-3">
-                  {songs.map((song, idx) => {
-                    const progressValue =
-                      idx === 0 ? 100 : idx === 1 ? 45 : 0;
-                    const isLocked = !subStatus.isSubscribed && idx > 0;
+                {/* Dashboard Stats Panel */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="glass p-5 rounded-2xl flex flex-col gap-1 border border-white/5 relative overflow-hidden">
+                     <div className="absolute -right-4 -bottom-4 opacity-10"><Play size={64}/></div>
+                     <span className="text-xs text-white/40 uppercase tracking-widest font-semibold">Músicas Concluídas</span>
+                     <span className="text-3xl font-bold text-white">0</span>
+                  </div>
+                  <div className="glass p-5 rounded-2xl flex flex-col gap-1 border border-white/5 relative overflow-hidden">
+                     <div className="absolute -right-4 -bottom-4 opacity-10"><Crown size={64}/></div>
+                     <span className="text-xs text-white/40 uppercase tracking-widest font-semibold">Ofensiva Atual (Dias)</span>
+                     <span className="text-3xl font-bold text-magenta">0</span>
+                  </div>
+                </div>
 
-                    return (
-                      <div
-                        key={song.id}
-                        className={`group relative glass p-4 rounded-xl flex items-center gap-4 transition-colors border border-white/5 ${
-                          isLocked
-                            ? "opacity-50 bg-black/40"
-                            : "hover:bg-white/[0.04]"
-                        }`}
-                      >
-                        {/* Play / Lock Button */}
-                        {isLocked ? (
-                          <div
-                            onClick={() => router.push("/#pricing")}
-                            className="shrink-0 w-12 h-12 rounded-full bg-white/5 flex items-center justify-center cursor-pointer hover:bg-magenta/20 transition-all border border-magenta/20 group/lock"
-                          >
-                            <Lock className="w-5 h-5 text-white/30 group-hover/lock:text-magenta transition-colors" />
-                          </div>
-                        ) : (
-                          <Link
-                            href={`/dashboard/play/${song.id}`}
-                            className="shrink-0"
-                          >
-                            <div className="w-12 h-12 rounded-full bg-cyan/10 flex items-center justify-center group-hover:bg-cyan/20 group-hover:scale-105 transition-all cursor-pointer">
-                              <Play
-                                className="w-5 h-5 text-cyan ml-1"
-                                fill="currentColor"
-                              />
-                            </div>
-                          </Link>
-                        )}
-
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-baseline mb-1">
-                            <h4 className="text-base font-medium text-white/90 truncate mr-4">
-                              {song.title}
-                            </h4>
-                            <span className="text-xs text-white/40 shrink-0">
-                              {song.duration}s
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-3">
-                            <p className="text-xs text-white/50">
-                              {song.artist}
-                            </p>
-                            <span className="w-1 h-1 rounded-full bg-white/20" />
-                            <span className="text-xs text-white/50">
-                              {song.difficulty}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Radix Progress */}
-                        {!isLocked && (
-                          <div className="hidden sm:flex flex-col items-end w-24 shrink-0 gap-1.5">
-                            <span className="text-[10px] font-medium text-white/40 uppercase tracking-wider">
-                              {progressValue}% Concluído
-                            </span>
-                            <Progress.Root
-                              className="relative overflow-hidden bg-white/5 rounded-full w-full h-1.5"
-                              value={progressValue}
-                            >
-                              <Progress.Indicator
-                                className="bg-gradient-to-r from-cyan to-magenta w-full h-full transition-transform duration-1000 ease-out"
-                                style={{
-                                  transform: `translateX(-${100 - progressValue}%)`,
-                                }}
-                              />
-                            </Progress.Root>
-                          </div>
-                        )}
+                {/* Medals Grid (Mock) */}
+                <div className="grid grid-cols-4 gap-4">
+                  {[
+                    { name: "Primeira Nota", icon: <Star className="w-6 h-6" />, active: true, color: "text-amber-400 bg-amber-400/10 border-amber-400/30", shadow: "shadow-[0_0_15px_rgba(251,191,36,0.3)]" },
+                    { name: "Mestre do Ritmo", icon: <Crown className="w-6 h-6" />, active: false, color: "text-white/20 bg-black/40 border-white/5", shadow: "" },
+                    { name: "Combo x10", icon: <Music className="w-6 h-6" />, active: false, color: "text-white/20 bg-black/40 border-white/5", shadow: "" },
+                    { name: "Mozart", icon: <Crown className="w-6 h-6" />, active: false, color: "text-white/20 bg-black/40 border-white/5", shadow: "" },
+                  ].map((medal, i) => (
+                    <div key={i} className={`flex flex-col items-center gap-3 p-4 rounded-2xl border ${medal.color} ${medal.shadow} transition-all duration-300`}>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${medal.active ? 'bg-amber-400/20' : 'bg-white/5'}`}>
+                         {medal.icon}
                       </div>
-                    );
-                  })}
-
-                  {/* Locked Module Suggestion */}
-                  {!subStatus.isSubscribed && !subStatus.loading && (
-                    <div className="glass p-5 rounded-xl flex items-center gap-4 border border-magenta/20 bg-magenta/5 mt-4 group">
-                      <div className="shrink-0 w-12 h-12 rounded-full bg-magenta/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Crown className="w-5 h-5 text-magenta" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-base font-medium text-white/90 mb-0.5">
-                          Desbloquear Catálogo
-                        </h4>
-                        <p className="text-xs text-white/50 mb-3">
-                          Assine o plano Pro para acessar todas as músicas.
-                        </p>
-                        <button
-                          onClick={() => router.push("/#pricing")}
-                          className="text-xs font-semibold text-magenta hover:text-magenta/80 transition-colors flex items-center gap-1"
-                        >
-                          Ver planos premium{" "}
-                          <ChevronRight className="w-3 h-3" />
-                        </button>
-                      </div>
+                      <span className="text-[10px] text-center font-medium opacity-70 uppercase tracking-wider">{medal.name}</span>
                     </div>
-                  )}
+                  ))}
                 </div>
+                
+                {/* Locked Module Suggestion */}
+                {!subStatus.isSubscribed && !subStatus.loading && (
+                  <div className="glass p-5 rounded-xl flex items-center gap-4 border border-magenta/20 bg-magenta/5 mt-6 group">
+                    <div className="shrink-0 w-12 h-12 rounded-full bg-magenta/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Lock className="w-5 h-5 text-magenta" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-base font-medium text-white/90 mb-0.5">
+                        Acesso Completo
+                      </h4>
+                      <p className="text-xs text-white/50 mb-3">
+                        As medalhas e a maioria das músicas requerem um plano ativo.
+                      </p>
+                      <button
+                        onClick={() => router.push("/#pricing")}
+                        className="text-xs font-semibold text-magenta hover:text-magenta/80 transition-colors flex items-center gap-1"
+                      >
+                        Ver planos premium <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </motion.section>
             </div>
 
