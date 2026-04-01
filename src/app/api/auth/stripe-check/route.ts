@@ -1,14 +1,22 @@
 import { NextResponse } from "next/server";
 
+import { auth } from "@clerk/nextjs/server";
+
 export async function GET() {
-  // Mock de um usuário autenticado (Substitua por getServerSession ou auth() do NextAuth/Clerk)
-  // Simulamos uma chamada ao seu banco de dados ou diretamente ao Stripe via Customer ID
+  const { userId } = await auth();
   
-  // Altere para true para testar a experiência "Premium" e false para "Free"
-  const isSubscribed = false; 
+  if (!userId) {
+    return NextResponse.json({ 
+      status: "unauthorized",
+      hasAccess: false 
+    }, { status: 401 });
+  }
+
+  // Por enquanto, simulamos o acesso se o usuário estiver logado
+  // Em produção, isso deve checar o banco de dados ou metadados do Clerk
+  const isSubscribed = true; 
 
   const userData = {
-    // Retornamos o status da assinatura
     status: isSubscribed ? "active" : "inactive",
     planType: isSubscribed ? "piano-kids-pro" : "free",
     hasAccess: isSubscribed,

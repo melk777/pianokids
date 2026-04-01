@@ -9,7 +9,7 @@ export const getStripe = () => {
     }
     
     stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2026-03-25.dahlia", // Mantendo a versão especificada
+      apiVersion: "2026-03-25.dahlia", // Versão exata exigida pelo SDK
       typescript: true,
     });
   }

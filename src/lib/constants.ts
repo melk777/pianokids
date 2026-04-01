@@ -1,7 +1,7 @@
 export const PLANS = {
   monthly: {
     name: "Mensal",
-    priceId: process.env.STRIPE_MONTHLY_PRICE_ID || "",
+    priceId: process.env.STRIPE_MONTHLY_PRICE_ID || "", // Obrigatório no Vercel
     price: "R$ 29,90",
     period: "/mês",
     features: [
