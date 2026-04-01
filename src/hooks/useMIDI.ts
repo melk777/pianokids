@@ -27,33 +27,40 @@ interface UseMIDIReturn {
 }
 
 export function useMIDI(): UseMIDIReturn {
+  // Lazy init: never evaluate `navigator` on the server
   const [isSupported, setIsSupported] = useState(false);
-
-  useEffect(() => {
-    setIsSupported(typeof navigator !== "undefined" && "requestMIDIAccess" in navigator);
-  }, []);
   const [isConnected, setIsConnected] = useState(false);
-  const [activeNotes, setActiveNotes] = useState<Map<number, MIDINote>>(new Map());
+  const [activeNotes, setActiveNotes] = useState<Map<number, MIDINote>>(
+    () => new Map()
+  );
   const [devices, setDevices] = useState<MIDIDevice[]>([]);
   const [lastNote, setLastNote] = useState<MIDINote | null>(null);
   const [error, setError] = useState<string | null>(null);
   const midiAccessRef = useRef<MIDIAccess | null>(null);
 
+  // Check support only on client (after hydration)
+  useEffect(() => {
+    setIsSupported(
+      typeof navigator !== "undefined" && "requestMIDIAccess" in navigator
+    );
+  }, []);
+
   const handleMIDIMessage = useCallback((event: MIDIMessageEvent) => {
-    const data = event.data!;
+    const data = event.data;
+    if (!data || data.length < 3) return;
+
     const status = data[0];
     const note = data[1];
     const velocity = data[2];
     const channel = status & 0x0f;
     const command = status >> 4;
 
-    // Note On (0x9) with velocity > 0
     if (command === 9 && velocity > 0) {
       const midiNote: MIDINote = {
         note,
         velocity,
         channel,
-        timestamp: performance.now(),
+        timestamp: typeof performance !== "undefined" ? performance.now() : Date.now(),
       };
       setActiveNotes((prev) => {
         const next = new Map(prev);
@@ -61,9 +68,7 @@ export function useMIDI(): UseMIDIReturn {
         return next;
       });
       setLastNote(midiNote);
-    }
-    // Note Off (0x8) or Note On with velocity 0
-    else if (command === 8 || (command === 9 && velocity === 0)) {
+    } else if (command === 8 || (command === 9 && velocity === 0)) {
       setActiveNotes((prev) => {
         const next = new Map(prev);
         next.delete(note);
@@ -96,12 +101,10 @@ export function useMIDI(): UseMIDIReturn {
 
       enumerateDevices(access);
 
-      // Listen to all inputs
       access.inputs.forEach((input) => {
         input.onmidimessage = handleMIDIMessage;
       });
 
-      // Handle device connection/disconnection
       access.onstatechange = () => {
         enumerateDevices(access);
         access.inputs.forEach((input) => {
@@ -131,7 +134,6 @@ export function useMIDI(): UseMIDIReturn {
     setDevices([]);
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       disconnect();
@@ -150,15 +152,12 @@ export function useMIDI(): UseMIDIReturn {
   };
 }
 
-// Utility: Convert MIDI note number to name
 export function midiNoteToName(note: number): string {
   const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   const octave = Math.floor(note / 12) - 1;
   return `${names[note % 12]}${octave}`;
 }
 
-// Utility: Check if a note is a black key
 export function isBlackKey(note: number): boolean {
-  const n = note % 12;
-  return [1, 3, 6, 8, 10].includes(n);
+  return [1, 3, 6, 8, 10].includes(note % 12);
 }

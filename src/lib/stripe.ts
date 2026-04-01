@@ -2,17 +2,18 @@ import Stripe from "stripe";
 
 let stripeInstance: Stripe | null = null;
 
-export const getStripe = () => {
+export const getStripe = (): Stripe => {
   if (!stripeInstance) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error("STRIPE_SECRET_KEY is missing in the environment variables.");
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
+      throw new Error(
+        "STRIPE_SECRET_KEY is missing. Add it to your .env.local and Vercel environment variables."
+      );
     }
-    
-    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2026-03-25.dahlia", // Versão exata exigida pelo SDK
+    stripeInstance = new Stripe(key, {
+      apiVersion: "2025-01-27.acacia",
       typescript: true,
     });
   }
   return stripeInstance;
 };
-

@@ -26,12 +26,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // Estratégia de carregamento seguro: Usamos aparência minimalista para eliminar overheads
     <ClerkProvider
       localization={ptBR}
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      // publishableKey é lido automaticamente de NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+      // Não passe a prop diretamente — evita erro de build quando a variável está ausente
       appearance={{
-        variables: { colorBackground: '#0a0a0a', colorText: '#ffffff', colorPrimary: '#00eaff' }
+        variables: {
+          colorBackground: "#0a0a0a",
+          colorText: "#ffffff",
+          colorPrimary: "#00eaff",
+        },
       }}
     >
       <html lang="pt-BR" className="dark" suppressHydrationWarning>
@@ -39,7 +43,6 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
           suppressHydrationWarning
         >
-          {/* Header customizado removido a pedido da correção técnica para evitar CSR crash */}
           {children}
         </body>
       </html>
