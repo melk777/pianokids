@@ -57,6 +57,17 @@ interface VisualEffect {
   note: number;
   type: "hit" | "miss" | "perfect";
   startTime: number;
+  sparked?: boolean;
+}
+
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  color: string;
 }
 
 /* ── Component ───────────────────────────────────────── */
@@ -86,6 +97,7 @@ export default function PianoPlayer({
     hitNotes: new Set<number>(),
     missedNotes: new Set<number>(),
     effects: [] as VisualEffect[],
+    particles: [] as Particle[],
     effectId: 0,
   });
 
@@ -109,6 +121,7 @@ export default function PianoPlayer({
       hitNotes: new Set(),
       missedNotes: new Set(),
       effects: [],
+      particles: [],
       effectId: 0,
     };
     lastActiveNotesState.current = "";
@@ -311,15 +324,16 @@ export default function PianoPlayer({
         // Cores Didáticas: Brancas -> Fundo Branco. Pretas (Sustenidos) -> Fundo Preto.
         let fill = rectInfo.isBlack ? "rgba(24, 24, 27, 0.95)" : "rgba(250, 250, 250, 0.95)";
         let stroke = rectInfo.isBlack ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.8)";
+        // Efeito Neon Nativo: Brilho constante na cor da própria nota caindo
+        let shadowColor = fill;
+        let shadowBlur = 8; // glow base
         let alpha = 1.0;
-        let shadowColor = "transparent";
-        let shadowBlur = 0;
 
         if (isHit) {
           fill = state.combo >= 10 ? COLORS.comboGlow : COLORS.hitNormal;
           stroke = COLORS.hitStroke;
           shadowColor = stroke;
-          shadowBlur = 10;
+          shadowBlur = 15; // glow mais intenso no acerto
           alpha = Math.max(0, 1 - (elapsed - ns.time) * 4); // Fast Fade Out
         } else if (isMiss) {
           fill = COLORS.missedFill;
@@ -376,11 +390,29 @@ export default function PianoPlayer({
         const isMiss = eff.type === "miss";
         const isPerf = eff.type === "perfect";
         
+        // --- SPARK PARTICLES (Dispara na explosão do acerto) ---
+        if (!eff.sparked && !isMiss) {
+          eff.sparked = true;
+          const effRect = getNoteRect(eff.note);
+          const pColor = isPerf ? "#34D399" : "#00EAFF";
+          for(let i = 0; i < 12; i++) {
+            state.particles.push({
+              x: effRect.x + effRect.w / 2,
+              y: HIT_Y,
+              vx: (Math.random() - 0.5) * 8, // Explosão Horizontal
+              vy: -Math.random() * 6 - 2,    // Explosão Vertical para cima
+              life: Math.random() * 0.3 + 0.2,
+              maxLife: 0.5,
+              color: pColor
+            });
+          }
+        }
+
         const tScale = Math.min(effAge * 4, 1); // 0 -> 1 rapidamente
         const opacity = Math.max(0, 1 - effAge * 1.5);
         
-        const effRect = getNoteRect(eff.note);
-        const baseX = effRect.x + effRect.w / 2;
+        const effRect2 = getNoteRect(eff.note);
+        const baseX = effRect2.x + effRect2.w / 2;
         const baseY = HIT_Y - (effAge * 80); // Sobe enquanto dissolve
         
         ctx.globalAlpha = opacity;
@@ -388,7 +420,7 @@ export default function PianoPlayer({
         ctx.textBaseline = "middle";
         ctx.font = `bold ${16 + tScale * 14}px sans-serif`;
         
-        // Efeito Néon
+        // Efeito Néon Subindo
         ctx.shadowBlur = 15;
         if (isPerf) {
           ctx.fillStyle = "#34D399"; // Emerald 400
@@ -405,6 +437,29 @@ export default function PianoPlayer({
         }
       }
       state.effects = activeEffects; // Garbage collect effects array
+
+      // --- 6. Renderizar Partículas Dinâmicas Físicas ---
+      const activeParticles: Particle[] = [];
+      for (const p of state.particles) {
+        p.life -= (1 / 60); // approx framerate decrement
+        if (p.life <= 0) continue;
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.25; // Simple Gravity pulling it down
+
+        ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        activeParticles.push(p);
+      }
+      state.particles = activeParticles;
 
       ctx.globalAlpha = 1.0;
       ctx.shadowBlur = 0;
@@ -429,7 +484,7 @@ export default function PianoPlayer({
       window.removeEventListener("resize", resizeCanvas);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD]);
+  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote]);
 
   // ── Input Binding Dinâmico via MIDI (Sincrono e Fora do JSX) ──
   useEffect(() => {
@@ -481,12 +536,25 @@ export default function PianoPlayer({
 
   // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-white/[0.06] bg-black/40 backdrop-blur-sm pointer-events-none">
+    <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-white/[0.06] bg-black bg-opacity-40 backdrop-blur-sm pointer-events-none">
       
+      {/* ── Background Video Render em Loop ── */}
+      <video
+        src="/videos/background.webm"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      
+      {/* ── Camada Escura Semi-Transparente solicitada ── */}
+      <div className="absolute inset-0 bg-black/50" />
+
       {/* ── Tela de Rendereização de Alta Performance O(1) ── */}
       <canvas
         ref={canvasRef}
-        className="block w-full h-full pointer-events-none"
+        className="absolute inset-0 block w-full h-full pointer-events-none"
       />
 
       {/* ── HUD de Score Desacoplada do React Lifecycle ── */}

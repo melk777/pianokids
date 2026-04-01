@@ -13,6 +13,9 @@ export interface Song {
   difficulty: "Fácil" | "Médio" | "Difícil";
   bpm: number;
   duration: number;   // Total duration in seconds
+  category: "Para Iniciantes" | "Infantis" | "Clássicos";
+  isPremium: boolean;
+  coverUrl?: string;
   notes: SongNote[];
 }
 
@@ -25,6 +28,9 @@ export const songs: Song[] = [
     title: "Brilha Brilha Estrelinha",
     artist: "Tradicional",
     difficulty: "Fácil",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: "https://images.unsplash.com/photo-1549488344-c09ab0ac2528?auto=format&fit=crop&q=80&w=400&h=400",
     bpm: 100,
     duration: 24,
     notes: [
@@ -70,6 +76,9 @@ export const songs: Song[] = [
     title: "A Dona Aranha",
     artist: "Tradicional",
     difficulty: "Fácil",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&q=80&w=400&h=400",
     bpm: 110,
     duration: 16,
     notes: [
@@ -110,6 +119,9 @@ export const songs: Song[] = [
     title: "Ode à Alegria",
     artist: "Beethoven",
     difficulty: "Médio",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "https://images.unsplash.com/photo-1558584673-c83ddfa78cc4?auto=format&fit=crop&q=80&w=400&h=400",
     bpm: 120,
     duration: 18,
     notes: [
@@ -161,6 +173,9 @@ export const songs: Song[] = [
     title: "Für Elise",
     artist: "Beethoven",
     difficulty: "Difícil",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&q=80&w=400&h=400",
     bpm: 130,
     duration: 180,
     notes: [

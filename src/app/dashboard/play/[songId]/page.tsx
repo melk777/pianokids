@@ -2,9 +2,11 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
+import ScoreScreen from "@/components/ScoreScreen";
+import MidiSetup from "@/components/MidiSetup";
 import PianoPlayer from "@/components/PianoPlayer";
 import Piano from "@/components/Piano";
 import { useMIDI } from "@/hooks/useMIDI";
@@ -27,6 +29,7 @@ const DIFFICULTY_ICONS: Record<Difficulty, React.ReactNode> = {
 
 export default function PlayPage() {
   const params = useParams();
+  const router = useRouter();
   const songId = params.songId as string;
   const song = getSongById(songId);
 
@@ -36,6 +39,7 @@ export default function PlayPage() {
   const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "playing" | "ended">("idle");
+  const [showSetup, setShowSetup] = useState(true);
   const [finalScore, setFinalScore] = useState({ score: 0, combo: 0, accuracy: 100 });
   const [audioEnabled, setAudioEnabled] = useState(true);
 
@@ -261,7 +265,7 @@ export default function PlayPage() {
                     <motion.button
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
-                      onClick={connect}
+                      onClick={() => setShowSetup(true)}
                       className="btn-secondary"
                     >
                       Conectar MIDI
@@ -323,65 +327,24 @@ export default function PlayPage() {
 
           {/* ─── ENDED STATE ─── */}
           {gameState === "ended" && (
-            <motion.div
-              key="ended"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="glass rounded-2xl p-12 text-center border border-white/[0.06]"
-            >
-              <motion.div
-                initial={{ scale: 0.5 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", damping: 15 }}
-                className="mb-8"
-              >
-                <div className="text-6xl mb-4">
-                  {finalScore.accuracy >= 90 ? "🌟" : finalScore.accuracy >= 70 ? "👏" : "💪"}
-                </div>
-                <h2 className="text-2xl font-bold mb-2">
-                  {finalScore.accuracy >= 90
-                    ? "Incrível!"
-                    : finalScore.accuracy >= 70
-                    ? "Muito bem!"
-                    : "Continue praticando!"}
-                </h2>
-                <p className="text-sm text-white/40">
-                  Dificuldade: <span className={DIFFICULTY_COLORS[difficulty]}>{DIFFICULTY_LABELS[difficulty]}</span>
-                </p>
-              </motion.div>
-
-              <div className="grid grid-cols-3 gap-4 max-w-md mx-auto mb-8">
-                <div className="glass rounded-xl p-4 border border-white/[0.06]">
-                  <p className="text-xs text-white/40 mb-1">Pontuação</p>
-                  <p className="text-2xl font-bold text-cyan">{finalScore.score.toLocaleString()}</p>
-                </div>
-                <div className="glass rounded-xl p-4 border border-white/[0.06]">
-                  <p className="text-xs text-white/40 mb-1">Combo máx.</p>
-                  <p className="text-2xl font-bold text-white">{finalScore.combo}x</p>
-                </div>
-                <div className="glass rounded-xl p-4 border border-white/[0.06]">
-                  <p className="text-xs text-white/40 mb-1">Precisão</p>
-                  <p className="text-2xl font-bold text-white">{Math.round(finalScore.accuracy)}%</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={resetGame}
-                  className="btn-primary"
-                >
-                  Tocar novamente
-                </motion.button>
-                <Link href="/dashboard/songs" className="btn-secondary">
-                  Outras músicas
-                </Link>
-              </div>
-            </motion.div>
+            <ScoreScreen
+              accuracy={finalScore.accuracy}
+              score={finalScore.score}
+              combo={finalScore.combo}
+              onRestart={resetGame}
+              onNext={() => router.push("/dashboard/songs")}
+              onExit={() => router.push("/dashboard/songs")}
+            />
           )}
         </AnimatePresence>
+        
+        {/* Modal Interceptador */}
+        <MidiSetup
+           isOpen={showSetup}
+           onClose={() => setShowSetup(false)}
+           isConnected={isConnected}
+           onConnect={connect}
+        />
       </div>
     </main>
   );
