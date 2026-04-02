@@ -38,7 +38,7 @@ export default function MidiSetup({ isOpen, isConnected, onConnect, onClose }: M
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}
           transition={{ type: "spring", damping: 20, stiffness: 300 }}
-          className="w-full max-w-xl bg-zinc-950 border border-white/10 rounded-3xl p-8 relative shadow-2xl overflow-hidden"
+          className="w-full max-w-xl max-h-[90vh] overflow-y-auto scrollbar-hide bg-zinc-950 border border-white/10 rounded-3xl p-6 md:p-8 relative shadow-2xl"
         >
           {/* Brilho decorativo de fundo alterando conforme o status */}
           <div

@@ -68,7 +68,7 @@ export default function ScoreScreen({
         initial={{ scale: 0.8, y: 30 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 18, bounce: 0.4 }}
-        className="w-full max-w-lg bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 relative overflow-hidden shadow-2xl"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide bg-[#0A0A0A] border border-white/10 rounded-3xl p-6 md:p-8 relative shadow-2xl"
       >
         {/* Efeito Glow Subjacente Atrás das Estrelas */}
         <div
