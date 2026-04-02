@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useMemo } from "react";
 import type { SongNote } from "@/lib/songs";
 import { midiNoteToName, type MIDINote } from "@/hooks/useMIDI";
 import type { Difficulty } from "@/lib/songFilters";
@@ -21,10 +21,12 @@ interface PianoPlayerProps {
   onNoteMiss?: (midi: number) => void;
   onPlayNote?: (midi: number) => void;      // NOVO: Repassar clique virtual
   onReleaseNote?: (midi: number) => void;   // NOVO: Repassar soltura virtual
+  resumeAudio?: () => Promise<void>;        // NOVO: Destravar áudio no mobile
   startNote?: number;           // physical piano start note
   endNote?: number;             // physical piano end note
   isFreePlay?: boolean;         // Modo infinito livre (Sandbox) sem notas.
 }
+
 
 /* ── Constants ───────────────────────────────────────── */
 
@@ -88,6 +90,7 @@ export default function PianoPlayer({
   onNoteMiss,
   onPlayNote,
   onReleaseNote,
+  resumeAudio,
   startNote = 48,
   endNote = 72,
   isFreePlay = false,
@@ -116,6 +119,17 @@ export default function PianoPlayer({
   const scoreUIRef = useRef<HTMLParagraphElement>(null);
   const comboUIRef = useRef<HTMLParagraphElement>(null);
   const accuracyUIRef = useRef<HTMLParagraphElement>(null);
+  
+  // Memoize whiteNotes and totalWidth for both Canvas and JSX
+  const whiteNotes = useMemo(() => {
+    const list: number[] = [];
+    for (let i = startNote; i <= endNote; i++) {
+      if (!isBlackKey(i)) list.push(i);
+    }
+    return list;
+  }, [startNote, endNote]);
+
+  const totalWidth = whiteNotes.length * 60;
 
   // Initialize/Reset State
   useEffect(() => {
@@ -186,23 +200,20 @@ export default function PianoPlayer({
     let height = canvas.clientHeight;
     
     const resizeCanvas = () => {
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
-      canvas.width = width * dpr;
+      width = canvas.parentElement?.clientWidth || canvas.clientWidth;
+      height = canvas.parentElement?.clientHeight || canvas.clientHeight;
+      // Buffer interno segue a largura total do teclado para resolução infinita no scroll
+      canvas.width = totalWidth * dpr;
       canvas.height = height * dpr;
       ctx.scale(dpr, dpr);
     };
+
     
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Pré-cálculo da Física do Teclado (Lanes idênticas ao Piano físico)
-    const whiteNotes: number[] = [];
-    for (let i = startNote; i <= endNote; i++) {
-        if (!isBlackKey(i)) whiteNotes.push(i);
-    }
-    
-    const laneW = width / whiteNotes.length;
+    // FIX: Alinhamento milimétrico com as teclas do Teclado Virtual (60px cada)
+    const laneW = 60; 
     
     // Calcula o centro exato do X de cada nota (seja branca ou preta)
     const getNoteRect = (midi: number) => {
@@ -269,7 +280,7 @@ export default function PianoPlayer({
       ctx.font = "12px var(--font-geist-mono), monospace";
       ctx.textAlign = "center";
       ctx.fillStyle = COLORS.textFaded;
-      whiteNotes.forEach((midi, i) => {
+      whiteNotes.forEach((midi: number, i: number) => {
         ctx.fillText(midiNoteToName(midi).replace(/\d/, ""), i * laneW + laneW / 2, height - 10);
       });
 
@@ -486,7 +497,8 @@ export default function PianoPlayer({
       window.removeEventListener("resize", resizeCanvas);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay]);
+  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay, whiteNotes, totalWidth]);
+
 
   // ── Input Binding Dinâmico via MIDI (Sincrono e Fora do JSX) ──
   useEffect(() => {
@@ -555,7 +567,11 @@ export default function PianoPlayer({
 
   // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
-    <div className="relative w-full h-[600px] md:h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5">
+    <div 
+      className="relative w-full h-[600px] md:h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5"
+      onTouchStart={() => resumeAudio?.()}
+      onClick={() => resumeAudio?.()}
+    >
       
       {/* ── Background Video ── */}
       <video
@@ -570,22 +586,33 @@ export default function PianoPlayer({
       {/* ── Camada de Fundo do Jogo ── */}
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-zinc-950/40 to-black" />
 
-      {/* ── Tela de Renderização das Notas ── */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 block w-full h-full pointer-events-none z-10"
-      />
+      {/* ── CONTAINER DE SCROLL UNIFICADO (Notas + Teclado) ── */}
+      <div className="absolute inset-0 overflow-x-auto overflow-y-hidden scrollbar-hide touch-pan-x z-10">
+        <div style={{ width: `${totalWidth}px` }} className="relative h-full">
+          
+          {/* Tela de Renderização das Notas (Canvas fixo com a largura do teclado) */}
+          <canvas
+            ref={canvasRef}
+            className="absolute inset-0 block h-full pointer-events-none"
+            style={{ width: `${totalWidth}px` }}
+          />
 
-      {/* ── TECLADO VIRTUAL INTEGRADO (Hit Zone) ── */}
-      <div className="absolute bottom-0 left-0 right-0 h-[220px] z-20">
-        <VirtualKeyboard 
-          onPlayNote={onPlayNote || (() => {})} 
-          onReleaseNote={onReleaseNote || (() => {})} 
-          activeNotes={activeNotes}
-        />
+          {/* TECLADO VIRTUAL INTEGRADO (Hit Zone) */}
+          <div className="absolute bottom-0 left-0 right-0 h-[220px] pointer-events-auto">
+            <VirtualKeyboard 
+              onPlayNote={(midi) => {
+                resumeAudio?.();
+                onPlayNote?.(midi);
+              }} 
+              onReleaseNote={onReleaseNote || (() => {})} 
+              activeNotes={activeNotes}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* ── HUD de Score ── */}
+
+      {/* ── HUD de Score (Fica fixo acima do scroll) ── */}
       <div className="absolute top-6 left-6 right-6 flex items-center justify-between pointer-events-none z-30">
         <div className="glass rounded-2xl px-5 py-3 border border-white/10 shadow-lg">
           <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1">Score</p>

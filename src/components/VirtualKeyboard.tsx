@@ -41,67 +41,65 @@ export default function VirtualKeyboard({ onPlayNote, onReleaseNote, activeNotes
   };
 
   return (
-    <div className={`relative w-full h-full select-none bg-zinc-950/40 backdrop-blur-md border-t border-white/10 ${className}`}>
-      {/* Container com Scroll para Mobile */}
-      <div className="absolute inset-0 overflow-x-auto overflow-y-hidden scrollbar-hide touch-pan-x">
-          <div className="relative h-full flex p-1 min-w-max">
+    <div className={`relative w-full h-full select-none ${className}`}>
+      <div className="relative h-full flex min-w-max p-0">
           
-            {/* Camada das Teclas Brancas */}
-            <div className="flex h-full gap-0.5">
-              {whiteNotes.map((note) => {
-                const isActive = activeNotes?.has(note) || pressedNotes.has(note);
-                return (
-                  <button
-                    key={note}
-                    onMouseDown={(e) => { e.preventDefault(); startPlay(note); }}
-                    onMouseUp={() => stopPlay(note)}
-                    onMouseLeave={() => pressedNotes.has(note) && stopPlay(note)}
-                    onTouchStart={(e) => { e.preventDefault(); startPlay(note); }}
-                    onTouchEnd={(e) => { e.preventDefault(); stopPlay(note); }}
-                    className={`relative min-w-[48px] md:min-w-[60px] h-full rounded-b-lg transition-all duration-75 flex flex-col justify-end items-center pb-4 active:scale-95 touch-none ${
-                      isActive 
-                        ? "bg-gradient-to-b from-white to-cyan shadow-[0_0_20px_rgba(0,234,255,0.6)]" 
-                        : "bg-gradient-to-b from-zinc-100 to-white hover:from-white hover:to-zinc-200"
-                    }`}
-                  >
-                    <span className={`text-[10px] font-bold uppercase tracking-tighter ${isActive ? "text-white" : "text-zinc-400"}`}>
-                      {midiNoteToName(note).replace(/\d/, "")}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+        {/* Camada das Teclas Brancas */}
+        <div className="flex h-full gap-0">
+          {whiteNotes.map((note) => {
+            const isActive = activeNotes?.has(note) || pressedNotes.has(note);
+            return (
+              <button
+                key={note}
+                onMouseDown={(e) => { e.preventDefault(); startPlay(note); }}
+                onMouseUp={() => stopPlay(note)}
+                onMouseLeave={() => pressedNotes.has(note) && stopPlay(note)}
+                onTouchStart={(e) => { e.preventDefault(); startPlay(note); }}
+                onTouchEnd={(e) => { e.preventDefault(); stopPlay(note); }}
+                className={`relative w-[60px] h-full rounded-b-lg border-x border-black/5 transition-all duration-75 flex flex-col justify-end items-center pb-6 active:scale-95 touch-none ${
+                  isActive 
+                    ? "bg-gradient-to-b from-white to-cyan shadow-[0_0_20px_rgba(0,234,255,0.6)]" 
+                    : "bg-gradient-to-b from-white to-zinc-100 hover:from-white hover:to-zinc-200"
+                }`}
+              >
+                <span className={`text-[12px] font-black uppercase tracking-tighter ${isActive ? "text-white" : "text-zinc-600"}`}>
+                  {midiNoteToName(note).replace(/\d/, "")}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-            {/* Camada das Teclas Pretas (Absolute Overlay) */}
-            <div className="absolute top-0 left-0 h-[60%] pointer-events-none flex p-1">
-              {whiteNotes.map((whiteNote) => {
-                const blackNote = whiteNote + 1;
-                const hasBlackNext = isBlackKey(blackNote) && blackNote <= endNote;
-                
-                if (!hasBlackNext) return <div key={`spacer-${whiteNote}`} className="min-w-[48px] md:min-w-[60px] mr-1" />;
+        {/* Camada das Teclas Pretas (Absolute Overlay) */}
+        <div className="absolute top-0 left-0 h-[60%] pointer-events-none flex p-0">
+          {whiteNotes.map((whiteNote) => {
+            const blackNote = whiteNote + 1;
+            const hasBlackNext = isBlackKey(blackNote) && blackNote <= endNote;
+            
+            if (!hasBlackNext) return <div key={`spacer-${whiteNote}`} className="w-[60px]" />;
 
-                const isActive = activeNotes?.has(blackNote) || pressedNotes.has(blackNote);
-                
-                return (
-                  <div key={`container-${blackNote}`} className="relative min-w-[48px] md:min-w-[60px] mr-1">
-                    <button
-                      onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startPlay(blackNote); }}
-                      onMouseUp={() => stopPlay(blackNote)}
-                      onMouseLeave={() => pressedNotes.has(blackNote) && stopPlay(blackNote)}
-                      onTouchStart={(e) => { e.preventDefault(); e.stopPropagation(); startPlay(blackNote); }}
-                      onTouchEnd={(e) => { e.preventDefault(); stopPlay(blackNote); }}
-                      className={`absolute right-[-14px] md:right-[-18px] top-0 w-7 md:w-9 h-full rounded-b-md transition-all duration-75 pointer-events-auto z-10 active:scale-95 touch-none ${
-                        isActive
-                          ? "bg-gradient-to-b from-magenta to-purple-600 shadow-[0_0_15px_rgba(255,0,229,0.7)]"
-                          : "bg-gradient-to-b from-zinc-800 to-zinc-950 border-x border-b border-white/10"
-                      }`}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+            const isActive = activeNotes?.has(blackNote) || pressedNotes.has(blackNote);
+            
+            return (
+              <div key={`container-${blackNote}`} className="relative w-[60px]">
+                <button
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startPlay(blackNote); }}
+                  onMouseUp={() => stopPlay(blackNote)}
+                  onMouseLeave={() => pressedNotes.has(blackNote) && stopPlay(blackNote)}
+                  onTouchStart={(e) => { e.preventDefault(); e.stopPropagation(); startPlay(blackNote); }}
+                  onTouchEnd={(e) => { e.preventDefault(); stopPlay(blackNote); }}
+                  className={`absolute right-[-20px] top-0 w-10 h-full rounded-b-md transition-all duration-75 pointer-events-auto z-10 active:scale-95 touch-none ${
+                    isActive
+                      ? "bg-gradient-to-b from-magenta to-purple-600 shadow-[0_0_15px_rgba(255,0,229,0.7)]"
+                      : "bg-gradient-to-b from-zinc-800 to-black border-x border-b border-white/20"
+                  }`}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
+

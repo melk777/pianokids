@@ -266,6 +266,7 @@ export default function PlayPage() {
                 onNoteMiss={handleNoteMiss}
                 onPlayNote={handleSimulatedPlay}
                 onReleaseNote={handleSimulatedRelease}
+                resumeAudio={audio.resume}
                 startNote={48}
                 endNote={72}
               />

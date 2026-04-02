@@ -19,6 +19,8 @@ function midiToFreq(midi: number): number {
 interface AudioEngineReturn {
   /** Initialize the audio context (must call on user gesture) */
   init: () => Promise<void>;
+  /** Resume audio context if suspended (mobile safety) */
+  resume: () => Promise<void>;
   /** Get current audio context time in seconds */
   getCurrentTime: () => number;
   /** Schedule an accompaniment note at a specific absolute time */
@@ -32,6 +34,7 @@ interface AudioEngineReturn {
   /** Clean up */
   destroy: () => void;
 }
+
 
 export function useAudioEngine(): AudioEngineReturn {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -232,16 +235,25 @@ export function useAudioEngine(): AudioEngineReturn {
     };
   }, [destroy]);
 
+  const resume = useCallback(async () => {
+    const ctx = ctxRef.current;
+    if (ctx && (ctx.state === "suspended" || ctx.state === "interrupted")) {
+      await ctx.resume();
+    }
+  }, []);
+
   const engine = useMemo(() => ({
     init,
+    resume,
     getCurrentTime,
     scheduleAccompaniment,
     playStudent,
     rewardHit,
     penaltyMiss,
     destroy,
-  }), [init, getCurrentTime, scheduleAccompaniment, playStudent, rewardHit, penaltyMiss, destroy]);
+  }), [init, resume, getCurrentTime, scheduleAccompaniment, playStudent, rewardHit, penaltyMiss, destroy]);
 
   return engine;
 }
+
 
