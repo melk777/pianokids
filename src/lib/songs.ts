@@ -1,8 +1,8 @@
 import borboletinhaData from "../../public/songs/borboletinha.json";
-import pintinhoMidiData from "../../public/songs/meu_pintinho_amarelinho.json";
-import twinkleMidiData from "../../public/songs/brilha_brilha_estrelinha.json";
-import maryData from "../../public/songs/mary-had-a-little-lamb.json";
-import odeMidiData from "../../public/songs/ode_to_joy_(ode_à_alegria)_-_very_easy_piano_version.json";
+import pintinhoMidiData from "../../public/songs/meu-pintinho-amarelinho.json";
+import twinkleMidiData from "../../public/songs/brilha-brilha-estrelinha.json";
+import aDonaAranhaData from "../../public/songs/a-dona-aranha.json";
+import odeMidiData from "../../public/songs/ode-to-joy.json";
 import furEliseMidiData from "../../public/songs/fur-elise-easy-ver.json";
 
 export interface SongNote {
@@ -68,7 +68,16 @@ export const songs: Song[] = [
   },
 
   // 4. A Dona Aranha (JSON original)
-  maryData as Song,
+  {
+    ...(aDonaAranhaData as Song),
+    id: "a-dona-aranha",
+    title: "A Dona Aranha",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: "/images/covers/dona_aranha_1775056352751.png",
+    difficulty: "Fácil"
+  },
 
   // 5. Ode à Alegria (Integrado via MIDI)
   {
