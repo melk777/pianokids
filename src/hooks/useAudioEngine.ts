@@ -111,8 +111,8 @@ export function useAudioEngine(): AudioEngineReturn {
       const ctx = ctxRef.current;
       if (!ctx || ctx.state === "closed" || !destinationGain) return;
 
-      // Resume if suspended (safety net)
-      if (ctx.state === "suspended") {
+      // Resume if suspended (Crticial for iOS/Android Safari & Chrome Autoplay)
+      if (ctx.state === "suspended" || ctx.state === "interrupted") {
         ctx.resume();
       }
 

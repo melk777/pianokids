@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import ScoreScreen from "@/components/ScoreScreen";
 import MidiSetup from "@/components/MidiSetup";
 import PianoPlayer from "@/components/PianoPlayer";
+import OrientationOverlay from "@/components/OrientationOverlay";
 import { useMIDI, type MIDINote } from "@/hooks/useMIDI";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useKeyboardInput } from "@/hooks/useKeyboardInput";
@@ -194,9 +195,11 @@ export default function PlayPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-black overflow-x-hidden">
       <Header />
-      <div className="pt-24 pb-12 px-6 max-w-5xl mx-auto">
+      <OrientationOverlay />
+      
+      <div className="pt-20 md:pt-24 pb-8 md:pb-12 px-4 md:px-6 max-w-5xl mx-auto">
         {/* ── Header ── */}
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-6 flex items-center justify-between">
           <div>
