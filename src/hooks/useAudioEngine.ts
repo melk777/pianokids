@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useMemo } from "react";
 
 /* ──────────────────────────────────────────────────────
    Web Audio Engine — 2 canais adaptativos
@@ -232,7 +232,7 @@ export function useAudioEngine(): AudioEngineReturn {
     };
   }, [destroy]);
 
-  return {
+  const engine = useMemo(() => ({
     init,
     getCurrentTime,
     scheduleAccompaniment,
@@ -240,5 +240,8 @@ export function useAudioEngine(): AudioEngineReturn {
     rewardHit,
     penaltyMiss,
     destroy,
-  };
+  }), [init, getCurrentTime, scheduleAccompaniment, playStudent, rewardHit, penaltyMiss, destroy]);
+
+  return engine;
 }
+

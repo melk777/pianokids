@@ -2,22 +2,25 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import type { SongNote } from "@/lib/songs";
-import { midiNoteToName } from "@/hooks/useMIDI";
+import { midiNoteToName, type MIDINote } from "@/hooks/useMIDI";
 import type { Difficulty } from "@/lib/songFilters";
 import { TIMING_WINDOWS } from "@/lib/songFilters";
+import VirtualKeyboard from "./VirtualKeyboard";
 
 /* ── Types ───────────────────────────────────────────── */
 
 interface PianoPlayerProps {
   notes: SongNote[];            // Pre-filtered by difficulty
   difficulty: Difficulty;
-  activeNotes: Map<number, { note: number; velocity: number; timestamp: number }>;
+  activeNotes: Map<number, MIDINote>;
   isPlaying: boolean;
   getAudioTime: () => number;   // Sync exactly with AudioContext.currentTime
   onScoreUpdate?: (score: number, combo: number, accuracy: number) => void;
   onSongEnd?: () => void;
   onNoteHit?: (midi: number, duration: number, velocity: number) => void;
   onNoteMiss?: (midi: number) => void;
+  onPlayNote?: (midi: number) => void;      // NOVO: Repassar clique virtual
+  onReleaseNote?: (midi: number) => void;   // NOVO: Repassar soltura virtual
   startNote?: number;           // physical piano start note
   endNote?: number;             // physical piano end note
   isFreePlay?: boolean;         // Modo infinito livre (Sandbox) sem notas.
@@ -26,7 +29,7 @@ interface PianoPlayerProps {
 /* ── Constants ───────────────────────────────────────── */
 
 const VIEWPORT_SECONDS = 4;
-const HIT_ZONE_PERCENT = 0.85;
+
 
 /* ── Colors (Neon/Cyberpunk Hand-specific) ───────────── */
 
@@ -83,8 +86,10 @@ export default function PianoPlayer({
   onSongEnd,
   onNoteHit,
   onNoteMiss,
+  onPlayNote,
+  onReleaseNote,
   startNote = 48,
-  endNote = 76,
+  endNote = 72,
   isFreePlay = false,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -213,8 +218,9 @@ export default function PianoPlayer({
         }
     };
     
-    const HIT_Y = height * HIT_ZONE_PERCENT;
-    const SPEED_PX_PER_SEC = height / VIEWPORT_SECONDS;
+    const KEYBOARD_HEIGHT = 220; // Altura visual do teclado integrado
+    const HIT_Y = height - KEYBOARD_HEIGHT; 
+    const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
 
     // LOOP PRINCIPAL
     const tick = () => {
@@ -251,21 +257,13 @@ export default function PianoPlayer({
       }
       ctx.stroke();
 
-      // --- 2. Hit Zone Line ---
-      const gradient = ctx.createLinearGradient(0, HIT_Y - 20, 0, HIT_Y);
-      gradient.addColorStop(0, "rgba(255,255,255,0)");
-      gradient.addColorStop(0.5, "rgba(255,255,255,0.03)");
-      gradient.addColorStop(1, "rgba(255,255,255,0)");
+      // --- 2. Hit Zone Gradient (sem linha sólida) ---
+      const gradient = ctx.createLinearGradient(0, HIT_Y - 40, 0, HIT_Y);
+      gradient.addColorStop(0, "rgba(0,234,255,0)");
+      gradient.addColorStop(1, "rgba(0,234,255,0.1)");
       
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, HIT_Y - 20, width, 20);
-
-      ctx.strokeStyle = COLORS.hitZoneLine;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, HIT_Y);
-      ctx.lineTo(width, HIT_Y);
-      ctx.stroke();
+      ctx.fillRect(0, HIT_Y - 40, width, 40);
       
       // Labels de nota na base apenas para The White Keys para imersão
       ctx.font = "12px var(--font-geist-mono), monospace";
@@ -557,46 +555,51 @@ export default function PianoPlayer({
 
   // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-white/[0.06] bg-black bg-opacity-40 backdrop-blur-sm pointer-events-none">
+    <div className="relative w-full h-[600px] md:h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5">
       
-      {/* ── Background Video Render em Loop ── */}
+      {/* ── Background Video ── */}
       <video
         src="/videos/background.webm"
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover opacity-60"
       />
       
-      {/* ── Camada Escura Semi-Transparente solicitada ── */}
-      <div className="absolute inset-0 bg-black/50" />
+      {/* ── Camada de Fundo do Jogo ── */}
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-zinc-950/40 to-black" />
 
-      {/* ── Tela de Rendereização de Alta Performance O(1) ── */}
+      {/* ── Tela de Renderização das Notas ── */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 block w-full h-full pointer-events-none"
+        className="absolute inset-0 block w-full h-full pointer-events-none z-10"
       />
 
-      {/* ── HUD de Score Desacoplada do React Lifecycle ── */}
-      <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
-        <div className="glass rounded-xl px-4 py-2 border border-white/[0.06]">
-          <p className="text-[10px] text-white/35 uppercase tracking-wider">Pontuação</p>
-          <p ref={scoreUIRef} className="text-xl font-bold tabular-nums text-white">0</p>
+      {/* ── TECLADO VIRTUAL INTEGRADO (Hit Zone) ── */}
+      <div className="absolute bottom-0 left-0 right-0 h-[220px] z-20">
+        <VirtualKeyboard 
+          onPlayNote={onPlayNote || (() => {})} 
+          onReleaseNote={onReleaseNote || (() => {})} 
+          activeNotes={activeNotes}
+        />
+      </div>
+
+      {/* ── HUD de Score ── */}
+      <div className="absolute top-6 left-6 right-6 flex items-center justify-between pointer-events-none z-30">
+        <div className="glass rounded-2xl px-5 py-3 border border-white/10 shadow-lg">
+          <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1">Score</p>
+          <p ref={scoreUIRef} className="text-2xl font-black tabular-nums text-cyan">0</p>
         </div>
 
-        <div className="glass rounded-xl px-4 py-2 text-center border border-white/[0.06] relative overflow-hidden">
-          <p className="text-[10px] text-white/35 uppercase tracking-wider relative z-10">Combo</p>
-          <p ref={comboUIRef} className="text-xl font-bold tabular-nums relative z-10 transition-colors text-white/30">
-            0x
-          </p>
+        <div className="glass rounded-2xl px-6 py-3 text-center border border-white/10 shadow-lg min-w-[100px]">
+          <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1">Combo</p>
+          <p ref={comboUIRef} className="text-2xl font-black tabular-nums text-white/40">0x</p>
         </div>
 
-        <div className="glass rounded-xl px-4 py-2 text-right border border-white/[0.06]">
-          <p className="text-[10px] text-white/35 uppercase tracking-wider">Precisão</p>
-          <p ref={accuracyUIRef} className="text-xl font-bold text-white tabular-nums">
-            100%
-          </p>
+        <div className="glass rounded-2xl px-5 py-3 text-right border border-white/10 shadow-lg">
+          <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1">Accuracy</p>
+          <p ref={accuracyUIRef} className="text-2xl font-black text-white tabular-nums">100%</p>
         </div>
       </div>
     </div>
