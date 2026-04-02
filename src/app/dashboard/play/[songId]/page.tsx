@@ -58,7 +58,14 @@ export default function PlayPage() {
   const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "playing" | "ended">("idle");
-  const [showSetup, setShowSetup] = useState(true);
+  const [showSetup, setShowSetup] = useState(false);
+  
+  // Efeito para mostrar o Setup MIDI apenas em Desktops no primeiro carregamento
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth > 1024) {
+      setShowSetup(true);
+    }
+  }, []);
   const [finalScore, setFinalScore] = useState({ score: 0, combo: 0, accuracy: 100 });
   const [audioEnabled, setAudioEnabled] = useState(true);
 
