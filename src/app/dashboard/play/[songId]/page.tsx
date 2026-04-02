@@ -249,9 +249,14 @@ export default function PlayPage() {
           {gameState === "idle" && (
             <motion.div key="idle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="glass rounded-2xl p-12 text-center border border-white/[0.06]">
               <div className="max-w-lg mx-auto">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan/20 to-cyan/5 flex items-center justify-center mx-auto mb-8">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00EAFF" strokeWidth="1.5"><polygon points="5 3 19 12 5 21" /></svg>
-                </div>
+                <button 
+                  onClick={startGame}
+                  className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan/20 to-cyan/5 border border-cyan/20 flex items-center justify-center mx-auto mb-8 hover:scale-105 active:scale-95 transition-all group cursor-pointer shadow-lg shadow-cyan/10"
+                >
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00EAFF" strokeWidth="1.5" className="group-hover:fill-cyan/20 transition-colors">
+                    <polygon points="5 3 19 12 5 21" />
+                  </svg>
+                </button>
                 <div className="mb-8">
                   <p className="text-xs uppercase tracking-widest text-white/30 mb-4">{isFreePlay ? "Modo de Teclado" : "Selecione a Dificuldade"}</p>
                   {!isFreePlay && (
