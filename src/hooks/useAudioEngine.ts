@@ -236,11 +236,19 @@ export function useAudioEngine(): AudioEngineReturn {
   }, [destroy]);
 
   const resume = useCallback(async () => {
+    // Se o contexto não existir, inicializa ele (Garante som no 1º toque em Mobile)
+    if (!ctxRef.current || !isInitRef.current) {
+      await init();
+      return;
+    }
+    
+    // Se o contexto existir mas estiver suspenso ou interrompido (autoplay policy)
     const ctx = ctxRef.current;
     if (ctx && (ctx.state === "suspended" || ctx.state === "interrupted")) {
       await ctx.resume();
     }
-  }, []);
+  }, [init]);
+
 
   const engine = useMemo(() => ({
     init,

@@ -567,11 +567,7 @@ export default function PianoPlayer({
 
   // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
-    <div 
-      className="relative w-full h-[600px] md:h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5"
-      onTouchStart={() => resumeAudio?.()}
-      onClick={() => resumeAudio?.()}
-    >
+    <div className="relative w-full h-[600px] md:h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5">
       
       {/* ── Background Video ── */}
       <video
@@ -601,6 +597,7 @@ export default function PianoPlayer({
           <div className="absolute bottom-0 left-0 right-0 h-[220px] pointer-events-auto">
             <VirtualKeyboard 
               onPlayNote={(midi) => {
+                // ATIVAÇÃO DIRETA DO ÁUDIO NO TOQUE (Criterial for Mobile Safari)
                 resumeAudio?.();
                 onPlayNote?.(midi);
               }} 
@@ -610,6 +607,7 @@ export default function PianoPlayer({
           </div>
         </div>
       </div>
+
 
 
       {/* ── HUD de Score (Fica fixo acima do scroll) ── */}
