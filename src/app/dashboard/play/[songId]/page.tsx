@@ -186,8 +186,13 @@ export default function PlayPage() {
   };
 
   useEffect(() => {
+    audio.setVolume(audioEnabled ? 1 : 0);
+  }, [audio, audioEnabled]);
+
+  useEffect(() => {
     return () => { audio.destroy(); };
   }, [audio]);
+
 
   if (!song) {
     return (

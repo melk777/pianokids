@@ -229,7 +229,8 @@ export default function PianoPlayer({
         }
     };
     
-    const KEYBOARD_HEIGHT = 220; // Altura visual do teclado integrado
+    const isShortScreen = height < 500;
+    const KEYBOARD_HEIGHT = isShortScreen ? 140 : 220; 
     const HIT_Y = height - KEYBOARD_HEIGHT; 
     const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
 
@@ -567,7 +568,7 @@ export default function PianoPlayer({
 
   // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
-    <div className="relative w-full h-[600px] md:h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5">
+    <div className="relative w-full h-[calc(100vh-180px)] min-h-[340px] max-h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5">
       
       {/* ── Background Video ── */}
       <video
@@ -594,7 +595,7 @@ export default function PianoPlayer({
           />
 
           {/* TECLADO VIRTUAL INTEGRADO (Hit Zone) */}
-          <div className="absolute bottom-0 left-0 right-0 h-[220px] pointer-events-auto">
+          <div className="absolute bottom-0 left-0 right-0 h-[140px] md:h-[220px] pointer-events-auto">
             <VirtualKeyboard 
               onPlayNote={(midi) => {
                 // ATIVAÇÃO DIRETA DO ÁUDIO NO TOQUE (Criterial for Mobile Safari)
@@ -611,22 +612,23 @@ export default function PianoPlayer({
 
 
       {/* ── HUD de Score (Fica fixo acima do scroll) ── */}
-      <div className="absolute top-6 left-6 right-6 flex items-center justify-between pointer-events-none z-30">
-        <div className="glass rounded-2xl px-5 py-3 border border-white/10 shadow-lg">
-          <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1">Score</p>
-          <p ref={scoreUIRef} className="text-2xl font-black tabular-nums text-cyan">0</p>
+      <div className="absolute top-3 md:top-6 left-3 md:left-6 right-3 md:right-6 flex items-center justify-between pointer-events-none z-30">
+        <div className="glass rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3 border border-white/10 shadow-lg">
+          <p className="text-[8px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0 md:mb-1">Score</p>
+          <p ref={scoreUIRef} className="text-lg md:text-2xl font-black tabular-nums text-cyan">0</p>
         </div>
 
-        <div className="glass rounded-2xl px-6 py-3 text-center border border-white/10 shadow-lg min-w-[100px]">
-          <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1">Combo</p>
-          <p ref={comboUIRef} className="text-2xl font-black tabular-nums text-white/40">0x</p>
+        <div className="glass rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center border border-white/10 shadow-lg min-w-[80px] md:min-w-[100px]">
+          <p className="text-[8px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0 md:mb-1">Combo</p>
+          <p ref={comboUIRef} className="text-lg md:text-2xl font-black tabular-nums text-white/40">0x</p>
         </div>
 
-        <div className="glass rounded-2xl px-5 py-3 text-right border border-white/10 shadow-lg">
-          <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1">Accuracy</p>
-          <p ref={accuracyUIRef} className="text-2xl font-black text-white tabular-nums">100%</p>
+        <div className="glass rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3 text-right border border-white/10 shadow-lg">
+          <p className="text-[8px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0 md:mb-1">Accuracy</p>
+          <p ref={accuracyUIRef} className="text-lg md:text-2xl font-black text-white tabular-nums">100%</p>
         </div>
       </div>
+
     </div>
   );
 }

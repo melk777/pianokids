@@ -31,16 +31,21 @@ interface AudioEngineReturn {
   rewardHit: () => void;
   /** Penalty: fade Channel B volume down */
   penaltyMiss: () => void;
+  /** Set master volume (0.0 to 1.0) */
+  setVolume: (volume: number) => void;
   /** Clean up */
   destroy: () => void;
 }
+
 
 
 export function useAudioEngine(): AudioEngineReturn {
   const ctxRef = useRef<AudioContext | null>(null);
   const channelAGain = useRef<GainNode | null>(null);
   const channelBGain = useRef<GainNode | null>(null);
+  const masterGainRef = useRef<GainNode | null>(null);
   const compressorRef = useRef<DynamicsCompressorNode | null>(null);
+
   const isInitRef = useRef(false);
 
   // ── Init: creates or resumes AudioContext ─────────
@@ -78,17 +83,24 @@ export function useAudioEngine(): AudioEngineReturn {
       compressor.connect(ctx.destination);
       compressorRef.current = compressor;
 
+      // Master Gain for overall volume control
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = 1.0;
+      masterGain.connect(compressor);
+      masterGainRef.current = masterGain;
+
       // Channel A — Accompaniment (stable volume)
       const gainA = ctx.createGain();
       gainA.gain.value = 0.3;
-      gainA.connect(compressor);
+      gainA.connect(masterGain);
       channelAGain.current = gainA;
 
       // Channel B — Student (adaptive volume)
       const gainB = ctx.createGain();
       gainB.gain.value = 0.7;
-      gainB.connect(compressor);
+      gainB.connect(masterGain);
       channelBGain.current = gainB;
+
 
       isInitRef.current = true;
       console.log("[AudioEngine] Initialized. State:", ctx.state, "SampleRate:", ctx.sampleRate);
@@ -218,6 +230,15 @@ export function useAudioEngine(): AudioEngineReturn {
     gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.4);
   }, []);
 
+  const setVolume = useCallback((volume: number) => {
+    const ctx = ctxRef.current;
+    const master = masterGainRef.current;
+    if (!ctx || !master) return;
+    
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.linearRampToValueAtTime(Math.max(0, Math.min(1, volume)), ctx.currentTime + 0.1);
+  }, []);
+
   const destroy = useCallback(() => {
     if (ctxRef.current && ctxRef.current.state !== "closed") {
       ctxRef.current.close();
@@ -225,9 +246,11 @@ export function useAudioEngine(): AudioEngineReturn {
     ctxRef.current = null;
     channelAGain.current = null;
     channelBGain.current = null;
+    masterGainRef.current = null;
     compressorRef.current = null;
     isInitRef.current = false;
   }, []);
+
 
   useEffect(() => {
     return () => {
@@ -258,8 +281,10 @@ export function useAudioEngine(): AudioEngineReturn {
     playStudent,
     rewardHit,
     penaltyMiss,
+    setVolume,
     destroy,
-  }), [init, resume, getCurrentTime, scheduleAccompaniment, playStudent, rewardHit, penaltyMiss, destroy]);
+  }), [init, resume, getCurrentTime, scheduleAccompaniment, playStudent, rewardHit, penaltyMiss, setVolume, destroy]);
+
 
   return engine;
 }
