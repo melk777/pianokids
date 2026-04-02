@@ -4,7 +4,6 @@ import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/Header";
 import ScoreScreen from "@/components/ScoreScreen";
 import MidiSetup from "@/components/MidiSetup";
 import PianoPlayer from "@/components/PianoPlayer";
@@ -196,42 +195,55 @@ export default function PlayPage() {
 
   if (!song) {
     return (
-      <main className="min-h-screen bg-black flex items-center justify-center">
-        <Header />
+      <main className="min-h-screen bg-black flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Música não encontrada</h1>
-          <Link href="/dashboard/songs" className="btn-secondary">Voltar</Link>
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+          </div>
+          <h1 className="text-xl font-bold mb-2">Música não encontrada</h1>
+          <p className="text-white/40 text-sm mb-6">Infelizmente não conseguimos carregar esta lição.</p>
+          <Link href="/dashboard/songs" className="btn-secondary text-sm">Voltar para Biblioteca</Link>
         </div>
       </main>
     );
   }
 
+
   return (
-    <main className="min-h-screen bg-black overflow-x-hidden">
-      <Header />
+    <main className="h-screen bg-black overflow-hidden flex flex-col">
       <OrientationOverlay />
       
-      <div className="pt-20 md:pt-24 pb-8 md:pb-12 px-4 md:px-6 max-w-5xl mx-auto">
-        {/* ── Header ── */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-6 flex items-center justify-between">
-          <div>
-            <Link href="/dashboard/songs" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-3">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-              Voltar
-            </Link>
-            <h1 className="text-2xl font-bold tracking-tight">{song.title}</h1>
-            <p className="text-sm text-white/40">{song.artist} · {filteredNotes.length} notas</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button onClick={() => setAudioEnabled(!audioEnabled)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${audioEnabled ? "text-cyan bg-cyan/10 border border-cyan/20" : "text-white/30 bg-white/5 border border-white/10"}`}>
-              <Volume2 className="w-3 h-3" /> {audioEnabled ? "Som ON" : "Som OFF"}
-            </button>
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-cyan" : "bg-white/20"}`} />
-              <span className="text-xs text-white/40">{isConnected ? "MIDI Conectado" : "Sem MIDI"}</span>
-            </div>
-          </div>
-        </motion.div>
+      <div className="flex-1 flex flex-col p-2 md:p-4 max-w-7xl mx-auto w-full relative">
+        {/* ── Header / Song Info (Só aparece no IDLE para imersão total) ── */}
+        <AnimatePresence>
+          {gameState === "idle" && (
+            <motion.div 
+              initial={{ y: -20, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }} 
+              exit={{ y: -20, opacity: 0 }}
+              className="mb-4 flex items-center justify-between"
+            >
+              <div>
+                <Link href="/dashboard/songs" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 mb-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+                  Voltar
+                </Link>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight">{song.title}</h1>
+                <p className="text-xs md:text-sm text-white/40">{song.artist} · {filteredNotes.length} notas</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setAudioEnabled(!audioEnabled)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${audioEnabled ? "text-cyan bg-cyan/10 border border-cyan/20" : "text-white/30 bg-white/5 border border-white/10"}`}>
+                  <Volume2 className="w-3 h-3" /> {audioEnabled ? "Som ON" : "Som OFF"}
+                </button>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-cyan" : "bg-white/20"}`} />
+                  <span className="hidden sm:inline text-xs text-white/40">{isConnected ? "MIDI" : "Sem MIDI"}</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
 
         <AnimatePresence mode="wait">
           {gameState === "idle" && (
@@ -264,7 +276,7 @@ export default function PlayPage() {
           )}
 
           {gameState === "playing" && (
-            <motion.div key="playing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col gap-8">
+            <motion.div key="playing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col">
               <PianoPlayer
                 notes={filteredNotes}
                 difficulty={difficulty}
@@ -282,11 +294,12 @@ export default function PlayPage() {
                 startNote={48}
                 endNote={72}
               />
-              <div className="flex justify-center">
-                <button onClick={resetGame} className="btn-secondary text-sm">Parar Partida</button>
+              <div className="flex justify-center mt-4">
+                <button onClick={resetGame} className="btn-secondary text-xs py-2">Parar Partida</button>
               </div>
             </motion.div>
           )}
+
 
           {gameState === "ended" && (
             <ScoreScreen accuracy={finalScore.accuracy} score={finalScore.score} combo={finalScore.combo} onRestart={resetGame} onNext={() => router.push("/dashboard/songs")} onExit={() => router.push("/dashboard/songs")} />

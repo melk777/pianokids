@@ -568,7 +568,7 @@ export default function PianoPlayer({
 
   // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
-    <div className="relative w-full h-[calc(100vh-180px)] min-h-[340px] max-h-[650px] rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5">
+    <div className="relative w-full flex-1 rounded-3xl overflow-hidden border border-white/[0.1] bg-black shadow-2xl shadow-cyan/5">
       
       {/* ── Background Video ── */}
       <video
