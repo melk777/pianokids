@@ -27,7 +27,7 @@ export default function GalaxyBackground() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Planeta Saturno-Kids (Mediano e sempre visível) */}
       <motion.div
-        className="absolute top-[25%] right-[10%] w-32 h-32 md:w-40 md:h-40 z-0"
+        className="absolute top-[25%] right-[10%] w-48 h-48 md:w-64 md:h-64 z-0"
         animate={{ 
           y: [0, -20, 0],
           rotate: [0, 2, 0]
@@ -40,7 +40,7 @@ export default function GalaxyBackground() {
       >
         {/* O Anel de Saturno */}
         <div 
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[40%] rounded-[100%] border-[10px] md:border-[15px] border-cyan/20 rotate-[-25deg] shadow-[0_0_20px_rgba(0,234,255,0.1)]"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[40%] rounded-[100%] border-[8px] md:border-[12px] border-cyan/20 rotate-[-25deg] shadow-[0_0_20px_rgba(0,234,255,0.1)]"
           style={{
             boxShadow: "inset 0 0 10px rgba(0,234,255,0.2)",
           }}
@@ -48,7 +48,7 @@ export default function GalaxyBackground() {
         
         {/* O Corpo do Planeta */}
         <div 
-          className="relative w-full h-full rounded-full overflow-hidden shadow-[0_0_50px_rgba(0,234,255,0.2)]"
+          className="relative w-full h-full rounded-full overflow-hidden shadow-[0_0_60px_rgba(0,234,255,0.2)]"
           style={{
             background: "radial-gradient(circle at 30% 30%, #00EAFF 0%, #006677 50%, #001122 100%)",
           }}
@@ -57,7 +57,22 @@ export default function GalaxyBackground() {
           <div className="absolute inset-0 bg-gradient-to-tr from-black/60 to-transparent" />
           <div className="absolute inset-0 border border-cyan/10 rounded-full" />
         </div>
+
+        {/* TECLADO ESPACIAL (Overlay frontal ao planeta) */}
+        <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 w-[90%] flex items-end gap-[2px] z-10 px-2">
+            {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={`white-${i}`} className="relative flex-1 h-20 md:h-28 rounded-sm bg-white/5 border border-cyan/30 backdrop-blur-[2px] shadow-[0_0_15px_rgba(0,234,255,0.1)]">
+                    {/* Teclas Pretas (Posicionamento entre brancas) */}
+                    {[0, 1, 3, 4, 5].includes(i) && (
+                        <div className="absolute right-[-40%] top-0 w-[60%] h-[60%] bg-black/80 rounded-sm border border-white/10 z-20" />
+                    )}
+                </div>
+            ))}
+            {/* Brilho neon na base do teclado */}
+            <div className="absolute inset-0 border-b-2 border-cyan/40 blur-[4px] -z-10" />
+        </div>
       </motion.div>
+
 
       {/* 300+ Estrelas com Movimento Diagonal Suave */}
       {stars.map((star) => (
