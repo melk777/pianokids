@@ -47,7 +47,8 @@ const CLIENT_PLANS = {
 
 export default function Home() {
   const router = useRouter();
-  const { isSupported, connect, devices, error } = useMIDI();
+  const { isSupported, connect, error } = useMIDI();
+
   const { playIntro, playSuccess, playError } = useJoseAudio();
 
   const [midiStatus, setMidiStatus] = useState<
@@ -90,16 +91,19 @@ export default function Home() {
 
       <main className="min-h-screen bg-black">
         {/* ── Hero Section ──────────────────────────── */}
-        <section className="relative flex flex-col items-center justify-center min-h-screen px-6 pt-24 overflow-hidden">
+        <section className="relative min-h-screen px-6 py-24 lg:py-32 overflow-hidden flex items-center">
           {/* Background gradient */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,234,255,0.05)_0%,transparent_50%)]" />
 
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative z-10 text-center max-w-3xl mx-auto"
-          >
+          <div className="relative z-10 max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
+            
+            <motion.div
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center lg:text-left"
+            >
+
             {/* Badge */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -112,7 +116,7 @@ export default function Home() {
             </motion.div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+            <h1 className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
               <span className="text-white">Aprenda piano</span>
               <br />
               <span className="bg-gradient-to-r from-cyan to-cyan/60 bg-clip-text text-transparent">
@@ -121,84 +125,61 @@ export default function Home() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg md:text-xl text-white/40 max-w-xl mx-auto mb-10 leading-relaxed">
+            <p className="text-lg md:text-2xl text-white/50 max-w-2xl lg:max-w-none mx-auto lg:mx-0 mb-12 leading-relaxed font-medium">
               Conecte seu teclado MIDI e transforme cada nota em uma aventura.
               Músicas que caem como estrelas — acerte no tempo certo.
             </p>
 
+
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
               <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleConnect}
                 disabled={midiStatus === "connecting"}
-                className="btn-primary flex items-center gap-2.5 disabled:opacity-50"
+                className="btn-primary rounded-full px-10 py-5 text-lg flex items-center gap-3 disabled:opacity-50 shadow-xl shadow-cyan/20"
               >
+                {/* ... (keep inside logic) */}
                 {midiStatus === "connecting" ? (
                   <>
                     <motion.div
-                      className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full"
+                      className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full"
                       animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                     />
                     Conectando...
                   </>
                 ) : midiStatus === "connected" ? (
-                  <>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M13.3 4.3L6.3 11.3L2.7 7.7"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        fill="none"
-                      />
-                    </svg>
-                    Conectado! ({devices.length} dispositivo
-                    {devices.length !== 1 ? "s" : ""})
-                  </>
+                  <>Conectado!</>
                 ) : (
                   <>
-                    <Music className="w-4 h-4" />
-                    Conectar Teclado
+                    <Music className="w-5 h-5" />
+                    Começar Agora
                   </>
                 )}
               </motion.button>
 
               <motion.a
                 href="/dashboard"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="btn-secondary flex items-center gap-2"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn-secondary rounded-full px-10 py-5 text-lg flex items-center gap-2 border-2"
               >
                 Explorar Dashboard
                 <svg
-                  width="14"
-                  height="14"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                 >
-                  <path
-                    d="M5 12h14M12 5l7 7-7 7"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </motion.a>
             </div>
+
 
             {/* Test Jose Audio Buttons (Static refactor) */}
             <motion.div
@@ -247,46 +228,49 @@ export default function Home() {
             )}
           </motion.div>
 
-          {/* Piano Animation */}
-          <motion.div
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-            className="relative z-10 mt-12 w-full max-w-2xl"
-          >
-            <HeroAnimation />
-          </motion.div>
+            {/* Piano Animation */}
+            <motion.div
+              initial={{ x: 30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+              className="relative z-10 mt-16 lg:mt-0 w-full"
+            >
+              <HeroAnimation />
+            </motion.div>
+          </div>
 
-          {/* Scroll indicator */}
+          {/* Scroll indicator - Only bottom for small screens or mobile */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
-            animate={{ y: [0, 8, 0] }}
+            className="hidden lg:block absolute bottom-12 left-1/2 -translate-x-1/2"
+            animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <ChevronDown className="w-5 h-5 text-white/20" />
+            <ChevronDown className="w-6 h-6 text-white/20" />
           </motion.div>
         </section>
+
 
         {/* ── Partner Logos Marquee ────────────────── */}
         <PartnerMarquee />
 
         {/* ── Features Section ──────────────────────── */}
-        <section className="py-24 px-6">
-          <div className="max-w-5xl mx-auto">
+        <section className="py-32 lg:py-48 px-6 lg:px-12">
+          <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ y: 30, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
-              className="text-center mb-20"
+              className="text-center mb-24"
             >
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
                 Por que <span className="text-cyan">PianoKids</span>?
               </h2>
-              <p className="text-white/40 max-w-lg mx-auto">
+              <p className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                 Uma experiência projetada para manter crianças engajadas e
-                aprendendo.
+                aprendendo com diversão imediata.
               </p>
             </motion.div>
+
 
             <div className="grid md:grid-cols-3 gap-6">
               {[
@@ -312,45 +296,50 @@ export default function Home() {
                   whileInView={{ y: 0, opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="glass glass-hover rounded-2xl p-8 group cursor-default"
+                  className="glass glass-hover rounded-[2.5rem] p-10 group cursor-default shadow-2xl shadow-black/40"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-5 transition-all duration-300 group-hover:bg-cyan/20 group-hover:shadow-[0_0_20px_rgba(0,234,255,0.2)]">
+                  <div className="w-14 h-14 rounded-2xl bg-cyan/10 flex items-center justify-center text-cyan mb-8 transition-all duration-300 group-hover:bg-cyan/20 group-hover:shadow-[0_0_20px_rgba(0,234,255,0.3)]">
                     {feature.icon}
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">
+                  <h3 className="text-xl font-bold mb-4">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-white/40 leading-relaxed">
+                  <p className="text-base text-white/40 leading-relaxed">
                     {feature.desc}
                   </p>
                 </motion.div>
+
               ))}
             </div>
           </div>
         </section>
 
         {/* ── Testimonials Carousel ──────────────────── */}
-        <TestimonialsCarousel />
+        <div className="py-16">
+          <TestimonialsCarousel />
+        </div>
 
         {/* ── Pricing Section ───────────────────────── */}
-        <section id="pricing" className="py-24 px-6 scroll-mt-20">
-          <div className="max-w-3xl mx-auto">
+        <section id="pricing" className="py-32 lg:py-48 px-6 scroll-mt-20">
+          <div className="max-w-4xl mx-auto">
             <motion.div
               initial={{ y: 30, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
-              className="text-center mb-16"
+              className="text-center mb-20"
             >
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
                 Planos simples,{" "}
+                <br />
                 <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
                   sem surpresas
                 </span>
               </h2>
-              <p className="text-white/40">
+              <p className="text-white/40 text-lg md:text-xl">
                 Comece gratuitamente. Assine quando estiver pronto.
               </p>
             </motion.div>
+
 
             <div className="grid md:grid-cols-2 gap-6">
               <PricingCard
