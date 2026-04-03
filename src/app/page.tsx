@@ -208,7 +208,7 @@ export default function Home() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => speak("Oi, Melk! A configuração deu certo, já estou falando e pronta para a aula!")}
+                onClick={() => speak("Oi, Melk! A configuração deu certo, eu sou o professor José e já estou pronto para a aula!")}
                 disabled={tutorIsSpeaking}
                 className={`group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all ${
                   tutorIsSpeaking 
@@ -217,7 +217,7 @@ export default function Home() {
                 }`}
               >
                 <span className={`text-xl transition-transform group-hover:scale-125 ${tutorIsSpeaking ? "animate-pulse" : ""}`}>🗣️</span>
-                <span>Testar Voz da Professora</span>
+                <span>Testar Voz do Professor</span>
                 {tutorIsSpeaking && (
                     <motion.div
                       className="absolute -right-2 -top-2 w-4 h-4 bg-cyan rounded-full"
@@ -227,8 +227,9 @@ export default function Home() {
                 )}
               </motion.button>
               <p className="mt-4 text-xs text-white/30 italic">
-                {tutorIsSpeaking ? "Professora Mel falando..." : "Clique para ouvir a Professora Mel!"}
+                {tutorIsSpeaking ? "Professor José falando..." : "Clique para ouvir o Professor José!"}
               </p>
+
             </motion.div>
 
 
