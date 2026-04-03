@@ -45,11 +45,47 @@ export async function POST(req: NextRequest) {
 
     const textToSpeak = chatResponse.choices[0]?.message?.content || "Vamos tocar?";
 
-    // 2. Converter Texto em Voz (TTS)
-    // Usando o modelo tts-1 da OpenAI (rápido e de alta qualidade)
+    // 2. Converter Texto em Voz (TTS) - ELEVENLABS (Prioridade) ou OpenAI (Fallback)
+    const elevenLabsApiKey = process.env.ELEVENLABS_API_KEY;
+    const elevenLabsVoiceId = process.env.ELEVENLABS_VOICE_ID;
+
+    if (elevenLabsApiKey && elevenLabsVoiceId) {
+      console.log("[TUTOR_API]: Using ElevenLabs for TTS");
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${elevenLabsVoiceId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "xi-api-key": elevenLabsApiKey,
+          },
+          body: JSON.stringify({
+            text: textToSpeak,
+            model_id: "eleven_multilingual_v2",
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.75,
+            },
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const audioBuffer = Buffer.from(await response.arrayBuffer());
+        return new NextResponse(audioBuffer, {
+          headers: {
+            "Content-Type": "audio/mpeg",
+            "X-Generated-Text": encodeURIComponent(textToSpeak),
+          },
+        });
+      }
+      console.warn("[TUTOR_API]: ElevenLabs failed, falling back to OpenAI");
+    }
+
+    // Fallback: OpenAI TTS
     const mp3 = await openai.audio.speech.create({
       model: "tts-1",
-      voice: "shimmer", // Voz feminina expressiva e energética (ideal para crianças)
+      voice: "shimmer",
       input: textToSpeak,
     });
 

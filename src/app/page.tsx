@@ -12,6 +12,8 @@ import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
 import { useMIDI } from "@/hooks/useMIDI";
+import { useTutorVoice } from "@/hooks/useTutorVoice";
+
 
 /* ──────────────────────────────────────────────────────
    Plan data (client-safe: no price IDs exposed)
@@ -45,9 +47,11 @@ const CLIENT_PLANS = {
 export default function Home() {
   const router = useRouter();
   const { isSupported, connect, devices, error } = useMIDI();
+  const { speak, isSpeaking: tutorIsSpeaking } = useTutorVoice();
   const [midiStatus, setMidiStatus] = useState<
     "idle" | "connecting" | "connected" | "error"
   >("idle");
+
 
   const handleConnect = async () => {
     setMidiStatus("connecting");
@@ -193,6 +197,40 @@ export default function Home() {
                 </svg>
               </motion.a>
             </div>
+
+            {/* Test Voice Button (ElevenLabs Validator) */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="mt-12"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => speak("Oi, Melk! A configuração deu certo, já estou falando e pronta para a aula!")}
+                disabled={tutorIsSpeaking}
+                className={`group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all ${
+                  tutorIsSpeaking 
+                    ? "bg-white/5 text-white/20 border border-white/5 cursor-not-allowed" 
+                    : "bg-white/5 text-white/80 border border-white/10 hover:border-cyan/50 hover:text-cyan hover:shadow-[0_0_30px_rgba(0,234,255,0.2)]"
+                }`}
+              >
+                <span className={`text-xl transition-transform group-hover:scale-125 ${tutorIsSpeaking ? "animate-pulse" : ""}`}>🗣️</span>
+                <span>Testar Voz da Professora</span>
+                {tutorIsSpeaking && (
+                    <motion.div
+                      className="absolute -right-2 -top-2 w-4 h-4 bg-cyan rounded-full"
+                      animate={{ scale: [1, 1.5, 1], opacity: [1, 0, 1] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    />
+                )}
+              </motion.button>
+              <p className="mt-4 text-xs text-white/30 italic">
+                {tutorIsSpeaking ? "Professora Mel falando..." : "Clique para ouvir a Professora Mel!"}
+              </p>
+            </motion.div>
+
 
             {/* MIDI Status Messages */}
             {midiStatus === "error" && (

@@ -4,40 +4,35 @@ import { useState, useCallback } from "react";
 
 interface TutorEventData {
   studentName?: string;
-  eventType: "error" | "success" | "welcome" | "idle";
+  eventType: "error" | "success" | "welcome" | "idle" | "test";
   context?: string;
 }
 
-export function useVirtualTutor() {
+export function useTutorVoice() {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const triggerTutor = useCallback(async (data: TutorEventData) => {
-    if (isSpeaking) return; // Evita sobreposição de vozes
+  const speak = useCallback(async (textOrData: string | TutorEventData) => {
+    if (isSpeaking) return;
 
     try {
       setIsSpeaking(true);
 
+      const isString = typeof textOrData === "string";
+      const body = isString 
+        ? { eventType: "test", context: textOrData } 
+        : textOrData;
+
       const response = await fetch("/api/tutor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) throw new Error("Failed to reach Tutor API");
 
-      // Receber o buffer de áudio (MP3)
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
-
-      // Reproduzir o áudio instantaneamente
       const audio = new Audio(audioUrl);
-      
-      // Capturar o texto gerado (se precisar exibir na tela via legenda)
-      const generatedText = decodeURIComponent(
-        response.headers.get("X-Generated-Text") || ""
-      );
-
-      console.log("[TUTOR_VOICE]:", generatedText);
 
       audio.onended = () => {
         setIsSpeaking(false);
@@ -47,10 +42,10 @@ export function useVirtualTutor() {
       await audio.play();
 
     } catch (error) {
-      console.error("[USE_VIRTUAL_TUTOR_ERROR]:", error);
+      console.error("[USE_TUTOR_VOICE_ERROR]:", error);
       setIsSpeaking(false);
     }
   }, [isSpeaking]);
 
-  return { triggerTutor, isSpeaking };
+  return { speak, isSpeaking };
 }
