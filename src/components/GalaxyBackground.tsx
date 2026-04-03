@@ -4,52 +4,62 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 
 export default function GalaxyBackground() {
-  // Gerar estrelas com trajetórias diagonais
+  // Gerar estrelas com trajetórias diagonais (mais estrelas para densidade épica)
   const stars = useMemo(() => {
-    return Array.from({ length: 100 }).map((_, i) => {
-      const directionX = Math.random() > 0.5 ? 20 : -20;
-      const directionY = Math.random() > 0.5 ? 20 : -20;
+    return Array.from({ length: 300 }).map((_, i) => {
+      const directionX = Math.random() > 0.5 ? 30 : -30;
+      const directionY = Math.random() > 0.5 ? 30 : -30;
       
       return {
         id: i,
         startX: Math.random() * 100,
         startY: Math.random() * 100,
-        endX: directionX, // Relativo ao start
-        endY: directionY, // Relativo ao start
-        size: Math.random() * 2 + 0.5,
-        duration: Math.random() * 15 + 10,
-        delay: Math.random() * -20, // Inicia em pontos diferentes da animação
+        endX: directionX,
+        endY: directionY,
+        size: Math.random() * 1.5 + 0.5,
+        duration: Math.random() * 20 + 15,
+        delay: Math.random() * -30,
       };
     });
   }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Planeta Mediano e Distante */}
+      {/* Planeta Saturno-Kids (Mediano e sempre visível) */}
       <motion.div
-        className="absolute top-[20%] right-[15%] w-32 h-32 md:w-48 md:h-48 rounded-full"
-        style={{
-          background: "radial-gradient(circle at 30% 30%, #00EAFF 0%, #006677 40%, #001122 80%)",
-          boxShadow: "inset -10px -10px 30px rgba(0,0,0,0.8), 0 0 40px rgba(0,234,255,0.15)",
-        }}
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="absolute top-[25%] right-[10%] w-32 h-32 md:w-40 md:h-40 z-0"
         animate={{ 
-          opacity: 0.6, 
-          scale: 1,
-          y: [0, -15, 0],
-          rotate: [0, 5, 0]
+          y: [0, -20, 0],
+          rotate: [0, 2, 0]
         }}
         transition={{ 
-          duration: 12, 
+          duration: 15, 
           repeat: Infinity, 
           ease: "easeInOut" 
         }}
       >
-        {/* Brilho Atmosférico */}
-        <div className="absolute inset-0 rounded-full border border-cyan/20 blur-[2px]" />
+        {/* O Anel de Saturno */}
+        <div 
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[40%] rounded-[100%] border-[10px] md:border-[15px] border-cyan/20 rotate-[-25deg] shadow-[0_0_20px_rgba(0,234,255,0.1)]"
+          style={{
+            boxShadow: "inset 0 0 10px rgba(0,234,255,0.2)",
+          }}
+        />
+        
+        {/* O Corpo do Planeta */}
+        <div 
+          className="relative w-full h-full rounded-full overflow-hidden shadow-[0_0_50px_rgba(0,234,255,0.2)]"
+          style={{
+            background: "radial-gradient(circle at 30% 30%, #00EAFF 0%, #006677 50%, #001122 100%)",
+          }}
+        >
+          {/* Sombras internas para volume */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-black/60 to-transparent" />
+          <div className="absolute inset-0 border border-cyan/10 rounded-full" />
+        </div>
       </motion.div>
 
-      {/* Estrelas com Movimento Diagonal */}
+      {/* 300+ Estrelas com Movimento Diagonal Suave */}
       {stars.map((star) => (
         <motion.div
           key={star.id}
@@ -59,12 +69,11 @@ export default function GalaxyBackground() {
             top: `${star.startY}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
-            opacity: 0.3,
           }}
           animate={{
             x: [0, star.endX * 5],
             y: [0, star.endY * 5],
-            opacity: [0.1, 0.4, 0.1],
+            opacity: [0.05, 0.3, 0.05],
           }}
           transition={{
             duration: star.duration,
@@ -74,6 +83,7 @@ export default function GalaxyBackground() {
           }}
         />
       ))}
+
 
 
       {/* Nebulosas Suaves (Gradientes animados) */}
