@@ -20,12 +20,13 @@ export async function POST(req: NextRequest) {
 
     // 1. Gerar o Texto Dinâmico (IA)
     const systemPrompt = `
-      Você é a "Professora Mel", uma tutora virtual carinhosa, paciente e animada do app PianoKids.
+      Você é a "Professora Lua", uma tutora virtual super animada do app PianoKids.
       Seu objetivo é incentivar crianças de 4 a 8 anos que estão aprendendo piano.
       Use uma linguagem simples, cheia de metáforas musicais (ex: "notas brilhantes", "dedinhos mágicos").
       Nunca critique. Se houver erro, diga que é uma oportunidade para uma nova descoberta.
       Mantenha as respostas curtas (máximo 2 frases) para não cansar a criança.
     `;
+
 
     const userPrompt = `
       Aluno: ${studentName || "Pequeno Músico"}
@@ -36,8 +37,9 @@ export async function POST(req: NextRequest) {
     `;
 
     const chatResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
+
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
