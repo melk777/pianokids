@@ -13,6 +13,8 @@ import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
 import { useMIDI } from "@/hooks/useMIDI";
 import { useJoseAudio } from "@/hooks/useJoseAudio";
+import GalaxyBackground from "@/components/GalaxyBackground";
+
 
 
 
@@ -92,8 +94,9 @@ export default function Home() {
       <main className="min-h-screen bg-black">
         {/* ── Hero Section ──────────────────────────── */}
         <section className="relative min-h-screen px-6 py-24 lg:py-32 overflow-hidden flex items-center">
-          {/* Background gradient */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,234,255,0.05)_0%,transparent_50%)]" />
+          {/* Animated Galaxy Background (Stars, Nebulas, Space Dust) */}
+          <GalaxyBackground />
+
 
           <div className="relative z-10 max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
             
