@@ -4,44 +4,77 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 
 export default function GalaxyBackground() {
-  // Gerar estrelas estáticas de forma determinística no lado do cliente
+  // Gerar estrelas com trajetórias diagonais
   const stars = useMemo(() => {
-    return Array.from({ length: 150 }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 3 + 2,
-      delay: Math.random() * 5,
-    }));
+    return Array.from({ length: 100 }).map((_, i) => {
+      const directionX = Math.random() > 0.5 ? 20 : -20;
+      const directionY = Math.random() > 0.5 ? 20 : -20;
+      
+      return {
+        id: i,
+        startX: Math.random() * 100,
+        startY: Math.random() * 100,
+        endX: directionX, // Relativo ao start
+        endY: directionY, // Relativo ao start
+        size: Math.random() * 2 + 0.5,
+        duration: Math.random() * 15 + 10,
+        delay: Math.random() * -20, // Inicia em pontos diferentes da animação
+      };
+    });
   }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Estrelas Cintilantes */}
+      {/* Planeta Mediano e Distante */}
+      <motion.div
+        className="absolute top-[20%] right-[15%] w-32 h-32 md:w-48 md:h-48 rounded-full"
+        style={{
+          background: "radial-gradient(circle at 30% 30%, #00EAFF 0%, #006677 40%, #001122 80%)",
+          boxShadow: "inset -10px -10px 30px rgba(0,0,0,0.8), 0 0 40px rgba(0,234,255,0.15)",
+        }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ 
+          opacity: 0.6, 
+          scale: 1,
+          y: [0, -15, 0],
+          rotate: [0, 5, 0]
+        }}
+        transition={{ 
+          duration: 12, 
+          repeat: Infinity, 
+          ease: "easeInOut" 
+        }}
+      >
+        {/* Brilho Atmosférico */}
+        <div className="absolute inset-0 rounded-full border border-cyan/20 blur-[2px]" />
+      </motion.div>
+
+      {/* Estrelas com Movimento Diagonal */}
       {stars.map((star) => (
         <motion.div
           key={star.id}
-          className="absolute bg-white rounded-full opacity-0"
+          className="absolute bg-white rounded-full"
           style={{
-            left: `${star.x}%`,
-            top: `${star.y}%`,
+            left: `${star.startX}%`,
+            top: `${star.startY}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
-            boxShadow: star.size > 2 ? `0 0 ${star.size * 2}px rgba(255,255,255,0.8)` : "none",
+            opacity: 0.3,
           }}
           animate={{
-            opacity: [0, 0.8, 0],
-            scale: [1, 1.2, 1],
+            x: [0, star.endX * 5],
+            y: [0, star.endY * 5],
+            opacity: [0.1, 0.4, 0.1],
           }}
           transition={{
             duration: star.duration,
             repeat: Infinity,
             delay: star.delay,
-            ease: "easeInOut",
+            ease: "linear",
           }}
         />
       ))}
+
 
       {/* Nebulosas Suaves (Gradientes animados) */}
       <motion.div
