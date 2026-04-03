@@ -11,7 +11,9 @@ import OrientationOverlay from "@/components/OrientationOverlay";
 import { useMIDI, type MIDINote } from "@/hooks/useMIDI";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useKeyboardInput } from "@/hooks/useKeyboardInput";
+import { useAudioInput } from "@/hooks/useAudioInput";
 import { getSongById, type Song } from "@/lib/songs";
+
 import {
   type Difficulty,
   DIFFICULTY_LABELS,
@@ -19,7 +21,8 @@ import {
   filterNotesByDifficulty,
   getAccompanimentNotes,
 } from "@/lib/songFilters";
-import { Zap, Shield, Crown, Volume2 } from "lucide-react";
+import { Zap, Shield, Crown, Volume2, Mic, MicOff } from "lucide-react";
+
 
 const DIFFICULTY_ICONS: Record<Difficulty, React.ReactNode> = {
   beginner: <Shield className="w-4 h-4" />,
@@ -52,9 +55,11 @@ export default function PlayPage() {
   }, [isFreePlay, songId]);
 
   const { isConnected, activeNotes: midiActiveNotes, connect } = useMIDI();
+  const { isListening: isMicActive, activeAudioNote, start: startMic, stop: stopMic } = useAudioInput();
   const audio = useAudioEngine();
 
   const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "playing" | "ended">("idle");
   const [showSetup, setShowSetup] = useState(false);
@@ -108,10 +113,26 @@ export default function PlayPage() {
   // Unified Notes Map (Single Source of Truth for game engine)
   const mergedActiveNotes = useMemo(() => {
     const merged = new Map<number, MIDINote>();
+    
+    // 1. MIDI Notes
     midiActiveNotes.forEach((v, k) => merged.set(k, v));
+    
+    // 2. Keyboard/Simulated Notes
     simulatedActiveNotes.forEach((v, k) => merged.set(k, v));
+
+    // 3. Audio/Microphone Notes (Mapped to MIDINote shape)
+    if (isMicActive && activeAudioNote) {
+      merged.set(activeAudioNote.note, {
+        note: activeAudioNote.note,
+        velocity: Math.round(activeAudioNote.volume * 200), // Map RMS to approximate velocity
+        channel: 1,
+        timestamp: activeAudioNote.timestamp
+      });
+    }
+
     return merged;
-  }, [midiActiveNotes, simulatedActiveNotes]);
+  }, [midiActiveNotes, simulatedActiveNotes, activeAudioNote, isMicActive]);
+
 
   // Accompaniment scheduler
   const accompanimentScheduled = useRef(false);
@@ -176,13 +197,15 @@ export default function PlayPage() {
     }
   };
 
-  const resetGame = () => {
+  const stopGame = () => {
     setIsPlaying(false);
     setGameState("idle");
     setFinalScore({ score: 0, combo: 0, accuracy: 100 });
     accompanimentScheduled.current = false;
     audio.destroy();
+    if (isMicActive) stopMic();
   };
+
 
   useEffect(() => {
     audio.setVolume(audioEnabled ? 1 : 0);
@@ -231,15 +254,23 @@ export default function PlayPage() {
                 <h1 className="text-xl md:text-2xl font-bold tracking-tight">{song.title}</h1>
                 <p className="text-xs md:text-sm text-white/40">{song.artist} · {filteredNotes.length} notas</p>
               </div>
-              <div className="flex items-center gap-3">
+               <div className="flex items-center gap-3">
                 <button onClick={() => setAudioEnabled(!audioEnabled)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${audioEnabled ? "text-cyan bg-cyan/10 border border-cyan/20" : "text-white/30 bg-white/5 border border-white/10"}`}>
                   <Volume2 className="w-3 h-3" /> {audioEnabled ? "Som ON" : "Som OFF"}
+                </button>
+                <button 
+                  onClick={() => isMicActive ? stopMic() : startMic()} 
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${isMicActive ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" : "text-white/30 bg-white/5 border border-white/10"}`}
+                >
+                  {isMicActive ? <Mic className="w-3 h-3" /> : <MicOff className="w-3 h-3" />}
+                  {isMicActive ? "Mic ON" : "Mic OFF"}
                 </button>
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-cyan" : "bg-white/20"}`} />
                   <span className="hidden sm:inline text-xs text-white/40">{isConnected ? "MIDI" : "Sem MIDI"}</span>
                 </div>
               </div>
+
             </motion.div>
           )}
         </AnimatePresence>
@@ -273,9 +304,15 @@ export default function PlayPage() {
                 <h2 className="text-xl font-semibold mb-3">Pronto para tocar?</h2>
                 <p className="text-sm text-white/40 mb-8">Sincronize seu teclado MIDI, use o teclado (A-K) ou clique nas teclas para marcar pontos!</p>
                 <div className="flex gap-3 justify-center">
+                  {!isConnected && !isMicActive && (
+                    <button onClick={() => startMic()} className="btn-secondary flex items-center gap-2">
+                      <Mic className="w-4 h-4" /> Ativar Microfone
+                    </button>
+                  )}
                   {!isConnected && <button onClick={() => setShowSetup(true)} className="btn-secondary">Conectar MIDI</button>}
                   <button onClick={startGame} className="btn-primary">Começar</button>
                 </div>
+
               </div>
             </motion.div>
           )}
@@ -300,15 +337,17 @@ export default function PlayPage() {
                 endNote={72}
               />
               <div className="flex justify-center mt-4">
-                <button onClick={resetGame} className="btn-secondary text-xs py-2">Parar Partida</button>
+                <button onClick={stopGame} className="btn-secondary text-xs py-2">Parar Partida</button>
               </div>
+
             </motion.div>
           )}
 
 
           {gameState === "ended" && (
-            <ScoreScreen accuracy={finalScore.accuracy} score={finalScore.score} combo={finalScore.combo} onRestart={resetGame} onNext={() => router.push("/dashboard/songs")} onExit={() => router.push("/dashboard/songs")} />
+            <ScoreScreen accuracy={finalScore.accuracy} score={finalScore.score} combo={finalScore.combo} onRestart={stopGame} onNext={() => router.push("/dashboard/songs")} onExit={() => router.push("/dashboard/songs")} />
           )}
+
         </AnimatePresence>
         
         <MidiSetup isOpen={showSetup} onClose={() => setShowSetup(false)} isConnected={isConnected} onConnect={connect} />
