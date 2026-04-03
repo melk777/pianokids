@@ -76,6 +76,7 @@ export async function POST(req: NextRequest) {
       );
 
       if (response.ok) {
+        console.log("[TUTOR_API]: ElevenLabs audio generated successfully");
         const audioBuffer = Buffer.from(await response.arrayBuffer());
         return new NextResponse(audioBuffer, {
           headers: {
@@ -83,9 +84,13 @@ export async function POST(req: NextRequest) {
             "X-Generated-Text": encodeURIComponent(textToSpeak),
           },
         });
+      } else {
+        const errorDetail = await response.text();
+        console.error("[TUTOR_API]: ElevenLabs error details:", response.status, errorDetail);
       }
       console.warn("[TUTOR_API]: ElevenLabs failed, falling back to OpenAI");
     }
+
 
     // Fallback: OpenAI TTS
     const mp3 = await openai.audio.speech.create({
