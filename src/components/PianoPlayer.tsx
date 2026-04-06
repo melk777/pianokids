@@ -147,6 +147,7 @@ export default function PianoPlayer({
       effects: [],
       particles: [],
       effectId: 0,
+      lastBeat: -1,
     };
     lastActiveNotesState.current = "";
     
