@@ -236,7 +236,7 @@ export default function PlayPage() {
     <main className="h-screen bg-black overflow-hidden flex flex-col">
       <OrientationOverlay />
       
-      <div className="flex-1 flex flex-col p-2 md:p-4 max-w-7xl mx-auto w-full relative">
+      <div className="flex-1 flex flex-col p-2 md:p-4 w-full relative">
         {/* ── Header / Song Info (Só aparece no IDLE para imersão total) ── */}
         <AnimatePresence>
           {gameState === "idle" && (
