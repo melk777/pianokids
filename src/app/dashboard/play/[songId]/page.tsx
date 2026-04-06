@@ -330,6 +330,7 @@ export default function PlayPage() {
                 onSongEnd={handleSongEnd}
                 onNoteHit={handleNoteHit}
                 onNoteMiss={handleNoteMiss}
+                onPlayTick={audio.playTick}
                 onPlayNote={handleSimulatedPlay}
                 onReleaseNote={handleSimulatedRelease}
                 resumeAudio={audio.resume}

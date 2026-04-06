@@ -19,6 +19,7 @@ interface PianoPlayerProps {
   onSongEnd?: () => void;
   onNoteHit?: (midi: number, duration: number, velocity: number) => void;
   onNoteMiss?: (midi: number) => void;
+  onPlayTick?: (velocity?: number) => void; // NOVO: Metrônomo
   onPlayNote?: (midi: number) => void;      // NOVO: Repassar clique virtual
   onReleaseNote?: (midi: number) => void;   // NOVO: Repassar soltura virtual
   resumeAudio?: () => Promise<void>;        // NOVO: Destravar áudio no mobile
@@ -88,6 +89,7 @@ export default function PianoPlayer({
   onSongEnd,
   onNoteHit,
   onNoteMiss,
+  onPlayTick,
   onPlayNote,
   onReleaseNote,
   resumeAudio,
@@ -109,6 +111,7 @@ export default function PianoPlayer({
     effects: [] as VisualEffect[],
     particles: [] as Particle[],
     effectId: 0,
+    lastBeat: -1,
   });
 
   const animFrameRef = useRef<number>(0);
@@ -230,7 +233,7 @@ export default function PianoPlayer({
     };
     
     const isShortScreen = height < 500;
-    const KEYBOARD_HEIGHT = isShortScreen ? 140 : 220; 
+    const KEYBOARD_HEIGHT = isShortScreen ? 180 : 280; 
     const HIT_Y = height - KEYBOARD_HEIGHT; 
     const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
 
@@ -254,6 +257,22 @@ export default function PianoPlayer({
       // getAudioTime already subtracts audioStartTimeRef, representing exact game seconds.
       const elapsed = rawAudioTime;
       state.gameTime = elapsed;
+
+      // --- Metronomê (Tick on every beat) ---
+      // We assume a 4/4 time signature for simplicity or use BPM to find beats
+      // BPM logic: 1 beat = 60 / BPM seconds
+      // However, notes usually have their own timing. 
+      // If we have access to BPM via props, we use it.
+      // Since BPM isn't in props, we'll try a default 120 or pass it.
+      // Let's assume a standard pulse if BPM is missing.
+      const bpm = 120; // Default fallback
+      const secondsPerBeat = 60 / bpm;
+      const currentBeat = Math.floor(elapsed / secondsPerBeat);
+      
+      if (currentBeat > state.lastBeat && elapsed >= 0) {
+        state.lastBeat = currentBeat;
+        onPlayTick?.(0.08); // Volume baixinhio solicitado
+      }
 
       // Limpar Canvas
       ctx.fillStyle = "#09090B"; // Zinc 950 bg
@@ -333,58 +352,52 @@ export default function PianoPlayer({
         const isHit = hitSet.has(i);
         const isMiss = missedSet.has(i);
         
-        // Cores Didáticas: Brancas -> Fundo Branco. Pretas (Sustenidos) -> Fundo Preto.
-        let fill = rectInfo.isBlack ? "rgba(24, 24, 27, 0.95)" : "rgba(250, 250, 250, 0.95)";
-        let stroke = rectInfo.isBlack ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.8)";
-        // Efeito Neon Nativo: Brilho constante na cor da própria nota caindo
-        let shadowColor = fill;
-        let shadowBlur = 8; // glow base
+        // --- EVOLVED VISUALS (From Reference Image) ---
+        // Right hand (even notes approx) -> Cyan/Blue. Left hand -> Orange/Amber.
+        const isRightHand = ns.hand === "right" || ns.midi >= 60; 
+        
         let alpha = 1.0;
-
-        if (isHit) {
-          fill = state.combo >= 10 ? COLORS.comboGlow : COLORS.hitNormal;
-          stroke = COLORS.hitStroke;
-          shadowColor = stroke;
-          shadowBlur = 15; // glow mais intenso no acerto
-          alpha = Math.max(0, 1 - (elapsed - ns.time) * 4); // Fast Fade Out
-        } else if (isMiss) {
-          fill = COLORS.missedFill;
-          stroke = COLORS.missedStroke;
-          alpha = Math.max(0, 0.5 - (elapsed - ns.time)); // Super Fast Fade Out na base
-        }
+        if (isHit) alpha = Math.max(0, 1 - (elapsed - ns.time) * 4);
+        else if (isMiss) alpha = Math.max(0, 0.5 - (elapsed - ns.time));
 
         if (alpha <= 0) continue;
+        ctx.globalAlpha = alpha;
 
-        ctx.globalAlpha = Math.min(Math.max(alpha, 0), 1);
-        ctx.shadowColor = shadowBlur > 0 ? shadowColor : "transparent";
-        ctx.shadowBlur = shadowBlur;
-        
-        ctx.fillStyle = fill;
-        ctx.strokeStyle = stroke;
-        ctx.lineWidth = rectInfo.isBlack ? 1 : 1.5;
+        // Note Body Gradient
+        const noteGradient = ctx.createLinearGradient(xPos, yPos, xPos, yPos + noteHeight);
+        if (isRightHand) {
+          noteGradient.addColorStop(0, "#00EAFF"); // Top Bright
+          noteGradient.addColorStop(1, "#0091FF"); // Bottom Deep
+        } else {
+          noteGradient.addColorStop(0, "#FDBA74"); // Top Orange
+          noteGradient.addColorStop(1, "#F97316"); // Bottom Dark Orange
+        }
 
-        // Desenhar bloco de nota usando coordenadas sub-pixel (mas bordas visuais fiéis)
+        ctx.fillStyle = isHit ? "#FFFFFF" : noteGradient;
+        ctx.strokeStyle = isHit ? "#FFFFFF" : "rgba(255,255,255,0.3)";
+        ctx.lineWidth = 2;
+
+        // Glow
+        ctx.shadowBlur = isHit ? 20 : 12;
+        ctx.shadowColor = isRightHand ? "rgba(0, 234, 255, 0.5)" : "rgba(249, 115, 22, 0.5)";
+
+        // Draw Rounded Rect Note
         ctx.beginPath();
-        ctx.roundRect(xPos, yPos, rectW, noteHeight, 4);
+        ctx.roundRect(xPos, yPos, rectW, noteHeight, 8);
         ctx.fill();
-        if (stroke !== "transparent") ctx.stroke();
+        ctx.stroke();
 
-        ctx.shadowBlur = 0; // reset shadow for text
+        ctx.shadowBlur = 0;
 
-        if (!isHit && !isMiss && noteHeight > 10) {
-          // Contraste para a letra: Se o bloco for preto, letra branca. Se bloco for branco, letra preta.
-          ctx.fillStyle = rectInfo.isBlack ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)";
-          ctx.font = "bold 13px var(--font-geist-mono), monospace";
+        // Inner Label (Note Name)
+        if (noteHeight > 20) {
+          ctx.fillStyle = "#000000";
+          ctx.font = "bold 14px sans-serif";
           ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.textBaseline = "bottom";
           
-          // Math.round AQUI evita o 'shivering/pulsating' da engine de Anti-Aliasing do Canvas 
-          // quando o texto tenta ser renderizado em linhas decimais movendo pra baixo rapidamente.
-          const textX = Math.round(xPos + rectW / 2);
-          const textY = Math.round(yPos + noteHeight / 2);
-          
-          // Replace \d remove o número da oitava (ex: C4 -> C), deixando mais didático pras crianças
-          ctx.fillText(midiNoteToName(ns.midi).replace(/\d/, ""), textX, textY);
+          const label = midiNoteToName(ns.midi).replace(/\d/, "");
+          ctx.fillText(label, xPos + rectW / 2, yPos + noteHeight - 8);
         }
       }
 
@@ -595,7 +608,7 @@ export default function PianoPlayer({
           />
 
           {/* TECLADO VIRTUAL INTEGRADO (Hit Zone) */}
-          <div className="absolute bottom-0 left-0 right-0 h-[140px] md:h-[220px] pointer-events-auto">
+          <div className="absolute bottom-0 left-0 right-0 h-[180px] md:h-[280px] pointer-events-auto">
             <VirtualKeyboard 
               onPlayNote={(midi) => {
                 // ATIVAÇÃO DIRETA DO ÁUDIO NO TOQUE (Criterial for Mobile Safari)

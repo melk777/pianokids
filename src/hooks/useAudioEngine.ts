@@ -27,6 +27,8 @@ interface AudioEngineReturn {
   scheduleAccompaniment: (midi: number, startTime: number, duration: number, velocity?: number) => void;
   /** Play a note on Channel B (student) immediately */
   playStudent: (midi: number, duration: number, velocity?: number) => void;
+  /** Play a rhythmic metronome click */
+  playTick: (velocity?: number) => void;
   /** Reward: ramp Channel B volume to max */
   rewardHit: () => void;
   /** Penalty: fade Channel B volume down */
@@ -91,13 +93,13 @@ export function useAudioEngine(): AudioEngineReturn {
 
       // Channel A — Accompaniment (stable volume)
       const gainA = ctx.createGain();
-      gainA.gain.value = 0.3;
+      gainA.gain.value = 0.0; // Permanently silenced
       gainA.connect(masterGain);
       channelAGain.current = gainA;
 
       // Channel B — Student (adaptive volume)
       const gainB = ctx.createGain();
-      gainB.gain.value = 0.7;
+      gainB.gain.value = 0.0; // Permanently silenced
       gainB.connect(masterGain);
       channelBGain.current = gainB;
 
@@ -210,6 +212,37 @@ export function useAudioEngine(): AudioEngineReturn {
     [playNote]
   );
 
+
+  /** Play a rhythmic/percussive click (metronome) */
+  const playTick = useCallback(
+    (velocity = 0.15) => {
+      const ctx = ctxRef.current;
+      const master = masterGainRef.current;
+      if (!ctx || !master) return;
+      if (ctx.state === "suspended") ctx.resume();
+
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const env = ctx.createGain();
+
+      // Sharp, dry wood-block-like click
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(400, now + 0.015);
+
+      env.gain.setValueAtTime(0, now);
+      env.gain.linearRampToValueAtTime(velocity, now + 0.001);
+      env.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+      osc.connect(env);
+      env.connect(master);
+
+      osc.start(now);
+      osc.stop(now + 0.04);
+    },
+    []
+  );
+
   /** Acerto → volume do Canal B sobe para 1.0 */
   const rewardHit = useCallback(() => {
     const ctx = ctxRef.current;
@@ -279,11 +312,12 @@ export function useAudioEngine(): AudioEngineReturn {
     getCurrentTime,
     scheduleAccompaniment,
     playStudent,
+    playTick,
     rewardHit,
     penaltyMiss,
     setVolume,
     destroy,
-  }), [init, resume, getCurrentTime, scheduleAccompaniment, playStudent, rewardHit, penaltyMiss, setVolume, destroy]);
+  }), [init, resume, getCurrentTime, scheduleAccompaniment, playStudent, playTick, rewardHit, penaltyMiss, setVolume, destroy]);
 
 
   return engine;

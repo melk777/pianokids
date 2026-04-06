@@ -49,7 +49,7 @@ export default function VirtualKeyboard({ onPlayNote, onReleaseNote, activeNotes
 
   return (
     <div className={`relative w-full h-full select-none ${className}`}>
-      <div className="relative h-full flex min-w-max p-0">
+      <div className="relative h-full flex min-w-max p-0 bg-zinc-900 border-t-4 border-black shadow-inner">
           
         {/* Camada das Teclas Brancas */}
         <div className="flex h-full gap-0">
@@ -65,31 +65,38 @@ export default function VirtualKeyboard({ onPlayNote, onReleaseNote, activeNotes
                 onMouseLeave={() => pressedNotes.has(note) && stopPlay(note)}
                 onTouchStart={(e) => { e.preventDefault(); startPlay(note); }}
                 onTouchEnd={(e) => { e.preventDefault(); stopPlay(note); }}
-                className={`relative w-[60px] h-full rounded-b-lg border-x border-black/5 transition-all duration-75 flex flex-col justify-end items-center pb-6 active:scale-95 touch-none ${
+                className={`relative w-[60px] h-full rounded-b-xl border-x border-zinc-200/50 transition-all duration-75 flex flex-col justify-end items-center pb-8 active:translate-y-1 touch-none group ${
                   isActive 
-                    ? "bg-gradient-to-b from-white to-cyan shadow-[0_0_20px_rgba(0,234,255,0.6)]" 
-                    : "bg-gradient-to-b from-white to-zinc-100 hover:from-white hover:to-zinc-200"
+                    ? "bg-gradient-to-b from-zinc-100 to-cyan shadow-[inset_0_-8px_15px_rgba(0,234,255,0.4),0_10px_20px_rgba(0,0,0,0.4)] translate-y-1" 
+                    : "bg-gradient-to-b from-white via-zinc-50 to-zinc-200 shadow-[inset_0_-4px_0_rgba(0,0,0,0.1),0_4px_6px_rgba(0,0,0,0.2)] hover:to-zinc-300"
                 }`}
+                style={{ zIndex: 1 }}
               >
-                {/* Indicador de Tecla Física (Desktop Only Hint) */}
+                {/* Ativity Glow on top */}
+                {isActive && <div className="absolute top-0 left-0 right-0 h-1 bg-cyan shadow-[0_4px_12px_rgba(0,234,255,0.8)] z-20" />}
+
+                {/* Physical Key indicator */}
                 {physicalKey && (
-                  <div className={`mb-2 w-6 h-6 rounded flex items-center justify-center text-[10px] font-black border transition-colors ${
-                    isActive ? "bg-white/20 border-white/40 text-white" : "bg-zinc-200/50 border-zinc-300 text-zinc-500"
+                  <div className={`mb-3 w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold border transition-colors ${
+                    isActive ? "bg-white/30 border-white/50 text-white" : "bg-zinc-100 border-zinc-300 text-zinc-400 group-hover:text-zinc-500"
                   }`}>
                     {physicalKey}
                   </div>
                 )}
                 
-                <span className={`text-[12px] font-black uppercase tracking-tighter ${isActive ? "text-white" : "text-zinc-600"}`}>
+                <span className={`text-[11px] font-black uppercase tracking-widest ${isActive ? "text-white" : "text-zinc-400"}`}>
                   {midiNoteToName(note).replace(/\d/, "")}
                 </span>
+                
+                {/* 3D Reflection bevel on bottom */}
+                {!isActive && <div className="absolute bottom-1 left-1 right-1 h-[2px] bg-white/60 rounded-full blur-[1px]" />}
               </button>
             );
           })}
         </div>
 
         {/* Camada das Teclas Pretas (Absolute Overlay) */}
-        <div className="absolute top-0 left-0 h-[60%] pointer-events-none flex p-0">
+        <div className="absolute top-0 left-0 h-[62%] pointer-events-none flex p-0">
           {whiteNotes.map((whiteNote) => {
             const blackNote = whiteNote + 1;
             const hasBlackNext = isBlackKey(blackNote) && blackNote <= endNote;
@@ -107,16 +114,21 @@ export default function VirtualKeyboard({ onPlayNote, onReleaseNote, activeNotes
                   onMouseLeave={() => pressedNotes.has(blackNote) && stopPlay(blackNote)}
                   onTouchStart={(e) => { e.preventDefault(); e.stopPropagation(); startPlay(blackNote); }}
                   onTouchEnd={(e) => { e.preventDefault(); stopPlay(blackNote); }}
-                  className={`absolute right-[-20px] top-0 w-10 h-full rounded-b-md transition-all duration-75 pointer-events-auto z-10 active:scale-95 touch-none flex flex-col items-center justify-end pb-4 ${
+                  className={`absolute right-[-22px] top-0 w-11 h-full rounded-b-lg transition-all duration-75 pointer-events-auto z-10 touch-none flex flex-col items-center justify-end pb-5 shadow-2xl ${
                     isActive
-                      ? "bg-gradient-to-b from-magenta to-purple-600 shadow-[0_0_15px_rgba(255,0,229,0.7)]"
-                      : "bg-gradient-to-b from-zinc-800 to-black border-x border-b border-white/20 shadow-xl"
+                      ? "bg-gradient-to-b from-zinc-800 to-magenta shadow-[inset_0_-6px_10px_rgba(255,0,229,0.5),0_8px_15px_rgba(0,0,0,0.5)] translate-y-1"
+                      : "bg-gradient-to-br from-zinc-700 via-zinc-800 to-black border-x border-b border-white/10 shadow-[inset_0_-3px_0_rgba(255,255,255,0.05),0_10px_10px_rgba(0,0,0,0.6)] hover:brightness-125"
                   }`}
                 >
-                  {/* Indicador de Tecla Física (Preta) */}
+                   {/* Ativity Glow on top (Black Keys) */}
+                   {isActive && <div className="absolute top-0 left-0 right-0 h-1 bg-magenta shadow-[0_4px_10px_rgba(255,0,229,0.8)] z-20" />}
+
+                  {/* Reflection highlights */}
+                  {!isActive && <div className="absolute top-[2px] left-[4px] right-[4px] h-[4px] bg-white/5 rounded-full" />}
+                  
                   {physicalKey && (
-                    <div className={`w-5 h-5 rounded flex items-center justify-center text-[9px] font-black border transition-colors ${
-                      isActive ? "bg-white/20 border-white/40 text-white" : "bg-black/50 border-white/10 text-white/40"
+                    <div className={`w-4 h-4 rounded flex items-center justify-center text-[8px] font-bold border transition-colors ${
+                      isActive ? "bg-white/20 border-white/30 text-white" : "bg-black/40 border-white/5 text-white/30"
                     }`}>
                       {physicalKey}
                     </div>
