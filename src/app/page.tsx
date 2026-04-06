@@ -350,7 +350,8 @@ export default function Home() {
                 price={CLIENT_PLANS.monthly.price}
                 period={CLIENT_PLANS.monthly.period}
                 features={[...CLIENT_PLANS.monthly.features]}
-                onSubscribe={() => handleSubscribe("monthly")}
+                planKey="monthly"
+                onSubscribe={handleSubscribe}
               />
               <PricingCard
                 name={CLIENT_PLANS.yearly.name}
@@ -358,8 +359,9 @@ export default function Home() {
                 period={CLIENT_PLANS.yearly.period}
                 features={[...CLIENT_PLANS.yearly.features]}
                 badge={CLIENT_PLANS.yearly.badge}
+                planKey="yearly"
                 popular
-                onSubscribe={() => handleSubscribe("yearly")}
+                onSubscribe={handleSubscribe}
               />
             </div>
           </div>

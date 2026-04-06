@@ -9,9 +9,10 @@ interface PricingCardProps {
   price: string;
   period: string;
   features: string[];
+  planKey: string;
   badge?: string;
   popular?: boolean;
-  onSubscribe: () => Promise<void>;
+  onSubscribe: (planKey: string) => Promise<void>;
 }
 
 export default function PricingCard({
@@ -19,6 +20,7 @@ export default function PricingCard({
   price,
   period,
   features,
+  planKey,
   badge,
   popular,
   onSubscribe,
@@ -28,7 +30,7 @@ export default function PricingCard({
   const handleClick = async () => {
     setLoading(true);
     try {
-      await onSubscribe();
+      await onSubscribe(planKey);
     } finally {
       setLoading(false);
     }
