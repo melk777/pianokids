@@ -206,8 +206,8 @@ export default function PianoPlayer({
     const resizeCanvas = () => {
       width = canvas.parentElement?.clientWidth || canvas.clientWidth;
       height = canvas.parentElement?.clientHeight || canvas.clientHeight;
-      // Buffer interno segue a largura total do teclado para resolução infinita no scroll
-      canvas.width = totalWidth * dpr;
+      // Buffer interno agora segue a largura REAL da tela para ocupar tudo
+      canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.scale(dpr, dpr);
     };
@@ -216,28 +216,6 @@ export default function PianoPlayer({
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // FIX: Alinhamento milimétrico com as teclas do Teclado Virtual (60px cada)
-    const laneW = 60; 
-    
-    // Calcula o centro exato do X de cada nota (seja branca ou preta)
-    const getNoteRect = (midi: number) => {
-        if (!isBlackKey(midi)) {
-            const idx = whiteNotes.indexOf(midi);
-            return { x: idx * laneW, w: laneW, isBlack: false };
-        } else {
-            const prevWhite = midi - 1;
-            const idx = whiteNotes.indexOf(prevWhite);
-            const w = laneW * 0.55;
-            const x = (idx + 1) * laneW - (w / 2);
-            return { x, w, isBlack: true };
-        }
-    };
-    
-    const isShortScreen = height < 500;
-    const KEYBOARD_HEIGHT = isShortScreen ? 180 : 280; 
-    const HIT_Y = height - KEYBOARD_HEIGHT; 
-    const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
-
     // LOOP PRINCIPAL
     const tick = () => {
       if (!isPlaying) {
@@ -245,13 +223,38 @@ export default function PianoPlayer({
         ctx.fillStyle = "#0A0A0A"; // BG Black
         ctx.fillRect(0, 0, width, height);
         
+        const isShortScreenIdle = height < 500;
+        const KEYBOARD_HEIGHT_IDLE = isShortScreenIdle ? 180 : 280; 
+        const HIT_Y_IDLE = height - KEYBOARD_HEIGHT_IDLE; 
+
         ctx.fillStyle = COLORS.hitZoneLine;
-        ctx.fillRect(0, HIT_Y, width, 1.5);
+        ctx.fillRect(0, HIT_Y_IDLE, width, 1.5);
         if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
         return;
       }
 
       const state = stateRef.current;
+
+      // FIX: Cálculo dinâmico de laneW (preenchimento total da tela)
+      const laneW = width / whiteNotes.length;
+      
+      const getNoteRect = (midi: number) => {
+        if (!isBlackKey(midi)) {
+            const idx = whiteNotes.indexOf(midi);
+            return { x: idx * laneW, w: laneW, isBlack: false };
+        } else {
+            const prevWhite = midi - 1;
+            const idx = whiteNotes.indexOf(prevWhite);
+            const w = laneW * 0.65; // Proporção da tecla preta
+            const x = (idx + 1) * laneW - (w / 2);
+            return { x, w, isBlack: true };
+        }
+      };
+
+      const isShortScreen = height < 500;
+      const KEYBOARD_HEIGHT = isShortScreen ? 180 : 280; 
+      const HIT_Y = height - KEYBOARD_HEIGHT; 
+      const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
 
       // Sincronia ABSOLUTA com áudio. (Não usar StartTime diff).
       const rawAudioTime = getAudioTime();
@@ -598,14 +601,13 @@ export default function PianoPlayer({
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-zinc-950/40 to-black" />
 
       {/* ── CONTAINER DE SCROLL UNIFICADO (Notas + Teclado) ── */}
-      <div className="absolute inset-0 overflow-x-auto overflow-y-hidden scrollbar-hide touch-pan-x z-10">
-        <div style={{ width: `${totalWidth}px` }} className="relative h-full">
+      <div className="absolute inset-0 overflow-hidden z-10">
+        <div className="relative w-full h-full">
           
-          {/* Tela de Renderização das Notas (Canvas fixo com a largura do teclado) */}
+          {/* Tela de Renderização das Notas (Canvas 100% da largura) */}
           <canvas
             ref={canvasRef}
-            className="absolute inset-0 block h-full pointer-events-none"
-            style={{ width: `${totalWidth}px` }}
+            className="absolute inset-0 block w-full h-full pointer-events-none"
           />
 
           {/* TECLADO VIRTUAL INTEGRADO (Hit Zone) */}
