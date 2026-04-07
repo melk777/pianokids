@@ -1,19 +1,28 @@
 import { NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import { getStripe } from "@/lib/stripe";
 import { hasSpecialAccess } from "@/lib/access-control";
 
 export const dynamic = "force-dynamic";
 
-/**
- * GET /api/auth/stripe-check
- * Verifica se o usuário logado possui uma assinatura ativa no Stripe.
- * Retorna: status, planType, hasAccess, customerId, interval (monthly/yearly)
- */
 export async function GET() {
-  const { userId } = await auth();
-  const user = await currentUser();
-  const email = user?.emailAddresses?.[0]?.emailAddress;
+  const cookieStore = cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+      },
+    }
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  const userId = user?.id;
+  const email = user?.email;
 
   if (!userId) {
     return NextResponse.json(
@@ -35,6 +44,40 @@ export async function GET() {
     });
   }
 
+  // 0.1 Buscar dados do perfil no Supabase (Trial e Status)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("subscription_status, trial_ends_at, stripe_customer_id")
+    .eq("id", userId)
+    .single();
+
+  if (profile) {
+    const now = new Date();
+    const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
+    
+    // Se o status for ACTIVE no banco, já libera o acesso (evita chamadas desnecessárias ao Stripe)
+    if (profile.subscription_status === "active") {
+      return NextResponse.json({
+        status: "active",
+        planType: "paid", // Simplificado
+        hasAccess: true,
+        customerId: profile.stripe_customer_id || null,
+        currentPeriodEnd: null, // Pode ser preenchido se tivermos a coluna
+      });
+    }
+
+    // Se estiver em TRIAL e dentro do prazo, libera o acesso
+    if (profile.subscription_status === "trialing" && trialEndsAt && now < trialEndsAt) {
+      return NextResponse.json({
+        status: "trialing",
+        planType: "trial",
+        hasAccess: true,
+        customerId: profile.stripe_customer_id || null,
+        currentPeriodEnd: trialEndsAt.toISOString(),
+      });
+    }
+  }
+
   try {
     const stripe = getStripe();
 
@@ -47,7 +90,8 @@ export async function GET() {
     for (const session of sessions.data) {
       if (
         session.client_reference_id === userId ||
-        session.metadata?.clerkUserId === userId
+        session.metadata?.userId === userId ||
+        session.metadata?.clerkUserId === userId // Mantemos como fallback temporário se houver legados
       ) {
         if (session.customer) {
           customerId =
