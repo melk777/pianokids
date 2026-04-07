@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getStripe } from "@/lib/stripe";
-import { PLANS } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
