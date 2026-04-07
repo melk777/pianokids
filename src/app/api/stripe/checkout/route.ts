@@ -35,6 +35,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log("DEBUG: Iniciando checkout para:", planKey, "com Price ID:", priceId);
+
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -54,10 +56,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log("DEBUG: Checkout session criada com sucesso:", session.id);
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Erro interno";
-    console.error("Stripe checkout error:", message);
+    console.error("DEBUG STRIPE ERROR:", err); // Log completo para ver o objeto de erro
     return NextResponse.json(
       { error: message },
       { status: 500 }
