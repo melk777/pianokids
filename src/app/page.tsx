@@ -81,8 +81,9 @@ export default function Home() {
     }
 
     if (data.url) {
-      window.location.href = data.url;
+      window.location.assign(data.url);
     } else if (data.error) {
+      alert(`Erro: ${data.error}`);
       console.error("Checkout error:", data.error);
     }
   };

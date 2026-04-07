@@ -12,7 +12,7 @@ interface PricingCardProps {
   planKey: string;
   badge?: string;
   popular?: boolean;
-  onSubscribe: (planKey: string) => Promise<void>;
+  onSubscribe: (planKey: any) => void;
 }
 
 export default function PricingCard({
