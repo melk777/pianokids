@@ -1,119 +1,80 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef, useMemo, Suspense } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import ScoreScreen from "@/components/ScoreScreen";
-import OrientationOverlay from "@/components/OrientationOverlay";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { songs } from "@/lib/songs";
 import PianoPlayer from "@/components/PianoPlayer";
-// Removido useMIDI
+import StarryBackground from "@/components/StarryBackground";
+import { useSFX } from "@/hooks/useSFX";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Play, 
+  ArrowLeft, 
+  Settings, 
+  Music,
+  Trophy,
+  Loader2,
+  AlertCircle
+} from "lucide-react";
+import Header from "@/components/Header";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
-import { useKeyboardInput } from "@/hooks/useKeyboardInput";
 import { useAudioInput } from "@/hooks/useAudioInput";
-import { getSongById, type Song, type SongNote } from "@/lib/songs";
+import { useKeyboardInput } from "@/hooks/useKeyboardInput";
+import { type MIDINote } from "@/hooks/useMIDI";
+import { useProfile } from "@/hooks/useProfile";
+import { useSubscription } from "@/hooks/useSubscription";
+import type { Difficulty } from "@/lib/songFilters";
 
-import {
-  type Difficulty,
-  DIFFICULTY_LABELS,
-  DIFFICULTY_COLORS,
-  filterNotesByDifficulty,
-  getAccompanimentNotes,
-} from "@/lib/songFilters";
-import { Zap, Shield, Crown, Volume2, Mic, MicOff, Play } from "lucide-react";
-
-
-const DIFFICULTY_ICONS: Record<Difficulty, React.ReactNode> = {
-  beginner: <Shield className="w-4 h-4" />,
-  medium: <Zap className="w-4 h-4" />,
-  pro: <Crown className="w-4 h-4" />,
-};
-
-export default function PlayPage() {
-  return (
-    <Suspense fallback={<div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-8">
-      <div className="w-12 h-12 border-4 border-cyan/20 border-t-cyan rounded-full animate-spin mb-4" />
-      <span className="text-xs font-bold tracking-[4px] uppercase opacity-40">Sincronizando...</span>
-    </div>}>
-      <PlayPageContent />
-    </Suspense>
-  );
-}
-
-function PlayPageContent() {
+export default function PlaySongPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const { playClick } = useSFX();
   const songId = params.songId as string;
-  const isFreePlay = songId === "freeplay";
-  
-  const song = useMemo<Song | undefined>(() => {
-    if (isFreePlay) {
-      return { 
-        id: "freeplay", 
-        title: "Prática Livre", 
-        artist: "Sintetizador Livre", 
-        category: "Para Iniciantes", 
-        isPremium: false, 
-        difficulty: "Fácil", 
-        duration: 0, 
-        bpm: 120, 
-        coverUrl: "", 
-        notes: [] 
-      };
-    }
-    return getSongById(songId);
-  }, [isFreePlay, songId]);
+  const song = songs.find((s) => s.id === songId);
 
-  // const { isConnected, activeNotes: midiActiveNotes, connect } = useMIDI(); // REMOVIDO
-  const { isListening: isMicActive, activeAudioNote, start: startMic, stop: stopMic } = useAudioInput();
-  const audio = useAudioEngine();
+  // Profile and Progress tracking
+  const { recordPracticeSession } = useProfile();
+  const { hasAccess: isSubscribed, loading: subscriptionLoading } = useSubscription();
 
-  // Tipo para nota MIDI (copiado de useMIDI para manter compatibilidade no código local)
-  type PianoNoteRecord = {
-    note: number;
-    velocity: number;
-    channel: number;
-    timestamp: number;
-  };
+  // Audio Context and Synth
+  const audioEngine = useAudioEngine();
+  const { isSupported: micSupported, isListening, start: startMic, activeAudioNote } = useAudioInput();
 
-  const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
+  // Component State
+  const [gameState, setGameState] = useState<"idle" | "playing" | "finished">("idle");
+  const [difficulty] = useState<Difficulty>("beginner");
+  const [audioEnabled] = useState(true);
+  const [simulatedActiveNotes, setSimulatedActiveNotes] = useState<Map<number, { note: number; timestamp: number }>>(new Map());
+  const [score, setScore] = useState(0);
+  const [combo, setCombo] = useState(0);
+  const [accuracy, setAccuracy] = useState(0);
+  const [tempo, setTempo] = useState(1);
+  const [isWaitingMode, setIsWaitingMode] = useState(true);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [gameState, setGameState] = useState<"idle" | "countdown" | "playing" | "ended">("idle");
-  const [countdown, setCountdown] = useState<number | null>(null);
-  const [audioStartTime, setAudioStartTime] = useState(0);
-  // MIDI Setup removido
+  // Sync mic on mount
   useEffect(() => {
-    // Tenta iniciar o microfone automaticamente se possível
-    // startMic();
-  }, [startMic]);
-  const [finalScore, setFinalScore] = useState({ score: 0, combo: 0, accuracy: 100 });
-  const [audioEnabled, setAudioEnabled] = useState(true);
-  const [isWaitingMode, setIsWaitingMode] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1.0); // 0.1 a 1.1
+    if (micSupported && !isListening) {
+      startMic();
+    }
+  }, [micSupported, isListening, startMic]);
 
-  // Simulated Notes (QWERTY / Virtual Keyboard)
-  const [simulatedActiveNotes, setSimulatedActiveNotes] = useState<Map<number, PianoNoteRecord>>(new Map());
+  // Pre-filtered notes based on difficulty (Songs in current lib don't have note-level difficulty filtering)
+  const songNotes = useMemo(() => {
+    if (!song) return [];
+    return song.notes;
+  }, [song]);
 
   const handleSimulatedPlay = useCallback((midi: number) => {
-    const noteData: PianoNoteRecord = {
-      note: midi,
-      velocity: 100,
-      channel: 1,
-      timestamp: performance.now()
-    };
-    
-    setSimulatedActiveNotes((prev: Map<number, PianoNoteRecord>) => {
+    setSimulatedActiveNotes((prev) => {
       const next = new Map(prev);
-      next.set(midi, noteData);
+      next.set(midi, { note: midi, timestamp: Date.now() });
       return next;
     });
 
     if (audioEnabled) {
-      audio.playStudent(midi, 0.5, 0.8);
+      audioEngine.playStudent(midi, 0.8);
     }
-  }, [audio, audioEnabled]);
+  }, [audioEngine, audioEnabled]);
 
   const handleSimulatedRelease = useCallback((midi: number) => {
     setSimulatedActiveNotes((prev) => {
@@ -123,314 +84,313 @@ function PlayPageContent() {
     });
   }, []);
 
-  // UseKeyboardInput hook para tocar notas com o computador (apenas se desejado)
-  useKeyboardInput({
-    onPlayNote: handleSimulatedPlay,
-    onReleaseNote: handleSimulatedRelease,
-  });
+  // UseKeyboardInput hook (QWERTY disabled)
+  useKeyboardInput();
 
   const activeNotes = useMemo(() => {
-    const merged = new Map<number, any>();
-    // midiActiveNotes.forEach((v, k) => merged.set(k, v)); // REMOVIDO
-    simulatedActiveNotes.forEach((v, k) => merged.set(k, v));
+    const merged = new Map<number, MIDINote>();
+    
+    simulatedActiveNotes.forEach((v, k) => merged.set(k, {
+      note: v.note,
+      timestamp: v.timestamp,
+      velocity: 127,
+      channel: 1
+    }));
     
     // Suporte a Audio Feedback do Microfone
     if (activeAudioNote) {
       merged.set(activeAudioNote.note, {
         note: activeAudioNote.note,
-        velocity: 80,
-        channel: 1,
-        timestamp: performance.now()
+        timestamp: Date.now(),
+        velocity: 100,
+        channel: 1
       });
     }
+
     return merged;
   }, [simulatedActiveNotes, activeAudioNote]);
 
-  const startGame = useCallback(() => {
-    setGameState("countdown");
-    setCountdown(3);
-    audio.resume(); // Destrava o AudioContext cedo
-  }, [audio]);
+  const handleScoreUpdate = useCallback((newScore: number, newCombo: number, newAccuracy: number) => {
+    setScore(newScore);
+    setCombo(newCombo);
+    setAccuracy(newAccuracy);
+  }, []);
 
-  // Lógica da Contagem Regressiva
-  useEffect(() => {
-    if (gameState !== "countdown" || countdown === null) return;
-
-    // Tocar o TICK rítmico
-    audio.playTick(0.15);
-
-    if (countdown > 0) {
-      const timer = setTimeout(() => {
-        setCountdown(countdown - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else {
-      // Começar o Jogo pra valer
-      const LEAD_TIME = 4; // Segundos para a nota cair do topo (VIEWPORT_SECONDS)
-      const startTime = audio.getCurrentTime() + LEAD_TIME;
-      setAudioStartTime(startTime);
-      
-      // Agendar Acompanhamento (Real Music Sync)
-      // DESATIVADO: Agora usamos o PianoPlayer para disparar notas em tempo real.
-      // Isso permite mudar a velocidade durante a música e ter o Modo Espera funcionando.
-      
-      setGameState("playing");
-      setIsPlaying(true);
-      setCountdown(null);
+  const handleSongEnd = useCallback(async () => {
+    setGameState("finished");
+    
+    if (songId && song) {
+      await recordPracticeSession(
+        song.duration || 0,
+        accuracy,
+        true
+      );
     }
-  }, [countdown, gameState, audio, song, isFreePlay, difficulty]);
+  }, [songId, song, accuracy, recordPracticeSession]);
 
-  const handleScoreUpdate = useCallback((score: number, combo: number, accuracy: number) => {
-    setFinalScore({ score, combo, accuracy });
-  }, []);
-
-  const handleSongEnd = useCallback(() => {
-    setIsPlaying(false);
-    setGameState("ended");
-  }, []);
+  const restartGame = () => {
+    playClick();
+    setScore(0);
+    setCombo(0);
+    setAccuracy(0);
+    setGameState("idle");
+    setTimeout(() => setGameState("playing"), 100);
+  };
 
   const handlePlayAccompaniment = useCallback((midi: number, duration: number) => {
     if (audioEnabled) {
-      audio.scheduleAccompaniment(midi, audio.getCurrentTime(), duration, 0.6);
+      audioEngine.scheduleAccompaniment(midi, audioEngine.getCurrentTime(), duration, 0.6);
     }
-  }, [audio, audioEnabled]);
+  }, [audioEngine, audioEnabled]);
 
-  // AUTO-START Logic from URL Params (Image_2 Flow)
-  useEffect(() => {
-    const lHand = searchParams.get("leftHand") === "true";
-    const rHand = searchParams.get("rightHand") === "true";
-    const mic = searchParams.get("mic") === "true";
-    
-    // Se temos parâmetros de configuração, iniciamos direto
-    if (lHand || rHand) {
-      const isBoth = lHand && rHand;
-      // Mapeamento de níveis baseado nas mãos
-      setDifficulty(isBoth ? "pro" : "medium");
-
-      if (mic) startMic();
-      
-      // Removemos o timer de auto-start para esperar o toque real do aluno
-    }
-  }, [searchParams, startMic]);
-
-  // ESCUTAR TOQUE PARA INICIAR (Aperte uma tecla para começar)
-  // Suporte para Piano (MIDI/Mic), Teclado (Keydown) e Touch (Click)
-  useEffect(() => {
-    if (gameState !== "idle") return;
-
-    // 1. Piano ou MIDI ja estao no activeNotes
-    if (activeNotes.size > 0) {
-      startGame();
-      return;
-    }
-
-    // 2. Teclado do Computador
-    const handleKeyDown = () => {
-      startGame();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeNotes, gameState, startGame]);
-
-  const filteredNotes = useMemo<SongNote[]>(() => {
-    if (!song) return [];
-    return filterNotesByDifficulty(song.notes, difficulty);
-  }, [song, difficulty]);
-
-  const accompanimentNotes = useMemo<SongNote[]>(() => {
-    if (!song) return [];
-    return getAccompanimentNotes(song.notes, difficulty);
-  }, [song, difficulty]);
-
+  // Loading and Error States
   if (!song) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <h1 className="text-2xl font-bold mb-4">Música não encontrada</h1>
-        <Link href="/dashboard/songs" className="text-cyan hover:underline">
-          Voltar para a biblioteca
-        </Link>
+      <div className="min-h-screen bg-black flex items-center justify-center p-6 text-center">
+        <div className="max-w-md">
+          <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-6" />
+          <h1 className="text-3xl font-bold mb-4">Música não encontrada</h1>
+          <p className="text-white/50 mb-8">Não conseguimos localizar a música solicitada na nossa biblioteca.</p>
+          <button 
+            onClick={() => router.push("/dashboard/songs")}
+            className="px-8 py-3 bg-white text-black font-bold rounded-2xl hover:bg-white/90 transition-all"
+          >
+            Voltar para Biblioteca
+          </button>
+        </div>
       </div>
     );
   }
 
+  // Se não estiver inscrito e for música Pro, bloqueia
+  if (!isSubscribed && !subscriptionLoading && song.isPremium) {
+     router.push("/dashboard/membership");
+     return null;
+  }
+
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white font-sans overflow-hidden">
-      <OrientationOverlay />
-      
-      {/* ── HEADER DE JOGO ── */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-white/10 glass z-20">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard/songs" className="p-2 hover:bg-white/5 rounded-full transition-colors">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-lg font-bold leading-none">{song.title}</h1>
-            <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1">
-              PianoKids Studio • {song.artist}
-            </p>
-          </div>
-        </div>
+    <>
+      <Header />
+      <StarryBackground />
 
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setAudioEnabled(!audioEnabled)}
-            className={`p-2 rounded-lg transition-colors ${audioEnabled ? 'bg-cyan/10 text-cyan border border-cyan/20' : 'bg-white/5 text-white/30 border border-white/10'}`}
-          >
-            <Volume2 size={20} />
-          </button>
+      <main className="relative min-h-screen bg-transparent text-white pt-24 pb-12 px-4 md:px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto h-[calc(100vh-160px)] flex flex-col gap-6">
           
-          <button 
-            onClick={() => isMicActive ? stopMic() : startMic()}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${isMicActive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-white/5 border-white/10 text-white/40'}`}
-          >
-            {isMicActive ? <Mic size={16} /> : <MicOff size={16} />}
-            <span className="text-[10px] font-bold uppercase tracking-widest">{isMicActive ? "MIC ATIVO" : "MIC OFF"}</span>
-          </button>
-          
-          <div className="h-8 w-px bg-white/10 mx-2" />
-          
-          <div className="flex items-center gap-2">
-            <div className="text-right">
-              <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Resolução</p>
-              <p className="text-xs font-black text-white">Full HD</p>
+          {/* Header Actions */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => { playClick(); router.push("/dashboard/songs"); }}
+                className="w-12 h-12 rounded-2xl glass flex items-center justify-center hover:bg-white/10 transition-all"
+              >
+                <ArrowLeft className="w-5 h-5 text-white/50" />
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold font-geist-sans">{song.title}</h1>
+                <p className="text-xs text-white/40 uppercase tracking-widest font-semibold">{song.artist}</p>
+              </div>
             </div>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+
+            <div className="hidden md:flex items-center gap-3">
+               <div className="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/5 font-semibold text-white/60">
+                 Tempo: <span className="text-white">{Math.round(tempo * 100)}%</span>
+               </div>
+               <div className="text-xs px-3 py-1 rounded-full border border-magenta/20 bg-magenta/5 font-semibold text-magenta">
+                  Dificuldade: <span className="uppercase">{difficulty}</span>
+               </div>
             </div>
           </div>
-          
-          <div className="h-8 w-px bg-white/10 mx-2" />
 
-          {/* VELOCIDADE: [-] 100% [+] */}
-          <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-             <button 
-               onClick={() => setPlaybackSpeed(Math.max(0.1, playbackSpeed - 0.1))}
-               className="w-6 h-6 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 transition-colors text-white font-bold"
-             >
-               -
-             </button>
-             <div className="px-2 min-w-[80px] text-center">
-                <p className="text-[8px] text-white/30 uppercase tracking-widest font-black">Velocidade</p>
-                <p className="text-xs font-black text-cyan">{Math.round(playbackSpeed * 100)}%</p>
+          {/* HUD Score */}
+          <div className="flex justify-center">
+            <div className="flex items-center gap-12 glass p-4 px-12 rounded-3xl border border-white/5 shadow-2xl">
+               <div className="text-center">
+                 <p className="text-[10px] uppercase tracking-tighter text-white/30 font-bold mb-1">Pontos</p>
+                 <p className="text-2xl font-black text-gradient tabular-nums">{score}</p>
+               </div>
+               <div className="text-center relative">
+                 <p className="text-[10px] uppercase tracking-tighter text-white/30 font-bold mb-1">Combo</p>
+                 <p className="text-2xl font-black text-white tabular-nums">x{combo}</p>
+                 {combo > 5 && (
+                   <motion.div 
+                     initial={{ scale: 0.5, opacity: 0 }} 
+                     animate={{ scale: 1, opacity: 1 }}
+                     className="absolute -top-4 -right-8 w-6 h-6 rounded-full bg-magenta/20 border border-magenta/40 flex items-center justify-center"
+                   >
+                     <p className="text-[10px] font-bold text-magenta">!</p>
+                   </motion.div>
+                 )}
+               </div>
+               <div className="text-center">
+                 <p className="text-[10px] uppercase tracking-tighter text-white/30 font-bold mb-1">Precisão</p>
+                 <p className="text-2xl font-black text-white tabular-nums">{accuracy}%</p>
+               </div>
+            </div>
+          </div>
+
+          {/* Piano Game Area */}
+          <div className="flex-1 min-h-0 relative glass rounded-3xl border border-white/10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+            {!audioEngine ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md z-50">
+                <Loader2 className="w-12 h-12 text-cyan animate-spin mb-4" />
+                <p className="text-cyan font-bold animate-pulse tracking-widest text-xs uppercase">Carregando Sons Mágicos...</p>
+              </div>
+            ) : gameState === "idle" ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-40 p-8 text-center">
+                 <div className="w-20 h-20 rounded-3xl bg-cyan/20 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,234,255,0.2)]">
+                   <Play size={40} className="text-cyan ml-1" />
+                 </div>
+                 <h2 className="text-4xl font-bold mb-4 font-geist-sans">Pronto para começar?</h2>
+                 <p className="text-white/50 max-w-sm mb-10 text-lg">Toque seu piano ou pressione o botão abaixo para iniciar a música.</p>
+                 
+                 <div className="flex flex-col md:flex-row gap-4">
+                   <button 
+                     onClick={() => restartGame()}
+                     className="px-10 py-4 bg-gradient-to-r from-cyan to-magenta text-white font-bold rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3 text-lg"
+                   >
+                     Começar Aula <Play size={20} />
+                   </button>
+                   
+                   <button 
+                     onClick={() => router.push("/dashboard/songs")}
+                     className="px-8 py-4 bg-white/5 text-white/50 font-bold rounded-2xl border border-white/10 hover:bg-white/10 transition-all"
+                   >
+                     Mudar Música
+                   </button>
+                 </div>
+              </div>
+            ) : null}
+
+            {/* Piano Player Core Engine */}
+            <PianoPlayer
+              notes={songNotes}
+              difficulty={difficulty}
+              activeNotes={activeNotes}
+              isPlaying={gameState === "playing"}
+              getAudioTime={() => (audioEngine.getCurrentTime())}
+              onScoreUpdate={handleScoreUpdate}
+              onSongEnd={handleSongEnd}
+              onPlayNote={handleSimulatedPlay}
+              onReleaseNote={handleSimulatedRelease}
+              isFreePlay={song.id === "free-practice"}
+              isWaitingMode={isWaitingMode}
+              onPlayAccompaniment={handlePlayAccompaniment}
+              playbackSpeed={tempo}
+              songDuration={song.duration}
+            />
+          </div>
+
+          {/* Bottom Toolbar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 glass p-3 px-6 rounded-2xl border border-white/5">
+             <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                   <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Modo Espera</span>
+                   <button 
+                     onClick={() => { playClick(); setIsWaitingMode(!isWaitingMode); }}
+                     className={`w-10 h-5 rounded-full relative transition-colors ${isWaitingMode ? 'bg-cyan' : 'bg-white/10'}`}
+                   >
+                     <motion.div 
+                        animate={{ x: isWaitingMode ? 22 : 2 }}
+                        className="w-4 h-4 rounded-full bg-white absolute top-0.5" 
+                     />
+                   </button>
+                </div>
+                
+                <div className="h-4 w-px bg-white/10" />
+                
+                <div className="flex items-center gap-3">
+                   <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Velocidade</span>
+                   <div className="flex items-center gap-1">
+                      {[0.5, 0.75, 1.0].map(s => (
+                        <button 
+                          key={s}
+                          onClick={() => { playClick(); setTempo(s); }}
+                          className={`w-10 h-6 text-[10px] font-bold rounded flex items-center justify-center transition-all ${tempo === s ? 'bg-white text-black' : 'bg-white/5 text-white/30 hover:bg-white/10'}`}
+                        >
+                          {s}x
+                        </button>
+                      ))}
+                   </div>
+                </div>
              </div>
-             <button 
-               onClick={() => setPlaybackSpeed(Math.min(1.1, playbackSpeed + 0.1))}
-               className="w-6 h-6 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 transition-colors text-white font-bold"
-             >
-               +
-             </button>
+
+             <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => { playClick(); restartGame(); }}
+                  className="p-2 text-white/40 hover:text-white transition-colors"
+                  title="Reiniciar"
+                >
+                  <Music size={20} />
+                </button>
+                <div className="h-4 w-px bg-white/10" />
+                <button 
+                  className="p-2 text-white/40 hover:text-white transition-colors"
+                >
+                  <Settings size={20} />
+                </button>
+             </div>
           </div>
-
-          <div className="h-8 w-px bg-white/10 mx-2" />
-
-          {/* Toggle Modo Espera */}
-          <button 
-            onClick={() => setIsWaitingMode(!isWaitingMode)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${isWaitingMode ? 'bg-cyan text-black border-cyan' : 'bg-white/5 border-white/10 text-white/40 hover:text-white'}`}
-          >
-            <Play size={14} className={isWaitingMode ? "fill-black" : ""} />
-            <span className="text-[10px] font-black uppercase tracking-widest">
-              {isWaitingMode ? "ESPERA: ON" : "MODO ESPERA"}
-            </span>
-          </button>
         </div>
-      </div>
 
-      <div className="flex-1 relative flex flex-col p-4 md:p-6 gap-6 overflow-hidden">
-        
-
-
-        <AnimatePresence mode="wait">
-          {gameState === "idle" && (
+        {/* Success Modal */}
+        <AnimatePresence>
+          {gameState === "finished" && (
             <motion.div 
-              key="idle" 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
-              className="flex flex-col items-center justify-center p-12 text-center h-full cursor-pointer select-none"
-              onClick={startGame}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
             >
               <motion.div 
-                animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.7, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="flex flex-col items-center gap-6"
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                className="max-w-md w-full glass-card p-10 rounded-3xl border border-cyan/20 text-center relative overflow-hidden"
               >
-                <div className="w-24 h-24 rounded-full border border-white/20 flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 bg-white/10 rounded-full animate-pulse blur-xl" />
-                  <Play size={40} className="text-white absolute" />
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan via-magenta to-cyan" />
+                
+                <div className="relative mb-8">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", damping: 10, stiffness: 100, delay: 0.2 }}
+                  >
+                    <Trophy className="w-24 h-24 text-amber-400 mx-auto drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" />
+                  </motion.div>
                 </div>
-                <h2 className="text-3xl font-black text-white tracking-[8px] uppercase">
-                  Aperte uma tecla para começar
-                </h2>
-                <p className="text-cyan/60 text-xs font-bold tracking-[4px] uppercase">O Estúdio está pronto e te esperando</p>
+                
+                <h2 className="text-4xl font-black mb-2 text-gradient tracking-tighter uppercase font-geist-sans">Excelente!</h2>
+                <p className="text-white/50 mb-10">Você conquistou mais uma música na sua jornada mágica.</p>
+                
+                <div className="grid grid-cols-2 gap-4 mb-10">
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <p className="text-[10px] text-white/30 uppercase font-black tracking-widest mb-1">Pontuação</p>
+                    <p className="text-3xl font-bold text-white">{score}</p>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <p className="text-[10px] text-white/30 uppercase font-black tracking-widest mb-1">Precisão</p>
+                    <p className="text-3xl font-bold text-cyan">{accuracy}%</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col gap-4">
+                  <button 
+                    onClick={() => { playClick(); restartGame(); }}
+                    className="w-full py-4 bg-white text-black font-extrabold rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all text-lg"
+                  >
+                    Jogar Novamente
+                  </button>
+                  <button 
+                    onClick={() => { playClick(); router.push("/dashboard/songs"); }}
+                    className="w-full py-4 bg-transparent text-white/50 font-bold rounded-2xl hover:text-white transition-colors"
+                  >
+                    Voltar para Biblioteca
+                  </button>
+                </div>
               </motion.div>
             </motion.div>
-          )}
-
-          {gameState === "countdown" && (
-            <motion.div 
-              key="countdown"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.5 }}
-              className="flex flex-col items-center justify-center p-12 text-center h-full"
-            >
-              <motion.div
-                key={countdown}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: "spring", damping: 12 }}
-                className="flex flex-col items-center"
-              >
-                <span className="text-8xl md:text-9xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]">
-                   {countdown === 0 ? "VAI!" : countdown}
-                </span>
-                <p className="text-cyan text-xs font-bold tracking-[10px] uppercase mt-8 animate-pulse">Prepare-se</p>
-              </motion.div>
-            </motion.div>
-          )}
-
-          {gameState === "playing" && (
-            <motion.div key="playing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col">
-              <PianoPlayer
-                notes={filteredNotes}
-                difficulty={difficulty}
-                activeNotes={activeNotes}
-                isPlaying={isPlaying}
-                songDuration={song.duration}
-                getAudioTime={() => audio.getCurrentTime() - audioStartTime}
-                onScoreUpdate={handleScoreUpdate}
-                onSongEnd={handleSongEnd}
-                onPlayTick={(v) => audio.playTick(v || 0.1)}
-                isWaitingMode={isWaitingMode}
-                onPlayAccompaniment={handlePlayAccompaniment}
-                accompanimentNotes={accompanimentNotes}
-                playbackSpeed={playbackSpeed}
-              />
-            </motion.div>
-          )}
-
-          {gameState === "ended" && (
-            <ScoreScreen 
-              score={finalScore.score} 
-              combo={finalScore.combo} 
-              accuracy={finalScore.accuracy} 
-              onRestart={() => {
-                setGameState("idle");
-              }}
-              onNext={() => {
-                router.push("/dashboard/songs");
-              }}
-              onExit={() => {
-                router.push("/dashboard/songs");
-              }}
-            />
           )}
         </AnimatePresence>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }
