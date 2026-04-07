@@ -1,5 +1,5 @@
 /**
- * Módulo de Controle de Acesso (Whitelist)
+ * Módulo de Controle de Acesso (Whitelist) - Vercel Redeploy Trigger: 07-04-2026
  * 
  * Adicione aqui os IDs dos usuários do Clerk que devem ter acesso premium TOTAL
  * sem precisar assinar via Stripe.
