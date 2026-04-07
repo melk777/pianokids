@@ -11,7 +11,7 @@ export const PLANS = {
     features: [
       "Acesso a todas as músicas",
       "Prática livre ilimitada",
-      "Conexão MIDI",
+      "Reconhecimento via Microfone",
       "Progresso salvo",
     ],
   },
