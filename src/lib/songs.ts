@@ -4,6 +4,7 @@ import twinkleMidiData from "../../public/songs/brilha-brilha-estrelinha.json";
 import aDonaAranhaData from "../../public/songs/a-dona-aranha.json";
 import odeMidiData from "../../public/songs/ode-to-joy.json";
 import furEliseMidiData from "../../public/songs/fur-elise-easy-ver.json";
+import furEliseProData from "../../public/songs/fur-elise-pro.json";
 
 export interface SongNote {
   midi: number;       // MIDI note number (e.g., 60 = C4)
@@ -91,11 +92,23 @@ export const songs: Song[] = [
     difficulty: "Médio"
   },
 
-  // 6. Für Elise (Integrado via MIDI do Usuário)
+  // 6. Für Elise - Versão Iniciante/Intermediária
   {
     ...(furEliseMidiData as Song),
-    id: "fur-elise", // Mantendo o ID original para links de dashboard
-    title: "Für Elise",
+    id: "fur-elise",
+    title: "Für Elise (Iniciante)",
+    artist: "Beethoven",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "/images/covers/fur_elise_1775056434348.png",
+    difficulty: "Médio"
+  },
+
+  // 7. Für Elise - Versão PROFISSIONAL
+  {
+    ...(furEliseProData as Song),
+    id: "fur-elise-pro",
+    title: "Für Elise (Profissional)",
     artist: "Beethoven",
     category: "Clássicos",
     isPremium: true,

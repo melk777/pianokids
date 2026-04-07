@@ -19,7 +19,10 @@ export const SPECIAL_ACCESS_IDS: string[] = [
  * Aceita tanto o UserID do Clerk quanto o e-mail.
  */
 export function hasSpecialAccess(userId: string | null | undefined, email?: string | null): boolean {
-  if (userId && SPECIAL_ACCESS_IDS.includes(userId)) return true;
-  if (email && SPECIAL_ACCESS_IDS.includes(email)) return true;
+  const normalizedList = SPECIAL_ACCESS_IDS.map(id => id.toLowerCase().trim());
+  
+  if (userId && normalizedList.includes(userId.toLowerCase().trim())) return true;
+  if (email && normalizedList.includes(email.toLowerCase().trim())) return true;
+  
   return false;
 }

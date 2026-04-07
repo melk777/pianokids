@@ -5,14 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ScoreScreen from "@/components/ScoreScreen";
-import MidiSetup from "@/components/MidiSetup";
-import PianoPlayer from "@/components/PianoPlayer";
 import OrientationOverlay from "@/components/OrientationOverlay";
-import { useMIDI, type MIDINote } from "@/hooks/useMIDI";
+import PianoPlayer from "@/components/PianoPlayer";
+// Removido useMIDI
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useKeyboardInput } from "@/hooks/useKeyboardInput";
 import { useAudioInput } from "@/hooks/useAudioInput";
-import { getSongById, type Song } from "@/lib/songs";
+import { getSongById, type Song, type SongNote } from "@/lib/songs";
 
 import {
   type Difficulty,
@@ -54,38 +53,43 @@ export default function PlayPage() {
     return getSongById(songId);
   }, [isFreePlay, songId]);
 
-  const { isConnected, activeNotes: midiActiveNotes, connect } = useMIDI();
+  // const { isConnected, activeNotes: midiActiveNotes, connect } = useMIDI(); // REMOVIDO
   const { isListening: isMicActive, activeAudioNote, start: startMic, stop: stopMic } = useAudioInput();
   const audio = useAudioEngine();
+
+  // Tipo para nota MIDI (copiado de useMIDI para manter compatibilidade no código local)
+  type PianoNoteRecord = {
+    note: number;
+    velocity: number;
+    channel: number;
+    timestamp: number;
+  };
 
   const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "playing" | "ended">("idle");
-  const [showSetup, setShowSetup] = useState(false);
-  
-  // Efeito para mostrar o Setup MIDI apenas em Desktops no primeiro carregamento
+  // MIDI Setup removido
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth > 1024) {
-      setShowSetup(true);
-    }
-  }, []);
+    // Tenta iniciar o microfone automaticamente se possível
+    // startMic();
+  }, [startMic]);
   const [finalScore, setFinalScore] = useState({ score: 0, combo: 0, accuracy: 100 });
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [handMode, setHandMode] = useState<"right" | "both">("both");
 
   // Simulated Notes (QWERTY / Virtual Keyboard)
-  const [simulatedActiveNotes, setSimulatedActiveNotes] = useState<Map<number, MIDINote>>(new Map());
+  const [simulatedActiveNotes, setSimulatedActiveNotes] = useState<Map<number, PianoNoteRecord>>(new Map());
 
   const handleSimulatedPlay = useCallback((midi: number) => {
-    const noteData: MIDINote = {
+    const noteData: PianoNoteRecord = {
       note: midi,
       velocity: 100,
       channel: 1,
       timestamp: performance.now()
     };
     
-    setSimulatedActiveNotes(prev => {
+    setSimulatedActiveNotes((prev: Map<number, PianoNoteRecord>) => {
       const next = new Map(prev);
       next.set(midi, noteData);
       return next;
@@ -97,7 +101,7 @@ export default function PlayPage() {
   }, [audio, audioEnabled]);
 
   const handleSimulatedRelease = useCallback((midi: number) => {
-    setSimulatedActiveNotes(prev => {
+    setSimulatedActiveNotes((prev: Map<number, PianoNoteRecord>) => {
       const next = new Map(prev);
       next.delete(midi);
       return next;
@@ -111,28 +115,25 @@ export default function PlayPage() {
     disabled: gameState !== "playing"
   });
 
-  // Unified Notes Map (Single Source of Truth for game engine)
+  // Unified Notes Map (Microfone e Teclado)
   const mergedActiveNotes = useMemo(() => {
-    const merged = new Map<number, MIDINote>();
+    const merged = new Map<number, PianoNoteRecord>();
     
-    // 1. MIDI Notes
-    midiActiveNotes.forEach((v, k) => merged.set(k, v));
-    
-    // 2. Keyboard/Simulated Notes
-    simulatedActiveNotes.forEach((v, k) => merged.set(k, v));
+    // 1. Keyboard/Simulated Notes
+    simulatedActiveNotes.forEach((v: PianoNoteRecord, k: number) => merged.set(k, v));
 
-    // 3. Audio/Microphone Notes (Mapped to MIDINote shape)
+    // 2. Audio/Microphone Notes
     if (isMicActive && activeAudioNote) {
       merged.set(activeAudioNote.note, {
         note: activeAudioNote.note,
-        velocity: Math.round(activeAudioNote.volume * 200), // Map RMS to approximate velocity
+        velocity: Math.round(activeAudioNote.volume * 200),
         channel: 1,
         timestamp: activeAudioNote.timestamp
       });
     }
 
     return merged;
-  }, [midiActiveNotes, simulatedActiveNotes, activeAudioNote, isMicActive]);
+  }, [simulatedActiveNotes, activeAudioNote, isMicActive]);
 
 
   // Accompaniment scheduler
@@ -199,7 +200,7 @@ export default function PlayPage() {
 
     if (audioEnabled) {
       accompanimentScheduled.current = true;
-      accompanimentNotes.forEach((note) => {
+      accompanimentNotes.forEach((note: SongNote) => {
         audio.scheduleAccompaniment(note.midi, startAt + note.time, note.duration, note.velocity ?? 0.5);
       });
     }
@@ -268,10 +269,10 @@ export default function PlayPage() {
                 </button>
                 <button 
                   onClick={() => isMicActive ? stopMic() : startMic()} 
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${isMicActive ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" : "text-white/30 bg-white/5 border border-white/10"}`}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${isMicActive ? "text-emerald-400 bg-emerald-400/10 border border-emerald-400/20" : "text-amber-400 bg-amber-400/10 border border-amber-400/20 shadow-lg shadow-amber-900/10"}`}
                 >
                   {isMicActive ? <Mic className="w-3 h-3" /> : <MicOff className="w-3 h-3" />}
-                  {isMicActive ? "Mic ON" : "Mic OFF"}
+                  {isMicActive ? "Microfone ON" : "Microfone OFF (Ative para jogar)"}
                 </button>
                 <div className="inline-flex items-center rounded-lg bg-white/5 border border-white/10 p-1 gap-1">
                   <button 
@@ -287,10 +288,6 @@ export default function PlayPage() {
                     2 MÃOS
                   </button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-cyan" : "bg-white/20"}`} />
-                  <span className="hidden sm:inline text-xs text-white/40">{isConnected ? "MIDI" : "Sem MIDI"}</span>
-                </div>
               </div>
 
             </motion.div>
@@ -303,12 +300,16 @@ export default function PlayPage() {
             <motion.div key="idle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="glass rounded-2xl p-12 text-center border border-white/[0.06]">
               <div className="max-w-lg mx-auto">
                 <button 
-                  onClick={startGame}
-                  className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan/20 to-cyan/5 border border-cyan/20 flex items-center justify-center mx-auto mb-8 hover:scale-105 active:scale-95 transition-all group cursor-pointer shadow-lg shadow-cyan/10"
+                  onClick={isMicActive ? startGame : startMic}
+                  className={`w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-8 hover:scale-105 active:scale-95 transition-all group cursor-pointer shadow-lg ${isMicActive ? "bg-gradient-to-br from-cyan/20 to-cyan/5 border border-cyan/20 shadow-cyan/10" : "bg-gradient-to-br from-amber-400/20 to-amber-400/5 border border-amber-400/20 shadow-amber-400/10 pulsate-mic"}`}
                 >
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00EAFF" strokeWidth="1.5" className="group-hover:fill-cyan/20 transition-colors">
-                    <polygon points="5 3 19 12 5 21" />
-                  </svg>
+                  {isMicActive ? (
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00EAFF" strokeWidth="1.5" className="group-hover:fill-cyan/20 transition-colors">
+                      <polygon points="5 3 19 12 5 21" />
+                    </svg>
+                  ) : (
+                    <Mic className="w-9 h-9 text-amber-400" />
+                  )}
                 </button>
                 <div className="mb-8">
                   <p className="text-xs uppercase tracking-widest text-white/30 mb-4">{isFreePlay ? "Modo de Teclado" : "Selecione a Dificuldade"}</p>
@@ -323,18 +324,23 @@ export default function PlayPage() {
                     </div>
                   )}
                 </div>
-                <h2 className="text-xl font-semibold mb-3">Pronto para tocar?</h2>
-                <p className="text-sm text-white/40 mb-8">Sincronize seu teclado MIDI, use o teclado (A-K) ou clique nas teclas para marcar pontos!</p>
+                <h2 className="text-xl font-semibold mb-3">
+                  {isMicActive ? "Pronto para tocar?" : "Ative seu Microfone"}
+                </h2>
+                <p className="text-sm text-white/40 mb-8 max-w-sm mx-auto">
+                  {isMicActive 
+                    ? "O PianoKids reconhecerá o som do seu instrumento. Comece a lição e marque muitos pontos!"
+                    : "Para que o PianoKids detecte sua performance, precisamos acessar o microfone para ouvir as notas do seu piano."}
+                </p>
                 <div className="flex gap-3 justify-center">
-                  {!isConnected && !isMicActive && (
-                    <button onClick={() => startMic()} className="btn-secondary flex items-center gap-2">
-                      <Mic className="w-4 h-4" /> Ativar Microfone
+                  {!isMicActive ? (
+                    <button onClick={() => startMic()} className="btn-primary flex items-center gap-2 px-8">
+                      <Mic className="w-4 h-4" /> ATIVAR MICROFONE OBRIGATÓRIO
                     </button>
+                  ) : (
+                    <button onClick={startGame} className="btn-primary px-12">Começar Partida</button>
                   )}
-                  {!isConnected && <button onClick={() => setShowSetup(true)} className="btn-secondary">Conectar MIDI</button>}
-                  <button onClick={startGame} className="btn-primary">Começar</button>
                 </div>
-
               </div>
             </motion.div>
           )}
@@ -373,8 +379,6 @@ export default function PlayPage() {
           )}
 
         </AnimatePresence>
-        
-        <MidiSetup isOpen={showSetup} onClose={() => setShowSetup(false)} isConnected={isConnected} onConnect={connect} />
       </div>
     </main>
   );
