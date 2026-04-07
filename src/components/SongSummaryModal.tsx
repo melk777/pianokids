@@ -3,11 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  X, 
   Mic, 
   MicOff, 
   Hand, 
-  ChevronRight,
   Play,
   ArrowLeft
 } from "lucide-react";
@@ -35,7 +33,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
   const activeHandsCount = (leftHand ? 1 : 0) + (rightHand ? 1 : 0);
   const isHard = activeHandsCount === 2;
   const difficultyLabel = isHard ? "DIFÍCIL" : "FÁCIL";
-  const difficultyColor = isHard ? "bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.6)]" : "bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)]";
+
 
   // Reset state when opening a new song
   useEffect(() => {

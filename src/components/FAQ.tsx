@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import * as Accordion from "@radix-ui/react-accordion";
-import { ChevronDown, Keyboard, CreditCard, ShieldCheck, Headphones, Zap } from "lucide-react";
+import { ChevronDown, Keyboard, CreditCard, ShieldCheck, Zap } from "lucide-react";
 
 const faqs = [
   {

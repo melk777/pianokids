@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Music, Star, BarChart3, ChevronDown } from "lucide-react";
@@ -11,7 +10,6 @@ import PartnerMarquee from "@/components/PartnerMarquee";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
-import { useJoseAudio } from "@/hooks/useJoseAudio";
 import GalaxyBackground from "@/components/GalaxyBackground";
 
 
@@ -48,7 +46,6 @@ const CLIENT_PLANS = {
 
 export default function Home() {
   const router = useRouter();
-  const { playIntro, playSuccess, playError } = useJoseAudio();
 
   /* ── Stripe checkout (com redirect p/ login se não autenticado) ── */
   const handleSubscribe = async (planKey: string) => {

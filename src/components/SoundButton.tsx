@@ -2,7 +2,7 @@
 
 import { useSFX } from "@/hooks/useSFX";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
-import { Play, Pause, Music, Volume2 } from "lucide-react";
+import { Pause, Music, Volume2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function SoundButton() {
@@ -50,7 +50,7 @@ export default function SoundButton() {
       </div>
 
       <p className="text-[10px] text-white/30 italic text-center">
-        Dica: Clique em "Teste SFX" para ouvir o clique e ativar a música de fundo.
+        Dica: Clique em &quot;Teste SFX&quot; para ouvir o clique e ativar a música de fundo.
       </p>
     </div>
   );

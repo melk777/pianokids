@@ -63,9 +63,10 @@ export function useProfile() {
       } else {
         setProfile(data);
       }
-    } catch (err: any) {
-      console.error("Error fetching profile:", err.message);
-      setError(err.message);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro desconhecido";
+      console.error("Error fetching profile:", msg);
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -78,8 +79,8 @@ export function useProfile() {
 
       // Clean up updates to avoid sending extra fields
       const cleanUpdates = { ...updates };
-      delete (cleanUpdates as any).id;
-      delete (cleanUpdates as any).updated_at;
+      delete cleanUpdates.id;
+      delete cleanUpdates.updated_at;
 
       const { data, error: updateError } = await supabase
         .from("profiles")
@@ -96,9 +97,10 @@ export function useProfile() {
       // Update local state with fresh copy
       setProfile({ ...data });
       return { success: true };
-    } catch (err: any) {
-      console.error("Error updating profile:", err.message);
-      return { success: false, error: err.message };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro ao atualizar";
+      console.error("Error updating profile:", msg);
+      return { success: false, error: msg };
     }
   };
 
@@ -110,7 +112,7 @@ export function useProfile() {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { 
           cacheControl: '3600', 
@@ -127,9 +129,10 @@ export function useProfile() {
       if (!res.success) throw new Error(res.error);
 
       return { success: true, url: publicUrl, fileName };
-    } catch (err: any) {
-      console.error("Error uploading avatar:", err.message);
-      return { success: false, error: err.message };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro no upload";
+      console.error("Error uploading avatar:", msg);
+      return { success: false, error: msg };
     }
   };
 
@@ -150,7 +153,7 @@ export function useProfile() {
     const today = new Date().toISOString().split('T')[0];
     if (profile.last_practice_date !== today) {
       updates.streak_days = (profile.streak_days || 0) + 1;
-      (updates as any).last_practice_date = today;
+      updates.last_practice_date = today;
     }
 
     return await updateProfile(updates);

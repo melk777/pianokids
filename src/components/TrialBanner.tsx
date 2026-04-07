@@ -2,7 +2,7 @@
 
 import { useSubscription } from "@/hooks/useSubscription";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, Clock, ArrowRight } from "lucide-react";
+import { Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function TrialBanner() {

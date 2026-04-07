@@ -8,13 +8,7 @@ import {
   Lock, 
   Play, 
   Search, 
-  X, 
-  Baby, 
-  Music, 
-  Mic, 
-  Zap, 
-  Library,
-  Heart
+  X
 } from "lucide-react";
 import { useSFX } from "@/hooks/useSFX";
 import { useState, useMemo } from "react";
@@ -224,7 +218,17 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
 }
 
 /* ── Song Card Sub-component ── */
-function SongCard({ song, hasPremium, catIndex, i, playClick, getDifficultyStars, onSelect }: any) {
+interface SongCardProps {
+  song: Song;
+  hasPremium: boolean;
+  catIndex: number;
+  i: number;
+  playClick: () => void;
+  getDifficultyStars: (diff: string) => string;
+  onSelect: () => void;
+}
+
+function SongCard({ song, hasPremium, catIndex, i, playClick, getDifficultyStars, onSelect }: SongCardProps) {
   const isLocked = song.isPremium && !hasPremium;
   
   const handleClick = (e: React.MouseEvent) => {

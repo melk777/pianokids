@@ -10,15 +10,15 @@ import {
   Trophy, 
   Clock, 
   Target, 
-  Music, 
-  Calendar,
-  CreditCard,
-  Settings,
-  Star,
-  ArrowLeft,
-  Loader2,
   CheckCircle2,
   Crown,
+  Settings,
+  ArrowLeft,
+  Loader2,
+  Calendar,
+  CreditCard,
+  Star,
+  Music,
   ExternalLink
 } from "lucide-react";
 import Link from "next/link";
@@ -28,10 +28,7 @@ export default function ProfilePage() {
   const { 
     hasAccess: isSubscribed, 
     planType, 
-    status: subStatus, 
     loading: subLoading,
-    currentPeriodEnd,
-    refresh: refreshSub
   } = useSubscription();
 
   const [editing, setEditing] = useState(false);
@@ -94,16 +91,9 @@ export default function ProfilePage() {
       if (data.url) window.location.assign(data.url);
       else alert(data.error || "Erro ao abrir portal.");
     } catch (err) {
+      console.error("Error creating portal session:", err);
       alert("Erro ao conectar com Stripe.");
     }
-  };
-
-  const getPlanName = () => {
-    if (planType === "admin_granted" || planType === "special_access") return "Acesso Especial (VIP)";
-    if (planType === "yearly") return "PianoKids Pro (Anual)";
-    if (planType === "monthly") return "PianoKids Pro (Mensal)";
-    if (planType === "trial") return "Período de Experiência";
-    return "Plano Gratuito";
   };
 
   if (profileLoading || subLoading) {
@@ -361,7 +351,7 @@ export default function ProfilePage() {
                 )
               ) : (
                 <Link 
-                  href="/login" 
+                  href="/#pricing" 
                   className="w-full bg-gradient-to-r from-cyan to-magenta py-3 rounded-xl text-sm font-bold transition-all text-center block"
                 >
                   Assinar Agora

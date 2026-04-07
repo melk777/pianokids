@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { songs } from "@/lib/songs";
-import { useState, useEffect } from "react";
 import SongLibrary from "@/components/SongLibrary";
 import { Loader2 } from "lucide-react";
 
