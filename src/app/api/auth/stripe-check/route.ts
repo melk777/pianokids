@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { getStripe } from "@/lib/stripe";
 import { hasSpecialAccess } from "@/lib/access-control";
 
@@ -12,6 +12,8 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   const { userId } = await auth();
+  const user = await currentUser();
+  const email = user?.emailAddresses?.[0]?.emailAddress;
 
   if (!userId) {
     return NextResponse.json(
@@ -21,8 +23,8 @@ export async function GET() {
   }
 
   // 0. Verificação de ACESSO ESPECIAL (Whitelist)
-  //    Se o usuário estiver na lista de IDs privilegiados, ignora o Stripe.
-  if (hasSpecialAccess(userId)) {
+  //    Se o usuário ou seu e-mail estiver na lista privilegiada, ignora o Stripe.
+  if (hasSpecialAccess(userId, email)) {
     return NextResponse.json({
       status: "special_access",
       planType: "admin_granted",
