@@ -547,7 +547,7 @@ export default function PianoPlayer({
       window.removeEventListener("resize", resizeCanvas);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay, whiteNotes, totalWidth]);
+  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay, whiteNotes, totalWidth, onPlayTick, songDuration]);
 
 
   // ── Input Binding Dinâmico via MIDI (Sincrono e Fora do JSX) ──

@@ -1,17 +1,17 @@
-"use client";
+﻿"use client";
 
 import { useRef, useCallback, useEffect, useMemo } from "react";
 
-/* ──────────────────────────────────────────────────────
-   Web Audio Engine — 2 canais adaptativos
-   Canal A: Acompanhamento (volume estável)
-   Canal B: Teclado do aluno (volume adaptativo 0.2 ↔ 1.0)
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   Web Audio Engine â€” 2 canais adaptativos
+   Canal A: Acompanhamento (volume estÃ¡vel)
+   Canal B: Teclado do aluno (volume adaptativo 0.2 â†” 1.0)
 
-   Síntese FM com 3 osciladores + ADSR envelope para
+   SÃ­ntese FM com 3 osciladores + ADSR envelope para
    um timbre quente parecido com piano Rhodes/Electric.
-   ────────────────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-// MIDI note → frequency (A4 = 440Hz, equal temperament)
+// MIDI note â†’ frequency (A4 = 440Hz, equal temperament)
 function midiToFreq(midi: number): number {
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
@@ -50,7 +50,7 @@ export function useAudioEngine(): AudioEngineReturn {
 
   const isInitRef = useRef(false);
 
-  // ── Init: creates or resumes AudioContext ─────────
+  // â”€â”€ Init: creates or resumes AudioContext â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const init = useCallback(async () => {
     // If already initialized and running, just resume if suspended
     if (ctxRef.current && isInitRef.current) {
@@ -91,13 +91,13 @@ export function useAudioEngine(): AudioEngineReturn {
       masterGain.connect(compressor);
       masterGainRef.current = masterGain;
 
-      // Channel A — Accompaniment (stable volume)
+      // Channel A â€” Accompaniment (stable volume)
       const gainA = ctx.createGain();
       gainA.gain.value = 0.0; // Permanently silenced
       gainA.connect(masterGain);
       channelAGain.current = gainA;
 
-      // Channel B — Student (adaptive volume)
+      // Channel B â€” Student (adaptive volume)
       const gainB = ctx.createGain();
       gainB.gain.value = 0.0; // Permanently silenced
       gainB.connect(masterGain);
@@ -111,12 +111,12 @@ export function useAudioEngine(): AudioEngineReturn {
     }
   }, []);
 
-  // ── Get current audio time ────────────────────────
+  // â”€â”€ Get current audio time â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const getCurrentTime = useCallback(() => {
     return ctxRef.current?.currentTime || 0;
   }, []);
 
-  // ── Play a piano-like tone (FM Synthesis + ADSR) ──
+  // â”€â”€ Play a piano-like tone (FM Synthesis + ADSR) â”€â”€
   const playNote = useCallback(
     (
       midi: number,
@@ -138,41 +138,41 @@ export function useAudioEngine(): AudioEngineReturn {
       const noteVol = velocity * 0.35;
       const releaseTime = Math.min(duration, 2.5);
 
-      // ── Oscillator 1: Fundamental (Triangle = warm) ──
+      // â”€â”€ Oscillator 1: Fundamental (Triangle = warm) â”€â”€
       const osc1 = ctx.createOscillator();
       osc1.type = "triangle";
       osc1.frequency.setValueAtTime(freq, now);
 
-      // ── Oscillator 2: 2nd Harmonic (Sine, soft) ──
+      // â”€â”€ Oscillator 2: 2nd Harmonic (Sine, soft) â”€â”€
       const osc2 = ctx.createOscillator();
       osc2.type = "sine";
       osc2.frequency.setValueAtTime(freq * 2, now);
 
-      // ── Oscillator 3: Sub-octave body (Sine, very soft) ──
+      // â”€â”€ Oscillator 3: Sub-octave body (Sine, very soft) â”€â”€
       const osc3 = ctx.createOscillator();
       osc3.type = "sine";
       osc3.frequency.setValueAtTime(freq * 0.5, now);
 
-      // ── Envelope 1 (Fundamental) ──
+      // â”€â”€ Envelope 1 (Fundamental) â”€â”€
       const env1 = ctx.createGain();
       env1.gain.setValueAtTime(0, now);
       env1.gain.linearRampToValueAtTime(noteVol, now + 0.008);           // Fast attack
       env1.gain.exponentialRampToValueAtTime(noteVol * 0.45, now + 0.12); // Decay to sustain
       env1.gain.exponentialRampToValueAtTime(0.001, now + releaseTime + 0.4); // Release
 
-      // ── Envelope 2 (2nd Harmonic — brighter attack) ──
+      // â”€â”€ Envelope 2 (2nd Harmonic â€” brighter attack) â”€â”€
       const env2 = ctx.createGain();
       env2.gain.setValueAtTime(0, now);
       env2.gain.linearRampToValueAtTime(noteVol * 0.2, now + 0.005);
       env2.gain.exponentialRampToValueAtTime(0.001, now + releaseTime * 0.5);
 
-      // ── Envelope 3 (Sub-octave — warmth body) ──
+      // â”€â”€ Envelope 3 (Sub-octave â€” warmth body) â”€â”€
       const env3 = ctx.createGain();
       env3.gain.setValueAtTime(0, now);
       env3.gain.linearRampToValueAtTime(noteVol * 0.12, now + 0.02);
       env3.gain.exponentialRampToValueAtTime(0.001, now + releaseTime * 0.8);
 
-      // ── Wire everything ──
+      // â”€â”€ Wire everything â”€â”€
       osc1.connect(env1);
       osc2.connect(env2);
       osc3.connect(env3);
@@ -180,7 +180,7 @@ export function useAudioEngine(): AudioEngineReturn {
       env2.connect(destinationGain);
       env3.connect(destinationGain);
 
-      // ── Start & stop ──
+      // â”€â”€ Start & stop â”€â”€
       osc1.start(now);
       osc2.start(now);
       osc3.start(now);
@@ -193,7 +193,7 @@ export function useAudioEngine(): AudioEngineReturn {
     []
   );
 
-  // ── Public API ────────────────────────────────────
+  // â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   const scheduleAccompaniment = useCallback(
     (midi: number, startTime: number, duration: number, velocity = 0.6) => {
@@ -202,19 +202,9 @@ export function useAudioEngine(): AudioEngineReturn {
     [playNote]
   );
 
-  const playStudent = useCallback(
-    (midi: number, duration: number, velocity = 0.9) => {
-      // SILENCIADO: Não toca som para evitar interferência no microfone
-      return;
-      /*
-      const ctx = ctxRef.current;
-      if (!ctx) return;
-      if (ctx.state === "suspended") ctx.resume();
-      playNote(midi, ctx.currentTime, duration, channelBGain.current, velocity);
-      */
-    },
-    [playNote]
-  );
+  const playStudent = useCallback(() => {
+    // SILENCIADO: Não toca som para evitar interferência no microfone
+  }, []);
 
 
   /** Play a rhythmic/percussive click (metronome) */
@@ -247,14 +237,14 @@ export function useAudioEngine(): AudioEngineReturn {
     []
   );
 
-  /** Acerto → SILENCIADO */
+  /** Acerto â†’ SILENCIADO */
   const rewardHit = useCallback(() => {
-    // Desativado para evitar interferência no microfone
+    // Desativado para evitar interferÃªncia no microfone
   }, []);
 
-  /** Erro → SILENCIADO */
+  /** Erro â†’ SILENCIADO */
   const penaltyMiss = useCallback(() => {
-    // Desativado para evitar interferência no microfone
+    // Desativado para evitar interferÃªncia no microfone
   }, []);
 
   const setVolume = useCallback((volume: number) => {
@@ -286,7 +276,7 @@ export function useAudioEngine(): AudioEngineReturn {
   }, [destroy]);
 
   const resume = useCallback(async () => {
-    // Se o contexto não existir, inicializa ele (Garante som no 1º toque em Mobile)
+    // Se o contexto nÃ£o existir, inicializa ele (Garante som no 1Âº toque em Mobile)
     if (!ctxRef.current || !isInitRef.current) {
       await init();
       return;
