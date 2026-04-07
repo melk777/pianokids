@@ -72,6 +72,7 @@ export default function PlayPage() {
   }, []);
   const [finalScore, setFinalScore] = useState({ score: 0, combo: 0, accuracy: 100 });
   const [audioEnabled, setAudioEnabled] = useState(true);
+  const [handMode, setHandMode] = useState<"right" | "both">("both");
 
   // Simulated Notes (QWERTY / Virtual Keyboard)
   const [simulatedActiveNotes, setSimulatedActiveNotes] = useState<Map<number, MIDINote>>(new Map());
@@ -168,8 +169,15 @@ export default function PlayPage() {
 
   const filteredNotes = useMemo(() => {
     if (!song) return [];
-    return filterNotesByDifficulty(song.notes, difficulty);
-  }, [song, difficulty]);
+    let notesToFilter = filterNotesByDifficulty(song.notes, difficulty);
+    
+    // Filtro ADICIONAL por Mão se selecionado '1 mão'
+    if (handMode === "right") {
+      notesToFilter = notesToFilter.filter(n => n.hand !== "left" && n.midi >= 60);
+    }
+    
+    return notesToFilter;
+  }, [song, difficulty, handMode]);
 
   const accompanimentNotes = useMemo(() => {
     if (!song) return [];
@@ -265,6 +273,20 @@ export default function PlayPage() {
                   {isMicActive ? <Mic className="w-3 h-3" /> : <MicOff className="w-3 h-3" />}
                   {isMicActive ? "Mic ON" : "Mic OFF"}
                 </button>
+                <div className="inline-flex items-center rounded-lg bg-white/5 border border-white/10 p-1 gap-1">
+                  <button 
+                    onClick={() => setHandMode("right")} 
+                    className={`px-3 py-1.5 rounded text-[10px] font-bold transition-all ${handMode === "right" ? "bg-cyan text-black" : "text-white/40 hover:text-white"}`}
+                  >
+                    1 MÃO
+                  </button>
+                  <button 
+                    onClick={() => setHandMode("both")} 
+                    className={`px-3 py-1.5 rounded text-[10px] font-bold transition-all ${handMode === "both" ? "bg-cyan text-black" : "text-white/40 hover:text-white"}`}
+                  >
+                    2 MÃOS
+                  </button>
+                </div>
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-cyan" : "bg-white/20"}`} />
                   <span className="hidden sm:inline text-xs text-white/40">{isConnected ? "MIDI" : "Sem MIDI"}</span>
@@ -336,6 +358,7 @@ export default function PlayPage() {
                 resumeAudio={audio.resume}
                 startNote={48}
                 endNote={72}
+                songDuration={song.duration}
               />
               <div className="flex justify-center mt-4">
                 <button onClick={stopGame} className="btn-secondary text-xs py-2">Parar Partida</button>

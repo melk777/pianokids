@@ -22,10 +22,11 @@ interface PianoPlayerProps {
   onPlayTick?: (velocity?: number) => void; // NOVO: Metrônomo
   onPlayNote?: (midi: number) => void;      // NOVO: Repassar clique virtual
   onReleaseNote?: (midi: number) => void;   // NOVO: Repassar soltura virtual
-  resumeAudio?: () => Promise<void>;        // NOVO: Destravar áudio no mobile
+  resumeAudio?: () => Promise<void>;        // REINTRODUZIDO: Destravar áudio no mobile
   startNote?: number;           // physical piano start note
   endNote?: number;             // physical piano end note
   isFreePlay?: boolean;         // Modo infinito livre (Sandbox) sem notas.
+  songDuration?: number;        // Duração total da música para a barra de progresso
 }
 
 
@@ -96,6 +97,7 @@ export default function PianoPlayer({
   startNote = 48,
   endNote = 72,
   isFreePlay = false,
+  songDuration = 0,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -122,6 +124,7 @@ export default function PianoPlayer({
   const scoreUIRef = useRef<HTMLParagraphElement>(null);
   const comboUIRef = useRef<HTMLParagraphElement>(null);
   const accuracyUIRef = useRef<HTMLParagraphElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   
   // Memoize whiteNotes and totalWidth for both Canvas and JSX
   const whiteNotes = useMemo(() => {
@@ -189,7 +192,12 @@ export default function PianoPlayer({
       const acc = total > 0 ? Math.round((s.hits / total) * 100) : 100;
       accuracyUIRef.current.innerText = `${acc}%`;
     }
-  }, []);
+
+    if (progressBarRef.current && songDuration > 0) {
+      const progress = Math.min(100, (s.gameTime / songDuration) * 100);
+      progressBarRef.current.style.width = `${progress}%`;
+    }
+  }, [songDuration]);
 
   // ── Render Loop (Canvas Imperativa O(1)) ────────────────
   useEffect(() => {
@@ -506,6 +514,12 @@ export default function PianoPlayer({
         }
       }
 
+      // Atualizar progresso a cada frame para suavidade (líquido)
+      if (progressBarRef.current && songDuration > 0) {
+        const progress = Math.min(100, (elapsed / songDuration) * 100);
+        progressBarRef.current.style.width = `${progress}%`;
+      }
+
       animFrameRef.current = requestAnimationFrame(tick);
     };
 
@@ -536,7 +550,7 @@ export default function PianoPlayer({
     activeNotes.forEach((midiNote) => {
       if (isFreePlay) {
          // No Modo Livre, ignora buscar as notas da música, só joga confetes instantaneamente
-         const isAlreadyHitThisFrame = s.effects.some(e => e.note === midiNote.note && (getAudioTime() - e.startTime) < 0.1);
+         const isAlreadyHitThisFrame = s.effects.some((eff: VisualEffect) => eff.note === midiNote.note && (getAudioTime() - eff.startTime) < 0.1);
          
          if (!isAlreadyHitThisFrame) {
             s.score += 10;
@@ -599,6 +613,19 @@ export default function PianoPlayer({
       
       {/* ── Camada de Fundo do Jogo ── */}
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-zinc-950/40 to-black" />
+
+      {/* ── BARRA DE PROGRESSO LÍQUIDA (Topo) ── */}
+      {!isFreePlay && songDuration > 0 && (
+        <div className="absolute top-0 left-0 right-0 h-1.5 md:h-2 bg-white/5 z-40 overflow-hidden">
+          <div 
+            ref={progressBarRef}
+            className="h-full w-0 bg-gradient-to-r from-cyan/40 via-cyan to-cyan/80 relative transition-[width] duration-300 ease-out shadow-[0_0_15px_rgba(0,234,255,0.5)]"
+          >
+             {/* Efeito de Brilho/Líquido na ponta */}
+             <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent to-white/40 blur-sm animate-pulse" />
+          </div>
+        </div>
+      )}
 
       {/* ── CONTAINER DE SCROLL UNIFICADO (Notas + Teclado) ── */}
       <div className="absolute inset-0 overflow-hidden z-10">
