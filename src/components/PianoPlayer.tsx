@@ -51,7 +51,8 @@ const COLORS = {
   missedStroke: "#FF00E5",
 
   hitZoneLine: "rgba(255, 255, 255, 0.3)",
-  grid: "rgba(255, 255, 255, 0.04)",
+  grid: "rgba(255, 255, 255, 0.12)",               // Linhas cinzas mais aparentes
+  gridHorizontal: "rgba(255, 255, 255, 0.06)",     // Linhas horizontais sutis
   textDim: "rgba(255, 255, 255, 0.65)",
   textFaded: "rgba(255, 255, 255, 0.15)",
 };
@@ -290,9 +291,26 @@ export default function PianoPlayer({
       ctx.fillStyle = "#09090B"; // Zinc 950 bg
       ctx.fillRect(0, 0, width, height);
 
-      // --- 1. Grade (Lanes Brancas Divisórias idênticas as teclas) ---
-      ctx.strokeStyle = COLORS.grid;
+      // --- 1. Grade (Vertical e Horizontal) ---
       ctx.lineWidth = 1;
+
+      // 1a. Linhas Horizontais (Beats / Tempo)
+      ctx.strokeStyle = COLORS.gridHorizontal;
+      const beatSpacing = secondsPerBeat * SPEED_PX_PER_SEC;
+      const firstBeatY = (elapsed % secondsPerBeat) * SPEED_PX_PER_SEC;
+      
+      ctx.beginPath();
+      for (let y = firstBeatY; y < height; y += beatSpacing) {
+        ctx.moveTo(0, HIT_Y - y);
+        ctx.lineTo(width, HIT_Y - y);
+        // Também desenha para baixo do hit zone para preencher o fundo
+        ctx.moveTo(0, HIT_Y + y);
+        ctx.lineTo(width, HIT_Y + y);
+      }
+      ctx.stroke();
+
+      // 1b. Linhas Verticais (Lanes das teclas)
+      ctx.strokeStyle = COLORS.grid;
       ctx.beginPath();
       for (let i = 0; i <= whiteNotes.length; i++) {
         ctx.moveTo(i * laneW, 0);
