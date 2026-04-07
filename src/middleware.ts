@@ -4,8 +4,8 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
+  "/api/auth/stripe-check", // ← liberada para a lista de musicas saber se é VIP
   "/api/stripe/webhook",    // ← webhook nunca pode ter Clerk auth (sem cookie)
-  "/api/stripe/checkout",   // ← checkout faz auth própria e retorna 401 JSON
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -16,7 +16,9 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
   ],
 };
