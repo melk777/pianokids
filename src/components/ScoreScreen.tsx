@@ -124,7 +124,7 @@ export default function ScoreScreen({
           >
             Precisão de acerto: <span className="text-white font-semibold">{Math.round(accuracy)}%</span>
             <br />
-            Pontos: <span className="text-cyan font-bold">{score.toLocaleString()}</span> &bull; Máximo Combo: <span className="text-magenta font-bold">{combo}x</span>
+            Pontos: <span className="text-gradient font-black">{score.toLocaleString()}</span> &bull; Sequência Máxima: <span className="text-magenta font-bold">{combo}x</span>
           </motion.p>
 
           {/* 3. Botões de Ação */}
