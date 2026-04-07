@@ -204,10 +204,14 @@ export function useAudioEngine(): AudioEngineReturn {
 
   const playStudent = useCallback(
     (midi: number, duration: number, velocity = 0.9) => {
+      // SILENCIADO: Não toca som para evitar interferência no microfone
+      return;
+      /*
       const ctx = ctxRef.current;
       if (!ctx) return;
       if (ctx.state === "suspended") ctx.resume();
       playNote(midi, ctx.currentTime, duration, channelBGain.current, velocity);
+      */
     },
     [playNote]
   );
@@ -243,24 +247,14 @@ export function useAudioEngine(): AudioEngineReturn {
     []
   );
 
-  /** Acerto → volume do Canal B sobe para 1.0 */
+  /** Acerto → SILENCIADO */
   const rewardHit = useCallback(() => {
-    const ctx = ctxRef.current;
-    const gain = channelBGain.current;
-    if (!ctx || !gain) return;
-    gain.gain.cancelScheduledValues(ctx.currentTime);
-    gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(1.0, ctx.currentTime + 0.08);
+    // Desativado para evitar interferência no microfone
   }, []);
 
-  /** Erro → volume do Canal B desce para 0.2 */
+  /** Erro → SILENCIADO */
   const penaltyMiss = useCallback(() => {
-    const ctx = ctxRef.current;
-    const gain = channelBGain.current;
-    if (!ctx || !gain) return;
-    gain.gain.cancelScheduledValues(ctx.currentTime);
-    gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.4);
+    // Desativado para evitar interferência no microfone
   }, []);
 
   const setVolume = useCallback((volume: number) => {
