@@ -30,10 +30,20 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-      - run: npm install
-      - name: Validar Segredos
+      - name: Instalar Dependências
+        run: npm ci || npm install
+      - name: Validar Configuração de Segredos
         run: |
-          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then echo "ERRO: NEXT_PUBLIC_SUPABASE_URL está vazia"; exit 1; fi
-          if [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then echo "ERRO: NEXT_PUBLIC_SUPABASE_ANON_KEY está vazia"; exit 1; fi
-      - run: npx tsc --noEmit
-      - run: npm run build
+          echo "Verificando presença de variáveis críticas (sem mostrar valores)..."
+          [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] && echo "✅ NEXT_PUBLIC_SUPABASE_URL presente" || echo "❌ NEXT_PUBLIC_SUPABASE_URL ausente"
+          [ -n "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ] && echo "✅ NEXT_PUBLIC_SUPABASE_ANON_KEY presente" || echo "❌ NEXT_PUBLIC_SUPABASE_ANON_KEY ausente"
+          [ -n "$STRIPE_SECRET_KEY" ] && echo "✅ STRIPE_SECRET_KEY presente" || echo "❌ STRIPE_SECRET_KEY ausente"
+          
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
+            echo "ERRO: Variáveis essenciais do Supabase não encontradas nos GitHub Secrets."
+            exit 1
+          fi
+      - name: Checagem de Tipos (TypeScript)
+        run: npx tsc --noEmit
+      - name: Build de Produção (Next.js)
+        run: npm run build
