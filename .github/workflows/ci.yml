@@ -31,5 +31,9 @@ jobs:
           node-version: 24
           cache: 'npm'
       - run: npm install
+      - name: Validar Segredos
+        run: |
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then echo "ERRO: NEXT_PUBLIC_SUPABASE_URL está vazia"; exit 1; fi
+          if [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then echo "ERRO: NEXT_PUBLIC_SUPABASE_ANON_KEY está vazia"; exit 1; fi
       - run: npx tsc --noEmit
       - run: npm run build
