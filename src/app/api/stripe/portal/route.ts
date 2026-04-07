@@ -41,8 +41,7 @@ export async function POST(req: NextRequest) {
     for (const session of sessions.data) {
       if (
         session.client_reference_id === userId ||
-        session.metadata?.userId === userId ||
-        session.metadata?.clerkUserId === userId
+        session.metadata?.userId === userId
       ) {
         if (session.customer) {
           customerId =

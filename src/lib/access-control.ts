@@ -1,22 +1,22 @@
 /**
- * Módulo de Controle de Acesso (Whitelist) - Vercel Redeploy Trigger: 07-04-2026
+ * Módulo de Controle de Acesso (Whitelist) - PianoKids 2026
  * 
- * Adicione aqui os IDs dos usuários do Clerk que devem ter acesso premium TOTAL
- * sem precisar assinar via Stripe.
+ * Adicione aqui os IDs ou E-mails de usuários que devem ter acesso premium TOTAL
+ * sem precisar de assinatura ativa no Stripe.
  * 
- * Como encontrar o ID? 
- * No Clerk Dashboard do seu projeto, você verá o UserID (ex: user_2m...)
+ * Como encontrar o ID do Supabase? 
+ * No Dashboard do Supabase > Authentication > Users (ex: a1b2c3d4...)
  */
 
 export const SPECIAL_ACCESS_IDS: string[] = [
   "alessia_samanta@hotmail.com", // Acesso via E-mail
   "comerciomelk@gmail.com",       // Acesso via E-mail
-  // "user_2m...", // Adicione seus IDs aqui
+  // "a1b2c3d4...", // Adicione IDs do Supabase aqui
 ];
 
 /**
  * Função utilitária para verificar se um usuário é VIP.
- * Aceita tanto o UserID do Clerk quanto o e-mail.
+ * Aceita tanto o UserID do Supabase quanto o e-mail.
  */
 export function hasSpecialAccess(userId: string | null | undefined, email?: string | null): boolean {
   const normalizedList = SPECIAL_ACCESS_IDS.map(id => id.toLowerCase().trim());
