@@ -4,7 +4,6 @@ import twinkleMidiData from "../../public/songs/brilha-brilha-estrelinha.json";
 import aDonaAranhaData from "../../public/songs/a-dona-aranha.json";
 import odeMidiData from "../../public/songs/ode-to-joy.json";
 import furEliseMidiData from "../../public/songs/fur-elise-easy-ver.json";
-import furEliseProData from "../../public/songs/fur-elise-pro.json";
 
 export interface SongNote {
   midi: number;       // MIDI note number (e.g., 60 = C4)
@@ -21,7 +20,7 @@ export interface Song {
   difficulty: "Fácil" | "Médio" | "Difícil";
   bpm: number;
   duration: number;   // Total duration in seconds
-  category: "Para Iniciantes" | "Infantis" | "Clássicos";
+  category: "Para Iniciantes" | "Infantis" | "Clássicos" | "Sertanejo" | "Religiosa" | "Sucessos Recentes";
   isPremium: boolean;
   coverUrl?: string;
   notes: SongNote[];
@@ -29,12 +28,9 @@ export interface Song {
 
 /**
  * ── Banco de Músicas do PianoKids ────────────────────────────
- * Centralização de todas as lições em arquivos JSON externos.
- * Isso garante que o código permaneça limpo e as notas sejam
- * importadas com precisão milimétrica de arquivos MIDI.
  */
 export const songs: Song[] = [
-  // 1. Borboletinha (Integrado via MIDI)
+  // 1. Borboletinha
   {
     ...(borboletinhaData as Song),
     artist: "Folclore Brasileiro",
@@ -44,7 +40,7 @@ export const songs: Song[] = [
     difficulty: "Fácil"
   },
 
-  // 2. Meu Pintinho Amarelinho (Integrado via MIDI)
+  // 2. Meu Pintinho Amarelinho
   {
     ...(pintinhoMidiData as Song),
     id: "pintinho-amarelinho",
@@ -56,7 +52,7 @@ export const songs: Song[] = [
     difficulty: "Fácil"
   },
 
-  // 3. Brilha Brilha Estrelinha (Integrado via MIDI)
+  // 3. Brilha Brilha Estrelinha
   {
     ...(twinkleMidiData as Song),
     id: "twinkle-twinkle",
@@ -68,7 +64,7 @@ export const songs: Song[] = [
     difficulty: "Fácil"
   },
 
-  // 4. A Dona Aranha (JSON original)
+  // 4. A Dona Aranha
   {
     ...(aDonaAranhaData as Song),
     id: "a-dona-aranha",
@@ -80,7 +76,7 @@ export const songs: Song[] = [
     difficulty: "Fácil"
   },
 
-  // 5. Ode à Alegria (Integrado via MIDI)
+  // 5. Ode à Alegria
   {
     ...(odeMidiData as Song),
     id: "ode-to-joy",
@@ -92,11 +88,11 @@ export const songs: Song[] = [
     difficulty: "Médio"
   },
 
-  // 6. Für Elise - Versão Iniciante/Intermediária
+  // 6. Für Elise
   {
     ...(furEliseMidiData as Song),
     id: "fur-elise",
-    title: "Für Elise (Iniciante)",
+    title: "Für Elise",
     artist: "Beethoven",
     category: "Clássicos",
     isPremium: true,
@@ -104,16 +100,46 @@ export const songs: Song[] = [
     difficulty: "Médio"
   },
 
-  // 7. Für Elise - Versão PROFISSIONAL
+  // Mock: Sertanejo
   {
-    ...(furEliseProData as Song),
-    id: "fur-elise-pro",
-    title: "Für Elise (Profissional)",
-    artist: "Beethoven",
-    category: "Clássicos",
+    id: "evidencias",
+    title: "Evidências",
+    artist: "Chitãozinho & Xororó",
+    category: "Sertanejo",
     isPremium: true,
-    coverUrl: "/images/covers/fur_elise_1775056434348.png",
-    difficulty: "Difícil"
+    difficulty: "Médio",
+    bpm: 90,
+    duration: 120,
+    coverUrl: "https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?w=500&auto=format&fit=crop&q=60",
+    notes: [] 
+  },
+
+  // Mock: Religiosa
+  {
+    id: "hallelujah",
+    title: "Hallelujah",
+    artist: "Leonard Cohen",
+    category: "Religiosa",
+    isPremium: true,
+    difficulty: "Fácil",
+    bpm: 60,
+    duration: 180,
+    coverUrl: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=500&auto=format&fit=crop&q=60",
+    notes: []
+  },
+
+  // Mock: Sucessos Recentes
+  {
+    id: "flowers",
+    title: "Flowers",
+    artist: "Miley Cyrus",
+    category: "Sucessos Recentes",
+    isPremium: true,
+    difficulty: "Médio",
+    bpm: 112,
+    duration: 200,
+    coverUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&auto=format&fit=crop&q=60",
+    notes: []
   }
 ];
 

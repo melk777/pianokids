@@ -46,7 +46,7 @@ export default function PianoEngine() {
     <div className="w-full flex flex-col items-center gap-8 py-10 bg-black min-h-[400px]">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-white mb-2 font-geist-sans tracking-tight">
-          Teclado <span className="text-cyan">Híbrido</span> Mágico
+          Teclado <span className="text-gradient font-black">Híbrido</span> Mágico
         </h2>
         <p className="text-white/40 text-sm max-w-md">
           Toque clicando com o mouse, usando o QWERTY (fileiras A-K e W-U) ou o seu teclado físico MIDI.

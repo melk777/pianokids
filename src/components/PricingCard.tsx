@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Loader2 } from "lucide-react";
+import { useSFX } from "@/hooks/useSFX";
 
 interface PricingCardProps {
   name: string;
@@ -26,8 +27,10 @@ export default function PricingCard({
   onSubscribe,
 }: PricingCardProps) {
   const [loading, setLoading] = useState(false);
+  const { playClick } = useSFX();
 
   const handleClick = async () => {
+    playClick();
     setLoading(true);
     try {
       await onSubscribe(planKey);
@@ -65,7 +68,7 @@ export default function PricingCard({
         <div className="mb-6">
           <span
             className={`text-4xl font-bold tracking-tight ${
-              popular ? "text-cyan" : "text-white"
+              popular ? "text-magenta" : "text-white"
             }`}
           >
             {price}
@@ -83,7 +86,7 @@ export default function PricingCard({
               <div
                 className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
                   popular
-                    ? "bg-cyan/15 text-cyan"
+                    ? "bg-magenta/15 text-magenta"
                     : "bg-white/[0.06] text-white/40"
                 }`}
               >

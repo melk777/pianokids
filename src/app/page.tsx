@@ -11,7 +11,6 @@ import PartnerMarquee from "@/components/PartnerMarquee";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
-import { useMIDI } from "@/hooks/useMIDI";
 import { useJoseAudio } from "@/hooks/useJoseAudio";
 import GalaxyBackground from "@/components/GalaxyBackground";
 
@@ -49,20 +48,7 @@ const CLIENT_PLANS = {
 
 export default function Home() {
   const router = useRouter();
-  const { isSupported, connect, error } = useMIDI();
-
   const { playIntro, playSuccess, playError } = useJoseAudio();
-
-  const [midiStatus, setMidiStatus] = useState<
-    "idle" | "connecting" | "connected" | "error"
-  >("idle");
-
-
-  const handleConnect = async () => {
-    setMidiStatus("connecting");
-    const success = await connect();
-    setMidiStatus(success ? "connected" : "error");
-  };
 
   /* ── Stripe checkout (com redirect p/ login se não autenticado) ── */
   const handleSubscribe = async (planKey: string) => {
@@ -130,8 +116,8 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="text-lg md:text-2xl text-white/50 max-w-2xl lg:max-w-none mx-auto lg:mx-0 mb-12 leading-relaxed font-medium">
-              Conecte seu teclado MIDI e transforme cada nota em uma aventura.
-              Músicas que caem como estrelas — acerte no tempo certo.
+              Toque no seu piano real e nós ouviremos cada nota. 
+              Músicas que caem como estrelas — aprenda de forma mágica e intuitiva.
             </p>
 
 
@@ -140,96 +126,23 @@ export default function Home() {
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleConnect}
-                disabled={midiStatus === "connecting"}
-                className="btn-primary rounded-full px-10 py-5 text-lg flex items-center gap-3 disabled:opacity-50 shadow-xl shadow-cyan/20"
+                onClick={() => router.push("/dashboard")}
+                className="btn-primary rounded-full px-10 py-5 text-lg flex items-center gap-3 shadow-xl shadow-cyan/20"
               >
-                {/* ... (keep inside logic) */}
-                {midiStatus === "connecting" ? (
-                  <>
-                    <motion.div
-                      className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                    Conectando...
-                  </>
-                ) : midiStatus === "connected" ? (
-                  <>Conectado!</>
-                ) : (
-                  <>
-                    <Music className="w-5 h-5" />
-                    Começar Agora
-                  </>
-                )}
+                <Music className="w-5 h-5" />
+                Começar Agora
               </motion.button>
 
               <motion.a
-                href="/dashboard"
+                href="#pricing"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 className="btn-secondary rounded-full px-10 py-5 text-lg flex items-center gap-2 border-2"
               >
-                Explorar Dashboard
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                Ver Planos
+                <ChevronDown className="w-4 h-4" />
               </motion.a>
             </div>
-
-
-            {/* Test Jose Audio Buttons (Static refactor) */}
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="mt-12 flex flex-wrap justify-center gap-4"
-            >
-              {[
-                { label: "Intro (Oi!)", icon: "👋", action: playIntro },
-                { label: "Acerto (Boa!)", icon: "⭐", action: playSuccess },
-                { label: "Erro (Ops!)", icon: "💡", action: playError }
-              ].map((item) => (
-                <motion.button
-                  key={item.label}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={item.action}
-                  className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold bg-white/5 border border-white/10 hover:border-cyan/50 hover:text-cyan transition-all hover:shadow-[0_0_20px_rgba(0,234,255,0.1)] text-sm"
-                >
-                  <span className="text-lg group-hover:animate-bounce">{item.icon}</span>
-                  {item.label}
-                </motion.button>
-              ))}
-            </motion.div>
-            <p className="mt-4 text-xs text-white/20 italic">
-              Certifique-se de adicionar os arquivos .mp3 na pasta /public/audios/
-            </p>
-
-
-            {/* MIDI Status Messages */}
-            {midiStatus === "error" && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 text-sm text-magenta/80"
-              >
-                {error || "Não foi possível conectar. Use Chrome ou Edge."}
-              </motion.p>
-            )}
-            {!isSupported && (
-              <p className="mt-4 text-xs text-white/30">
-                WebMIDI não suportado neste navegador. Recomendamos Chrome ou
-                Edge.
-              </p>
-            )}
           </motion.div>
 
             {/* Piano Animation */}
@@ -267,7 +180,7 @@ export default function Home() {
               className="text-center mb-24"
             >
               <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
-                Por que <span className="text-cyan">PianoKids</span>?
+                Por que <span className="text-gradient font-black">PianoKids</span>?
               </h2>
               <p className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                 Uma experiência projetada para manter crianças engajadas e
@@ -280,8 +193,8 @@ export default function Home() {
               {[
                 {
                   icon: <Music className="w-6 h-6" />,
-                  title: "Conexão MIDI Real",
-                  desc: "Conecte qualquer teclado MIDI via USB e toque de verdade.",
+                  title: "Reconhecimento de Áudio",
+                  desc: "Toque as notas no seu piano real e nossa IA reconhece instantaneamente via microfone.",
                 },
                 {
                   icon: <Star className="w-6 h-6" />,
@@ -302,7 +215,7 @@ export default function Home() {
                   transition={{ delay: i * 0.1, duration: 0.5 }}
                   className="glass glass-hover rounded-[2.5rem] p-10 group cursor-default shadow-2xl shadow-black/40"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-cyan/10 flex items-center justify-center text-cyan mb-8 transition-all duration-300 group-hover:bg-cyan/20 group-hover:shadow-[0_0_20px_rgba(0,234,255,0.3)]">
+                  <div className="w-14 h-14 rounded-2xl bg-cyan/10 flex items-center justify-center icon-gradient mb-8 transition-all duration-300 group-hover:bg-cyan/20 group-hover:shadow-[0_0_20px_rgba(255,0,229,0.3)]">
                     {feature.icon}
                   </div>
                   <h3 className="text-xl font-bold mb-4">

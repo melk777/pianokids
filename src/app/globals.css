@@ -59,11 +59,24 @@ body {
                  0 0 40px rgba(255, 0, 229, 0.2);
   }
 
+  .text-gradient {
+    @apply bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent;
+    display: inline-block;
+  }
+
+  .icon-gradient {
+    stroke: url(#primary-gradient) !important;
+  }
+
+  .icon-gradient-fill {
+    fill: url(#primary-gradient) !important;
+  }
+
   .btn-primary {
     @apply relative px-8 py-3 rounded-xl font-medium text-sm tracking-wide
-           bg-gradient-to-r from-cyan to-cyan/80 text-black
+           bg-gradient-to-r from-cyan to-magenta text-white
            transition-all duration-300 ease-out
-           hover:shadow-[0_0_30px_rgba(0,234,255,0.4)]
+           hover:shadow-[0_0_30px_rgba(255,0,229,0.3)]
            active:scale-[0.98];
   }
 
@@ -93,8 +106,26 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Selection */
-::selection {
-  background: rgba(0, 234, 255, 0.3);
-  color: white;
+/* Custom Animation Utilities */
+@keyframes gradient-slow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-slow {
+  animation: gradient-slow 6s ease infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.05); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
 }

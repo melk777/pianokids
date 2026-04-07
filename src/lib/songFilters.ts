@@ -14,7 +14,7 @@ export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
 
 export const DIFFICULTY_COLORS: Record<Difficulty, string> = {
   beginner: "text-emerald-400",
-  medium: "text-cyan",
+  medium: "text-magenta",
   pro: "text-magenta",
 };
 

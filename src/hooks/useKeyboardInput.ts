@@ -33,35 +33,7 @@ interface UseKeyboardInputProps {
 
 export function useKeyboardInput({ onPlayNote, onReleaseNote, disabled }: UseKeyboardInputProps) {
   useEffect(() => {
-    if (disabled) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignora repetições automáticas do SO ao segurar a tecla
-      if (e.repeat) return;
-
-      const key = e.key.toLowerCase();
-      const midi = KEY_MAP[key];
-
-      if (midi) {
-        onPlayNote(midi);
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-      const midi = KEY_MAP[key];
-
-      if (midi && onReleaseNote) {
-        onReleaseNote(midi);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [onPlayNote, onReleaseNote, disabled]);
+    // Teclado do PC (QWERTY) desativado conforme solicitado para focar no piano real/toque.
+    return () => {};
+  }, []);
 }

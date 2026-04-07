@@ -64,7 +64,7 @@ export default function MidiSetup({ isOpen, isConnected, onConnect, onClose }: M
           <div className="flex flex-col gap-6 relative z-10">
             {/* Steps Guiados */}
             <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
-              <div className="w-10 h-10 rounded-full bg-cyan/10 flex items-center justify-center text-cyan shrink-0">
+              <div className="w-10 h-10 rounded-full bg-cyan/10 flex items-center justify-center icon-gradient shrink-0">
                 <Usb size={20} />
               </div>
               <div>
@@ -76,7 +76,7 @@ export default function MidiSetup({ isOpen, isConnected, onConnect, onClose }: M
             </div>
 
             <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.05]">
-              <div className="w-10 h-10 rounded-full bg-cyan/10 flex items-center justify-center text-cyan shrink-0">
+              <div className="w-10 h-10 rounded-full bg-cyan/10 flex items-center justify-center icon-gradient shrink-0">
                 <Activity size={20} />
               </div>
               <div>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AudioProvider } from "@/contexts/AudioContext";
+import StarryBackground from "@/components/StarryBackground";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +31,20 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
         suppressHydrationWarning
       >
-        {children}
+        <AudioProvider>
+          <StarryBackground />
+          {children}
+
+          {/* Global SVG Gradients for Icons */}
+          <svg width="0" height="0" className="absolute pointer-events-none">
+            <defs>
+              <linearGradient id="primary-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#00eaff" />
+                <stop offset="100%" stopColor="#ff00e5" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </AudioProvider>
       </body>
     </html>
   );

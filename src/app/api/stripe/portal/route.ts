@@ -1,17 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import { getStripe } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
-/**
- * POST /api/stripe/portal
- * Gera uma sessão do Stripe Billing Portal para o usuário logado
- * gerenciar sua assinatura (trocar cartão, cancelar, etc).
- */
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
+
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id;
 
     if (!userId) {
       return NextResponse.json(
@@ -31,6 +41,7 @@ export async function POST(req: NextRequest) {
     for (const session of sessions.data) {
       if (
         session.client_reference_id === userId ||
+        session.metadata?.userId === userId ||
         session.metadata?.clerkUserId === userId
       ) {
         if (session.customer) {

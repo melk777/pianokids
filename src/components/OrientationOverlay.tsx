@@ -20,7 +20,7 @@ export default function OrientationOverlay() {
           animate={{ rotate: 90 }}
           transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
         >
-          <RotateCcw className="w-12 h-12 text-cyan" />
+          <RotateCcw className="w-12 h-12 icon-gradient" />
         </motion.div>
       </div>
       

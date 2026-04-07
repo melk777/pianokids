@@ -122,7 +122,7 @@ export default function PracticePage() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
-                  className="px-4 py-2 rounded-lg bg-cyan/10 border border-cyan/20 text-cyan font-mono text-sm"
+                  className="px-4 py-2 rounded-lg bg-cyan/10 border border-cyan/20 text-gradient font-black font-mono text-sm"
                   style={{ filter: "drop-shadow(0 0 8px rgba(0,234,255,0.3))" }}
                 >
                   {midiNoteToName(note)}
@@ -145,7 +145,7 @@ export default function PracticePage() {
               <div>
                 <p className="text-sm text-white/50">
                   <strong className="text-white/70">Dica:</strong> Use as teclas do seu teclado MIDI para ver as notas iluminarem no piano acima. 
-                  As notas são destacadas em <span className="text-cyan">ciano</span> quando pressionadas.
+                  As notas são destacadas com o <span className="text-gradient font-black">gradiente</span> quando pressionadas.
                 </p>
               </div>
             </div>

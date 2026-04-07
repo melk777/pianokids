@@ -76,7 +76,7 @@ export default function MembershipPage() {
       <main className="min-h-screen bg-black">
         <Header />
         <div className="pt-32 flex flex-col items-center justify-center gap-4">
-          <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+          <Loader2 className="w-8 h-8 icon-gradient animate-spin" />
           <p className="text-sm text-white/40">Verificando assinatura...</p>
         </div>
       </main>
@@ -171,7 +171,7 @@ export default function MembershipPage() {
               <div>
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isYearly ? "bg-gradient-to-br from-cyan/20 to-emerald-400/20" : "bg-cyan/10"}`}>
-                    <Crown className={`w-5 h-5 ${isYearly ? "text-emerald-400" : "text-cyan"}`} />
+                    <Crown className={`w-5 h-5 ${isYearly ? "text-emerald-400" : "icon-gradient"}`} />
                   </div>
                   <div>
                     <h1 className="text-xl font-bold tracking-tight">
@@ -245,7 +245,7 @@ export default function MembershipPage() {
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                    b.active ? "bg-cyan/10 text-cyan" : "bg-white/5 text-white/20"
+                    b.active ? "bg-cyan/10 text-magenta font-bold" : "bg-white/5 text-white/20"
                   }`}>
                     {b.icon}
                   </div>

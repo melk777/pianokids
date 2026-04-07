@@ -7,26 +7,10 @@ import { useState, useEffect } from "react";
 import SongLibrary from "@/components/SongLibrary";
 import { Loader2 } from "lucide-react";
 
-export default function SongsPage() {
-  const [hasPremium, setHasPremium] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+import { useSubscription } from "@/hooks/useSubscription";
 
-  useEffect(() => {
-    async function checkSub() {
-      try {
-        const res = await fetch("/api/auth/stripe-check");
-        if (res.ok) {
-          const data = await res.json();
-          setHasPremium(data.hasAccess);
-        }
-      } catch (err) {
-        console.error("Failed to fetch subscription status:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    checkSub();
-  }, []);
+export default function SongsPage() {
+  const { hasAccess: hasPremium, loading: isLoading } = useSubscription();
 
   return (
     <main className="min-h-screen bg-[#0A0A0A]">
@@ -43,14 +27,14 @@ export default function SongsPage() {
             Biblioteca
           </h1>
           <p className="text-lg text-white/40">
-            Explore nosso catálogo premium categorizado por dificuldade e etilos.
+            Explore nosso catálogo premium categorizado por dificuldade e estilos.
           </p>
         </motion.div>
 
         {/* Content Loading or Netflix UI */}
         {isLoading ? (
           <div className="flex flex-col h-64 items-center justify-center text-white/30 gap-4 mt-20">
-            <Loader2 className="w-10 h-10 animate-spin text-cyan" />
+            <Loader2 className="w-10 h-10 animate-spin icon-gradient" />
             <p>Carregando catálogo...</p>
           </div>
         ) : (

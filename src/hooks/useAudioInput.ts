@@ -22,6 +22,8 @@ function frequencyToNote(frequency: number): { note: number; name: string } {
 }
 
 export function useAudioInput() {
+  const [isSupported, setIsSupported] = useState(true);
+  const [permissionStatus, setPermissionStatus] = useState<"prompt" | "granted" | "denied">("prompt");
   const [isListening, setIsListening] = useState(false);
   const [activeAudioNote, setActiveAudioNote] = useState<AudioNote | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +32,26 @@ export function useAudioInput() {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+
+  // Check support and permission on mount
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setIsSupported(false);
+      setError("Seu navegador não suporta entrada de áudio.");
+    }
+
+    // Try to query permission if supported
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: "microphone" as PermissionName }).then(status => {
+        setPermissionStatus(status.state as "prompt" | "granted" | "denied");
+        status.onchange = () => {
+          setPermissionStatus(status.state as "prompt" | "granted" | "denied");
+        };
+      }).catch(() => {
+        // Fallback for browsers that don't support querying microphone permission
+      });
+    }
+  }, []);
 
   const stop = useCallback(() => {
     setIsListening(false);
@@ -48,6 +70,7 @@ export function useAudioInput() {
       // 1. Solicitar microfone
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
+      setPermissionStatus("granted");
 
       // 2. Setup AudioContext
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,7 +129,12 @@ export function useAudioInput() {
       updatePitch();
     } catch (err) {
       console.error("[USE_AUDIO_INPUT_ERROR]:", err);
-      setError(err instanceof Error ? err.message : "Erro ao acessar microfone");
+      if (err instanceof DOMException && (err.name === "NotAllowedError" || err.name === "PermissionDeniedError")) {
+        setPermissionStatus("denied");
+        setError("Acesso ao microfone negado. Por favor, permita o acesso nas configurações do navegador.");
+      } else {
+        setError(err instanceof Error ? err.message : "Erro ao acessar microfone");
+      }
       setIsListening(false);
     }
   }, []);
@@ -121,6 +149,8 @@ export function useAudioInput() {
 
   return { 
     isListening, 
+    isSupported,
+    permissionStatus,
     activeAudioNote, 
     start, 
     stop, 

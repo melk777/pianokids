@@ -1,11 +1,18 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
-// Cliente para componentes de CLIENTE (Browser)
-export const createClientComponent = () => createClientComponentClient();
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Cliente padrão para uso geral
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Faltando variáveis de ambiente do Supabase. Verifique o arquivo .env.local."
+  );
+}
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Cliente dinâmico: No navegador usa cookies (SSR), no servidor usa o cliente padrão
+export const supabase = typeof window !== "undefined" 
+  ? createBrowserClient(supabaseUrl, supabaseAnonKey) 
+  : createClient(supabaseUrl, supabaseAnonKey);
+
+export const createClientComponent = () => createBrowserClient(supabaseUrl, supabaseAnonKey);

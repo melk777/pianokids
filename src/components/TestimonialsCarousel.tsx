@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { useSFX } from "@/hooks/useSFX";
 
 const testimonials = [
   {
@@ -42,8 +43,10 @@ const testimonials = [
 export default function TestimonialsCarousel() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
+  const { playClick } = useSFX();
 
   const paginate = (dir: number) => {
+    playClick();
     setDirection(dir);
     setCurrent((prev) => (prev + dir + testimonials.length) % testimonials.length);
   };

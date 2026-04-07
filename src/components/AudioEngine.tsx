@@ -10,7 +10,7 @@ export default function AudioEngine() {
   return (
     <div className="flex flex-col items-center justify-center p-8 glass rounded-3xl border border-white/10 w-full max-w-sm mx-auto overflow-hidden">
       <div className="flex items-center gap-3 mb-8">
-        <div className={`p-3 rounded-full ${isListening ? 'bg-cyan/20 text-cyan animate-pulse' : 'bg-white/5 text-white/40'}`}>
+        <div className={`p-3 rounded-full ${isListening ? 'bg-cyan/20 icon-gradient animate-pulse' : 'bg-white/5 text-white/40'}`}>
           {isListening ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
         </div>
         <h3 className="text-xl font-bold text-white">Reconhecimento</h3>
@@ -54,7 +54,7 @@ export default function AudioEngine() {
                 animate={{ opacity: 0.2 }}
                 className="text-white flex flex-col items-center gap-2"
               >
-                <Activity className="w-12 h-12" />
+                <Activity className="w-12 h-12 icon-gradient" />
                 <span className="text-xs uppercase tracking-widest">Silêncio</span>
               </motion.div>
             )}
@@ -63,7 +63,7 @@ export default function AudioEngine() {
             <motion.div 
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
-              className="text-cyan text-sm font-mono mt-2"
+              className="text-gradient font-black text-sm font-mono mt-2"
             >
               {Math.round(activeAudioNote.frequency)} Hz
             </motion.div>

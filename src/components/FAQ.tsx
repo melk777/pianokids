@@ -9,7 +9,7 @@ const faqs = [
     icon: <Keyboard className="w-4 h-4" />,
     question: "Preciso de um teclado físico?",
     answer:
-      "Recomendamos um teclado MIDI com conexão USB para a melhor experiência. O PianoKids usa a WebMIDI API, que permite conectar qualquer teclado MIDI diretamente ao navegador (Chrome ou Edge). Teclados de 49 a 88 teclas funcionam perfeitamente. Se você ainda não tem um, pode explorar a plataforma e ver as notas caindo — mas para tocar de verdade, um teclado é essencial!",
+      "Sim, seu filho precisará de um piano real ou teclado musical físico. A diferença é que agora não é necessário nenhum cabo! O PianoKids usa o microfone do seu dispositivo (celular, tablet ou computador) para 'ouvir' as notas sendo tocadas e dar o feedback instantâneo. Isso permite usar qualquer instrumento, desde um piano acústico até um teclado eletrônico simples.",
   },
   {
     icon: <CreditCard className="w-4 h-4" />,
@@ -24,10 +24,10 @@ const faqs = [
       "Absolutamente! O PianoKids foi projetado pensando na segurança infantil. Não exibimos anúncios, não coletamos dados pessoais das crianças e todo o conteúdo é curado e apropriado para todas as idades. O pagamento é feito apenas pelo responsável, e o ambiente da plataforma é 100% focado na educação musical.",
   },
   {
-    icon: <Headphones className="w-4 h-4" />,
+    icon: <Zap className="w-4 h-4" />,
     question: "Quais navegadores são compatíveis?",
     answer:
-      "O PianoKids funciona melhor no Google Chrome e Microsoft Edge, que suportam a WebMIDI API nativamente. Safari e Firefox ainda não oferecem suporte nativo ao WebMIDI. Para a melhor experiência, recomendamos Chrome na versão mais recente.",
+      "O PianoKids funciona em qualquer navegador moderno (Chrome, Edge, Safari e Firefox) que suporte acesso ao microfone. Recomendamos manter seu navegador atualizado para a melhor precisão no reconhecimento das notas.",
   },
   {
     icon: <Zap className="w-4 h-4" />,
@@ -49,7 +49,7 @@ export default function FAQ() {
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
             Perguntas{" "}
-            <span className="text-cyan">frequentes</span>
+            <span className="text-gradient font-black">frequentes</span>
           </h2>
           <p className="text-white/40 max-w-lg mx-auto">
             Tudo o que você precisa saber antes de começar.
@@ -70,13 +70,13 @@ export default function FAQ() {
                 className="glass rounded-2xl border border-white/[0.06] overflow-hidden group data-[state=open]:border-cyan/20 transition-colors duration-300"
               >
                 <Accordion.Trigger className="w-full flex items-center gap-4 px-6 py-5 text-left group cursor-pointer">
-                  <div className="w-8 h-8 rounded-lg bg-white/[0.04] group-data-[state=open]:bg-cyan/10 flex items-center justify-center text-white/30 group-data-[state=open]:text-cyan transition-all duration-300 shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-white/[0.04] group-data-[state=open]:bg-cyan/10 flex items-center justify-center text-white/30 group-data-[state=open]:icon-gradient transition-all duration-300 shrink-0">
                     {faq.icon}
                   </div>
                   <span className="flex-1 text-[15px] font-medium text-white/80 group-data-[state=open]:text-white transition-colors">
                     {faq.question}
                   </span>
-                  <ChevronDown className="w-4 h-4 text-white/25 group-data-[state=open]:text-cyan transition-all duration-300 group-data-[state=open]:rotate-180 shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-white/25 group-data-[state=open]:icon-gradient transition-all duration-300 group-data-[state=open]:rotate-180 shrink-0" />
                 </Accordion.Trigger>
 
                 <Accordion.Content className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">

@@ -25,7 +25,7 @@ export default function SignUpPage() {
               formFieldInput: "bg-[#111] border-white/10 text-white rounded-[12px] focus:ring-cyan focus:border-cyan transition-all",
               formButtonPrimary: "bg-white hover:bg-white/90 text-black font-semibold rounded-[14px] transition-all active:scale-[0.98]",
               footerActionText: "text-white/50",
-              footerActionLink: "text-cyan hover:text-cyan/80",
+              footerActionLink: "text-magenta hover:text-magenta/40",
             },
             variables: {
               colorPrimary: "#00eaff",

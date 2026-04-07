@@ -46,7 +46,7 @@ export default function TestAudioPage() {
                transition={{ delay: 0.4 + (i * 0.1) }}
                className="glass p-8 rounded-2xl border border-white/5"
              >
-               <h4 className="text-cyan font-bold mb-3">{item.title}</h4>
+               <h4 className="text-gradient font-black mb-3">{item.title}</h4>
                <p className="text-sm text-white/40 leading-relaxed">{item.text}</p>
              </motion.div>
            ))}

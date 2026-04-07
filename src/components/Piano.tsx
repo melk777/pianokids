@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { isBlackKey, midiNoteToName } from "@/hooks/useMIDI";
+import { midiNoteToName, isBlackKey } from "@/hooks/useMIDI";
+import { useBackgroundMusic } from "@/contexts/AudioContext";
+import { useEffect } from "react";
 
 interface PianoProps {
   startNote?: number; // Default: 48 (C3)
@@ -18,6 +20,15 @@ export default function Piano({
   correctNotes = new Set(),
   wrongNotes = new Set(),
 }: PianoProps) {
+  const { pauseBackgroundMusic } = useBackgroundMusic();
+
+  // Pausa a música de fundo se o usuário começar a tocar o piano
+  useEffect(() => {
+    if (activeNotes.size > 0) {
+      pauseBackgroundMusic();
+    }
+  }, [activeNotes.size, pauseBackgroundMusic]);
+
   // Generate note range
   const notes: number[] = [];
   for (let i = startNote; i <= endNote; i++) {
