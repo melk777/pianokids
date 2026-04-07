@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 import { getStripe } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
+    const supabase = createRouteHandlerClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id;
 
-    // ── Se o usuário NÃO está logado, retorna redirect para cadastro ──
+    // ── Se o usuário NÃO está logado, retorna para o novo login ──
     if (!userId) {
       return NextResponse.json(
         {
-          redirect: "/sign-up",
-          message: "Crie uma conta antes de assinar um plano.",
+          redirect: "/login",
+          message: "Faça login para assinar um plano.",
         },
         { status: 401 }
       );
