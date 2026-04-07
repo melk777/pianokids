@@ -10,6 +10,7 @@
 
 export const SPECIAL_ACCESS_IDS: string[] = [
   "alessia_samanta@hotmail.com", // Acesso via E-mail
+  "comerciomelk@gmail.com",       // Acesso via E-mail
   // "user_2m...", // Adicione seus IDs aqui
 ];
 
