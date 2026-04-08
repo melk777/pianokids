@@ -18,7 +18,7 @@ import {
   filterNotesByDifficulty,
   getAccompanimentNotes,
 } from "@/lib/songFilters";
-import { Zap, Shield, Crown, Volume2, Mic, MicOff, Play } from "lucide-react";
+import { Volume2, Mic, MicOff, Play } from "lucide-react";
 
 
 
@@ -86,9 +86,6 @@ function PlayPageContent() {
   const [isWaitingMode, setIsWaitingMode] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1.0); // 0.1 a 1.1
 
-  // Simulated Notes (QWERTY / Virtual Keyboard)
-  const [simulatedActiveNotes, setSimulatedActiveNotes] = useState<Map<number, PianoNoteRecord>>(new Map());
-
     // Removido handleSimulatedPlay and handleSimulatedRelease as they are unused now due to QWERTY disable
 
   // UseKeyboardInput hook para tocar notas  // 2. Conexão com o QWERTY Listener (Hook)
@@ -97,7 +94,6 @@ function PlayPageContent() {
   const activeNotes = useMemo(() => {
     const merged = new Map<number, PianoNoteRecord>();
     // midiActiveNotes.forEach((v, k) => merged.set(k, v)); // REMOVIDO
-    simulatedActiveNotes.forEach((v, k) => merged.set(k, v));
     
     // Suporte a Audio Feedback do Microfone
     if (activeAudioNote) {
@@ -109,7 +105,7 @@ function PlayPageContent() {
       });
     }
     return merged;
-  }, [simulatedActiveNotes, activeAudioNote]);
+  }, [activeAudioNote]);
 
   const startGame = useCallback(() => {
     setGameState("countdown");
