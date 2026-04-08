@@ -57,7 +57,7 @@ export default function ProfilePage() {
     
     if (res?.success) {
       setEditing(false);
-      alert("Perfil atualizado com sucesso!");
+      // Toast local ou feedback visual
     } else {
       alert(`Erro ao salvar: ${res?.error || "Verifique se o nome de usuário já está em uso."}`);
     }
@@ -151,11 +151,19 @@ export default function ProfilePage() {
                   <User className="w-16 h-16 text-white/20" />
                 )}
                 
-                <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer">
-                  <Camera className="w-6 h-6 mb-1" />
+                <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 md:group-hover/avatar:opacity-100 md:opacity-0 transition-opacity cursor-pointer">
+                  <Camera className="w-6 h-6 mb-1 text-cyan" />
                   <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">Alterar</span>
                   <input type="file" className="hidden" accept="image/*" onChange={onFileChange} disabled={uploading} />
                 </label>
+
+                {/* Forcing visibility on small devices or if no avatar */}
+                {!avatarUrl && (
+                  <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer">
+                    <Camera className="w-6 h-6 mb-1 text-white/20" />
+                    <input type="file" className="hidden" accept="image/*" onChange={onFileChange} disabled={uploading} />
+                  </label>
+                )}
 
                 {uploading && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm">

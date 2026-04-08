@@ -90,7 +90,7 @@ export default function Dashboard() {
   };
 
   const handlePortal = () => {
-    router.push("/dashboard/membership");
+    router.push("/dashboard/profile");
   };
 
   /* ── Greeting based on time of day ── */
@@ -119,7 +119,9 @@ export default function Dashboard() {
           >
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-3 text-balance">
               {getGreeting()},{" "}
-              <span className="text-gradient font-black">{profile?.full_name?.split(" ")[0] || firstName}</span>!
+              <Link href="/dashboard/profile" className="text-gradient font-black hover:opacity-80 transition-opacity">
+                {profile?.full_name?.split(" ")[0] || firstName}
+              </Link>!
             </h1>
             <p className="text-white/50 text-lg max-w-2xl">
               {profile?.trophies && profile.trophies > 1 
@@ -272,6 +274,9 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-semibold">Meu Progresso</h2>
+                  <Link href="/dashboard/profile" className="text-xs font-bold text-white/40 hover:text-cyan transition-colors flex items-center gap-1">
+                    Ver Perfil Completo <ChevronRight className="w-3 h-3" />
+                  </Link>
                 </div>
 
                 {/* Dashboard Stats Panel */}
