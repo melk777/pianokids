@@ -46,8 +46,7 @@ export function useAudioEngine(): AudioEngineReturn {
     }
 
     try {
-      const AudioContextClass = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext) as typeof AudioContext;
-      const ctx = new AudioContextClass({ sampleRate: 44100 });
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 44100 });
       ctxRef.current = ctx;
 
       if (ctx.state === "suspended") {

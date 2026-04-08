@@ -73,7 +73,8 @@ export function useAudioInput() {
       setPermissionStatus("granted");
 
       // 2. Setup AudioContext
-      const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
       const audioContext = new AudioContextClass();
 
       audioContextRef.current = audioContext;

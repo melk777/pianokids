@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import { songs } from "@/lib/songs";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
@@ -29,7 +30,7 @@ export default function Dashboard() {
   const router = useRouter();
   const supabase = createClientComponent();
   const { playClick } = useSFX();
-  const { profile } = useProfile();
+  const { profile, loading: profileLoading } = useProfile();
   const { hasAccess: isSubscribed, loading: subscriptionLoading, planType } = useSubscription();
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -110,7 +111,7 @@ export default function Dashboard() {
 
       <main className="min-h-screen bg-black text-white selection:bg-cyan/30">
         <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto">
-          {/* ────── Greeting ────────────────────────── */}
+          {/* \u2500\u2500 Greeting \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -190,7 +191,7 @@ export default function Dashboard() {
                         {isListening && activeAudioNote && (
                           <div className="mt-2 flex items-center gap-2">
                              <div className="text-xs px-2 py-0.5 rounded bg-cyan/10 border border-cyan/20 text-white font-bold animate-pulse">
-                                Capturando: <span className="text-gradient font-black">{activeAudioNote.name}</span>
+                               Capturando: <span className="text-gradient font-black">{activeAudioNote.name}</span>
                              </div>
                           </div>
                         )}

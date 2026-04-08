@@ -37,7 +37,10 @@ export default function PianoEngine() {
   };
 
   // 2. Conexão com o QWERTY Listener (Hook)
-  useKeyboardInput();
+  useKeyboardInput({
+    onPlayNote: playNote,
+    onReleaseNote: releaseNote,
+  });
 
   return (
     <div className="w-full flex flex-col items-center gap-8 py-10 bg-black min-h-[400px]">
