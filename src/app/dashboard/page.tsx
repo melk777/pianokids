@@ -16,6 +16,7 @@ import {
   Mic,
   MicOff,
   CreditCard,
+  Clock,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAudioInput } from "@/hooks/useAudioInput";
@@ -30,7 +31,7 @@ export default function Dashboard() {
   const supabase = createClientComponent();
   const { playClick } = useSFX();
   const { profile } = useProfile();
-  const { hasAccess: isSubscribed, loading: subscriptionLoading, planType } = useSubscription();
+  const { status, currentPeriodEnd, hasAccess: isSubscribed, loading: subscriptionLoading, planType } = useSubscription();
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const { isSupported, isListening, start: startMic, error: audioError, activeAudioNote } = useAudioInput();
@@ -100,6 +101,16 @@ export default function Dashboard() {
     if (hour < 18) return "Boa tarde";
     return "Boa noite";
   };
+  
+  const getTrialDays = () => {
+    if (status !== "trialing" || !currentPeriodEnd) return null;
+    const now = new Date();
+    const end = new Date(currentPeriodEnd);
+    const diffTime = Math.max(0, end.getTime() - now.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+  
+  const diffDays = getTrialDays();
 
   const firstName =
     isLoaded && user ? user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0] || "Aluno" : "...";
@@ -337,8 +348,40 @@ export default function Dashboard() {
               </motion.section>
             </div>
 
-            {/* ── Right Column: Subscription + Stats ── */}
+            {/* \u2500\u2500 Right Column: Subscription + Stats \u2500\u2500 */}
             <div className="space-y-6">
+              {/* Trial Remaining Card (Static) */}
+              {status === "trialing" && diffDays !== null && (
+                <motion.div
+                  initial={{ x: 20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.35, duration: 0.5 }}
+                  className="glass rounded-2xl p-6 border border-cyan/20 bg-cyan/5 relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Clock size={48} className="text-cyan" />
+                  </div>
+                  <div className="relative z-10 flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-cyan/20 flex items-center justify-center">
+                      <Clock className="w-4 h-4 text-cyan animate-pulse" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-widest text-cyan/80">Período de Teste</span>
+                  </div>
+                  <h4 className="text-xl font-bold mb-1">
+                    {diffDays} {diffDays === 1 ? 'dia restante' : 'dias restantes'}
+                  </h4>
+                  <p className="text-xs text-white/40 mb-4">
+                    Seu acesso Pro gratuito expira em breve. Aproveite todas as músicas!
+                  </p>
+                  <Link 
+                    href="/#pricing" 
+                    className="inline-flex items-center gap-2 text-xs font-bold text-white hover:text-cyan transition-colors"
+                  >
+                    Garantir acesso vitalício <ChevronRight className="w-3 h-3" />
+                  </Link>
+                </motion.div>
+              )}
+
               {/* Subscription Card */}
               <motion.div
                 initial={{ x: 20, opacity: 0 }}
