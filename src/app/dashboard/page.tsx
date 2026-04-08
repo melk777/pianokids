@@ -23,7 +23,6 @@ import { useAudioInput } from "@/hooks/useAudioInput";
 import { useProfile } from "@/hooks/useProfile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
-import Header from "@/components/Header";
 import { createClientComponent } from "@/lib/supabase";
 
 export default function Dashboard() {
@@ -92,7 +91,7 @@ export default function Dashboard() {
   };
 
   const handlePortal = () => {
-    router.push("/dashboard/profile");
+    router.push("/dashboard/subscription");
   };
 
   /* ── Greeting based on time of day ── */
@@ -118,11 +117,9 @@ export default function Dashboard() {
 
   return (
     <>
-      <Header />
-
       <main className="min-h-screen bg-black text-white selection:bg-cyan/30">
         <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto">
-          {/* \u2500\u2500 Greeting \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
+          {/* ── Greeting ────────────────────────── */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

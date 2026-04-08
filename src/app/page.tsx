@@ -4,13 +4,11 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Music, Star, BarChart3, ChevronDown } from "lucide-react";
 
-import Header from "@/components/Header";
-import HeroAnimation from "@/components/HeroAnimation";
+import HeroVideo from "@/components/HeroVideo";
 import PartnerMarquee from "@/components/PartnerMarquee";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
-import GalaxyBackground from "@/components/GalaxyBackground";
 
 
 
@@ -73,37 +71,24 @@ export default function Home() {
 
   return (
     <>
-      <Header />
-
-      <main className="min-h-screen bg-black">
+      <main className="min-h-screen">
         {/* ── Hero Section ──────────────────────────── */}
-        <section className="relative min-h-screen px-6 py-24 lg:py-32 overflow-hidden flex items-center">
-          {/* Animated Galaxy Background (Stars, Nebulas, Space Dust) */}
-          <GalaxyBackground />
+        <section className="relative min-h-screen px-6 py-24 lg:py-32 overflow-hidden flex items-center justify-center">
+          {/* Background Video (Optimized) */}
+          <HeroVideo />
 
 
-          <div className="relative z-10 max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
+          <div className="relative z-10 max-w-7xl mx-auto w-full">
             
             <motion.div
-              initial={{ x: -30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-center lg:text-left"
+              className="text-center max-w-4xl mx-auto"
             >
-
-            {/* Badge */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass mb-8 text-xs text-white/60"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan animate-glow-pulse" />
-              Educação musical gamificada
-            </motion.div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
+            <h1 className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tight mb-8 leading-[1.1]">
               <span className="text-white">Aprenda piano</span>
               <br />
               <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
@@ -112,36 +97,24 @@ export default function Home() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg md:text-2xl text-white/50 max-w-2xl lg:max-w-none mx-auto lg:mx-0 mb-12 leading-relaxed font-medium">
+            <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
               Toque no seu piano real e nós ouviremos cada nota. 
-              Músicas que caem como estrelas — aprenda de forma mágica e intuitiva.
             </p>
 
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => router.push("/dashboard")}
-                className="btn-primary rounded-full px-8 py-4 text-base flex items-center gap-3 shadow-xl shadow-cyan/20"
+                className="btn-primary rounded-full px-10 py-5 text-lg flex items-center gap-3 shadow-2xl shadow-cyan/30"
               >
-                <Music className="w-5 h-5" />
+                <Music className="w-6 h-6" />
                 Iniciar teste de 7 dias gratuitos
               </motion.button>
             </div>
-          </motion.div>
-
-            {/* Piano Animation */}
-            <motion.div
-              initial={{ x: 30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 mt-16 lg:mt-0 w-full"
-            >
-              <HeroAnimation />
             </motion.div>
           </div>
-
           {/* Scroll indicator - Only bottom for small screens or mobile */}
           <motion.div
             className="hidden lg:block absolute bottom-12 left-1/2 -translate-x-1/2"

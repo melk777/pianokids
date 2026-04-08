@@ -24,6 +24,11 @@ import { useProfile } from "@/hooks/useProfile";
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+
+  // Ocultar Header na tela de jogo
+  if (pathname?.startsWith("/dashboard/play/")) {
+    return null;
+  }
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -90,9 +95,9 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-2">
             <button
                onClick={() => { playClick(); toggleBackgroundMusic(); }}
-              className="mr-2 p-2.5 rounded-xl bg-white/[0.04] text-white/40 hover:text-magenta-400 hover:bg-magenta/10 transition-all border border-white/[0.05]"
+              className="mr-2 p-2.5 rounded-xl bg-white/[0.04] text-white/40 hover:text-magenta hover:bg-magenta/10 transition-all border border-white/[0.05]"
             >
-              {isPlaying ? <Volume2 className="w-4 h-4 animate-pulse icon-gradient" /> : <VolumeX className="w-4 h-4" />}
+              {isPlaying ? <Volume2 className="w-4 h-4 icon-gradient" /> : <VolumeX className="w-4 h-4" />}
             </button>
             
             <button onClick={scrollToPricing} className={navLinkClass}>

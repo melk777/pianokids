@@ -53,41 +53,37 @@ export async function GET() {
     if (profile) {
       const now = new Date();
       if (profile.subscription_status === "active") {
-        return NextResponse.json({
-          status: "active",
-          planType: "paid",
-          hasAccess: true,
-          isPro: true,
-          customerId: profile.stripe_customer_id || null,
-        });
-      }
-
-      const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
-      if (profile.subscription_status === "trialing" && trialEndsAt && now < trialEndsAt) {
-        return NextResponse.json({
-          status: "trialing",
-          planType: "trial",
-          hasAccess: true,
-          isPro: false, // Em teste, não tem acesso PRO (apenas músicas grátis)
-          customerId: profile.stripe_customer_id || null,
-          currentPeriodEnd: trialEndsAt.toISOString(),
-        });
+        // Mantemos prosseguindo para buscar dados reais do Stripe se houver customerId
+      } else {
+        const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
+        if (profile.subscription_status === "trialing" && trialEndsAt && now < trialEndsAt) {
+          return NextResponse.json({
+            status: "trialing",
+            planType: "trial",
+            hasAccess: true,
+            isPro: false,
+            customerId: profile.stripe_customer_id || null,
+            currentPeriodEnd: trialEndsAt.toISOString(),
+          });
+        }
       }
     }
 
     const stripe = getStripe();
-    const sessions = await stripe.checkout.sessions.list({ limit: 100 });
-    let customerId: string | undefined;
+    let customerId = profile?.stripe_customer_id;
 
-    for (const session of sessions.data) {
-      if (
-        session.client_reference_id === userId ||
-        session.metadata?.userId === userId
-      ) {
-        if (session.customer) {
-          customerId = typeof session.customer === "string" ? session.customer : session.customer.id;
+    if (!customerId) {
+      const sessions = await stripe.checkout.sessions.list({ limit: 100 });
+      for (const session of sessions.data) {
+        if (
+          session.client_reference_id === userId ||
+          session.metadata?.userId === userId
+        ) {
+          if (session.customer) {
+            customerId = typeof session.customer === "string" ? session.customer : session.customer.id;
+          }
+          break;
         }
-        break;
       }
     }
 
@@ -120,14 +116,38 @@ export async function GET() {
 
     const activeSub = subscriptions.data[0];
     const interval = activeSub.items.data[0]?.plan?.interval;
+    const amount = activeSub.items.data[0]?.plan?.amount;
+    const currency = activeSub.items.data[0]?.plan?.currency;
+
+    // Buscar faturas recentes
+    const invoicesData = await stripe.invoices.list({
+      customer: customerId,
+      limit: 6,
+    });
+
+    const invoices = invoicesData.data.map((inv) => ({
+      id: inv.id,
+      amount: inv.amount_paid,
+      currency: inv.currency,
+      status: inv.status,
+      date: new Date(inv.created * 1000).toISOString(),
+      pdf_url: inv.invoice_pdf,
+    }));
 
     return NextResponse.json({
-      status: "active",
+      status: activeSub.status,
       planType: interval === "year" ? "yearly" : "monthly",
       hasAccess: true,
       isPro: true,
       customerId,
       interval: interval || null,
+      currentPeriodStart: new Date((activeSub as any).current_period_start * 1000).toISOString(),
+      currentPeriodEnd: new Date((activeSub as any).current_period_end * 1000).toISOString(),
+      subscriptionStart: new Date((activeSub as any).created * 1000).toISOString(),
+      cancelAtPeriodEnd: (activeSub as any).cancel_at_period_end,
+      amount: amount ? amount / 100 : 0,
+      currency: currency || "brl",
+      invoices,
     });
   } catch (err: unknown) {
     console.error("stripe-check error:", err);

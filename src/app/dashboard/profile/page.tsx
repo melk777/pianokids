@@ -186,13 +186,27 @@ export default function ProfilePage() {
                       autoFocus
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 focus:border-cyan outline-none transition-all text-xl font-bold"
                     />
-                    <input 
-                      type="text" 
-                      value={username}
-                      onChange={e => setUsername(e.target.value)}
-                      placeholder="Nome de usuário"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 focus:border-cyan outline-none transition-all text-sm text-white/60"
-                    />
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between px-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-white/40">Username (@)</label>
+                        {(profile?.username_changes_count || 0) >= 1 && (
+                          <span className="text-[9px] font-black text-magenta uppercase">Bloqueado</span>
+                        )}
+                      </div>
+                      <input 
+                        type="text" 
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
+                        placeholder="Nome de usuário"
+                        disabled={(profile?.username_changes_count || 0) >= 1}
+                        className={`w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 focus:border-cyan outline-none transition-all text-sm font-bold ${ (profile?.username_changes_count || 0) >= 1 ? "opacity-50 cursor-not-allowed text-white/30" : "text-white/80" }`}
+                      />
+                      <p className="text-[9px] text-white/20 font-medium pl-1">
+                        {(profile?.username_changes_count || 0) >= 1 
+                          ? "Você já alterou seu nome de usuário uma vez." 
+                          : "O nome de usuário só pode ser alterado 1 vez."}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex gap-2 justify-center md:justify-start">
                     <button 

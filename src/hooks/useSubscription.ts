@@ -4,13 +4,28 @@ import { useState, useEffect, useCallback } from "react";
 
 export type PlanType = "free" | "monthly" | "yearly" | "special_access" | "admin_granted" | "trial" | "past_due";
 
+export interface Invoice {
+  id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  date: string;
+  pdf_url: string | null;
+}
+
 export interface SubscriptionData {
   status: string;
   planType: PlanType;
   hasAccess: boolean;
   customerId: string | null;
   interval: string | null;
+  currentPeriodStart?: string;
   currentPeriodEnd: string | null;
+  subscriptionStart?: string;
+  cancelAtPeriodEnd?: boolean;
+  amount?: number;
+  currency?: string;
+  invoices?: Invoice[];
   isPro: boolean;
   loading: boolean;
 }

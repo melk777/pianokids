@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { AudioProvider } from "@/contexts/AudioContext";
 import StarryBackground from "@/components/StarryBackground";
+import GlobalSocialOverlay from "@/components/Social/GlobalSocialOverlay";
+import Header from "@/components/Header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -46,8 +48,10 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AudioProvider>
+          <Header />
           <StarryBackground />
           {children}
+          <GlobalSocialOverlay />
 
           {/* Global SVG Gradients for Icons */}
           <svg width="0" height="0" className="absolute pointer-events-none">

@@ -62,25 +62,32 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  const playBackgroundMusic = () => {
+  const playBackgroundMusic = async () => {
     if (audioRef.current) {
-      audioRef.current.play().catch((err) => {
-        console.warn("Autoplay bloqueado pelo navegador. Interação do usuário necessária.", err);
-      });
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.warn("Autoplay bloqueado pelo navegador ou erro de áudio:", err);
+        setIsPlaying(false);
+      }
     }
   };
 
   const pauseBackgroundMusic = () => {
     if (audioRef.current) {
       audioRef.current.pause();
+      setIsPlaying(false);
     }
   };
 
   const toggleBackgroundMusic = () => {
-    if (isPlaying) {
-      pauseBackgroundMusic();
-    } else {
-      playBackgroundMusic();
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        playBackgroundMusic();
+      } else {
+        pauseBackgroundMusic();
+      }
     }
   };
 

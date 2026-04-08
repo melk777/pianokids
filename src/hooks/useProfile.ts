@@ -6,6 +6,7 @@ import { createClientComponent } from "@/lib/supabase";
 export interface Profile {
   id: string;
   username: string | null;
+  username_changes_count: number;
   full_name: string | null;
   avatar_url: string | null;
   trophies: number;
@@ -48,6 +49,7 @@ export function useProfile() {
             id: user.id,
             full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Aluno",
             username: user.email?.split("@")[0] || `user_${user.id.slice(0, 5)}`,
+            username_changes_count: 0,
           };
           const { data: inserted, error: insertError } = await supabase
             .from("profiles")
@@ -77,6 +79,15 @@ export function useProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
+      // Verificação de alteração de username (Regra de 1 alteração)
+      if (updates.username && updates.username !== profile?.username) {
+        if ((profile?.username_changes_count || 0) >= 1) {
+          throw new Error("Você já alterou seu nome de usuário uma vez e não pode alterá-lo novamente.");
+        }
+        // Se está alterando pela primeira vez, marcamos o contador
+        updates.username_changes_count = 1;
+      }
+
       // Clean up updates to avoid sending extra fields
       const cleanUpdates = { ...updates };
       delete cleanUpdates.id;
@@ -92,7 +103,12 @@ export function useProfile() {
         .select()
         .single();
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        if (updateError.code === "23505") {
+          throw new Error("Este nome de usuário já está sendo usado por outro aluno.");
+        }
+        throw updateError;
+      }
       
       // Update local state with fresh copy
       setProfile({ ...data });
@@ -159,6 +175,22 @@ export function useProfile() {
     return await updateProfile(updates);
   };
 
+  const getPublicProfile = useCallback(async (username: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("username", username)
+        .single();
+      
+      if (error) throw error;
+      return { success: true, data: data as Profile };
+    } catch (err: unknown) {
+      console.error("Public profile error:", err);
+      return { success: false, error: err instanceof Error ? err.message : "Erro ao carregar" };
+    }
+  }, [supabase]);
+
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
@@ -170,6 +202,7 @@ export function useProfile() {
     refresh: fetchProfile,
     updateProfile,
     uploadAvatar,
-    recordPracticeSession
+    recordPracticeSession,
+    getPublicProfile
   };
 }
