@@ -11,6 +11,7 @@ export interface SubscriptionData {
   customerId: string | null;
   interval: string | null;
   currentPeriodEnd: string | null;
+  isPro: boolean;
   loading: boolean;
 }
 
@@ -22,6 +23,7 @@ export function useSubscription() {
     customerId: null,
     interval: null,
     currentPeriodEnd: null,
+    isPro: false,
     loading: true,
   });
 

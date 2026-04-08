@@ -37,6 +37,7 @@ export async function GET() {
         status: "special_access",
         planType: "admin_granted",
         hasAccess: true,
+        isPro: true,
         customerId: "admin_vip",
         interval: "forever",
         currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(),
@@ -56,6 +57,7 @@ export async function GET() {
           status: "active",
           planType: "paid",
           hasAccess: true,
+          isPro: true,
           customerId: profile.stripe_customer_id || null,
         });
       }
@@ -66,6 +68,7 @@ export async function GET() {
           status: "trialing",
           planType: "trial",
           hasAccess: true,
+          isPro: false, // Em teste, não tem acesso PRO (apenas músicas grátis)
           customerId: profile.stripe_customer_id || null,
           currentPeriodEnd: trialEndsAt.toISOString(),
         });
@@ -89,7 +92,7 @@ export async function GET() {
     }
 
     if (!customerId) {
-      return NextResponse.json({ status: "inactive", planType: "free", hasAccess: false });
+      return NextResponse.json({ status: "inactive", planType: "free", hasAccess: false, isPro: false });
     }
 
     const subscriptions = await stripe.subscriptions.list({
@@ -112,7 +115,7 @@ export async function GET() {
           customerId,
         });
       }
-      return NextResponse.json({ status: "inactive", planType: "free", hasAccess: false });
+      return NextResponse.json({ status: "inactive", planType: "free", hasAccess: false, isPro: false });
     }
 
     const activeSub = subscriptions.data[0];
@@ -122,6 +125,7 @@ export async function GET() {
       status: "active",
       planType: interval === "year" ? "yearly" : "monthly",
       hasAccess: true,
+      isPro: true,
       customerId,
       interval: interval || null,
     });

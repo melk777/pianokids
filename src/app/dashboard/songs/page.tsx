@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 
 export default function SongsPage() {
-  const { hasAccess: hasPremium, loading: isLoading } = useSubscription();
+  const { isPro: hasPremium, loading: isLoading } = useSubscription();
 
   return (
     <main className="min-h-screen bg-[#0A0A0A]">

@@ -31,7 +31,8 @@ export default function Dashboard() {
   const supabase = createClientComponent();
   const { playClick } = useSFX();
   const { profile } = useProfile();
-  const { status, currentPeriodEnd, hasAccess: isSubscribed, loading: subscriptionLoading, planType } = useSubscription();
+  const { status, currentPeriodEnd, isPro, loading: subscriptionLoading, planType } = useSubscription();
+  const isSubscribed = isPro; // No Dashboard, 'isSubscribed' agora significa ter acesso PRO (pago)
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const { isSupported, isListening, start: startMic, error: audioError, activeAudioNote } = useAudioInput();

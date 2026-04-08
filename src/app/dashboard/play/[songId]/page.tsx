@@ -19,6 +19,7 @@ import {
   getAccompanimentNotes,
 } from "@/lib/songFilters";
 import { Volume2, Mic, MicOff, Play } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
 
 
 
@@ -58,8 +59,12 @@ function PlayPageContent() {
     return getSongById(songId);
   }, [isFreePlay, songId]);
 
-  // const { isConnected, activeNotes: midiActiveNotes, connect } = useMIDI(); // REMOVIDO
-  const { isListening: isMicActive, activeAudioNote, start: startMic, stop: stopMic } = useAudioInput();
+  const { isPro, loading: subLoading } = useSubscription();
+
+  const isMicActive = useAudioInput().isListening;
+  const activeAudioNote = useAudioInput().activeAudioNote;
+  const startMic = useAudioInput().start;
+  const stopMic = useAudioInput().stop;
   const audio = useAudioEngine();
 
   // Tipo para nota MIDI (copiado de useMIDI para manter compatibilidade no código local)
@@ -211,6 +216,18 @@ function PlayPageContent() {
         <Link href="/dashboard/songs" className="text-cyan hover:underline">
           Voltar para a biblioteca
         </Link>
+      </div>
+    );
+  }
+
+  // ── Bloqueio de Segurança: Apenas PRO pode tocar músicas Premium ──
+  if (!subLoading && song.isPremium && !isPro) {
+    router.push("/dashboard/songs");
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-8">
+        <div className="w-12 h-12 border-4 border-rose-500/20 border-t-rose-500 rounded-full animate-spin mb-4" />
+        <span className="text-sm font-bold tracking-widest uppercase text-rose-400">Acesso Restrito</span>
+        <p className="text-xs text-white/40 mt-2">Esta música requer uma assinatura PRO. Redirecionando...</p>
       </div>
     );
   }
