@@ -7,6 +7,10 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'images.unsplash.com',
             },
+            {
+                protocol: 'https',
+                hostname: 'wlqyvygbxzkuufeaixmi.supabase.co',
+            },
         ],
     },
     // Headers de segurança (boa prática para produção)
