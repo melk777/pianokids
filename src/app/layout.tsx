@@ -15,6 +15,16 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const customRegular = localFont({
+  src: "./fonts/regular.ttf",
+  variable: "--font-custom-regular",
+});
+
+const customBold = localFont({
+  src: "./fonts/bold.ttf",
+  variable: "--font-custom-bold",
+});
+
 export const metadata: Metadata = {
   title: "PianoKids — Aprenda Piano Brincando",
   description: "Transforme o aprendizado de piano em um jogo divertido.",
@@ -28,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="dark" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${customRegular.variable} ${customBold.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
         suppressHydrationWarning
       >
         <AudioProvider>

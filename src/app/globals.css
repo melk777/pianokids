@@ -15,9 +15,19 @@ html {
 body {
   color: #ededed;
   background: #000000;
-  font-family: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  font-family: var(--font-custom-regular), var(--font-geist-sans), "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-custom-regular), var(--font-geist-sans), sans-serif;
+  font-weight: normal;
+}
+
+h4, h5, h6, .subtitle {
+  font-family: var(--font-custom-bold), var(--font-geist-sans), sans-serif;
+  font-weight: bold;
 }
 
 /* Glassmorphism utilities */
