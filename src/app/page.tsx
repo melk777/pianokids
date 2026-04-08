@@ -153,7 +153,7 @@ export default function Home() {
                 {
                   icon: <Music className="w-6 h-6" />,
                   title: "Reconhecimento de Áudio",
-                  desc: "Toque as notas no seu piano real e nossa IA reconhece instantaneamente via microfone.",
+                  desc: "Toque as notas no seu piano real e nossa IA reconhecerá instantaneamente via microfone.",
                 },
                 {
                   icon: <Star className="w-6 h-6" />,

@@ -167,7 +167,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                   >
                     <Hand 
                       size={28} 
-                      className={`transition-all duration-500 ${leftHand ? "text-zinc-900 scale-110 drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)]" : "text-white/20"}`} 
+                      className={`transition-all duration-500 transform -scale-x-100 ${leftHand ? "text-zinc-900 scale-110 drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)]" : "text-white/20"}`} 
                     />
                     <span className={`text-[9px] font-black tracking-widest uppercase ${leftHand ? "text-zinc-900" : "text-white/20"}`}>Mão Esquerda</span>
                     
@@ -181,7 +181,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                   >
                     <Hand 
                       size={28} 
-                      className="text-zinc-900 scale-110 drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)] transform -scale-x-100" 
+                      className="text-zinc-900 scale-110 drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)]" 
                     />
                     <div className="flex flex-col items-center">
                       <span className="text-[9px] font-black tracking-widest uppercase text-zinc-900">Mão Direita</span>

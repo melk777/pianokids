@@ -20,7 +20,7 @@ export interface Song {
   difficulty: "Fácil" | "Médio" | "Difícil";
   bpm: number;
   duration: number;   // Total duration in seconds
-  category: "Para Iniciantes" | "Infantis" | "Clássicos" | "Sertanejo" | "Religiosa" | "Sucessos Recentes";
+  category: "Para Iniciantes" | "Infantis" | "Clássicos" | "Sertanejos" | "Religiosos" | "Grandes Sucessos";
   isPremium: boolean;
   coverUrl?: string;
   notes: SongNote[];
@@ -105,7 +105,7 @@ export const songs: Song[] = [
     id: "evidencias",
     title: "Evidências",
     artist: "Chitãozinho & Xororó",
-    category: "Sertanejo",
+    category: "Sertanejos",
     isPremium: true,
     difficulty: "Médio",
     bpm: 90,
@@ -119,7 +119,7 @@ export const songs: Song[] = [
     id: "hallelujah",
     title: "Hallelujah",
     artist: "Leonard Cohen",
-    category: "Religiosa",
+    category: "Religiosos",
     isPremium: true,
     difficulty: "Fácil",
     bpm: 60,
@@ -133,7 +133,7 @@ export const songs: Song[] = [
     id: "flowers",
     title: "Flowers",
     artist: "Miley Cyrus",
-    category: "Sucessos Recentes",
+    category: "Grandes Sucessos",
     isPremium: true,
     difficulty: "Médio",
     bpm: 112,

@@ -24,9 +24,9 @@ const CATEGORIES = [
   { id: "all", label: "Todas" },
   { id: "Infantis", label: "Infantis" },
   { id: "Clássicos", label: "Clássicos" },
-  { id: "Sertanejo", label: "Sertanejo" },
-  { id: "Religiosa", label: "Religiosa" },
-  { id: "Sucessos Recentes", label: "Sucessos" },
+  { id: "Sertanejos", label: "Sertanejos" },
+  { id: "Religiosos", label: "Religiosos" },
+  { id: "Grandes Sucessos", label: "Grandes Sucessos" },
 ];
 
 export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
