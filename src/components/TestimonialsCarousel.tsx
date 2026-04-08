@@ -84,7 +84,7 @@ export default function TestimonialsCarousel() {
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
             O que dizem nossos{" "}
             <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
-              pequenos pianistas
+              pequenos pianistas...
             </span>
           </h2>
           <p className="text-white/40 max-w-lg mx-auto">

@@ -208,7 +208,7 @@ export default function Home() {
                 Planos simples,{" "}
                 <br />
                 <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
-                  sem surpresas
+                  sem surpresas.
                 </span>
               </h2>
               <p className="text-white/40 text-lg md:text-xl">
