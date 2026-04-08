@@ -4,6 +4,10 @@ import twinkleMidiData from "../../public/songs/brilha-brilha-estrelinha.json";
 import aDonaAranhaData from "../../public/songs/a-dona-aranha.json";
 import odeMidiData from "../../public/songs/ode-to-joy.json";
 import furEliseMidiData from "../../public/songs/fur-elise-easy-ver.json";
+import oSapoData from "../../public/songs/o-sapo-nao-lava-o-pe.json";
+import minuetoData from "../../public/songs/minueto-em-sol-maior.json";
+import goldenHourData from "../../public/songs/golden-hour.json";
+import parabensData from "../../public/songs/parabens-pra-voce.json";
 
 export interface SongNote {
   midi: number;       // MIDI note number (e.g., 60 = C4)
@@ -140,6 +144,42 @@ export const songs: Song[] = [
     duration: 200,
     coverUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&auto=format&fit=crop&q=60",
     notes: []
+  },
+
+  // 10. O Sapo não lava o pé
+  {
+    ...(oSapoData as Song),
+    artist: "Folclore Brasileiro",
+    category: "Infantis",
+    isPremium: true,
+    difficulty: "Fácil"
+  },
+
+  // 11. Minueto em Sol Maior
+  {
+    ...(minuetoData as Song),
+    artist: "J.S. Bach",
+    category: "Clássicos",
+    isPremium: true,
+    difficulty: "Médio"
+  },
+
+  // 12. Golden Hour
+  {
+    ...(goldenHourData as Song),
+    artist: "JVKE",
+    category: "Grandes Sucessos",
+    isPremium: true,
+    difficulty: "Médio"
+  },
+
+  // 13. Parabéns Pra Você
+  {
+    ...(parabensData as Song),
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: true,
+    difficulty: "Fácil"
   }
 ];
 
