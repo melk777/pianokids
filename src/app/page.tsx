@@ -118,27 +118,16 @@ export default function Home() {
             </p>
 
 
-            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => router.push("/dashboard")}
-                className="btn-primary rounded-full px-10 py-5 text-lg flex items-center gap-3 shadow-xl shadow-cyan/20"
+                className="btn-primary rounded-full px-8 py-4 text-base flex items-center gap-3 shadow-xl shadow-cyan/20"
               >
                 <Music className="w-5 h-5" />
                 Iniciar teste de 7 dias gratuitos
               </motion.button>
-
-              <motion.a
-                href="#pricing"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn-secondary rounded-full px-10 py-5 text-lg flex items-center gap-2 border-2"
-              >
-                Ver Planos
-                <ChevronDown className="w-4 h-4" />
-              </motion.a>
             </div>
           </motion.div>
 
