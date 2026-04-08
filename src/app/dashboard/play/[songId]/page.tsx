@@ -123,11 +123,8 @@ function PlayPageContent() {
     });
   }, []);
 
-  // UseKeyboardInput hook para tocar notas com o computador (apenas se desejado)
-  useKeyboardInput({
-    onPlayNote: handleSimulatedPlay,
-    onReleaseNote: handleSimulatedRelease,
-  });
+  // UseKeyboardInput hook para tocar notas  // 2. Conexão com o QWERTY Listener (Hook)
+  useKeyboardInput();
 
   const activeNotes = useMemo(() => {
     const merged = new Map<number, any>();
