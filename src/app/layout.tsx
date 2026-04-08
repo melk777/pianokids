@@ -18,11 +18,13 @@ const geistMono = localFont({
 const customRegular = localFont({
   src: "./fonts/regular.ttf",
   variable: "--font-custom-regular",
+  display: "swap",
 });
 
 const customBold = localFont({
   src: "./fonts/bold.ttf",
   variable: "--font-custom-bold",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
