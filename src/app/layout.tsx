@@ -16,14 +16,16 @@ const geistMono = localFont({
 });
 
 const customRegular = localFont({
-  src: "./fonts/regular.ttf",
+  src: "./fonts/PianoKids-Regular.ttf",
   variable: "--font-custom-regular",
+  weight: "400",
   display: "swap",
 });
 
 const customBold = localFont({
-  src: "./fonts/bold.ttf",
+  src: "./fonts/PianoKids-Bold.ttf",
   variable: "--font-custom-bold",
+  weight: "700",
   display: "swap",
 });
 
