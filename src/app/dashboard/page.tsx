@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 import { songs } from "@/lib/songs";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
@@ -30,7 +29,7 @@ export default function Dashboard() {
   const router = useRouter();
   const supabase = createClientComponent();
   const { playClick } = useSFX();
-  const { profile, loading: profileLoading } = useProfile();
+  const { profile } = useProfile();
   const { hasAccess: isSubscribed, loading: subscriptionLoading, planType } = useSubscription();
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);

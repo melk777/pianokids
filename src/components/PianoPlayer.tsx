@@ -719,7 +719,7 @@ export default function PianoPlayer({
                 onPlayNote?.(midi);
               }} 
               onReleaseNote={onReleaseNote || (() => {})} 
-              activeNotes={activeNotes as any}
+              activeNotes={activeNotes as unknown as Map<number, boolean>}
               startNote={startNote}
               endNote={endNote}
             />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef, useMemo, Suspense } from "react";
+import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -15,19 +15,12 @@ import { getSongById, type Song, type SongNote } from "@/lib/songs";
 
 import {
   type Difficulty,
-  DIFFICULTY_LABELS,
-  DIFFICULTY_COLORS,
   filterNotesByDifficulty,
   getAccompanimentNotes,
 } from "@/lib/songFilters";
 import { Zap, Shield, Crown, Volume2, Mic, MicOff, Play } from "lucide-react";
 
 
-const DIFFICULTY_ICONS: Record<Difficulty, React.ReactNode> = {
-  beginner: <Shield className="w-4 h-4" />,
-  medium: <Zap className="w-4 h-4" />,
-  pro: <Crown className="w-4 h-4" />,
-};
 
 export default function PlayPage() {
   return (
@@ -96,38 +89,13 @@ function PlayPageContent() {
   // Simulated Notes (QWERTY / Virtual Keyboard)
   const [simulatedActiveNotes, setSimulatedActiveNotes] = useState<Map<number, PianoNoteRecord>>(new Map());
 
-  const handleSimulatedPlay = useCallback((midi: number) => {
-    const noteData: PianoNoteRecord = {
-      note: midi,
-      velocity: 100,
-      channel: 1,
-      timestamp: performance.now()
-    };
-    
-    setSimulatedActiveNotes((prev: Map<number, PianoNoteRecord>) => {
-      const next = new Map(prev);
-      next.set(midi, noteData);
-      return next;
-    });
-
-    if (audioEnabled) {
-      audio.playStudent(midi, 0.5, 0.8);
-    }
-  }, [audio, audioEnabled]);
-
-  const handleSimulatedRelease = useCallback((midi: number) => {
-    setSimulatedActiveNotes((prev) => {
-      const next = new Map(prev);
-      next.delete(midi);
-      return next;
-    });
-  }, []);
+    // Removido handleSimulatedPlay and handleSimulatedRelease as they are unused now due to QWERTY disable
 
   // UseKeyboardInput hook para tocar notas  // 2. Conexão com o QWERTY Listener (Hook)
   useKeyboardInput();
 
   const activeNotes = useMemo(() => {
-    const merged = new Map<number, any>();
+    const merged = new Map<number, PianoNoteRecord>();
     // midiActiveNotes.forEach((v, k) => merged.set(k, v)); // REMOVIDO
     simulatedActiveNotes.forEach((v, k) => merged.set(k, v));
     
