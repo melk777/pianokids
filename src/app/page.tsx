@@ -106,7 +106,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
               <span className="text-white">Aprenda piano</span>
               <br />
-              <span className="bg-gradient-to-r from-cyan to-cyan/60 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
                 brincando.
               </span>
             </h1>
