@@ -25,7 +25,6 @@ export default function SubscriptionPage() {
   const router = useRouter();
   const { playClick } = useSFX();
   const { 
-    status, 
     planType, 
     currentPeriodEnd, 
     subscriptionStart, 

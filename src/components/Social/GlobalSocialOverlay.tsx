@@ -7,11 +7,12 @@ import SocialTray from "./SocialTray";
 import ChatWindow from "./ChatWindow";
 import { FriendshipData } from "@/hooks/useSocial";
 import { AnimatePresence } from "framer-motion";
+import { User } from "@supabase/supabase-js";
 
 export default function GlobalSocialOverlay() {
   const pathname = usePathname();
   const supabase = createClientComponent();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [selectedFriendship, setSelectedFriendship] = useState<FriendshipData | null>(null);
 
   useEffect(() => {

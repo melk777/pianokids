@@ -14,6 +14,7 @@ import { useSFX } from "@/hooks/useSFX";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { createClientComponent } from "@/lib/supabase";
+import Image from "next/image";
 
 interface ChatWindowProps {
   friendship: FriendshipData;
@@ -69,7 +70,13 @@ export default function ChatWindow({ friendship, onClose }: ChatWindowProps) {
         <div className="flex items-center gap-4">
           <div className="relative">
             {friendship.friend_profile.avatar_url ? (
-              <img src={friendship.friend_profile.avatar_url} className="w-12 h-12 rounded-full border-2 border-white/10" alt="" />
+              <Image 
+                src={friendship.friend_profile.avatar_url} 
+                alt={friendship.friend_profile.username || "Avatar"}
+                width={48}
+                height={48}
+                className="w-12 h-12 rounded-full border-2 border-white/10 object-cover" 
+              />
             ) : (
               <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/20">
                 <UserCircle2 className="w-7 h-7" />

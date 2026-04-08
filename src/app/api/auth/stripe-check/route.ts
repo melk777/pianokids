@@ -3,6 +3,12 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getStripe } from "@/lib/stripe";
 import { hasSpecialAccess } from "@/lib/access-control";
+import type Stripe from "stripe";
+
+interface StripeSubscription extends Stripe.Subscription {
+  current_period_start: number;
+  current_period_end: number;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -114,7 +120,7 @@ export async function GET() {
       return NextResponse.json({ status: "inactive", planType: "free", hasAccess: false, isPro: false });
     }
 
-    const activeSub = subscriptions.data[0];
+    const activeSub = subscriptions.data[0] as StripeSubscription;
     const interval = activeSub.items.data[0]?.plan?.interval;
     const amount = activeSub.items.data[0]?.plan?.amount;
     const currency = activeSub.items.data[0]?.plan?.currency;
@@ -141,10 +147,10 @@ export async function GET() {
       isPro: true,
       customerId,
       interval: interval || null,
-      currentPeriodStart: new Date((activeSub as any).current_period_start * 1000).toISOString(),
-      currentPeriodEnd: new Date((activeSub as any).current_period_end * 1000).toISOString(),
-      subscriptionStart: new Date((activeSub as any).created * 1000).toISOString(),
-      cancelAtPeriodEnd: (activeSub as any).cancel_at_period_end,
+      currentPeriodStart: new Date(activeSub.current_period_start * 1000).toISOString(),
+      currentPeriodEnd: new Date(activeSub.current_period_end * 1000).toISOString(),
+      subscriptionStart: new Date(activeSub.created * 1000).toISOString(),
+      cancelAtPeriodEnd: activeSub.cancel_at_period_end,
       amount: amount ? amount / 100 : 0,
       currency: currency || "brl",
       invoices,

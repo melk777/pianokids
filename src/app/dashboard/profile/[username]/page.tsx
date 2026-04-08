@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { useProfile, Profile } from "@/hooks/useProfile";
 import { 
@@ -17,6 +17,7 @@ import {
   Music,
   User as UserIcon
 } from "lucide-react";
+import Image from "next/image";
 
 export default function PublicCareerPage() {
   const params = useParams();
@@ -88,7 +89,13 @@ export default function PublicCareerPage() {
             <div className="relative">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white/10 overflow-hidden bg-white/5 flex items-center justify-center shadow-2xl">
                 {profile.avatar_url ? (
-                  <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                  <Image 
+                    src={profile.avatar_url} 
+                    alt={profile.username || "Avatar"} 
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover" 
+                  />
                 ) : (
                   <UserIcon className="w-16 h-16 text-white/20" />
                 )}

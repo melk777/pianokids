@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { createClientComponent } from "@/lib/supabase";
+import { RealtimeChannel } from "@supabase/supabase-js";
 import { Profile } from "./useProfile";
 
 export interface FriendshipData {
@@ -41,7 +42,14 @@ export function useSocial() {
       const formattedFriends: FriendshipData[] = [];
       const formattedPending: FriendshipData[] = [];
 
-      data.forEach((item: any) => {
+      data?.forEach((item: {
+        id: string;
+        sender_id: string;
+        receiver_id: string;
+        status: 'pending' | 'accepted' | 'blocked';
+        sender: Profile;
+        receiver: Profile;
+      }) => {
         const isSender = item.sender_id === user.id;
         const friendProfile = isSender ? item.receiver : item.sender;
         
@@ -121,8 +129,8 @@ export function useSocial() {
 
   useEffect(() => {
     let active = true;
-    let friendshipsChannel: any;
-    let presenceChannel: any;
+    let friendshipsChannel: RealtimeChannel;
+    let presenceChannel: RealtimeChannel;
 
     const setup = async () => {
       const { data: { session } } = await supabase.auth.getSession();

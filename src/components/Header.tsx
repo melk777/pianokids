@@ -20,15 +20,11 @@ import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useSFX } from "@/hooks/useSFX";
 import { usePathname, useRouter } from "next/navigation";
 import { useProfile } from "@/hooks/useProfile";
+import Image from "next/image";
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-
-  // Ocultar Header na tela de jogo
-  if (pathname?.startsWith("/dashboard/play/")) {
-    return null;
-  }
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -53,6 +49,11 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Ocultar Header na tela de jogo - MOVED DOWN to obey Rules of Hooks
+  if (pathname?.startsWith("/dashboard/play/")) {
+    return null;
+  }
 
   const scrollToPricing = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -114,7 +115,13 @@ export default function Header() {
                 >
                   <div className="w-6 h-6 rounded-full overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center shrink-0">
                     {profile?.avatar_url ? (
-                      <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                      <Image 
+                        src={profile.avatar_url} 
+                        alt="Profile" 
+                        width={24} 
+                        height={24} 
+                        className="w-full h-full object-cover" 
+                      />
                     ) : (
                       <User className="w-3 h-3 text-white/40" />
                     )}
@@ -165,7 +172,13 @@ export default function Header() {
                      <Link href="/dashboard/profile" onClick={() => setMobileOpen(false)} className={mobileLinkClass}>
                         <div className="w-5 h-5 rounded-full overflow-hidden border border-white/10 bg-white/5 shrink-0">
                           {profile?.avatar_url ? (
-                            <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                            <Image 
+                              src={profile.avatar_url} 
+                              alt="Profile" 
+                              width={20} 
+                              height={20} 
+                              className="w-full h-full object-cover" 
+                            />
                           ) : (
                             <User className="w-3 h-3" />
                           )}

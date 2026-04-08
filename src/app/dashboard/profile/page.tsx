@@ -22,6 +22,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ProfilePage() {
   const { profile, loading: profileLoading, error: profileError, updateProfile, uploadAvatar } = useProfile();
@@ -141,10 +142,12 @@ export default function ProfilePage() {
             <div className="relative">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white/10 overflow-hidden bg-white/5 flex items-center justify-center relative group/avatar">
                 {avatarUrl ? (
-                  <img 
+                  <Image 
                     src={avatarUrl} 
                     key={avatarUrl} 
-                    alt="Profile" 
+                    alt={profile?.username || "Avatar"} 
+                    width={160}
+                    height={160}
                     className="w-full h-full object-cover"
                   />
                 ) : (

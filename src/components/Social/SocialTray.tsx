@@ -9,7 +9,6 @@ import {
   ChevronRight,
   UserCircle2,
   Bell,
-  Check,
   X,
   Plus,
   Loader2,
@@ -18,7 +17,9 @@ import {
   Trophy
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useSocial, FriendshipData } from "@/hooks/useSocial";
+import { Profile } from "@/hooks/useProfile";
 import { useSFX } from "@/hooks/useSFX";
 
 interface SocialTrayProps {
@@ -40,7 +41,7 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
   } = useSocial();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<Profile[]>([]);
   const [searching, setSearching] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
 
@@ -266,7 +267,13 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
             >
               <div className="relative shrink-0">
                 {friendship.friend_profile.avatar_url ? (
-                  <img src={friendship.friend_profile.avatar_url} className="w-12 h-12 rounded-full border-2 border-white/20 object-cover shadow-lg group-hover:border-cyan/50 transition-all" alt="" />
+                  <Image 
+                    src={friendship.friend_profile.avatar_url} 
+                    alt={friendship.friend_profile.username || "Avatar"}
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 rounded-full border-2 border-white/20 object-cover shadow-lg group-hover:border-cyan/50 transition-all" 
+                  />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center text-white/30 group-hover:text-cyan group-hover:border-cyan/50 transition-all">
                     <UserCircle2 className="w-8 h-8" />
