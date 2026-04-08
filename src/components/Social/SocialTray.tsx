@@ -14,7 +14,8 @@ import {
   Plus,
   Loader2,
   UserPlus,
-  ExternalLink
+  ExternalLink,
+  Trophy
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSocial, FriendshipData } from "@/hooks/useSocial";
