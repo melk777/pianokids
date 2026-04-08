@@ -136,7 +136,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
                     {category}
                   </h2>
 
-                  <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-4 pb-4 px-2">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-2">
                     {categorySongs.map((song, i) => (
                       <SongCard 
                         key={song.id} 
@@ -243,7 +243,7 @@ function SongCard({ song, hasPremium, catIndex, i, playClick, getDifficultyStars
     <Link
       href={isLocked ? "/#pricing" : "#"}
       onClick={handleClick}
-      className="flex-none w-56 md:w-64 snap-start group relative transition-transform duration-300 hover:scale-105"
+      className="w-full group relative transition-transform duration-300 hover:scale-105"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}

@@ -201,13 +201,45 @@ function PlayPageContent() {
 
   const filteredNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
+    
+    const lHand = searchParams.get("leftHand") === "true";
+    const rHand = searchParams.get("rightHand") === "true";
+    const isBoth = lHand && rHand;
+
+    // Se temos a versão específica de 1 mão e o usuário escolheu apenas uma, usamos ela
+    if (!isBoth && song.notes1Hand) {
+      return song.notes1Hand;
+    }
+
+    // Se temos a versão de 2 mãos e o usuário escolheu ambas, usamos ela
+    if (isBoth && song.notes2Hands) {
+      return song.notes2Hands;
+    }
+
+    // Fallback para o comportamento antigo de filtro
     return filterNotesByDifficulty(song.notes, difficulty);
-  }, [song, difficulty]);
+  }, [song, difficulty, searchParams]);
 
   const accompanimentNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
+    
+    const lHand = searchParams.get("leftHand") === "true";
+    const rHand = searchParams.get("rightHand") === "true";
+    const isBoth = lHand && rHand;
+
+    // Se o usuário está na versão de 1 mão (MIDI 1), 
+    // o acompanhamento deve vir desse mesmo contexto ou ser filtrado dele
+    if (!isBoth && song.notes1Hand) {
+      return getAccompanimentNotes(song.notes1Hand, difficulty);
+    }
+
+    // Se está em 2 mãos, usa a versão completa
+    if (isBoth && song.notes2Hands) {
+      return getAccompanimentNotes(song.notes2Hands, difficulty);
+    }
+
     return getAccompanimentNotes(song.notes, difficulty);
-  }, [song, difficulty]);
+  }, [song, difficulty, searchParams]);
 
   if (!song) {
     return (

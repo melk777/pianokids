@@ -4,10 +4,10 @@ import twinkleMidiData from "../../public/songs/brilha-brilha-estrelinha.json";
 import aDonaAranhaData from "../../public/songs/a-dona-aranha.json";
 import odeMidiData from "../../public/songs/ode-to-joy.json";
 import furEliseMidiData from "../../public/songs/fur-elise-easy-ver.json";
-import oSapoData from "../../public/songs/o-sapo-nao-lava-o-pe.json";
-import minuetoData from "../../public/songs/minueto-em-sol-maior.json";
+import oSapoData from "../../public/songs/o-sapo.json";
+import minuetoData from "../../public/songs/minueto.json";
 import goldenHourData from "../../public/songs/golden-hour.json";
-import parabensData from "../../public/songs/parabens-pra-voce.json";
+import parabensData from "../../public/songs/parabens.json";
 
 export interface SongNote {
   midi: number;       // MIDI note number (e.g., 60 = C4)
@@ -28,6 +28,8 @@ export interface Song {
   isPremium: boolean;
   coverUrl?: string;
   notes: SongNote[];
+  notes1Hand?: SongNote[] | null;
+  notes2Hands?: SongNote[] | null;
 }
 
 /**
@@ -149,37 +151,45 @@ export const songs: Song[] = [
   // 10. O Sapo não lava o pé
   {
     ...(oSapoData as Song),
+    id: "o-sapo-nao-lava-o-pe", // Mantendo ID para compatibilidade
     artist: "Folclore Brasileiro",
     category: "Infantis",
     isPremium: true,
-    difficulty: "Fácil"
+    difficulty: "Fácil",
+    coverUrl: "/images/covers/o_sapo_1775073045610.png"
   },
 
   // 11. Minueto em Sol Maior
   {
     ...(minuetoData as Song),
+    id: "minueto-em-sol-maior",
     artist: "J.S. Bach",
     category: "Clássicos",
     isPremium: true,
-    difficulty: "Médio"
+    difficulty: "Médio",
+    coverUrl: "/images/covers/minueto_1775073045610.png"
   },
 
   // 12. Golden Hour
   {
     ...(goldenHourData as Song),
+    id: "golden-hour",
     artist: "JVKE",
     category: "Grandes Sucessos",
     isPremium: true,
-    difficulty: "Médio"
+    difficulty: "Médio",
+    coverUrl: "/images/covers/golden-hour_1775101037255.png"
   },
 
   // 13. Parabéns Pra Você
   {
     ...(parabensData as Song),
+    id: "parabens-pra-voce",
     artist: "Tradicional",
     category: "Infantis",
     isPremium: true,
-    difficulty: "Fácil"
+    difficulty: "Fácil",
+    coverUrl: "/images/covers/parabens_pra_voce_1775101235123.png"
   }
 ];
 
