@@ -101,8 +101,8 @@ export default function PianoPlayer({
   onPlayNote,
   onReleaseNote,
   resumeAudio,
-  startNote = 48,
-  endNote = 77,
+  startNote = 36,
+  endNote = 84,
   isFreePlay = false,
   songDuration = 0,
   isWaitingMode = false,
@@ -246,7 +246,7 @@ export default function PianoPlayer({
         ctx.fillRect(0, 0, width, height);
         
         // 25% da altura para teclado
-        const KEYBOARD_HEIGHT_IDLE = Math.round(height * 0.25);
+        const KEYBOARD_HEIGHT_IDLE = Math.round(height * 0.30);
         const HIT_Y_IDLE = height - KEYBOARD_HEIGHT_IDLE; 
 
         ctx.fillStyle = COLORS.hitZoneLine;
@@ -272,8 +272,8 @@ export default function PianoPlayer({
         }
       };
 
-      // ── PROPORÇÃO 75/25: Teclado = 25% da altura ──
-      const KEYBOARD_HEIGHT = Math.round(height * 0.25);
+      // ── PROPORÇÃO 70/30: Teclado = 30% da altura ──
+      const KEYBOARD_HEIGHT = Math.round(height * 0.30);
       const HIT_Y = height - KEYBOARD_HEIGHT; 
       const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
 
@@ -724,7 +724,7 @@ export default function PianoPlayer({
           />
 
           {/* TECLADO VIRTUAL: 25% da altura */}
-          <div className="absolute bottom-0 left-0 right-0 pointer-events-auto" style={{ height: '25%' }}>
+          <div className="absolute bottom-0 left-0 right-0 pointer-events-auto" style={{ height: '30%' }}>
             <VirtualKeyboard 
               onPlayNote={(midi) => {
                 resumeAudio?.();

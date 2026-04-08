@@ -25,8 +25,8 @@ export default function VirtualKeyboard({
   onReleaseNote, 
   activeNotes, 
   className,
-  startNote = 48,
-  endNote = 77
+  startNote = 36,
+  endNote = 84
 }: VirtualKeyboardProps) {
   const notes = Array.from({ length: endNote - startNote + 1 }, (_, i) => startNote + i);
 
