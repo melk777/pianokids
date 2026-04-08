@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { createClientComponent } from "@/lib/supabase";
 import { Mail, Lock, Loader2, ArrowRight, Music } from "lucide-react";
 import Link from "next/link";
+import { getURL } from "@/lib/utils/url";
 
 export default function AuthForm() {
   const supabase = createClientComponent();
@@ -32,7 +33,7 @@ export default function AuthForm() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${getURL()}/auth/callback`,
           },
         });
         if (error) throw error;
