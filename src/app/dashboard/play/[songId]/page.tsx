@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ScoreScreen from "@/components/ScoreScreen";
 import OrientationOverlay from "@/components/OrientationOverlay";
 import PianoPlayer from "@/components/PianoPlayer";
-// Removido useMIDI
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useKeyboardInput } from "@/hooks/useKeyboardInput";
 import { useAudioInput } from "@/hooks/useAudioInput";
@@ -18,7 +17,7 @@ import {
   filterNotesByDifficulty,
   getAccompanimentNotes,
 } from "@/lib/songFilters";
-import { Volume2, Mic, MicOff, Play } from "lucide-react";
+import { Volume2, Mic, MicOff, Play, BookOpen, Settings, RotateCcw } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 
 
@@ -89,7 +88,10 @@ function PlayPageContent() {
   const [finalScore, setFinalScore] = useState({ score: 0, combo: 0, accuracy: 100 });
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [isWaitingMode, setIsWaitingMode] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1.0); // 0.1 a 1.1
+  const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
+  const [showSettings, setShowSettings] = useState(false);
+  const [metronomeVolume, setMetronomeVolume] = useState(0.08);
+  const settingsRef = useRef<HTMLDivElement>(null);
 
     // Removido handleSimulatedPlay and handleSimulatedRelease as they are unused now due to QWERTY disable
 
@@ -115,8 +117,28 @@ function PlayPageContent() {
   const startGame = useCallback(() => {
     setGameState("countdown");
     setCountdown(3);
-    audio.resume(); // Destrava o AudioContext cedo
+    audio.resume();
   }, [audio]);
+
+  const restartGame = useCallback(() => {
+    setIsPlaying(false);
+    setGameState("idle");
+    setFinalScore({ score: 0, combo: 0, accuracy: 100 });
+    setShowSettings(false);
+  }, []);
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setShowSettings(false);
+      }
+    };
+    if (showSettings) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showSettings]);
 
   // Lógica da Contagem Regressiva
   useEffect(() => {
@@ -269,83 +291,164 @@ function PlayPageContent() {
       <OrientationOverlay />
       
       {/* ── HEADER DE JOGO ── */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-white/10 glass z-20">
-        <div className="flex items-center gap-4">
+      <div className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-white/10 glass z-20 shrink-0">
+        <div className="flex items-center gap-3">
           <Link href="/dashboard/songs" className="p-2 hover:bg-white/5 rounded-full transition-colors">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </Link>
           <div>
-            <h1 className="text-lg font-bold leading-none">{song.title}</h1>
-            <p className="text-[10px] text-white/40 uppercase tracking-widest mt-1">
+            <h1 className="text-base font-bold leading-none">{song.title}</h1>
+            <p className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5">
               PianoKids Studio • {song.artist}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Volume */}
           <button 
             onClick={() => setAudioEnabled(!audioEnabled)}
             className={`p-2 rounded-lg transition-colors ${audioEnabled ? 'bg-cyan/10 text-cyan border border-cyan/20' : 'bg-white/5 text-white/30 border border-white/10'}`}
+            title="Volume"
           >
-            <Volume2 size={20} />
+            <Volume2 size={18} />
           </button>
           
+          {/* Microfone */}
           <button 
             onClick={() => isMicActive ? stopMic() : startMic()}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${isMicActive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-white/5 border-white/10 text-white/40'}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition-all ${isMicActive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-white/5 border-white/10 text-white/40'}`}
+            title="Microfone"
           >
-            {isMicActive ? <Mic size={16} /> : <MicOff size={16} />}
-            <span className="text-[10px] font-bold uppercase tracking-widest">{isMicActive ? "MIC ATIVO" : "MIC OFF"}</span>
+            {isMicActive ? <Mic size={15} /> : <MicOff size={15} />}
+            <span className="text-[9px] font-bold uppercase tracking-widest hidden md:inline">{isMicActive ? "MIC" : "MIC"}</span>
           </button>
           
-          <div className="h-8 w-px bg-white/10 mx-2" />
+          <div className="h-7 w-px bg-white/10" />
           
-          <div className="flex items-center gap-2">
+          {/* Resolução */}
+          <div className="flex items-center gap-1.5">
             <div className="text-right">
-              <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Resolução</p>
-              <p className="text-xs font-black text-white">Full HD</p>
+              <p className="text-[9px] text-white/30 uppercase tracking-widest font-bold">Resolução</p>
+              <p className="text-[11px] font-black text-white">Full HD</p>
             </div>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             </div>
           </div>
           
-          <div className="h-8 w-px bg-white/10 mx-2" />
+          <div className="h-7 w-px bg-white/10" />
 
-          {/* VELOCIDADE: [-] 100% [+] */}
-          <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-             <button 
-               onClick={() => setPlaybackSpeed(Math.max(0.1, playbackSpeed - 0.1))}
-               className="w-6 h-6 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 transition-colors text-white font-bold"
-             >
-               -
-             </button>
-             <div className="px-2 min-w-[80px] text-center">
-                <p className="text-[8px] text-white/30 uppercase tracking-widest font-black">Velocidade</p>
-                <p className="text-xs font-black text-cyan">{Math.round(playbackSpeed * 100)}%</p>
-             </div>
-             <button 
-               onClick={() => setPlaybackSpeed(Math.min(1.1, playbackSpeed + 0.1))}
-               className="w-6 h-6 flex items-center justify-center rounded bg-white/10 hover:bg-white/20 transition-colors text-white font-bold"
-             >
-               +
-             </button>
-          </div>
-
-          <div className="h-8 w-px bg-white/10 mx-2" />
-
-          {/* Toggle Modo Espera */}
-          <button 
-            onClick={() => setIsWaitingMode(!isWaitingMode)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${isWaitingMode ? 'bg-cyan text-black border-cyan' : 'bg-white/5 border-white/10 text-white/40 hover:text-white'}`}
+          {/* Voltar à Biblioteca */}
+          <Link
+            href="/dashboard/songs"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-all"
+            title="Voltar à Biblioteca"
           >
-            <Play size={14} className={isWaitingMode ? "fill-black" : ""} />
-            <span className="text-[10px] font-black uppercase tracking-widest">
-              {isWaitingMode ? "ESPERA: ON" : "MODO ESPERA"}
-            </span>
-          </button>
+            <BookOpen size={18} />
+          </Link>
+
+          {/* Configurações Dropdown */}
+          <div className="relative" ref={settingsRef}>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className={`p-2 rounded-lg border transition-all ${
+                showSettings
+                  ? 'bg-cyan/15 text-cyan border-cyan/30'
+                  : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-white/10'
+              }`}
+              title="Configurações"
+            >
+              <Settings size={18} />
+            </button>
+
+            {/* ── DROPDOWN DE CONFIGURAÇÕES (Glassmorphism) ── */}
+            <AnimatePresence>
+              {showSettings && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-white/15 shadow-2xl z-50 overflow-hidden"
+                  style={{ background: 'rgba(10, 10, 15, 0.80)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
+                >
+                  <div className="p-4 border-b border-white/10">
+                    <p className="text-xs font-black uppercase tracking-[3px] text-white/60">Configurações</p>
+                  </div>
+
+                  <div className="p-3 flex flex-col gap-3">
+                    {/* Velocidade */}
+                    <div className="flex items-center justify-between">
+                      <p className="text-[11px] text-white/50 font-bold uppercase tracking-widest">Velocidade</p>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => setPlaybackSpeed(Math.max(0.1, playbackSpeed - 0.1))}
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-bold text-sm"
+                        >−</button>
+                        <span className="min-w-[48px] text-center text-sm font-black text-cyan">
+                          {Math.round(playbackSpeed * 100)}%
+                        </span>
+                        <button
+                          onClick={() => setPlaybackSpeed(Math.min(1.1, playbackSpeed + 0.1))}
+                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-white font-bold text-sm"
+                        >+</button>
+                      </div>
+                    </div>
+
+                    {/* Modo Espera */}
+                    <div className="flex items-center justify-between">
+                      <p className="text-[11px] text-white/50 font-bold uppercase tracking-widest">Modo Espera</p>
+                      <button
+                        onClick={() => setIsWaitingMode(!isWaitingMode)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-black uppercase tracking-wider transition-all ${
+                          isWaitingMode
+                            ? 'bg-cyan/20 text-cyan border-cyan/40'
+                            : 'bg-white/5 text-white/40 border-white/10 hover:text-white'
+                        }`}
+                      >
+                        <Play size={12} className={isWaitingMode ? "fill-cyan" : ""} />
+                        {isWaitingMode ? "ON" : "OFF"}
+                      </button>
+                    </div>
+
+                    {/* Volume do Metrônomo */}
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[11px] text-white/50 font-bold uppercase tracking-widest">Metrônomo</p>
+                        <span className="text-[11px] font-black text-white/60">{Math.round(metronomeVolume * 100)}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="0.5"
+                        step="0.01"
+                        value={metronomeVolume}
+                        onChange={(e) => setMetronomeVolume(parseFloat(e.target.value))}
+                        className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #00EAFF ${(metronomeVolume / 0.5) * 100}%, rgba(255,255,255,0.1) ${(metronomeVolume / 0.5) * 100}%)`,
+                        }}
+                      />
+                    </div>
+
+                    <div className="h-px bg-white/10" />
+
+                    {/* Reiniciar Música */}
+                    <button
+                      onClick={restartGame}
+                      className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-rose-500/10 hover:border-rose-500/20 hover:text-rose-400 transition-all text-white/50"
+                    >
+                      <RotateCcw size={16} />
+                      <span className="text-[11px] font-bold uppercase tracking-widest">Reiniciar Música</span>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
@@ -412,9 +515,10 @@ function PlayPageContent() {
                 isPlaying={isPlaying}
                 songDuration={song.duration}
                 getAudioTime={() => audio.getCurrentTime() - audioStartTime}
+                metronomeVolume={metronomeVolume}
                 onScoreUpdate={handleScoreUpdate}
                 onSongEnd={handleSongEnd}
-                onPlayTick={(v) => audio.playTick(v || 0.1)}
+                onPlayTick={(v) => audio.playTick(v || metronomeVolume)}
                 isWaitingMode={isWaitingMode}
                 onPlayAccompaniment={handlePlayAccompaniment}
                 accompanimentNotes={accompanimentNotes}

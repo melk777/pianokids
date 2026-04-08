@@ -10,27 +10,28 @@ import VirtualKeyboard from "./VirtualKeyboard";
 /* ── Types ───────────────────────────────────────────── */
 
 interface PianoPlayerProps {
-  notes: SongNote[];            // Pre-filtered by difficulty
+  notes: SongNote[];
   difficulty: Difficulty;
   activeNotes: Map<number, MIDINote>;
   isPlaying: boolean;
-  getAudioTime: () => number;   // Sync exactly with AudioContext.currentTime
+  getAudioTime: () => number;
   onScoreUpdate?: (score: number, combo: number, accuracy: number) => void;
   onSongEnd?: () => void;
   onNoteHit?: (midi: number, duration: number, velocity: number) => void;
   onNoteMiss?: (midi: number) => void;
-  onPlayTick?: (velocity?: number) => void; // NOVO: Metrônomo
-  onPlayNote?: (midi: number) => void;      // NOVO: Repassar clique virtual
-  onReleaseNote?: (midi: number) => void;   // NOVO: Repassar soltura virtual
-  resumeAudio?: () => Promise<void>;        // REINTRODUZIDO: Destravar áudio no mobile
-  startNote?: number;           // physical piano start note
-  endNote?: number;             // physical piano end note
-  isFreePlay?: boolean;         // Modo infinito livre (Sandbox) sem notas.
-  songDuration?: number;        // Duração total da música para a barra de progresso
-  isWaitingMode?: boolean;     // NOVO: Esperar o aluno tocar
-  onPlayAccompaniment?: (midi: number, duration: number) => void; // NOVO: Tocar trilha sonora real-time
-  accompanimentNotes?: SongNote[]; // Notas de fundo para o Modo Espera
-  playbackSpeed?: number;      // Multiplicador de velocidade (0.1 a 1.1)
+  onPlayTick?: (velocity?: number) => void;
+  onPlayNote?: (midi: number) => void;
+  onReleaseNote?: (midi: number) => void;
+  resumeAudio?: () => Promise<void>;
+  startNote?: number;
+  endNote?: number;
+  isFreePlay?: boolean;
+  songDuration?: number;
+  isWaitingMode?: boolean;
+  onPlayAccompaniment?: (midi: number, duration: number) => void;
+  accompanimentNotes?: SongNote[];
+  playbackSpeed?: number;
+  metronomeVolume?: number;
 }
 
 
@@ -39,24 +40,24 @@ interface PianoPlayerProps {
 const VIEWPORT_SECONDS = 4;
 
 
-/* ── Colors (Neon/Cyberpunk Hand-specific) ───────────── */
+/* ── Colors (Dark Mode, Clean & Bright) ───────────── */
 
 const COLORS = {
-  rightHandFill: "rgba(0, 234, 255, 0.55)",       // Cyan / Blue
+  rightHandFill: "rgba(0, 234, 255, 0.55)",
   rightHandStroke: "#00EAFF",
-  leftHandFill: "rgba(16, 185, 129, 0.55)",       // Emerald / Green
+  leftHandFill: "rgba(16, 185, 129, 0.55)",
   leftHandStroke: "#10B981",
- 
-  hitNormal: "rgba(255, 255, 255, 0.7)",          // White flash for hit
+
+  hitNormal: "rgba(255, 255, 255, 0.7)",
   hitStroke: "#FFFFFF",
- 
-  comboGlow: "rgba(252, 211, 77, 0.8)",           // Amber/Gold
-  missedFill: "rgba(255, 0, 229, 0.3)",           // Magenta fade
+
+  comboGlow: "rgba(252, 211, 77, 0.8)",
+  missedFill: "rgba(255, 0, 229, 0.3)",
   missedStroke: "#FF00E5",
- 
+
   hitZoneLine: "rgba(255, 255, 255, 0.3)",
-  grid: "rgba(255, 255, 255, 0.12)",               // Linhas cinzas mais aparentes
-  gridHorizontal: "rgba(255, 255, 255, 0.06)",     // Linhas horizontais sutis
+  grid: "rgba(255, 255, 255, 0.12)",
+  gridHorizontal: "rgba(255, 255, 255, 0.06)",
   textDim: "rgba(255, 255, 255, 0.65)",
   textFaded: "rgba(255, 255, 255, 0.15)",
 };
@@ -81,6 +82,7 @@ interface Particle {
   life: number;
   maxLife: number;
   color: string;
+  size: number;
 }
 
 /* ── Component ───────────────────────────────────────── */
@@ -107,6 +109,7 @@ export default function PianoPlayer({
   onPlayAccompaniment,
   accompanimentNotes = [],
   playbackSpeed = 1.0,
+  metronomeVolume = 0.08,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -169,11 +172,10 @@ export default function PianoPlayer({
     };
     lastActiveNotesState.current = "";
     
-    // Atualizar HUD para zero
     if (scoreUIRef.current) scoreUIRef.current.innerText = "0";
     if (comboUIRef.current) {
       comboUIRef.current.innerText = "0x";
-      comboUIRef.current.className = "text-xl font-bold tabular-nums relative z-10 transition-colors text-white/30";
+      comboUIRef.current.className = "text-2xl md:text-4xl font-black tabular-nums relative z-10 transition-colors text-white/30";
     }
     if (accuracyUIRef.current) accuracyUIRef.current.innerText = "100%";
   }, [notes]);
@@ -191,7 +193,7 @@ export default function PianoPlayer({
       const isLegendary = s.combo >= 25;
       const isStreak = s.combo >= 10;
       
-      comboUIRef.current.className = `text-xl font-bold tabular-nums relative z-10 transition-colors ${
+      comboUIRef.current.className = `text-2xl md:text-4xl font-black tabular-nums relative z-10 transition-colors ${
         isLegendary
           ? "text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.7)]"
           : isStreak
@@ -218,10 +220,9 @@ export default function PianoPlayer({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false }); // alpha: false otimiza BG preto
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    // Ajuste de DPI/Retina Display
     const dpr = window.devicePixelRatio || 1;
     let width = canvas.clientWidth;
     let height = canvas.clientHeight;
@@ -229,7 +230,6 @@ export default function PianoPlayer({
     const resizeCanvas = () => {
       width = canvas.parentElement?.clientWidth || canvas.clientWidth;
       height = canvas.parentElement?.clientHeight || canvas.clientHeight;
-      // Buffer interno agora segue a largura REAL da tela para ocupar tudo
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.scale(dpr, dpr);
@@ -242,12 +242,11 @@ export default function PianoPlayer({
     // LOOP PRINCIPAL
     const tick = () => {
       if (!isPlaying) {
-        // Se parado mas com estado sujo, desenha a tela inicial (vazia ou pausada)
-        ctx.fillStyle = "#0A0A0A"; // BG Black
+        ctx.fillStyle = "#0A0A0A";
         ctx.fillRect(0, 0, width, height);
         
-        const isShortScreenIdle = height < 500;
-        const KEYBOARD_HEIGHT_IDLE = isShortScreenIdle ? 180 : 280; 
+        // 25% da altura para teclado
+        const KEYBOARD_HEIGHT_IDLE = Math.round(height * 0.25);
         const HIT_Y_IDLE = height - KEYBOARD_HEIGHT_IDLE; 
 
         ctx.fillStyle = COLORS.hitZoneLine;
@@ -258,7 +257,6 @@ export default function PianoPlayer({
 
       const state = stateRef.current;
 
-      // FIX: Cálculo dinâmico de laneW (preenchimento total da tela)
       const laneW = width / whiteNotes.length;
       
       const getNoteRect = (midi: number) => {
@@ -268,14 +266,14 @@ export default function PianoPlayer({
         } else {
             const prevWhite = midi - 1;
             const idx = whiteNotes.indexOf(prevWhite);
-            const w = laneW * 0.65; // Proporção da tecla preta
+            const w = laneW * 0.55; // Tecla preta mais fina
             const x = (idx + 1) * laneW - (w / 2);
             return { x, w, isBlack: true };
         }
       };
 
-      const isShortScreen = height < 500;
-      const KEYBOARD_HEIGHT = isShortScreen ? 180 : 280; 
+      // ── PROPORÇÃO 75/25: Teclado = 25% da altura ──
+      const KEYBOARD_HEIGHT = Math.round(height * 0.25);
       const HIT_Y = height - KEYBOARD_HEIGHT; 
       const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
 
@@ -285,11 +283,8 @@ export default function PianoPlayer({
       const dt = (nowMs - state.lastTickTime) / 1000;
       state.lastTickTime = nowMs;
 
-      // Sincronia ABSOLUTA com áudio (Sempre disponível)
       const rawAudioTime = getAudioTime();
       
-      // --- Lógica do Relógio Unificada (Internal Clock) ---
-      // No início, sincronizamos com o lead-time do áudio
       if (state.internalGameTime === 0 && rawAudioTime < 0) {
          state.internalGameTime = rawAudioTime;
       }
@@ -297,35 +292,33 @@ export default function PianoPlayer({
       const isWaiting = isWaitingMode && notes.some((n, idx) => !state.hitNotes.has(idx) && !state.missedNotes.has(idx) && state.internalGameTime >= n.time);
 
       if (!isWaiting) {
-        // O tempo avança baseado no multiplicador de velocidade
-        state.internalGameTime += Math.min(dt * playbackSpeed, 2.0); // Cap de 2s para segurança
+        state.internalGameTime += Math.min(dt * playbackSpeed, 2.0);
       }
 
       const elapsed = state.internalGameTime;
       state.gameTime = elapsed;
 
-      // --- Metronomê (Tick on every beat) ---
-      const bpm = 120; // Default fallback
+      // --- Metrônomo ---
+      const bpm = 120;
       const secondsPerBeat = 60 / bpm;
       const currentBeat = Math.floor(elapsed / secondsPerBeat);
       
       if (currentBeat > state.lastBeat && elapsed >= 0) {
         state.lastBeat = currentBeat;
-        // Metrônomo para no modo espera se estivermos aguardando nota
-        const isWaiting = isWaitingMode && notes.some((n, idx) => !state.hitNotes.has(idx) && !state.missedNotes.has(idx) && elapsed >= n.time);
-        if (!isWaiting) {
-          onPlayTick?.(0.08); 
+        const isWaitingNow = isWaitingMode && notes.some((n, idx) => !state.hitNotes.has(idx) && !state.missedNotes.has(idx) && elapsed >= n.time);
+        if (!isWaitingNow) {
+          onPlayTick?.(metronomeVolume); 
         }
       }
 
       // Limpar Canvas
-      ctx.fillStyle = "#09090B"; // Zinc 950 bg
+      ctx.fillStyle = "#09090B";
       ctx.fillRect(0, 0, width, height);
 
-      // --- 1. Grade (Vertical e Horizontal) ---
+      // --- 1. Grade ---
       ctx.lineWidth = 1;
 
-      // 1a. Linhas Horizontais (Beats / Tempo)
+      // 1a. Linhas Horizontais
       ctx.strokeStyle = COLORS.gridHorizontal;
       const beatSpacing = secondsPerBeat * SPEED_PX_PER_SEC;
       const firstBeatY = (elapsed % secondsPerBeat) * SPEED_PX_PER_SEC;
@@ -334,13 +327,12 @@ export default function PianoPlayer({
       for (let y = firstBeatY; y < height; y += beatSpacing) {
         ctx.moveTo(0, HIT_Y - y);
         ctx.lineTo(width, HIT_Y - y);
-        // Também desenha para baixo do hit zone para preencher o fundo
         ctx.moveTo(0, HIT_Y + y);
         ctx.lineTo(width, HIT_Y + y);
       }
       ctx.stroke();
 
-      // 1b. Linhas Verticais (Lanes das teclas)
+      // 1b. Linhas Verticais
       ctx.strokeStyle = COLORS.grid;
       ctx.beginPath();
       for (let i = 0; i <= whiteNotes.length; i++) {
@@ -349,23 +341,42 @@ export default function PianoPlayer({
       }
       ctx.stroke();
 
-      // --- 2. Hit Zone Gradient (sem linha sólida) ---
+      // --- 2. Hit Zone Gradient ---
       const gradient = ctx.createLinearGradient(0, HIT_Y - 40, 0, HIT_Y);
       gradient.addColorStop(0, "rgba(0,234,255,0)");
       gradient.addColorStop(1, "rgba(0,234,255,0.1)");
       
       ctx.fillStyle = gradient;
       ctx.fillRect(0, HIT_Y - 40, width, 40);
+
+      // ── GLOW VIBRANTE nas teclas ativas ──
+      activeNotes.forEach((_val, midi) => {
+        const rect = getNoteRect(midi);
+        const isRight = midi >= 60;
+        const glowGradient = ctx.createRadialGradient(
+          rect.x + rect.w / 2, HIT_Y, 0,
+          rect.x + rect.w / 2, HIT_Y, rect.w * 1.5
+        );
+        if (isRight) {
+          glowGradient.addColorStop(0, "rgba(234, 179, 8, 0.35)");
+          glowGradient.addColorStop(1, "rgba(234, 179, 8, 0)");
+        } else {
+          glowGradient.addColorStop(0, "rgba(34, 197, 94, 0.35)");
+          glowGradient.addColorStop(1, "rgba(34, 197, 94, 0)");
+        }
+        ctx.fillStyle = glowGradient;
+        ctx.fillRect(rect.x - rect.w, HIT_Y - rect.w * 1.5, rect.w * 3, rect.w * 3);
+      });
       
-      // Labels de nota na base apenas para The White Keys para imersão
-      ctx.font = "12px var(--font-geist-mono), monospace";
+      // Labels de nota na base
+      ctx.font = "11px var(--font-geist-mono), monospace";
       ctx.textAlign = "center";
       ctx.fillStyle = COLORS.textFaded;
       whiteNotes.forEach((midi: number, i: number) => {
-        ctx.fillText(midiNoteToName(midi).replace(/\d/, ""), i * laneW + laneW / 2, height - 10);
+        ctx.fillText(midiNoteToName(midi).replace(/\d/, ""), i * laneW + laneW / 2, height - 8);
       });
 
-      // --- 3. Atualizar Cleanup de Passos (Tiros Perdidos) ---
+      // --- 3. Cleanup de Passos ---
       const missedSet = state.missedNotes;
       const hitSet = state.hitNotes;
       
@@ -391,7 +402,7 @@ export default function PianoPlayer({
       
       if (missesAdded) updateHUD();
 
-      // --- 4. Tocar Acompanhamento Real-time (Sempre ativo para suportar Speed Control) ---
+      // --- 4. Tocar Acompanhamento ---
       if (onPlayAccompaniment) {
         accompanimentNotes.forEach((ns, i) => {
           if (!state.playedAccompaniment.has(i) && elapsed >= ns.time) {
@@ -401,133 +412,146 @@ export default function PianoPlayer({
         });
       }
 
-      // --- 5. Renderizar Notas Dinamicamente O(1) ---
+      // --- 5. Renderizar Notas Dinamicamente ---
       for (let i = 0; i < notes.length; i++) {
         const ns = notes[i];
         
-        // Posição Core
         const timeDiff = ns.time - elapsed;
         const noteHeight = Math.max((ns.duration * SPEED_PX_PER_SEC), 4);
         const yPos = HIT_Y - (timeDiff * SPEED_PX_PER_SEC) - noteHeight;
         
-        // Cull estrito: Só processar nota se estiver cruzando a tela visual -> [-NoteHeight Até ViewHeight]
         if (yPos + noteHeight < -50 || yPos > height + 50) {
-          continue; // Pule notas que estão fora da tela (Zero Lag garantido)
+          continue;
         }
 
         const rectInfo = getNoteRect(ns.midi);
-        // Small padding inside the key lane
-        const xPos = rectInfo.x + rectInfo.w * 0.1;
-        const rectW = rectInfo.w * 0.8;
+        const isSharp = rectInfo.isBlack;
+        // Notas sustenidas: mais finas, sem padding extra
+        const xPos = isSharp ? rectInfo.x : rectInfo.x + rectInfo.w * 0.1;
+        const rectW = isSharp ? rectInfo.w : rectInfo.w * 0.8;
         
         const isHit = hitSet.has(i);
         const isMiss = missedSet.has(i);
         
-        // --- EVOLVED VISUALS (From Reference Image) ---
-        // Left hand (Grave < 60) -> Green. Right hand (Acute >= 60) -> Yellow.
         const isRightHand = ns.midi >= 60; 
         
-        let alpha = 0.9; // Translucent as requested
+        let alpha = 0.9;
         if (isHit) alpha = Math.max(0, 1 - (elapsed - ns.time) * 4);
         else if (isMiss) alpha = Math.max(0, 0.5 - (elapsed - ns.time));
 
         if (alpha <= 0) continue;
         ctx.globalAlpha = alpha;
 
-        // Note Body Gradient (Fidelity to Image_1.png)
+        // ── Note Body: Sustenidas mais saturadas, normais translúcidas ──
         const noteGradient = ctx.createLinearGradient(xPos, yPos, xPos, yPos + noteHeight);
-        if (isRightHand) {
-          noteGradient.addColorStop(0, "#FEF08A"); // Yellow 200 (Top)
-          noteGradient.addColorStop(1, "#EAB308"); // Yellow 600 (Bottom)
+        if (isSharp) {
+          // Cores FORTES para sustenidos
+          if (isRightHand) {
+            noteGradient.addColorStop(0, "#F59E0B"); // Amber 500
+            noteGradient.addColorStop(1, "#B45309"); // Amber 700
+          } else {
+            noteGradient.addColorStop(0, "#059669"); // Emerald 600
+            noteGradient.addColorStop(1, "#065F46"); // Emerald 800
+          }
         } else {
-          noteGradient.addColorStop(0, "#BBF7D0"); // Green 200 (Top)
-          noteGradient.addColorStop(1, "#16A34A"); // Green 600 (Bottom)
+          if (isRightHand) {
+            noteGradient.addColorStop(0, "#FEF08A"); // Yellow 200
+            noteGradient.addColorStop(1, "#EAB308"); // Yellow 600
+          } else {
+            noteGradient.addColorStop(0, "#BBF7D0"); // Green 200
+            noteGradient.addColorStop(1, "#16A34A"); // Green 600
+          }
         }
 
         ctx.fillStyle = isHit ? "#FFFFFF" : noteGradient;
-        ctx.strokeStyle = isHit ? "#FFFFFF" : "rgba(255,255,255,0.2)";
-        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = isHit ? "#FFFFFF" : isSharp ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.2)";
+        ctx.lineWidth = isSharp ? 2 : 1.5;
 
-        // Glow (High contrast / Photorealistic)
-        ctx.shadowBlur = isHit ? 25 : 10;
-        ctx.shadowColor = isRightHand ? "rgba(234, 179, 8, 0.6)" : "rgba(34, 197, 94, 0.6)";
+        // Glow
+        ctx.shadowBlur = isHit ? 25 : isSharp ? 14 : 10;
+        ctx.shadowColor = isRightHand 
+          ? (isSharp ? "rgba(245, 158, 11, 0.8)" : "rgba(234, 179, 8, 0.6)") 
+          : (isSharp ? "rgba(5, 150, 105, 0.8)" : "rgba(34, 197, 94, 0.6)");
 
         // Draw Rounded Rect Note
         ctx.beginPath();
-        ctx.roundRect(xPos, yPos, rectW, noteHeight, 6);
+        ctx.roundRect(xPos, yPos, rectW, noteHeight, isSharp ? 4 : 6);
         ctx.fill();
         ctx.stroke();
 
         ctx.shadowBlur = 0;
 
-        // Inner Label (Note Name + Octave as in image)
+        // Inner Label
         if (noteHeight > 25) {
-          ctx.fillStyle = "rgba(0,0,0,0.8)";
-          ctx.font = "bold 13px sans-serif";
+          ctx.fillStyle = isSharp ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)";
+          ctx.font = `bold ${isSharp ? 11 : 13}px sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           
-          const label = midiNoteToName(ns.midi); // Includes octave
+          const label = midiNoteToName(ns.midi);
           ctx.fillText(label, xPos + rectW / 2, yPos + noteHeight - 12);
-          
-          // Small number below label if needed (like the small 4 in the image)
-          // But midiNoteToName already gives C4.
         }
       }
 
       ctx.globalAlpha = 1.0;
 
-      // --- 5. Renderizar Efeitos Visuais (Partículas) ---
+      // --- 5. Renderizar Efeitos Visuais ---
       const activeEffects: VisualEffect[] = [];
       
       for (const eff of state.effects) {
         const effAge = rawAudioTime - eff.startTime;
-        if (effAge > 0.6) continue; // Morre em 600ms
+        if (effAge > 0.6) continue;
         
         activeEffects.push(eff);
         
         const isMiss = eff.type === "miss";
         const isPerf = eff.type === "perfect";
         
-        // --- SPARK PARTICLES (Dispara na explosão do acerto) ---
+        // ── PARTÍCULAS VIBRANTES ──
         if (!eff.sparked && !isMiss) {
           eff.sparked = true;
           const effRect = getNoteRect(eff.note);
           const isRightHand = eff.note >= 60;
-          const pColor = isRightHand ? "#FACC15" : "#4ADE80"; // Yellow for Right, Green for Left
-          for(let i = 0; i < 12; i++) {
+          
+          // Quantidade de partículas baseada no combo
+          const particleCount = isPerf ? 24 : 14;
+          const baseColors = isRightHand 
+            ? ["#FACC15", "#FDE68A", "#F59E0B", "#FFFFFF"] 
+            : ["#4ADE80", "#86EFAC", "#10B981", "#FFFFFF"];
+          
+          for (let i = 0; i < particleCount; i++) {
             state.particles.push({
-              x: effRect.x + effRect.w / 2,
+              x: effRect.x + effRect.w / 2 + (Math.random() - 0.5) * effRect.w,
               y: HIT_Y,
-              vx: (Math.random() - 0.5) * 8, // Explosão Horizontal
-              vy: -Math.random() * 6 - 2,    // Explosão Vertical para cima
-              life: Math.random() * 0.3 + 0.2,
-              maxLife: 0.5,
-              color: pColor
+              vx: (Math.random() - 0.5) * 10,
+              vy: -Math.random() * 8 - 2,
+              life: Math.random() * 0.4 + 0.2,
+              maxLife: 0.6,
+              color: baseColors[Math.floor(Math.random() * baseColors.length)],
+              size: Math.random() * 3 + 1.5,
             });
           }
         }
 
-        const tScale = Math.min(effAge * 4, 1); // 0 -> 1 rapidamente
+        const tScale = Math.min(effAge * 4, 1);
         const opacity = Math.max(0, 1 - effAge * 1.5);
         
         const effRect2 = getNoteRect(eff.note);
         const baseX = effRect2.x + effRect2.w / 2;
-        const baseY = HIT_Y - (effAge * 80); // Sobe enquanto dissolve
+        const baseY = HIT_Y - (effAge * 80);
         
         ctx.globalAlpha = opacity;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.font = `bold ${16 + tScale * 14}px sans-serif`;
         
-        // Efeito Néon Subindo
         ctx.shadowBlur = 15;
         if (isPerf) {
-          ctx.fillStyle = "#34D399"; // Emerald 400
+          ctx.fillStyle = "#34D399";
           ctx.shadowColor = "rgba(52,211,153,0.8)";
           ctx.fillText("★", baseX, baseY);
         } else if (isMiss) {
-          ctx.fillStyle = "#FF00E5"; // Magenta
+          ctx.fillStyle = "#FF00E5";
           ctx.shadowColor = "rgba(255,0,229,0.8)";
           ctx.fillText("✗", baseX, baseY);
         } else {
@@ -536,17 +560,17 @@ export default function PianoPlayer({
           ctx.fillText("✓", baseX, baseY);
         }
       }
-      state.effects = activeEffects; // Garbage collect effects array
+      state.effects = activeEffects;
 
-      // --- 6. Renderizar Partículas Dinâmicas Físicas ---
+      // --- 6. Renderizar Partículas Dinâmicas ---
       const activeParticles: Particle[] = [];
       for (const p of state.particles) {
-        p.life -= (1 / 60); // approx framerate decrement
+        p.life -= (1 / 60);
         if (p.life <= 0) continue;
         
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.25; // Simple Gravity pulling it down
+        p.vy += 0.25;
 
         ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
         ctx.fillStyle = p.color;
@@ -554,7 +578,7 @@ export default function PianoPlayer({
         ctx.shadowColor = p.color;
         
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
         
         activeParticles.push(p);
@@ -568,7 +592,6 @@ export default function PianoPlayer({
       if (!isFreePlay) {
         const lastNote = notes[notes.length - 1];
         if (lastNote && elapsed > lastNote.time + lastNote.duration + 2) {
-          // Envia score final e dispara encerramento limpo
           const total = state.hits + state.misses;
           const accuracy = total > 0 ? (state.hits / total) * 100 : 100;
           onScoreUpdate?.(state.score, state.combo, accuracy);
@@ -577,10 +600,10 @@ export default function PianoPlayer({
         }
       }
 
-      // Atualizar progresso em RÉGUA (Muda a posição LEFT em vez da largura)
+      // Atualizar progresso
       if (progressBarRef.current && songDuration > 0) {
         const progress = Math.min(100, (elapsed / songDuration) * 100);
-        progressBarRef.current.style.left = `calc(${progress}% - 12px)`; // 12px is half pill width approx
+        progressBarRef.current.style.left = `calc(${progress}% - 12px)`;
       }
 
       animFrameRef.current = requestAnimationFrame(tick);
@@ -592,14 +615,13 @@ export default function PianoPlayer({
       window.removeEventListener("resize", resizeCanvas);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay, whiteNotes, totalWidth, onPlayTick, songDuration, isWaitingMode, accompanimentNotes, onPlayAccompaniment, playbackSpeed]);
+  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay, whiteNotes, totalWidth, onPlayTick, songDuration, isWaitingMode, accompanimentNotes, onPlayAccompaniment, playbackSpeed, metronomeVolume, activeNotes]);
 
 
-  // ── Input Binding Dinâmico via MIDI (Sincrono e Fora do JSX) ──
+  // ── Input Binding Dinâmico via MIDI ──
   useEffect(() => {
     if (!isPlaying) return;
     
-    // Hash state detection para não rodar desnecessariamente se for a mesma nota segurada
     const activeStateHash = Array.from(activeNotes.entries())
       .map(([k, v]) => `${k}-${v.velocity}`)
       .join("|");
@@ -612,7 +634,6 @@ export default function PianoPlayer({
 
     activeNotes.forEach((midiNote) => {
       if (isFreePlay) {
-         // No Modo Livre, ignora buscar as notas da música, só joga confetes instantaneamente
          const isAlreadyHitThisFrame = s.effects.some((eff: VisualEffect) => eff.note === midiNote.note && (getAudioTime() - eff.startTime) < 0.1);
          
          if (!isAlreadyHitThisFrame) {
@@ -627,7 +648,6 @@ export default function PianoPlayer({
             onNoteHit?.(midiNote.note, 0.5, midiNote.velocity ?? 0.8);
          }
       } else {
-        // Find eligible note para Acertos Normais
         const matchIdx = notes.findIndex((ns, i) => {
           if (s.hitNotes.has(i) || s.missedNotes.has(i)) return false;
           if (ns.midi !== midiNote.note) return false;
@@ -660,11 +680,10 @@ export default function PianoPlayer({
   }, [activeNotes, isPlaying, timingWindow, onNoteHit, notes, updateHUD, getAudioTime, isFreePlay]);
 
 
-  // O HTML não recalcula quadros durante o uso. Apenas a HUD manipulada pela ref.
   return (
     <div className="relative w-full flex-1 rounded-3xl overflow-hidden border border-white/[0.1] bg-zinc-950 shadow-2xl">
       
-      {/* ── Dark Grid Background (Image_1.png Style) ── */}
+      {/* ── Dark Grid Background ── */}
       <div className="absolute inset-0 opacity-20" 
         style={{ 
           backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
@@ -675,17 +694,15 @@ export default function PianoPlayer({
       {/* ── Camada de Vinheta ── */}
       <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black/60 pointer-events-none" />
 
-      {/* ── BARRA DE PROGRESSO EM RÉGUA (Topo - Image_1.png Style) ── */}
+      {/* ── BARRA DE PROGRESSO ── */}
       {!isFreePlay && songDuration > 0 && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[80%] max-w-2xl h-6 bg-zinc-900/80 border border-white/10 rounded-full z-40 flex items-center px-1 overflow-hidden backdrop-blur-md">
-          {/* Ticks da Régua */}
           <div className="absolute inset-0 flex justify-between px-4 pointer-events-none opacity-20">
             {Array.from({ length: 40 }).map((_, i) => (
               <div key={i} className={`w-[1px] bg-white ${i % 5 === 0 ? 'h-3' : 'h-1.5'} self-center`} />
             ))}
           </div>
           
-          {/* Marcador de Progresso (Red Pill) */}
           <div className="relative w-full h-full">
             <div 
               ref={progressBarRef}
@@ -696,21 +713,20 @@ export default function PianoPlayer({
         </div>
       )}
 
-      {/* ── CONTAINER DE SCROLL UNIFICADO (Notas + Teclado) ── */}
+      {/* ── CONTAINER UNIFICADO (Notas + Teclado) ── */}
       <div className="absolute inset-0 overflow-hidden z-10">
         <div className="relative w-full h-full">
           
-          {/* Tela de Renderização das Notas (Canvas 100% da largura) */}
+          {/* Canvas de Notas (100%) */}
           <canvas
             ref={canvasRef}
             className="absolute inset-0 block w-full h-full pointer-events-none"
           />
 
-          {/* TECLADO VIRTUAL INTEGRADO (Hit Zone) */}
-          <div className="absolute bottom-0 left-0 right-0 h-[180px] md:h-[280px] pointer-events-auto">
+          {/* TECLADO VIRTUAL: 25% da altura */}
+          <div className="absolute bottom-0 left-0 right-0 pointer-events-auto" style={{ height: '25%' }}>
             <VirtualKeyboard 
               onPlayNote={(midi) => {
-                // ATIVAÇÃO DIRETA DO ÁUDIO NO TOQUE (Criterial for Mobile Safari)
                 resumeAudio?.();
                 onPlayNote?.(midi);
               }} 
@@ -725,16 +741,16 @@ export default function PianoPlayer({
 
 
 
-      {/* ── HUD de Score (Fica fixo acima do scroll) ── */}
+      {/* ── HUD de Score ── */}
       <div className="absolute top-3 md:top-6 left-3 md:left-6 right-3 md:right-6 flex items-center justify-between pointer-events-none z-30">
         <div className="glass rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3 border border-white/10 shadow-lg">
           <p className="text-[8px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0 md:mb-1">Pontos</p>
           <p ref={scoreUIRef} className="text-lg md:text-2xl font-black tabular-nums text-gradient">0</p>
         </div>
 
-        <div className="glass rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center border border-white/10 shadow-lg min-w-[80px] md:min-w-[100px]">
-          <p className="text-[8px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0 md:mb-1">Sequência</p>
-          <p ref={comboUIRef} className="text-lg md:text-2xl font-black tabular-nums text-white/40">0x</p>
+        <div className="glass rounded-xl md:rounded-2xl px-5 md:px-8 py-2 md:py-4 text-center border border-white/10 shadow-lg min-w-[100px] md:min-w-[130px]">
+          <p className="text-[9px] md:text-xs text-white/40 uppercase tracking-[3px] font-black mb-0 md:mb-1">Combos</p>
+          <p ref={comboUIRef} className="text-2xl md:text-4xl font-black tabular-nums text-white/30">0x</p>
         </div>
 
         <div className="glass rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3 text-right border border-white/10 shadow-lg">
