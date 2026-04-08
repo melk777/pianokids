@@ -127,7 +127,7 @@ export default function Home() {
                 className="btn-primary rounded-full px-10 py-5 text-lg flex items-center gap-3 shadow-xl shadow-cyan/20"
               >
                 <Music className="w-5 h-5" />
-                Começar Agora
+                Iniciar teste de 7 dias gratuitos
               </motion.button>
 
               <motion.a
