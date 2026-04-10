@@ -199,7 +199,7 @@ export default function PublicCareerPage() {
               active={true}
               icon={<Star className="w-6 h-6" />}
               name="Bem-vindo!"
-              desc="Primeiro acesso ao PianoKids."
+              desc="Primeiro acesso ao Pianify."
             />
             <TrophyItem 
               active={(profile.songs_played || 0) > 0}

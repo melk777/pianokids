@@ -19,7 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSocial, FriendshipData } from "@/hooks/useSocial";
-import { Profile } from "@/hooks/useProfile";
+import { useProfile, Profile } from "@/hooks/useProfile";
 import { useSFX } from "@/hooks/useSFX";
 
 interface SocialTrayProps {
@@ -39,6 +39,9 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
     updateRequestStatus, 
     loading 
   } = useSocial();
+
+  const { profile } = useProfile();
+  const isTeacher = profile?.role === "teacher";
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Profile[]>([]);
@@ -92,7 +95,7 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
             >
               <h2 className="text-[11px] font-black tracking-[0.2em] uppercase text-cyan flex items-center gap-2">
                 <Users className="w-4 h-4 text-cyan" />
-                Amigos
+                {isTeacher ? "Meus Alunos" : "Amigos"}
               </h2>
               <div className="flex gap-2">
                 <button 
@@ -181,7 +184,7 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
               <form onSubmit={handleSearch} className="relative">
                 <input 
                   type="text" 
-                  placeholder="Nome do aluno..."
+                  placeholder={isTeacher ? "Nome do aluno..." : "Nome do amigo..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-black border border-white/10 rounded-xl py-2.5 px-4 text-xs text-white focus:border-cyan outline-none transition-all"
@@ -250,7 +253,7 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
 
         {/* Friends List */}
         <div className="space-y-1">
-          {isExpanded && <h3 className="text-[10px] font-black uppercase text-white/40 tracking-[0.2em] pl-2 mb-3">Amigos</h3>}
+          {isExpanded && <h3 className="text-[10px] font-black uppercase text-white/40 tracking-[0.2em] pl-2 mb-3">{isTeacher ? "Meus Alunos" : "Amigos"}</h3>}
           {friends.map((friendship) => (
             <button
               key={friendship.id}
@@ -309,7 +312,7 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
                     {friendship.isOnline && (
                       <>
                         <span className="w-1 h-1 rounded-full bg-emerald-400/50" />
-                        <span className="text-[9px] text-white/20 font-bold">PianoKids</span>
+                        <span className="text-[9px] text-white/20 font-bold">Pianify</span>
                       </>
                     )}
                   </div>
@@ -322,7 +325,7 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3 border border-white/10">
                   <Plus className="text-white w-6 h-6" />
                 </div>
-                <p className="text-[10px] uppercase font-black tracking-[0.2em] text-white/40">Sem amigos</p>
+                <p className="text-[10px] uppercase font-black tracking-[0.2em] text-white/40">{isTeacher ? "Sem alunos" : "Sem amigos"}</p>
              </div>
           )}
         </div>

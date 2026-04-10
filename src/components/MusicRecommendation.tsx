@@ -66,7 +66,7 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
                   Sugestões de Músicas
                   <Sparkles size={16} className="text-amber-400" />
                 </h4>
-                <p className="text-white/40 text-sm">Ajude-nos a fazer a PianoKids ainda melhor!</p>
+                <p className="text-white/40 text-sm">Ajude-nos a fazer a Pianify ainda melhor!</p>
               </div>
             </div>
 
@@ -138,7 +138,7 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
                     <Lock size={14} />
                   </div>
                   <p className="text-sm text-white/60">
-                    O chat de sugestões é um recurso exclusivo para nossa **Família Premium**.
+                    O chat de sugestões é um recurso exclusivo para nossa **Comunidade Premium**.
                   </p>
                 </div>
                 <a 

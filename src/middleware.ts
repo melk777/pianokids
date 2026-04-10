@@ -61,6 +61,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname === "/" ||
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/auth") ||
+    request.nextUrl.pathname.startsWith("/professores") ||
+    request.nextUrl.pathname.startsWith("/privacidade") ||
     request.nextUrl.pathname.startsWith("/api/stripe/webhook");
 
   // 1. Redirecionar deslogados de rotas privadas para /login
@@ -72,24 +74,36 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // 2. Lógica de Trial Expirado para logados
+  // 2. Proteção de Rotas e Lógica de Trial/Role
   if (user && !isPublicRoute) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("subscription_status, trial_ends_at")
+      .select("subscription_status, trial_ends_at, role")
       .eq("id", user.id)
       .single();
 
     if (profile) {
+      // A. Restrição de Professor (Não acessa biblioteca/player)
+      if (profile.role === "teacher") {
+        const path = request.nextUrl.pathname;
+        if (path.startsWith("/dashboard/songs") || path.startsWith("/dashboard/play")) {
+          const url = new URL("/dashboard", request.url);
+          return NextResponse.redirect(url, {
+            headers: response.headers,
+          });
+        }
+      }
+
+      // B. Lógica de Trial Expirado para Alunos
       const now = new Date();
       const trialEndsAt = new Date(profile.trial_ends_at);
       
-      // Checagem de segurança para data inválida
       if (!isNaN(trialEndsAt.getTime())) {
         const isTrialExpired = now > trialEndsAt;
         const isNotActive = profile.subscription_status !== "active";
 
-        if (isTrialExpired && isNotActive) {
+        // Professores não precisam de assinatura para acessar o dashboard administrativo
+        if (isTrialExpired && isNotActive && profile.role !== "teacher") {
           const url = new URL("/", request.url);
           url.hash = "pricing";
           return NextResponse.redirect(url, {

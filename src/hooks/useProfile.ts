@@ -50,6 +50,7 @@ export function useProfile() {
             full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Aluno",
             username: user.email?.split("@")[0] || `user_${user.id.slice(0, 5)}`,
             username_changes_count: 0,
+            role: user.user_metadata?.role || "student",
           };
           const { data: inserted, error: insertError } = await supabase
             .from("profiles")

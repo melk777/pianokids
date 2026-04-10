@@ -33,7 +33,7 @@ export interface Song {
 }
 
 /**
- * ── Banco de Músicas do PianoKids ────────────────────────────
+ * ── Banco de Músicas do Pianify ────────────────────────────
  */
 export const songs: Song[] = [
   // 1. Borboletinha
@@ -96,10 +96,10 @@ export const songs: Song[] = [
 
   // 6. Für Elise
   {
-    ...(furEliseMidiData as Song),
-    id: "fur-elise",
-    title: "Für Elise",
-    artist: "Beethoven",
+    isFree: false,
+    duration: "1:24",
+    difficulty: "Iniciante",
+    description: "Uma canção de ninar clássica e suave, perfeita para começar sua jornada no Pianify.",
     category: "Clássicos",
     isPremium: true,
     coverUrl: "/images/covers/fur_elise_1775056434348.png",
@@ -152,11 +152,12 @@ export const songs: Song[] = [
   {
     ...(oSapoData as Song),
     id: "o-sapo-nao-lava-o-pe", // Mantendo ID para compatibilidade
+    title: "O sapo não lava o pé",
     artist: "Folclore Brasileiro",
     category: "Infantis",
     isPremium: true,
     difficulty: "Fácil",
-    coverUrl: "/images/covers/o_sapo_1775073045610.png"
+    coverUrl: "/images/covers/o_sapo_cover.png"
   },
 
   // 11. Minueto em Sol Maior
@@ -167,7 +168,7 @@ export const songs: Song[] = [
     category: "Clássicos",
     isPremium: true,
     difficulty: "Médio",
-    coverUrl: "/images/covers/minueto_1775073045610.png"
+    coverUrl: "/images/covers/minueto_cover.png"
   },
 
   // 12. Golden Hour
@@ -178,18 +179,19 @@ export const songs: Song[] = [
     category: "Grandes Sucessos",
     isPremium: true,
     difficulty: "Médio",
-    coverUrl: "/images/covers/golden-hour_1775101037255.png"
+    coverUrl: "/images/covers/golden_hour_cover.png"
   },
 
   // 13. Parabéns Pra Você
   {
     ...(parabensData as Song),
     id: "parabens-pra-voce",
+    title: "Parabens pra você",
     artist: "Tradicional",
     category: "Infantis",
     isPremium: true,
     difficulty: "Fácil",
-    coverUrl: "/images/covers/parabens_pra_voce_1775101235123.png"
+    coverUrl: "/images/covers/parabens_cover.png"
   }
 ];
 

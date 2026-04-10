@@ -3,12 +3,15 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Music, Star, BarChart3, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 import HeroVideo from "@/components/HeroVideo";
 import PartnerMarquee from "@/components/PartnerMarquee";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
+import TeacherAffiliateSection from "@/components/TeacherAffiliateSection";
 
 
 
@@ -18,7 +21,7 @@ import PricingCard from "@/components/PricingCard";
    ────────────────────────────────────────────────────── */
 const CLIENT_PLANS = {
   monthly: {
-    name: "Mensal",
+    name: "Pianify Pro Mensal",
     price: "R$ 29,90",
     period: "/mês",
     features: [
@@ -29,7 +32,7 @@ const CLIENT_PLANS = {
     ],
   },
   yearly: {
-    name: "Anual",
+    name: "Pianify Pro Anual",
     price: "R$ 239,90",
     period: "/ano",
     features: [
@@ -88,11 +91,11 @@ export default function Home() {
             >
 
             {/* Title */}
-            <h1 className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tight mb-8 leading-[1.1]">
-              <span className="text-white">Aprenda piano</span>
+            <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
+              <span className="text-white">Sua Jornada Musical </span>
               <br />
               <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
-                brincando.
+                Começa Aqui.
               </span>
             </h1>
 
@@ -139,10 +142,10 @@ export default function Home() {
               className="text-center mb-24"
             >
               <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
-                Por que <span className="text-gradient font-black">PianoKids</span>?
+                Por que <span className="text-gradient font-black">Pianify</span>?
               </h2>
               <p className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                Uma experiência projetada para manter crianças engajadas e
+                Uma experiência projetada para manter alunos de todas as idades engajados e
                 aprendendo com diversão imediata.
               </p>
             </motion.div>
@@ -240,15 +243,26 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── Partner / Affiliate Program ──────────────── */}
+        <TeacherAffiliateSection />
+
         {/* ── FAQ Accordion ──────────────────────────── */}
         <FAQ />
 
         {/* ── Footer ────────────────────────────────── */}
         <footer className="border-t border-white/5 py-12 px-6">
           <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-white/40 text-sm">
-              <div className="w-5 h-5 rounded bg-gradient-to-br from-cyan to-cyan/60" />
-              <span>PianoKids © {new Date().getFullYear()}</span>
+            <div className="flex items-center gap-2 text-white/40 text-[13px] font-medium tracking-tight">
+              <div className="w-6 h-6 rounded-lg bg-white overflow-hidden flex items-center justify-center p-1">
+                <Image 
+                  src="/logo.png" 
+                  alt="Pianify" 
+                  width={24} 
+                  height={24} 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <span className="opacity-70">Pianify © {new Date().getFullYear()}</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-white/30">
               <a
@@ -257,12 +271,12 @@ export default function Home() {
               >
                 Termos
               </a>
-              <a
-                href="#"
+              <Link
+                href="/privacidade"
                 className="hover:text-white/60 transition-colors"
               >
                 Privacidade
-              </a>
+              </Link>
               <a
                 href="#"
                 className="hover:text-white/60 transition-colors"

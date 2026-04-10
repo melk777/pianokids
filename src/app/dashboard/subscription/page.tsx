@@ -139,7 +139,7 @@ export default function SubscriptionPage() {
                         Plano Atual
                       </span>
                       <span className="text-lg font-bold">
-                        {planType === "yearly" ? "Premium Anual" : planType === "monthly" ? "Premium Mensal" : "Free"}
+                        {planType === "yearly" ? "Pianify Pro Anual" : planType === "monthly" ? "Pianify Pro Mensal" : "Free"}
                       </span>
                     </div>
                     <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
@@ -309,7 +309,7 @@ export default function SubscriptionPage() {
                   Problemas com sua fatura ou acesso? Nossa equipe de suporte está pronta para ajudar.
                 </p>
                 <a 
-                  href="mailto:suporte@pianokids.com"
+                  href="mailto:suporte@pianify.app"
                   className="text-sm font-bold text-cyan hover:underline"
                 >
                   Entrar em contato

@@ -31,7 +31,7 @@ export default function RedirectToUpgrade() {
         
         <h2 className="text-2xl font-bold mb-3">Acesso Restrito</h2>
         <p className="text-white/60 mb-8 px-4">
-          Essa área é exclusiva para alunos do plano PianoKids Pro. Você será redirecionado para os planos em instantes...
+          Essa área é exclusiva para alunos do plano Pianify Pro. Você será redirecionado para os planos em instantes...
         </p>
 
         <motion.button

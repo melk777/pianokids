@@ -29,7 +29,7 @@ export default function GlobalSocialOverlay() {
   }, [supabase]);
 
   // Não mostrar se não estiver logado ou se estiver na página do jogo
-  const isGamePage = pathname?.startsWith("/piano");
+  const isGamePage = pathname?.startsWith("/piano") || pathname?.includes("/dashboard/play");
   if (!user || isGamePage) return null;
 
   return (

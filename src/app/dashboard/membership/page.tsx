@@ -175,9 +175,9 @@ export default function MembershipPage() {
                   </div>
                   <div>
                     <h1 className="text-xl font-bold tracking-tight">
-                      Plano {isYearly ? "Anual" : "Mensal"}
+                      {isYearly ? "Pianify Pro Anual" : "Pianify Pro Mensal"}
                     </h1>
-                    <p className="text-xs text-white/35">PianoKids Pro</p>
+                    <p className="text-xs text-white/35">Sua Jornada Musical</p>
                   </div>
                   {isYearly && (
                     <span className="ml-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 rounded-full">

@@ -11,15 +11,15 @@ const testimonials = [
     avatar: "S",
     avatarGradient: "from-cyan to-cyan/60",
     quote:
-      "Minha filha aprendeu sua primeira música em 3 dias com o PianoKids! Ela pede para praticar todo dia depois da escola.",
+      "Minha filha aprendeu sua primeira música em 3 dias com o Pianify! Ela pede para praticar todo dia depois da escola.",
     rating: 5,
   },
   {
-    name: "Rafael Costa, pai do Pedro (9 anos)",
-    avatar: "P",
+    name: "Ricardo Oliveira, 34 anos",
+    avatar: "R",
     avatarGradient: "from-magenta to-magenta/60",
     quote:
-      "O Pedro sempre teve dificuldade de se concentrar, mas o formato de jogo do PianoKids prendeu a atenção dele. Recomendo demais!",
+      "Sempre foi um sonho tocar piano. O Pianify tornou o aprendizado leve e prático para a minha rotina corrida. Recomendo para qualquer idade!",
     rating: 5,
   },
   {
@@ -31,11 +31,11 @@ const testimonials = [
     rating: 5,
   },
   {
-    name: "Carlos Mendes, pai do Bernardo (10 anos)",
+    name: "Beatriz Lopes, estudante universitária",
     avatar: "B",
     avatarGradient: "from-amber-400 to-amber-400/60",
     quote:
-      "Meu filho já sabia um pouco de piano, mas com o PianoKids ele evoluiu muito rápido. O sistema de estrelas e progressão é genial.",
+      "Uso o Pianify para relaxar e aprender minhas músicas favoritas. É incrível como o reconhecimento de notas funciona bem mesmo em pianos acústicos antigos.",
     rating: 5,
   },
 ];
@@ -82,13 +82,13 @@ export default function TestimonialsCarousel() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            O que dizem nossos{" "}
+            O que dizem os nossos{" "}
             <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
-              pequenos pianistas...
+              pianistas...
             </span>
           </h2>
           <p className="text-white/40 max-w-lg mx-auto">
-            e seus pais ❤️
+            Alunos de todas as idades ❤️
           </p>
         </motion.div>
 
@@ -142,7 +142,7 @@ export default function TestimonialsCarousel() {
                         {t.name}
                       </p>
                       <p className="text-xs text-white/40">
-                        Família PianoKids
+                        Comunidade Pianify
                       </p>
                     </div>
                   </div>

@@ -17,23 +17,19 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const customRegular = localFont({
-  src: "./fonts/PianoKids-Regular.ttf",
-  variable: "--font-custom-regular",
-  weight: "400",
-  display: "swap",
+const pianoRegular = localFont({
+  src: "./fonts/Pianify-Regular.ttf",
+  variable: "--font-piano-regular",
 });
 
-const customBold = localFont({
-  src: "./fonts/PianoKids-Bold.ttf",
-  variable: "--font-custom-bold",
-  weight: "700",
-  display: "swap",
+const pianoBold = localFont({
+  src: "./fonts/Pianify-Bold.ttf",
+  variable: "--font-piano-bold",
 });
 
 export const metadata: Metadata = {
-  title: "PianoKids — Aprenda Piano Brincando",
-  description: "Transforme o aprendizado de piano em um jogo divertido.",
+  title: "Pianify — Sua Jornada Musical Começa Aqui",
+  description: "Aprenda piano e teclado de forma gamificada, divertida e inteligente. Método exclusivo para todas as idades.",
 };
 
 export default function RootLayout({
@@ -44,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="dark" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${customRegular.variable} ${customBold.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${pianoRegular.variable} ${pianoBold.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
         suppressHydrationWarning
       >
         <AudioProvider>

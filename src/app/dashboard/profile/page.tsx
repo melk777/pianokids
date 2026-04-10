@@ -232,17 +232,21 @@ export default function ProfilePage() {
                 <>
                   <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
                     <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                      {profile?.full_name || "Músico Iniciante"}
+                      {profile?.full_name || (profile?.role === "teacher" ? "Professor Parceiro" : "Músico Iniciante")}
                     </h1>
-                    {isSubscribed && (
+                    {profile?.role === "teacher" ? (
+                      <div className="px-3 py-1 bg-magenta/10 text-magenta text-[10px] font-black uppercase tracking-widest rounded-full border border-magenta/20 shadow-[0_0_15px_rgba(255,0,229,0.2)]">
+                        Professor Parceiro
+                      </div>
+                    ) : isSubscribed && (
                       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-magenta to-cyan flex items-center justify-center shadow-[0_0_15px_rgba(255,0,229,0.4)]">
                         <Crown className="w-3.5 h-3.5 text-white" />
                       </div>
                     )}
                   </div>
                   <p className="text-white/40 font-mono text-sm mb-6 flex items-center justify-center md:justify-start gap-2">
-                    @{profile?.username || "pianokid"}
-                    <span className={`w-1.5 h-1.5 rounded-full ${isSubscribed ? "bg-gradient-to-r from-cyan to-magenta animate-pulse" : "bg-white/20"}`} />
+                    @{profile?.username || "pianify"}
+                    <span className={`w-1.5 h-1.5 rounded-full ${profile?.role === "teacher" || isSubscribed ? "bg-gradient-to-r from-cyan to-magenta animate-pulse" : "bg-white/20"}`} />
                   </p>
                   <button 
                     onClick={() => setEditing(true)}
@@ -257,92 +261,98 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatCard 
-            icon={<Trophy className="text-yellow-400" />} 
-            label="Troféus" 
-            value={profile?.trophies || 0} 
-            color="border-yellow-400/20"
-          />
-          <StatCard 
-            icon={<Calendar className="text-orange-400" />} 
-            label="Dias Seguidos" 
-            value={profile?.streak_days || 0} 
-            color="border-orange-400/20"
-          />
-          <StatCard 
-            icon={<Clock className="icon-gradient" />} 
-            label="Prática" 
-            value={`${Math.floor((profile?.total_practice_time || 0) / 60)} min`} 
-            color="border-cyan/20"
-          />
-          <StatCard 
-            icon={<Target className="text-emerald-400" />} 
-            label="Precisão" 
-            value={`${profile?.average_accuracy || 0}%`} 
-            color="border-emerald-400/20"
-          />
-        </div>
+        {profile?.role !== "teacher" && (
+          <>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <StatCard 
+                icon={<Trophy className="text-yellow-400" />} 
+                label="Troféus" 
+                value={profile?.trophies || 0} 
+                color="border-yellow-400/20"
+              />
+              <StatCard 
+                icon={<Calendar className="text-orange-400" />} 
+                label="Dias Seguidos" 
+                value={profile?.streak_days || 0} 
+                color="border-orange-400/20"
+              />
+              <StatCard 
+                icon={<Clock className="icon-gradient" />} 
+                label="Prática" 
+                value={`${Math.floor((profile?.total_practice_time || 0) / 60)} min`} 
+                color="border-cyan/20"
+              />
+              <StatCard 
+                icon={<Target className="text-emerald-400" />} 
+                label="Precisão" 
+                value={`${profile?.average_accuracy || 0}%`} 
+                color="border-emerald-400/20"
+              />
+            </div>
+          </>
+        )}
 
         {/* Secondary Grid: Progress + Subscription */}
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Progress Card */}
-          <div className="md:col-span-2 glass rounded-[2rem] p-8 border border-white/10">
-            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 icon-gradient" />
-              Progresso nas Músicas
-            </h3>
-            
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/40 mb-2">
-                  <span>Músicas Tocadas</span>
-                  <span>{profile?.songs_played || 0}</span>
+        <div className={`grid ${profile?.role === "teacher" ? "grid-cols-1" : "md:grid-cols-3"} gap-6`}>
+          {/* Progress Card (Only for Students) */}
+          {profile?.role !== "teacher" && (
+            <div className="md:col-span-2 glass rounded-[2rem] p-8 border border-white/10">
+              <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 icon-gradient" />
+                Progresso nas Músicas
+              </h3>
+              
+              <div className="space-y-6">
+                <div>
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/40 mb-2">
+                    <span>Músicas Tocadas</span>
+                    <span>{profile?.songs_played || 0}</span>
+                  </div>
+                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((profile?.songs_played || 0) * 10, 100)}%` }}
+                      className="h-full bg-white/20 rounded-full"
+                    />
+                  </div>
                 </div>
-                <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((profile?.songs_played || 0) * 10, 100)}%` }}
-                    className="h-full bg-white/20 rounded-full"
-                  />
-                </div>
-              </div>
 
-              <div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/40 mb-2">
-                  <span>Concluídas 100%</span>
-                  <span>{profile?.songs_completed || 0}</span>
-                </div>
-                <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((profile?.songs_completed || 0) * 10, 100)}%` }}
-                    className="h-full bg-gradient-to-r from-cyan to-magenta rounded-full shadow-[0_0_10px_rgba(0,234,255,0.4)]"
-                  />
+                <div>
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/40 mb-2">
+                    <span>Concluídas 100%</span>
+                    <span>{profile?.songs_completed || 0}</span>
+                  </div>
+                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((profile?.songs_completed || 0) * 10, 100)}%` }}
+                      className="h-full bg-gradient-to-r from-cyan to-magenta rounded-full shadow-[0_0_10px_rgba(0,234,255,0.4)]"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* DYNAMIC SUBSCRIPTION CARD */}
-          <div className="glass rounded-[2rem] p-8 border border-white/10 relative overflow-hidden flex flex-col">
-            {isSubscribed && (
+          <div className={`${profile?.role === "teacher" ? "w-full" : ""} glass rounded-[2rem] p-8 border border-white/10 relative overflow-hidden flex flex-col`}>
+            {(isSubscribed || profile?.role === "teacher") && (
               <div className="absolute top-0 right-0 w-32 h-32 bg-magenta/10 blur-3xl -mr-16 -mt-16" />
             )}
             
             <h3 className="text-lg font-bold mb-6 flex items-center gap-2 relative z-10">
-              <CreditCard className={`w-5 h-5 ${isSubscribed ? "text-magenta" : "text-white/40"}`} />
-              Assinatura
+              <CreditCard className={`w-5 h-5 ${isSubscribed || profile?.role === "teacher" ? "text-magenta" : "text-white/40"}`} />
+              {profile?.role === "teacher" ? "Parceria" : "Assinatura"}
             </h3>
 
             <div className="mb-auto relative z-10">
               <div className="mb-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-1">Status Atual</p>
                 <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${isSubscribed ? "bg-green-400" : "bg-white/20"}`} />
-                  <span className={`text-sm font-bold ${isSubscribed ? "text-green-400" : "text-white/60"}`}>
-                    {isSubscribed ? "Plano Pro Ativo" : "Plano Gratuito"}
+                  <span className={`w-2 h-2 rounded-full ${isSubscribed || profile?.role === "teacher" ? "bg-green-400" : "bg-white/20"}`} />
+                  <span className={`text-sm font-bold ${isSubscribed || profile?.role === "teacher" ? "text-green-400" : "text-white/60"}`}>
+                    {profile?.role === "teacher" ? "Parceiro Ativo" : isSubscribed ? "Plano Pro Ativo" : "Plano Gratuito"}
                   </span>
                 </div>
               </div>
@@ -350,9 +360,10 @@ export default function ProfilePage() {
               <div className="mb-6">
                 <p className="text-[10px] font-black uppercase tracking-[0.15em] text-white/30 mb-1">Tipo de Plano</p>
                 <p className="text-base font-bold text-white">{(() => {
+                  if (profile?.role === "teacher") return "Professor Parceiro (Gestão)";
                   if (planType === "admin_granted" || planType === "special_access") return "Acesso Especial (VIP)";
-                  if (planType === "yearly") return "PianoKids Pro (Anual)";
-                  if (planType === "monthly") return "PianoKids Pro (Mensal)";
+                  if (planType === "yearly") return "Pianify Pro (Anual)";
+                  if (planType === "monthly") return "Pianify Pro (Mensal)";
                   if (planType === "trial") return "Período de Experiência";
                   return "Plano Gratuito";
                 })()}</p>
@@ -360,7 +371,11 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-3 relative z-10 mt-6">
-              {isSubscribed ? (
+              {profile?.role === "teacher" ? (
+                 <div className="text-center py-3 bg-white/5 border border-white/10 rounded-xl">
+                   <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Acesso Administrativo Vitalício</p>
+                 </div>
+              ) : isSubscribed ? (
                 planType !== 'admin_granted' && planType !== 'special_access' ? (
                   <button 
                     onClick={handleManageSubscription}
@@ -386,39 +401,41 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Trophies Collection */}
-        <section className="mt-12">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-yellow-400" />
-            Coleção de Troféus
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <TrophyItem 
-              active={true}
-              icon={<Star className="w-6 h-6" />}
-              name="Bem-vindo!"
-              desc="Primeiro acesso ao PianoKids."
-            />
-            <TrophyItem 
-              active={(profile?.songs_played || 0) > 0}
-              icon={<Music className="w-6 h-6" />}
-              name="Primeira Nota"
-              desc="Começou sua jornada musical."
-            />
-            <TrophyItem 
-              active={(profile?.streak_days || 0) >= 5}
-              icon={<Calendar className="w-6 h-6" />}
-              name="Focado"
-              desc="5 dias seguidos de prática."
-            />
-            <TrophyItem 
-              active={(profile?.average_accuracy || 0) >= 90}
-              icon={<Target className="w-6 h-6" />}
-              name="Ouvido Absoluto"
-              desc="Precisão média acima de 90%."
-            />
-          </div>
-        </section>
+        {/* Trophies Collection (Only for Students) */}
+        {profile?.role !== "teacher" && (
+          <section className="mt-12">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-400" />
+              Coleção de Troféus
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <TrophyItem 
+                active={true}
+                icon={<Star className="w-6 h-6" />}
+                name="Bem-vindo!"
+                desc="Primeiro acesso ao Pianify."
+              />
+              <TrophyItem 
+                active={(profile?.songs_played || 0) > 0}
+                icon={<Music className="w-6 h-6" />}
+                name="Primeira Nota"
+                desc="Começou sua jornada musical."
+              />
+              <TrophyItem 
+                active={(profile?.streak_days || 0) >= 5}
+                icon={<Calendar className="w-6 h-6" />}
+                name="Focado"
+                desc="5 dias seguidos de prática."
+              />
+              <TrophyItem 
+                active={(profile?.average_accuracy || 0) >= 90}
+                icon={<Target className="w-6 h-6" />}
+                name="Ouvido Absoluto"
+                desc="Precisão média acima de 90%."
+              />
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );

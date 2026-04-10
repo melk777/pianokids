@@ -22,12 +22,12 @@ export default function LoginPage() {
       {/* Decorative text */}
       <div className="absolute bottom-10 left-10 hidden lg:block opacity-10 pointer-events-none">
         <h1 className="text-[12rem] font-bold tracking-tighter leading-none select-none">
-          PIANO
+          PIANI
         </h1>
       </div>
       <div className="absolute top-10 right-10 hidden lg:block opacity-10 pointer-events-none">
         <h1 className="text-[12rem] font-bold tracking-tighter leading-none select-none">
-          KIDS
+          FY
         </h1>
       </div>
     </main>

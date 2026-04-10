@@ -25,11 +25,14 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { createClientComponent } from "@/lib/supabase";
 
+import TeacherDashboard from "@/components/TeacherDashboard";
+import AdminDashboard from "@/components/AdminDashboard";
+
 export default function Dashboard() {
   const router = useRouter();
   const supabase = createClientComponent();
   const { playClick } = useSFX();
-  const { profile } = useProfile();
+  const { profile, loading: profileLoading } = useProfile();
   const { status, currentPeriodEnd, isPro, loading: subscriptionLoading, planType } = useSubscription();
   const isSubscribed = isPro; // No Dashboard, 'isSubscribed' agora significa ter acesso PRO (pago)
   const [user, setUser] = useState<User | null>(null);
@@ -112,13 +115,22 @@ export default function Dashboard() {
   
   const diffDays = getTrialDays();
 
-  const firstName =
-    isLoaded && user ? user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0] || "Aluno" : "...";
+  if (profileLoading || subscriptionLoading || !profile) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-cyan/20 border-t-cyan animate-spin" />
+          <p className="text-white/40 text-sm font-bold animate-pulse uppercase tracking-widest">Carregando painel...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const firstName = (isLoaded && user) ? (user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0] || "Aluno") : "...";
 
   return (
-    <>
-      <main className="min-h-screen bg-black text-white selection:bg-cyan/30">
-        <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto">
+    <main className="min-h-screen bg-black text-white selection:bg-cyan/30">
+      <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto">
           {/* ── Greeting ────────────────────────── */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -133,15 +145,21 @@ export default function Dashboard() {
               </Link>!
             </h1>
             <p className="text-white/50 text-lg max-w-2xl">
-              {profile?.trophies && profile.trophies > 1 
+              {profile?.role === "teacher" 
+                ? "Gestão Administrativa: Acompanhe o progresso de seus alunos e gerencie seu link de indicações."
+                : profile?.trophies && profile.trophies > 1 
                 ? "Você está indo muito bem! Continue praticando para ganhar mais troféus." 
                 : "Seu primeiro troféu de boas-vindas já está na sua estante! Vamos tocar?"}
             </p>
           </motion.div>
 
-          {/* ── Dashboard Grid ────────────────────── */}
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left Column: MIDI Status + Actions + Lessons */}
+          {profile?.role === "admin" ? (
+             <AdminDashboard />
+          ) : profile?.role === "teacher" ? (
+             <TeacherDashboard />
+          ) : (
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Left Column: MIDI Status + Actions + Lessons */}
             <div className="lg:col-span-2 space-y-8">
               {/* ── MIDI Status Card (Apple-style) ── */}
               <motion.div
@@ -235,7 +253,7 @@ export default function Dashboard() {
                   {/* Recognition Info */}
                   {isListening && (
                     <p className="mt-3 text-[10px] text-white/20 border-t border-white/[0.04] pt-3 italic">
-                      Toque as notas no seu piano e nós as reconheceremos via áudio.
+                      O chat de sugestões é um recurso exclusivo para nossa **Comunidade Premium**.
                     </p>
                   )}
                 </div>
@@ -267,7 +285,7 @@ export default function Dashboard() {
                         Explorar Biblioteca
                       </h3>
                       <p className="text-base text-white/50 group-hover:text-white/70 transition-colors">
-                        Acesse todo o nosso acervo de músicas infantis e clássicas prontas para tocar. 
+                        Acesse todo o nosso acervo de músicas clássicas e populares prontas para tocar. 
                         Inclui o novo modo Prática Livre!
                       </p>
                     </div>
@@ -346,7 +364,7 @@ export default function Dashboard() {
               </motion.section>
             </div>
 
-            {/* \u2500\u2500 Right Column: Subscription + Stats \u2500\u2500 */}
+            {/* ── Right Column: Subscription + Stats ── */}
             <div className="space-y-6">
               {/* Trial Remaining Card (Static) */}
               {status === "trialing" && diffDays !== null && (
@@ -428,8 +446,8 @@ export default function Dashboard() {
                         <div>
                           <h3 className="text-lg font-bold text-white leading-tight">
                             {planType === "admin_granted" || planType === "special_access" ? "Acesso Especial" : 
-                             planType === "yearly" ? "Plano Pro (Anual)" :
-                             planType === "monthly" ? "Plano Pro (Mensal)" :
+                             planType === "yearly" ? "Pianify Pro (Anual)" :
+                             planType === "monthly" ? "Pianify Pro (Mensal)" :
                              isSubscribed ? "Plano Pro" : "Plano Gratuito"}
                           </h3>
                           <div className="flex items-center gap-2 mt-0.5">
@@ -456,7 +474,7 @@ export default function Dashboard() {
                       <p className="text-sm text-white/60 mb-6 leading-relaxed">
                         {isSubscribed
                           ? "Você tem acesso ilimitado a todas as lições, músicas e ferramentas de prática da plataforma."
-                          : "Você está no plano gratuito. Desbloqueie todo o poder do PianoKids assinando o Premium."}
+                          : "Você está no plano gratuito. Desbloqueie todo o poder do Pianify assinando o Premium."}
                       </p>
 
                       <button
@@ -505,7 +523,7 @@ export default function Dashboard() {
                   <div>
                     <div className="flex flex-col mb-2">
                       <span className="text-3xl font-bold text-white mb-1">
-                        {profile?.trophies || 0}
+                        @{profile?.username || "pianify"}
                       </span>
                       <span className="text-sm text-white/50 flex items-center gap-1.5">
                         <Star className="w-4 h-4 icon-gradient" /> Troféus Ganhos
@@ -529,7 +547,7 @@ export default function Dashboard() {
                       Dias Seguidos
                     </span>
                     <span className="text-sm font-medium text-white flex items-center gap-1">
-                      <span className="text-orange-500">\uD83D\uDD25</span> {profile?.streak_days || 0} dias
+                      🔥 {profile?.streak_days || 0} dias
                     </span>
                   </div>
 
@@ -551,9 +569,9 @@ export default function Dashboard() {
                 </div>
               </motion.div>
             </div>
-          </div>
+            </div>
+          )}
         </div>
       </main>
-    </>
-  );
+    );
 }

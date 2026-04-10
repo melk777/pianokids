@@ -7,33 +7,33 @@ import { ChevronDown, Keyboard, CreditCard, ShieldCheck, Zap } from "lucide-reac
 const faqs = [
   {
     icon: <Keyboard className="w-4 h-4" />,
-    question: "Preciso de um teclado físico?",
+    question: "Preciso de um piano ou teclado físico?",
     answer:
-      "Sim, seu filho precisará de um piano real ou teclado musical físico. A diferença é que agora não é necessário nenhum cabo! O PianoKids usa o microfone do seu dispositivo (celular, tablet ou computador) para 'ouvir' as notas sendo tocadas e dar o feedback instantâneo. Isso permite usar qualquer instrumento, desde um piano acústico até um teclado eletrônico simples.",
+      "Sim, você precisará de um piano real ou teclado musical físico. A grande vantagem é que o Pianify não exige cabos! Usamos o microfone do seu dispositivo para 'ouvir' e dar feedback instantâneo, seja em um piano acústico ou teclado digital.",
   },
   {
     icon: <CreditCard className="w-4 h-4" />,
-    question: "Como funciona a assinatura?",
+    question: "Como funciona a assinatura Pianify Pro?",
     answer:
-      "Oferecemos planos Mensal (R$ 29,90/mês) e Anual (R$ 239,90/ano, equivalente a 2 meses grátis). Com a assinatura, você tem acesso ilimitado a todas as músicas, prática livre, acompanhamento de progresso e suporte prioritário. Você pode cancelar a qualquer momento pelo painel de gerenciamento da assinatura, sem multa ou complicação.",
+      "Oferecemos planos Mensal e Anual. Com o Pianify Pro, você tem acesso ilimitado a todas as músicas, prática livre e suporte prioritário. O aprendizado é gamificado para todas as idades, garantindo evolução constante.",
   },
   {
     icon: <ShieldCheck className="w-4 h-4" />,
-    question: "É seguro para crianças?",
+    question: "O método funciona para adultos também?",
     answer:
-      "Absolutamente! O PianoKids foi projetado pensando na segurança infantil. Não exibimos anúncios, não coletamos dados pessoais das crianças e todo o conteúdo é curado e apropriado para todas as idades. O pagamento é feito apenas pelo responsável, e o ambiente da plataforma é 100% focado na educação musical.",
+      "Com certeza! Embora o visual seja divertido e colorido, a metodologia de reconhecimento de notas e progressão é extremamente eficaz para adultos que buscam um aprendizado prático, direto e sem a pressão das aulas tradicionais.",
   },
   {
     icon: <Zap className="w-4 h-4" />,
-    question: "Quais navegadores são compatíveis?",
+    question: "Quais são os requisitos técnicos?",
     answer:
-      "O PianoKids funciona em qualquer navegador moderno (Chrome, Edge, Safari e Firefox) que suporte acesso ao microfone. Recomendamos manter seu navegador atualizado para a melhor precisão no reconhecimento das notas.",
+      "O Pianify funciona em qualquer navegador moderno (Chrome, Edge, Safari e Firefox). Basta permitir o acesso ao microfone quando solicitado e você estará pronto para tocar.",
   },
   {
     icon: <Zap className="w-4 h-4" />,
-    question: "Meu filho já sabe um pouco de piano. O PianoKids ainda vale?",
+    question: "Já tenho uma base musical. O Pianify é para mim?",
     answer:
-      "Com certeza! Temos músicas de diferentes níveis de dificuldade — de iniciante a avançado. O sistema de progressão se adapta e as músicas exclusivas do plano Pro são desafiadoras o suficiente para manter pianistas intermediários engajados. Além disso, o modo de prática livre permite tocar qualquer coisa sem restrições.",
+      "Sim! Nossa biblioteca de músicas abrange níveis que vão do básico ao avançado. Se você já toca, o Pianify ajudará você a aprimorar sua leitura de partituras e precisão rítmica de uma forma muito mais dinâmica.",
   },
 ];
 

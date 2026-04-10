@@ -13,6 +13,7 @@ import {
   LogOut,
   Volume2,
   VolumeX,
+  Piano,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { User as AuthUser } from "@supabase/supabase-js";
@@ -85,11 +86,17 @@ export default function Header() {
       >
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 md:px-10">
           <Link href="/" className="flex items-center gap-2.5 group select-none">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan to-cyan/50 flex items-center justify-center transition-all duration-300 group-hover:shadow-[0_0_24px_rgba(0,234,255,0.35)] group-hover:scale-105">
-              <Music className="w-[18px] h-[18px] text-black" strokeWidth={2.5} />
+            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center transition-all duration-300 group-hover:shadow-[0_0_24px_rgba(255,255,255,0.2)] group-hover:scale-105 overflow-hidden">
+              <Image 
+                src="/logo.png" 
+                alt="Pianify Logo" 
+                width={36} 
+                height={36} 
+                className="w-full h-full object-contain p-1"
+              />
             </div>
             <span className="text-lg font-semibold tracking-tight text-white/90">
-              Piano<span className="text-gradient font-black">Kids</span>
+              Pian<span className="text-gradient font-black">ify</span>
             </span>
           </Link>
 
@@ -101,11 +108,13 @@ export default function Header() {
               {isPlaying ? <Volume2 className="w-4 h-4 icon-gradient" /> : <VolumeX className="w-4 h-4" />}
             </button>
             
-            <button onClick={scrollToPricing} className={navLinkClass}>
-              <Sparkles className="w-3.5 h-3.5" />
-              Ver Planos
-            </button>
-
+            {profile?.role !== "teacher" && (
+              <button onClick={scrollToPricing} className={navLinkClass}>
+                <Sparkles className="w-3.5 h-3.5" />
+                Ver Planos
+              </button>
+            )}
+            
             {user ? (
               <>
                 <Link 
@@ -131,7 +140,7 @@ export default function Header() {
 
                 <Link href="/dashboard" onClick={() => playClick()} className="flex items-center gap-1.5 ml-1 px-5 py-2 text-[13px] font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-white/90">
                   <LayoutDashboard className="w-3.5 h-3.5" />
-                  Painel do Aluno
+                  {profile?.role === "teacher" ? "Painel do Parceiro" : "Painel do Aluno"}
                 </Link>
                 <button onClick={handleLogout} className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-red-400/70 hover:text-red-400 transition-colors duration-200 rounded-xl hover:bg-red-400/5 group">
                   <LogOut className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
@@ -144,10 +153,16 @@ export default function Header() {
                   <User className="w-3.5 h-3.5" />
                   Entrar
                 </Link>
-                <Link href="/login" onClick={() => playClick()} className="flex items-center gap-1.5 ml-1 px-5 py-2 text-[13px] font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-white/90">
-                  <User className="w-3.5 h-3.5" />
-                  Cadastrar
-                </Link>
+                <div className="flex gap-2 items-center ml-2">
+                  <Link href="/login" onClick={() => playClick()} className="flex items-center gap-1.5 px-5 py-2 text-[13px] font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-white/90">
+                    <User className="w-3.5 h-3.5" />
+                    Cadastrar
+                  </Link>
+                  <Link href="/login?role=teacher" onClick={() => playClick()} className={navLinkClass}>
+                    <Piano className="w-4 h-4 icon-gradient" />
+                    Sou Professor
+                  </Link>
+                </div>
               </>
             )}
           </nav>
@@ -163,10 +178,12 @@ export default function Header() {
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="fixed inset-x-0 top-[72px] z-40 md:hidden">
             <div className="mx-4 rounded-2xl bg-black/80 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.5)] overflow-hidden">
               <nav className="flex flex-col p-3 gap-1">
-                <button onClick={scrollToPricing} className={mobileLinkClass}>
-                  <Sparkles className="w-4 h-4 icon-gradient" />
-                  Ver Planos
-                </button>
+                {profile?.role !== "teacher" && (
+                  <button onClick={scrollToPricing} className={mobileLinkClass}>
+                    <Sparkles className="w-4 h-4 icon-gradient" />
+                    Ver Planos
+                  </button>
+                )}
                 {user ? (
                    <>
                      <Link href="/dashboard/profile" onClick={() => setMobileOpen(false)} className={mobileLinkClass}>
@@ -187,7 +204,7 @@ export default function Header() {
                     </Link>
                     <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-black bg-white rounded-xl">
                       <LayoutDashboard className="w-4 h-4 text-black" />
-                      Painel do Aluno
+                      {profile?.role === "teacher" ? "Painel do Parceiro" : "Painel do Aluno"}
                     </Link>
                     <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-400/80 hover:text-red-400 hover:bg-red-400/5 rounded-xl">
                       <LogOut className="w-4 h-4" />
@@ -203,6 +220,10 @@ export default function Header() {
                     <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-black bg-white rounded-xl mt-1">
                       <User className="w-4 h-4" />
                       Cadastrar
+                    </Link>
+                    <Link href="/login?role=teacher" onClick={() => setMobileOpen(false)} className={mobileLinkClass}>
+                      <Piano className="w-4 h-4 icon-gradient" />
+                      Sou Professor
                     </Link>
                   </>
                 )}

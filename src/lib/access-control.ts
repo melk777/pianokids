@@ -1,5 +1,5 @@
 /**
- * Módulo de Controle de Acesso (Whitelist) - PianoKids 2026
+ * Módulo de Controle de Acesso (Whitelist) - Pianify 2026
  * 
  * Adicione aqui os IDs ou E-mails de usuários que devem ter acesso premium TOTAL
  * sem precisar de assinatura ativa no Stripe.

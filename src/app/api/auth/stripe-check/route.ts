@@ -52,9 +52,23 @@ export async function GET() {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("subscription_status, trial_ends_at, stripe_customer_id")
+      .select("subscription_status, trial_ends_at, stripe_customer_id, role")
       .eq("id", userId)
       .single();
+
+    // 1. Verificação Especial para Professor Parceiro
+    if (profile?.role === "teacher") {
+      return NextResponse.json({
+        status: "active",
+        planType: "teacher_partner",
+        hasAccess: false, // Professor não tem acesso à biblioteca PRO de aluno
+        isPro: false,
+        isTeacher: true,
+        customerId: profile.stripe_customer_id || null,
+        interval: "lifetime",
+        currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(),
+      });
+    }
 
     if (profile) {
       const now = new Date();
