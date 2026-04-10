@@ -3,21 +3,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { createClientComponent } from "@/lib/supabase";
 
-export interface Profile {
-  id: string;
-  username: string | null;
-  username_changes_count: number;
-  full_name: string | null;
-  avatar_url: string | null;
-  trophies: number;
-  streak_days: number;
-  total_practice_time: number;
-  average_accuracy: number;
-  songs_played: number;
-  songs_completed: number;
-  last_practice_date: string | null;
-  updated_at: string;
-}
+import { Profile } from "@/lib/types";
+export type { Profile };
+
+
 
 export function useProfile() {
   const supabase = createClientComponent();

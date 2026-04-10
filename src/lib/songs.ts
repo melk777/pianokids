@@ -9,28 +9,10 @@ import minuetoData from "../../public/songs/minueto.json";
 import goldenHourData from "../../public/songs/golden-hour.json";
 import parabensData from "../../public/songs/parabens.json";
 
-export interface SongNote {
-  midi: number;       // MIDI note number (e.g., 60 = C4)
-  time: number;       // Start time in seconds
-  duration: number;   // Duration in seconds
-  hand?: "left" | "right"; // Which hand plays this note
-  velocity?: number;  // 0-1, dynamic intensity
-}
+import { Song, SongNote } from "@/lib/types";
+export type { Song, SongNote };
 
-export interface Song {
-  id: string;
-  title: string;
-  artist: string;
-  difficulty: "Fácil" | "Médio" | "Difícil";
-  bpm: number;
-  duration: number;   // Total duration in seconds
-  category: "Para Iniciantes" | "Infantis" | "Clássicos" | "Sertanejos" | "Religiosos" | "Grandes Sucessos";
-  isPremium: boolean;
-  coverUrl?: string;
-  notes: SongNote[];
-  notes1Hand?: SongNote[] | null;
-  notes2Hands?: SongNote[] | null;
-}
+
 
 /**
  * ── Banco de Músicas do Pianify ────────────────────────────
@@ -96,12 +78,8 @@ export const songs: Song[] = [
 
   // 6. Für Elise
   {
-    isFree: false,
-    duration: "1:24",
-    difficulty: "Iniciante",
-    description: "Uma canção de ninar clássica e suave, perfeita para começar sua jornada no Pianify.",
-    category: "Clássicos",
-    isPremium: true,
+    ...(furEliseMidiData as Song),
+    id: "fur-elise",
     coverUrl: "/images/covers/fur_elise_1775056434348.png",
     difficulty: "Médio"
   },
@@ -151,12 +129,7 @@ export const songs: Song[] = [
   // 10. O Sapo não lava o pé
   {
     ...(oSapoData as Song),
-    id: "o-sapo-nao-lava-o-pe", // Mantendo ID para compatibilidade
-    title: "O sapo não lava o pé",
-    artist: "Folclore Brasileiro",
-    category: "Infantis",
-    isPremium: true,
-    difficulty: "Fácil",
+    id: "o-sapo-nao-lava-o-pe",
     coverUrl: "/images/covers/o_sapo_cover.png"
   },
 
@@ -164,10 +137,6 @@ export const songs: Song[] = [
   {
     ...(minuetoData as Song),
     id: "minueto-em-sol-maior",
-    artist: "J.S. Bach",
-    category: "Clássicos",
-    isPremium: true,
-    difficulty: "Médio",
     coverUrl: "/images/covers/minueto_cover.png"
   },
 
@@ -175,10 +144,6 @@ export const songs: Song[] = [
   {
     ...(goldenHourData as Song),
     id: "golden-hour",
-    artist: "JVKE",
-    category: "Grandes Sucessos",
-    isPremium: true,
-    difficulty: "Médio",
     coverUrl: "/images/covers/golden_hour_cover.png"
   },
 
@@ -186,11 +151,6 @@ export const songs: Song[] = [
   {
     ...(parabensData as Song),
     id: "parabens-pra-voce",
-    title: "Parabens pra você",
-    artist: "Tradicional",
-    category: "Infantis",
-    isPremium: true,
-    difficulty: "Fácil",
     coverUrl: "/images/covers/parabens_cover.png"
   }
 ];

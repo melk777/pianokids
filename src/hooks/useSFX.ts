@@ -2,18 +2,26 @@
 
 import useSound from "use-sound";
 
-export const useSFX = () => {
+type PlayFunction = (options?: any) => void;
+
+interface SFXHook {
+  playClick: PlayFunction;
+  playSuccess: PlayFunction;
+  playMessage: PlayFunction;
+  playError: PlayFunction;
+}
+
+export const useSFX = (): SFXHook => {
   const [playClick] = useSound("/audio/sweep-click.mp3", { volume: 0.5 });
   
-  // Você pode adicionar mais sons aqui conforme necessário
-  // const [playWin] = useSound("/audio/win.mp3", { volume: 0.6 });
-
   const [playSuccess] = useSound("/audio/sweep-click.mp3", { volume: 0.5 });
   const [playMessage] = useSound("/audio/sweep-click.mp3", { volume: 0.4 });
+  const [playError] = useSound("/audio/sweep-click.mp3", { volume: 0.5 });
 
   return {
-    playClick,
-    playSuccess,
-    playMessage,
+    playClick: playClick as PlayFunction,
+    playSuccess: playSuccess as PlayFunction,
+    playMessage: playMessage as PlayFunction,
+    playError: playError as PlayFunction,
   };
 };

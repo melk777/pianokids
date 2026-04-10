@@ -313,8 +313,9 @@ export default function TeacherDashboard() {
                           <Tooltip 
                             contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#ffffff20', borderRadius: '12px' }}
                             itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
-                            formatter={(value: number) => [`R$ ${value.toFixed(2)}`, "Oportunidade Gerada"]}
+                            formatter={(value: any) => [`R$ ${Number(value || 0).toFixed(2)}`, "Oportunidade Gerada"]}
                           />
+
                           <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} dot={{ fill: '#0a0a0a', stroke: '#10b981', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, strokeWidth: 0 }} />
                         </RechartsLineChart>
                       </ResponsiveContainer>

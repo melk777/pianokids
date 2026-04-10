@@ -22,17 +22,16 @@ export async function GET(request: NextRequest) {
     const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
     if (adminProfile?.role !== 'admin') return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    let query = supabase.from("company_expenses").select("*");
     if (monthYear) {
-       query = query.eq('month_year', monthYear).single();
-       const { data, error } = await query;
-       if (error && error.code !== "PGRST116") throw error; // Ignora se não achou
+       const { data, error } = await supabase.from("company_expenses").select("*").eq('month_year', monthYear).maybeSingle();
+       if (error) throw error;
        return NextResponse.json(data || { month_year: monthYear, marketing: 0, development: 0, copyrights: 0, other: 0 });
     } else {
-       const { data, error } = await query;
+       const { data, error } = await supabase.from("company_expenses").select("*");
        if (error) throw error;
-       return NextResponse.json({ expenses: data });
+       return NextResponse.json({ expenses: data || [] });
     }
+
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -300,12 +300,16 @@ export default function AdminDashboard() {
       return (
         <div className="glass p-4 rounded-xl border border-white/10 text-xs shadow-2xl">
           <p className="font-bold text-white mb-2 pb-2 border-b border-white/10">{label}</p>
-          {payload.map((entry: any, index: number) => (
-             <p key={index} className="flex gap-4 justify-between font-bold" style={{ color: entry.color }}>
-                 <span>{entry.name}:</span>
-                 <span>R$ {entry.value.toFixed(2)}</span>
-             </p>
-          ))}
+          {payload.map((entry: any, index: number) => {
+             const val = typeof entry.value === 'number' ? entry.value : Number(entry.value || 0);
+             return (
+               <p key={index} className="flex gap-4 justify-between font-bold" style={{ color: entry.color }}>
+                   <span>{entry.name}:</span>
+                   <span>R$ {val.toFixed(2)}</span>
+               </p>
+             );
+          })}
+
         </div>
       );
     }

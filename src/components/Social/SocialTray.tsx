@@ -19,7 +19,9 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSocial, FriendshipData } from "@/hooks/useSocial";
-import { useProfile, Profile } from "@/hooks/useProfile";
+import { useProfile } from "@/hooks/useProfile";
+import { Profile } from "@/lib/types";
+
 import { useSFX } from "@/hooks/useSFX";
 
 interface SocialTrayProps {
