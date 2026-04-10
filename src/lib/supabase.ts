@@ -14,6 +14,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
   ? (typeof window !== "undefined" 
     ? createBrowserClient(supabaseUrl!, supabaseAnonKey!) 
     : createClient(supabaseUrl!, supabaseAnonKey!))
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   : ({} as any);
 
 export const createClientComponent = () => createBrowserClient(supabaseUrl || "", supabaseAnonKey || "");
