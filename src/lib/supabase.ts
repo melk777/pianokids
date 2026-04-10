@@ -12,8 +12,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = (supabaseUrl && supabaseAnonKey)
   ? (typeof window !== "undefined" 
-    ? createBrowserClient(supabaseUrl, supabaseAnonKey) 
-    : createClient(supabaseUrl, supabaseAnonKey))
+    ? createBrowserClient(supabaseUrl!, supabaseAnonKey!) 
+    : createClient(supabaseUrl!, supabaseAnonKey!))
   : ({} as any);
 
-export const createClientComponent = () => createBrowserClient(supabaseUrl, supabaseAnonKey);
+export const createClientComponent = () => createBrowserClient(supabaseUrl || "", supabaseAnonKey || "");

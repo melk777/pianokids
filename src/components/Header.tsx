@@ -15,7 +15,7 @@ import {
   Piano,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { User as AuthUser } from "@supabase/supabase-js";
+import { User as AuthUser, Session } from "@supabase/supabase-js";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useSFX } from "@/hooks/useSFX";
 import { usePathname, useRouter } from "next/navigation";
@@ -33,14 +33,14 @@ export default function Header() {
   const { profile } = useProfile();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setUser(session?.user ?? null);
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+  
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
       setUser(session?.user ?? null);
     });
-
+  
     return () => subscription.unsubscribe();
   }, []);
 
