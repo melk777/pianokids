@@ -2,7 +2,7 @@
 
 import useSound from "use-sound";
 
-type PlayFunction = (options?: any) => void;
+type PlayFunction = (options?: unknown) => void;
 
 interface SFXHook {
   playClick: PlayFunction;

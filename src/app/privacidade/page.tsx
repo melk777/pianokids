@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Shield, Lock, Eye, Users, FileText } from "lucide-react";
 import Link from "next/link";
 

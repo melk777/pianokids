@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 import { motion } from "framer-motion";
 
@@ -16,7 +17,9 @@ export default function LoginPage() {
         transition={{ duration: 1 }}
         className="w-full relative z-10"
       >
-        <AuthForm />
+        <Suspense fallback={<div className="text-white/50 text-sm mt-10 text-center">Carregando...</div>}>
+          <AuthForm />
+        </Suspense>
       </motion.div>
 
       {/* Decorative text */}

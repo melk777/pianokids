@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Users, DollarSign, CheckCircle, AlertCircle, LayoutDashboard, Search, UploadCloud, FileText, Check, X, ShieldAlert, LineChart as ChartIcon, Wallet } from "lucide-react";
+import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet } from "lucide-react";
 import { createClientComponent } from "@/lib/supabase";
 import { useSFX } from "@/hooks/useSFX";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend } from "recharts";
@@ -18,8 +18,25 @@ interface AdminStats {
   debtGlobal: number;
 }
 
+interface ChartDataPoint {
+  name: string;
+  revenue: number;
+  profit: number;
+  custosVariaveis: number;
+  [key: string]: unknown;
+}
+
+interface ExpenseHistoryItem {
+  month_year: string;
+  marketing: string | number;
+  development: string | number;
+  copyrights: string | number;
+  other: string | number;
+  [key: string]: unknown;
+}
+
 interface FinancialStats {
-  chartData: any[];
+  chartData: ChartDataPoint[];
   mrr: number;
   arr: number;
   revenueMonthlyPlan: number;
@@ -72,8 +89,8 @@ export default function AdminDashboard() {
   const [expenseMonthYear, setExpenseMonthYear] = useState<string>(
     `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
   );
-  const [expensesData, setExpensesData] = useState<any>({ marketing: "", development: "", copyrights: "", other: "" });
-  const [expensesHistory, setExpensesHistory] = useState<any[]>([]);
+  const [expensesData, setExpensesData] = useState<Record<string, string>>({ marketing: "", development: "", copyrights: "", other: "" });
+  const [expensesHistory, setExpensesHistory] = useState<ExpenseHistoryItem[]>([]);
   const [isSavingExpenses, setIsSavingExpenses] = useState(false);
 
   // States para o Comprovante (Modal)
@@ -113,8 +130,8 @@ export default function AdminDashboard() {
 
   const formatCurToInput = (val: number) => {
       if (!val) return "";
-      let v = Number(val).toFixed(2);
-      let parts = v.split(".");
+      const v = Number(val).toFixed(2);
+      const parts = v.split(".");
       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       return parts.join(",");
   };
@@ -126,7 +143,7 @@ export default function AdminDashboard() {
          return;
      }
      v = (Number(v) / 100).toFixed(2);
-     let parts = v.split(".");
+     const parts = v.split(".");
      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
      setExpensesData({ ...expensesData, [field]: parts.join(",") });
   };
@@ -162,6 +179,7 @@ export default function AdminDashboard() {
     if (activeTab === 'financial') {
         fetchExpenses(expenseMonthYear);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, expenseMonthYear]);
 
   const submitExpenses = async () => {
@@ -185,7 +203,7 @@ export default function AdminDashboard() {
           } else {
               playError();
           }
-      } catch (error) {
+      } catch {
           playError();
       } finally {
           setIsSavingExpenses(false);
@@ -204,7 +222,7 @@ export default function AdminDashboard() {
               }
               fetchAll();
           }
-      } catch(e) {
+      } catch {
           playError();
       }
   };
@@ -250,7 +268,7 @@ export default function AdminDashboard() {
       } else {
         throw new Error("Falha na API");
       }
-    } catch (e) {
+    } catch {
       playError();
       alert("Erro ao processar o comprovante. Tente novamente.");
     } finally {
@@ -279,7 +297,7 @@ export default function AdminDashboard() {
             setSelectedWithdrawal(null);
             fetchAll();
           }
-      } catch (e) {
+      } catch {
           playError();
           alert("Erro ao rejeitar");
       } finally {
@@ -295,12 +313,12 @@ export default function AdminDashboard() {
 
   const filteredTeachers = teachers.filter(t => t.full_name?.toLowerCase().includes(searchTeacher.toLowerCase()) || t.username?.toLowerCase().includes(searchTeacher.toLowerCase()));
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: { active?: boolean, payload?: { value: unknown, color: string, name: string }[], label?: string }) => {
     if (active && payload && payload.length) {
       return (
         <div className="glass p-4 rounded-xl border border-white/10 text-xs shadow-2xl">
           <p className="font-bold text-white mb-2 pb-2 border-b border-white/10">{label}</p>
-          {payload.map((entry: any, index: number) => {
+          {payload.map((entry, index: number) => {
              const val = typeof entry.value === 'number' ? entry.value : Number(entry.value || 0);
              return (
                <p key={index} className="flex gap-4 justify-between font-bold" style={{ color: entry.color }}>
@@ -337,7 +355,7 @@ export default function AdminDashboard() {
         ].map(tab => (
           <button
             key={tab.id}
-            onClick={() => { playClick(); setActiveTab(tab.id as any); }}
+            onClick={() => { playClick(); setActiveTab(tab.id as 'overview' | 'financial' | 'withdrawals' | 'teachers'); }}
             className={`relative flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-colors ${activeTab === tab.id ? "text-cyan" : "text-white/40 hover:text-white/70"}`}
           >
             <tab.icon className="w-4 h-4" />

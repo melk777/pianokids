@@ -115,8 +115,11 @@ export default function AuthForm() {
         });
         localStorage.removeItem("pianify_ref");
       }
-    } catch (error: any) {
-      let errorMessage = error?.message || "Erro na autenticação";
+    } catch (error: unknown) {
+      let errorMessage = "Erro na autenticação";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       if (errorMessage.includes("User already registered")) {
         errorMessage = "Este e-mail já está cadastrado.";
       }

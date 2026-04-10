@@ -46,8 +46,9 @@ export async function GET() {
     if (errCST) throw errCST;
     
     // Create mapping for expenses string format "YYYY-MM"
-    const expensesMap: Record<string, any> = {};
-    (rawExpenses || []).forEach((e: any) => { expensesMap[e.month_year] = e; });
+    // Create mapping for expenses string format "YYYY-MM"
+    const expensesMap: Record<string, { marketing: number, development: number, copyrights: number, other: number, [key: string]: unknown }> = {};
+    (rawExpenses || []).forEach((e: { month_year: string, marketing: number, development: number, copyrights: number, other: number, [key: string]: unknown }) => { expensesMap[e.month_year] = e; });
 
     // --- Time Series Builder (Últimos 12 Meses até o Mês Atual) ---
     const now = new Date();
@@ -131,7 +132,10 @@ export async function GET() {
         monthNetProfit: currentMonthData.lucroLiquido
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: "Unknown error" }, { status: 500 });
   }
 }

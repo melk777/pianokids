@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronRight, CheckCircle2, LayoutDashboard, Link as LinkIcon, DollarSign, Clock, HelpCircle, MessageCircle, Mail, Users } from "lucide-react";
+import { ChevronRight, Link as LinkIcon, DollarSign, Clock, MessageCircle, Mail, Users } from "lucide-react";
 import Link from "next/link";
 import { useSFX } from "@/hooks/useSFX";
 

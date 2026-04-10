@@ -2,40 +2,22 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ChevronRight, DollarSign, Users, Sparkles, TrendingUp } from "lucide-react";
+import { ChevronRight, Users } from "lucide-react";
 import Link from "next/link";
 import { useSFX } from "@/hooks/useSFX";
 
 export default function TeacherAffiliateSection() {
   const { playClick } = useSFX();
   const [students, setStudents] = useState<number | "">(""); 
-  const [targetEarning, setTargetEarning] = useState<number | "">(""); 
 
-  const commissionPerStudent = 5.00;
 
   // Real-time calculation logic
   const handleStudentsChange = (val: string) => {
     const num = val === "" ? "" : Number(val);
     setStudents(num);
-    if (num !== "") {
-      setTargetEarning(num * commissionPerStudent);
-    } else {
-      setTargetEarning("");
-    }
-  };
-
-  const handleEarningChange = (val: string) => {
-    const num = val === "" ? "" : Number(val);
-    setTargetEarning(num);
-    if (num !== "") {
-      setStudents(Math.ceil(num / commissionPerStudent));
-    } else {
-      setStudents("");
-    }
   };
 
   const safeStudents = students === "" ? 0 : students;
-  const safeEarnings = targetEarning === "" ? 0 : targetEarning;
 
   return (
     <section className="relative py-24 pb-32 overflow-hidden selection:bg-cyan/30">

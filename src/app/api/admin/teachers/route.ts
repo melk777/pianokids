@@ -37,12 +37,24 @@ export async function GET() {
 
     if (errS) throw errS;
 
-    const teacherStats = teachers.map((teacher: any) => {
-        const referredStudents = students.filter((s:any) => s.referred_by === teacher.id);
-        const activeStudents = referredStudents.filter((s:any) => s.subscription_status === 'active' || s.subscription_status === 'admin_granted');
+    interface TeacherProf {
+      id: string;
+      balance_withdrawn_total: number | null;
+      [key: string]: unknown;
+    }
+    interface StudentProf {
+      referred_by?: string | null;
+      subscription_status?: string | null;
+      subscription_plan_interval?: string | null;
+      [key: string]: unknown;
+    }
+
+    const teacherStats = teachers.map((teacher: TeacherProf) => {
+        const referredStudents = students.filter((s: StudentProf) => s.referred_by === teacher.id);
+        const activeStudents = referredStudents.filter((s: StudentProf) => s.subscription_status === 'active' || s.subscription_status === 'admin_granted');
         
         let estimatedRevenue = 0;
-        activeStudents.forEach((s:any) => {
+        activeStudents.forEach((s: StudentProf) => {
            estimatedRevenue += (s.subscription_plan_interval === 'year' ? 40 : 5);
         });
 
@@ -56,7 +68,10 @@ export async function GET() {
     });
 
     return NextResponse.json({ teachers: teacherStats });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: "Unknown error" }, { status: 500 });
   }
 }

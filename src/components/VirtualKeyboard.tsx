@@ -22,7 +22,19 @@ const isBlackKey = (midi: number) => {
 // Componente Memoizado para a Tecla Branca
 // Evita re-renderizações desnecessárias em 50+ teclas sempre que uma for tocada
 // ----------------------------------------------------------------------------
-const WhiteKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, noteName, letterOnly }: any) => {
+interface KeyProps {
+  note: number;
+  isActiveProp: boolean;
+  onPlayNote: (midi: number) => void;
+  onReleaseNote: (midi: number) => void;
+  noteName?: string;
+  letterOnly?: string;
+  sharpLabel?: string;
+  leftPosition?: number;
+  whiteKeyWidthPercent?: number;
+}
+
+const WhiteKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, noteName, letterOnly }: KeyProps) => {
   const isRightHand = note >= 60;
   
   // Feedback visual ultra-rápido isolado apenas neste botão
@@ -81,7 +93,7 @@ WhiteKey.displayName = "WhiteKey";
 // ----------------------------------------------------------------------------
 // Componente Memoizado para a Tecla Preta
 // ----------------------------------------------------------------------------
-const BlackKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, sharpLabel, leftPosition, whiteKeyWidthPercent }: any) => {
+const BlackKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, sharpLabel, leftPosition, whiteKeyWidthPercent }: KeyProps) => {
   const isRightHand = note >= 60;
   
   // Feedback visual instantâneo
@@ -123,7 +135,7 @@ const BlackKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, sharpLab
       style={{ 
         left: `${leftPosition}%`,
         transform: `translateX(-50%) ${isActive ? 'translateY(4px)' : ''}`,
-        width: `${whiteKeyWidthPercent * 0.65}%`,
+        width: `${(whiteKeyWidthPercent || 0) * 0.65}%`,
         minWidth: '20px'
       }}
     >

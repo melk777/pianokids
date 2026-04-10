@@ -71,7 +71,9 @@ export default function TeacherDashboard() {
         const data = await res.json();
         setWithdrawals(data.withdrawals || []);
       }
-    } catch (err) {}
+    } catch {
+      console.error("Failed to fetch withdrawals");
+    }
   };
 
   useEffect(() => {
@@ -120,7 +122,7 @@ export default function TeacherDashboard() {
          playError();
          setWithdrawMessage({type: 'error', text: data.error || "Erro ao solicitar saque."});
       }
-    } catch (e) {
+    } catch {
       playError();
       setWithdrawMessage({type: 'error', text: "Falha na comunicação com o servidor."});
     }
@@ -285,7 +287,7 @@ export default function TeacherDashboard() {
                {['3months', '6months', 'all'].map(f => (
                  <button 
                   key={f}
-                  onClick={() => setChartFilter(f as any)}
+                  onClick={() => setChartFilter(f as 'all' | '6months' | '3months')}
                   className={`px-3 py-1 text-xs font-bold rounded-full border transition-colors ${
                     chartFilter === f ? 'bg-cyan/10 border-cyan/30 text-cyan' : 'bg-black border-white/10 text-white/40 hover:text-white/70'
                   }`}
@@ -313,7 +315,7 @@ export default function TeacherDashboard() {
                           <Tooltip 
                             contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#ffffff20', borderRadius: '12px' }}
                             itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
-                            formatter={(value: any) => [`R$ ${Number(value || 0).toFixed(2)}`, "Oportunidade Gerada"]}
+                            formatter={(value: unknown) => [`R$ ${Number(value || 0).toFixed(2)}`, "Oportunidade Gerada"]}
                           />
 
                           <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} dot={{ fill: '#0a0a0a', stroke: '#10b981', strokeWidth: 2, r: 4 }} activeDot={{ r: 6, strokeWidth: 0 }} />
@@ -376,7 +378,7 @@ export default function TeacherDashboard() {
                 <div className="p-12 flex flex-col items-center justify-center text-center">
                    <AlertCircle className="w-8 h-8 text-white/20 mb-3" />
                    <h4 className="text-white/80 font-semibold mb-1">Você ainda não referenciou nenhum aluno</h4>
-                   <p className="text-white/40 text-sm max-w-xs">Use o seu link exclusivo encontrado na aba "Visão Geral".</p>
+                   <p className="text-white/40 text-sm max-w-xs">Use o seu link exclusivo encontrado na aba &quot;Visão Geral&quot;.</p>
                 </div>
               ) : (
                 <table className="w-full text-left border-collapse">
