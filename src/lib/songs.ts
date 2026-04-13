@@ -6,13 +6,16 @@ import odeMidiData from "../../public/songs/ode-to-joy.json";
 import furEliseMidiData from "../../public/songs/fur-elise-easy-ver.json";
 import oSapoData from "../../public/songs/o-sapo.json";
 import minuetoData from "../../public/songs/minueto.json";
+import moonlightSonataData from "../../public/songs/moonlight-sonata.json";
+import bachPreludeData from "../../public/songs/bach-prelude.json";
+import turkishMarchData from "../../public/songs/turkish-march.json";
+import minuteWaltzData from "../../public/songs/minute-waltz.json";
+import nocturneOp9Data from "../../public/songs/nocturne-op9.json";
 import goldenHourData from "../../public/songs/golden-hour.json";
 import parabensData from "../../public/songs/parabens.json";
 
 import { Song, SongNote } from "@/lib/types";
 export type { Song, SongNote };
-
-
 
 /**
  * ── Banco de Músicas do Pianify ────────────────────────────
@@ -80,6 +83,7 @@ export const songs: Song[] = [
   {
     ...(furEliseMidiData as Song),
     id: "fur-elise",
+    title: "Für Elise",
     coverUrl: "/images/covers/fur_elise_1775056434348.png",
     difficulty: "Médio"
   },
@@ -130,6 +134,7 @@ export const songs: Song[] = [
   {
     ...(oSapoData as Song),
     id: "o-sapo-nao-lava-o-pe",
+    title: "O Sapo não lava o pé",
     coverUrl: "/images/covers/o_sapo_cover.png"
   },
 
@@ -137,6 +142,7 @@ export const songs: Song[] = [
   {
     ...(minuetoData as Song),
     id: "minueto-em-sol-maior",
+    title: "Minueto em Sol Maior",
     coverUrl: "/images/covers/minueto_cover.png"
   },
 
@@ -144,6 +150,7 @@ export const songs: Song[] = [
   {
     ...(goldenHourData as Song),
     id: "golden-hour",
+    title: "Golden Hour",
     coverUrl: "/images/covers/golden_hour_cover.png"
   },
 
@@ -151,7 +158,68 @@ export const songs: Song[] = [
   {
     ...(parabensData as Song),
     id: "parabens-pra-voce",
+    title: "Parabéns Pra Você",
     coverUrl: "/images/covers/parabens_cover.png"
+  },
+
+  // 14. Moonlight Sonata
+  {
+    ...(moonlightSonataData as Song),
+    id: "moonlight-sonata",
+    title: "Moonlight Sonata (1st Movement)",
+    artist: "Beethoven",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "/images/covers/moonlight_sonata.png",
+    difficulty: "Médio"
+  },
+
+  // 15. Bach Prelude
+  {
+    ...(bachPreludeData as Song),
+    id: "bach-prelude",
+    title: "Prelúdio em Dó Maior (BWV 846)",
+    artist: "J.S. Bach",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "/images/covers/bach_prelude.png",
+    difficulty: "Médio"
+  },
+
+  // 16. Turkish March
+  {
+    ...(turkishMarchData as Song),
+    id: "turkish-march",
+    title: "Marcha Turca",
+    artist: "W.A. Mozart",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "/images/covers/turkish_march.png",
+    difficulty: "Difícil"
+  },
+
+  // 17. Minute Waltz
+  {
+    ...(minuteWaltzData as Song),
+    id: "minute-waltz",
+    title: "Valsa Minuto (Op. 64 No. 1)",
+    artist: "Frédéric Chopin",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "/images/covers/minute_waltz.png",
+    difficulty: "Difícil"
+  },
+
+  // 18. Nocturne Op. 9 No. 2
+  {
+    ...(nocturneOp9Data as Song),
+    id: "nocturne-op9",
+    title: "Nocturne Op. 9 No. 2",
+    artist: "Frédéric Chopin",
+    category: "Clássicos",
+    isPremium: true,
+    coverUrl: "/images/covers/nocturne_op9.png",
+    difficulty: "Médio"
   }
 ];
 

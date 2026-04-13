@@ -11,6 +11,7 @@
 export const SPECIAL_ACCESS_IDS: string[] = [
   "alessia_samanta@hotmail.com", // Acesso via E-mail
   "comerciomelk@gmail.com",       // Acesso via E-mail
+  "melkhenrique1@icloud.com",     // Acesso PRO Vitalício
   // "a1b2c3d4...", // Adicione IDs do Supabase aqui
 ];
 
