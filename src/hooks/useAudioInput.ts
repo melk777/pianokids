@@ -80,7 +80,7 @@ export function useAudioInput() {
       audioContextRef.current = audioContext;
 
       const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 2048;
+      analyser.fftSize = 4096; // Resolução maior para piano acústico (era 2048)
       analyserRef.current = analyser;
 
       const source = audioContext.createMediaStreamSource(stream);
@@ -108,8 +108,10 @@ export function useAudioInput() {
         // Pitch
         const [pitch, clarity] = detector.findPitch(input, audioContext.sampleRate);
         
-        // Thresholds (Similares aos do AudioEngine)
-        if (rms > 0.01 && clarity > 0.85) {
+        // Thresholds ajustados para piano acústico:
+        // - clarity > 0.80 (era 0.85 — muito restritivo, piano tem harmônicos)
+        // - rms > 0.008 (era 0.01 — mais sensível a toques suaves)
+        if (rms > 0.008 && clarity > 0.80) {
           const { note, name } = frequencyToNote(pitch);
           setActiveAudioNote({
             note,
@@ -119,7 +121,7 @@ export function useAudioInput() {
             volume: rms,
             timestamp: performance.now()
           });
-        } else if (rms < 0.005) {
+        } else if (rms < 0.004) { // era 0.005
           setActiveAudioNote(null);
         }
 

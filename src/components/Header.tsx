@@ -13,6 +13,7 @@ import {
   Volume2,
   VolumeX,
   Piano,
+  GraduationCap,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { User as AuthUser, Session } from "@supabase/supabase-js";
@@ -113,6 +114,16 @@ export default function Header() {
                 Ver Planos
               </button>
             )}
+
+            {/* Botão Professor Parceiro — sempre visível */}
+            <Link
+              href="/professores"
+              onClick={() => playClick()}
+              className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold rounded-xl border border-cyan/30 text-cyan hover:bg-cyan/10 transition-all duration-200"
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              Professor Parceiro
+            </Link>
             
             {user ? (
               <>
@@ -183,6 +194,15 @@ export default function Header() {
                     Ver Planos
                   </button>
                 )}
+                {/* Botão Professor Parceiro mobile */}
+                <Link
+                  href="/professores"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-cyan border border-cyan/20 bg-cyan/5 hover:bg-cyan/10 rounded-xl transition-all"
+                >
+                  <GraduationCap className="w-4 h-4" />
+                  Professor Parceiro
+                </Link>
                 {user ? (
                    <>
                      <Link href="/dashboard/profile" onClick={() => setMobileOpen(false)} className={mobileLinkClass}>

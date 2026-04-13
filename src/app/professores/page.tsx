@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronRight, Link as LinkIcon, DollarSign, Clock, MessageCircle, Mail, Users } from "lucide-react";
 import Link from "next/link";
 import { useSFX } from "@/hooks/useSFX";
+import TeacherAffiliateSection from "@/components/TeacherAffiliateSection";
 
 export default function ProfessoresPage() {
   const { playClick } = useSFX();
@@ -53,6 +54,9 @@ export default function ProfessoresPage() {
           </Link>
         </motion.div>
       </section>
+
+      {/* Calculadora e Informações do Programa de Afiliados */}
+      <TeacherAffiliateSection />
 
       {/* Dashboard Explainer Section */}
       <section className="max-w-6xl mx-auto px-6 mb-32 relative z-10">

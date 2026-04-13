@@ -19,6 +19,7 @@ import {
 } from "@/lib/songFilters";
 import { Volume2, Mic, MicOff, Play, Pause, RotateCcw } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useBackgroundMusic } from "@/contexts/AudioContext";
 
 
 
@@ -60,11 +61,25 @@ function PlayPageContent() {
 
   const { isPro, loading: subLoading } = useSubscription();
 
-  const isMicActive = useAudioInput().isListening;
-  const activeAudioNote = useAudioInput().activeAudioNote;
-  const startMic = useAudioInput().start;
-  const stopMic = useAudioInput().stop;
+  // ── Hook de microfone — UMA ÚNICA instância (bug fix: antes eram 4 instâncias separadas)
+  const {
+    isListening: isMicActive,
+    activeAudioNote,
+    start: startMic,
+    stop: stopMic,
+  } = useAudioInput();
+
+  const { pauseBackgroundMusic } = useBackgroundMusic();
   const audio = useAudioEngine();
+
+  // ── Pausar música ambiente ao entrar no jogo, restaurar ao sair ──
+  useEffect(() => {
+    pauseBackgroundMusic();
+    return () => {
+      // Não auto-retoma ao sair — o usuário pode querer manter desligada
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   type PianoNoteRecord = {
     note: number;
