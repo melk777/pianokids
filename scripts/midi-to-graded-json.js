@@ -1,26 +1,60 @@
 const fs = require("fs");
 const path = require("path");
 const { Midi } = require("@tonejs/midi");
+const songManifest = require("./song-manifest");
 
 const MIDI_DIR = path.resolve(__dirname, "../public/midi");
 const SONGS_DIR = path.resolve(__dirname, "../public/songs");
 const GROUP_WINDOW_SECONDS = 0.09;
-
-function slugify(value) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .toLowerCase();
-}
-
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
-}
+const CLASSICAL_IDS = new Set([
+  "ode-to-joy",
+  "fur-elise",
+  "minueto-em-sol-maior",
+  "moonlight-sonata",
+  "bach-prelude",
+  "turkish-march",
+  "minute-waltz",
+  "nocturne-op9",
+  "ballade-4chopin",
+  "chopin-fantaisie-impromptuchopin",
+  "das-wohltemperierte-clavier-ii-praeludium-iijsbach",
+  "doumkatchaikosvky",
+  "etude-a-mollchopin",
+  "fantasy-in-d-minormozart",
+  "fugue-in-e-flat-major-kv-153375fmozart",
+  "fugue-sur-le-nom-de-bachrimsky-korsakov",
+  "fuguefragmentmozart",
+  "gigue-in-g-majormozart",
+  "march-of-the-wooden-soldierstchaikovsky",
+  "marche-funebre-kv-453amozart",
+  "morning-prayertchaikovsky",
+  "notteegiornomozart",
+  "old-french-songtchaikosvky",
+  "piano-sonata-in-c-major-kv-309-1st-part-mozart",
+  "prelude-op-28-no-4-suffocation-chopin",
+  "preludio-chopin",
+  "preludio-n-15-chopin",
+  "preludio-n-20-chopin",
+  "preludio-n-6-chopin",
+  "preludio-numero7chopin",
+  "premiere-arabesquedebussy",
+  "sonata-2bmoll-chopin",
+  "sonata-in-c-major-fragment-mozart",
+  "suite-bergamasque-clair-de-lunedebussy",
+  "the-seasons-augusttchaikovsky",
+  "the-seasons-februarytchaikovsky",
+  "the-seasons-januarytchaikovsky",
+  "trois-nouvelles-etudes-no-1-f-minorchopin",
+]);
 
 function round(value, digits = 3) {
   return Number(value.toFixed(digits));
+}
+
+function humanize(value) {
+  return value
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function inferHand(track, note) {
@@ -108,7 +142,7 @@ function collapseRapidRepeats(notes, minGap) {
   });
 }
 
-function simplifyHard(notes) {
+function stripTrackIndex(notes) {
   return notes.map(({ trackIndex, ...note }) => note);
 }
 
@@ -126,8 +160,7 @@ function simplifyMedium(notes, bpm) {
     const melody = sorted[sorted.length - 1];
     const middle = sorted.length > 2 ? sorted[Math.floor(sorted.length / 2)] : null;
 
-    const chosen = [];
-    chosen.push(melody);
+    const chosen = [melody];
     if (bass !== melody) chosen.push(bass);
     if (middle && middle !== bass && middle !== melody) chosen.push(middle);
 
@@ -136,49 +169,81 @@ function simplifyMedium(notes, bpm) {
       .forEach((note) => simplified.push({ ...note, duration: round(Math.max(note.duration, beatSeconds / 4)) }));
   }
 
-  return collapseRapidRepeats(simplified, beatSeconds / 6).map(({ trackIndex, ...note }) => note);
+  return stripTrackIndex(collapseRapidRepeats(simplified, beatSeconds / 6));
 }
 
-function simplifyEasy(notes, bpm) {
+function simplifyEasy(notes, bpm, options = {}) {
   const beatSeconds = 60 / bpm;
   const groups = groupNotesByTime(notes);
   const simplified = [];
+  const strictRightHand = options.strictRightHand ?? false;
+  const minimumDuration = strictRightHand ? beatSeconds / 5 : beatSeconds / 8;
+  const repeatGap = strictRightHand ? beatSeconds / 1.75 : beatSeconds / 4;
+  let lastAcceptedTime = -Infinity;
 
   for (const group of groups) {
-    const usable = group.notes.filter((note) => note.duration >= beatSeconds / 8);
+    const usable = group.notes.filter((note) => note.duration >= minimumDuration);
     if (usable.length === 0) continue;
 
-    const rightHand = usable.filter((note) => note.hand !== "left");
-    const source = rightHand.length > 0 ? rightHand : usable;
+    const rightHand = usable.filter((note) => note.hand !== "left" && note.midi >= 60);
+    const source = strictRightHand ? rightHand : rightHand.length > 0 ? rightHand : usable;
+    if (source.length === 0) continue;
     const melody = [...source].sort((a, b) => b.midi - a.midi)[0];
+
+    if (strictRightHand && melody.time - lastAcceptedTime < beatSeconds / 2) {
+      continue;
+    }
+
     simplified.push({
       ...melody,
-      duration: round(Math.max(melody.duration, beatSeconds / 3)),
+      duration: round(Math.max(melody.duration, strictRightHand ? beatSeconds / 2 : beatSeconds / 3)),
       hand: "right",
     });
+    lastAcceptedTime = melody.time;
   }
 
-  return collapseRapidRepeats(simplified, beatSeconds / 4).map(({ trackIndex, ...note }) => note);
+  return stripTrackIndex(collapseRapidRepeats(simplified, repeatGap));
 }
 
-function buildSongJson(fileName, midiData) {
-  const { notes, bpm, duration, title } = midiData;
-  const id = slugify(path.basename(fileName, path.extname(fileName)));
+function readMidiFile(fileName) {
+  const filePath = path.join(MIDI_DIR, fileName);
+  const buffer = fs.readFileSync(filePath);
+  const midi = new Midi(buffer);
+  return normalizeNotes(midi);
+}
 
-  const hard = simplifyHard(notes);
-  const medium = simplifyMedium(notes, bpm);
-  const easy = simplifyEasy(notes, bpm);
+function buildSongJson(entry) {
+  const sources = entry.midiFiles.map((fileName) => ({
+    fileName,
+    ...readMidiFile(fileName),
+  }));
+
+  sources.sort((left, right) => left.notes.length - right.notes.length);
+
+  const easySource = sources[0];
+  const hardSource = sources[sources.length - 1];
+  const middleSource = sources.length > 2 ? sources[Math.floor(sources.length / 2)] : null;
+  const strictRightHandEasy = CLASSICAL_IDS.has(entry.id);
+
+  const easy =
+    strictRightHandEasy
+      ? simplifyEasy(hardSource.notes, hardSource.bpm, { strictRightHand: true })
+      : sources.length > 1
+        ? stripTrackIndex(easySource.notes)
+        : simplifyEasy(hardSource.notes, hardSource.bpm);
+  const medium = middleSource ? stripTrackIndex(middleSource.notes) : simplifyMedium(hardSource.notes, hardSource.bpm);
+  const hard = stripTrackIndex(hardSource.notes);
 
   return {
-    id,
-    title: title || id.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
-    artist: "MIDI Source",
+    id: entry.id,
+    title: entry.title || hardSource.title || humanize(entry.id),
+    artist: entry.artist || "MIDI Source",
     difficulty: "Médio",
-    bpm,
-    duration,
-    category: "A revisar",
-    isPremium: true,
-    coverUrl: "/images/covers/placeholder.png",
+    bpm: hardSource.bpm,
+    duration: Math.max(...sources.map((source) => source.duration)),
+    category: entry.category || "A revisar",
+    isPremium: typeof entry.isPremium === "boolean" ? entry.isPremium : true,
+    coverUrl: entry.coverUrl || "/images/covers/placeholder.png",
     notes: hard,
     arrangements: {
       easy,
@@ -190,19 +255,31 @@ function buildSongJson(fileName, midiData) {
   };
 }
 
-function convertMidiFile(fileName) {
-  const filePath = path.join(MIDI_DIR, fileName);
-  const buffer = fs.readFileSync(filePath);
-  const midi = new Midi(buffer);
-  const midiData = normalizeNotes(midi);
-  const songJson = buildSongJson(fileName, midiData);
-  const outputPath = path.join(SONGS_DIR, `${songJson.id}.json`);
+function ensureSongsDir() {
+  if (!fs.existsSync(SONGS_DIR)) {
+    fs.mkdirSync(SONGS_DIR, { recursive: true });
+  }
+}
+
+function cleanSongsDir() {
+  ensureSongsDir();
+
+  fs.readdirSync(SONGS_DIR)
+    .filter((fileName) => fileName.toLowerCase().endsWith(".json"))
+    .forEach((fileName) => {
+      fs.unlinkSync(path.join(SONGS_DIR, fileName));
+    });
+}
+
+function writeSongJson(entry) {
+  const songJson = buildSongJson(entry);
+  const outputPath = path.join(SONGS_DIR, entry.outputFile);
 
   fs.writeFileSync(outputPath, `${JSON.stringify(songJson, null, 2)}\n`);
 
   return {
     id: songJson.id,
-    outputPath,
+    outputFile: entry.outputFile,
     counts: {
       easy: songJson.arrangements.easy.length,
       medium: songJson.arrangements.medium.length,
@@ -211,41 +288,19 @@ function convertMidiFile(fileName) {
   };
 }
 
-function getMidiFilesFromArgs() {
-  const argFile = process.argv[2];
-  if (argFile) {
-    return [argFile];
-  }
-
-  if (!fs.existsSync(MIDI_DIR)) {
-    throw new Error("Pasta public/midi nao encontrada.");
-  }
-
-  return fs.readdirSync(MIDI_DIR).filter((file) => file.toLowerCase().endsWith(".mid"));
-}
-
 function main() {
-  const files = getMidiFilesFromArgs();
+  cleanSongsDir();
 
-  if (!fs.existsSync(SONGS_DIR)) {
-    fs.mkdirSync(SONGS_DIR, { recursive: true });
-  }
+  console.log(`Reconstruindo ${songManifest.length} musica(s) em public/songs...`);
 
-  if (files.length === 0) {
-    console.log("Nenhum arquivo MIDI encontrado.");
-    return;
-  }
-
-  console.log(`Processando ${files.length} arquivo(s) MIDI...`);
-
-  files.forEach((fileName) => {
-    const result = convertMidiFile(fileName);
+  for (const entry of songManifest) {
+    const result = writeSongJson(entry);
     console.log(
-      `OK ${result.id}: easy=${result.counts.easy}, medium=${result.counts.medium}, hard=${result.counts.hard}`
+      `OK ${result.outputFile}: easy=${result.counts.easy}, medium=${result.counts.medium}, hard=${result.counts.hard}`,
     );
-  });
+  }
 
-  console.log("Conversao concluida.");
+  console.log("Biblioteca JSON regenerada com sucesso.");
 }
 
 main();

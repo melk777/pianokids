@@ -3,7 +3,7 @@ import pintinhoMidiData from "../../public/songs/meu-pintinho-amarelinho.json";
 import twinkleMidiData from "../../public/songs/brilha-brilha-estrelinha.json";
 import aDonaAranhaData from "../../public/songs/a-dona-aranha.json";
 import odeMidiData from "../../public/songs/ode-to-joy.json";
-import furEliseMidiData from "../../public/songs/fur-elise-easy-ver.json";
+import furEliseMidiData from "../../public/songs/fur-elise.json";
 import oSapoData from "../../public/songs/o-sapo.json";
 import minuetoData from "../../public/songs/minueto.json";
 import moonlightSonataData from "../../public/songs/moonlight-sonata.json";
@@ -53,6 +53,7 @@ const COVER_MOZART = "https://upload.wikimedia.org/wikipedia/commons/f/fc/Barbar
 const COVER_TCHAIKOVSKY = "https://upload.wikimedia.org/wikipedia/commons/d/db/Tchaikovsky%2C_head-and-shoulders_portrait.jpg";
 const COVER_DEBUSSY = "https://upload.wikimedia.org/wikipedia/commons/1/12/Claude_Debussy_portrait.jpg";
 const COVER_RIMSKY = "https://upload.wikimedia.org/wikipedia/commons/3/34/1905_Nikolai_Rimsky-Korsakov.jpg";
+const COVER_BEETHOVEN = "https://upload.wikimedia.org/wikipedia/commons/6/6f/Beethoven.jpg";
 
 export const songs: Song[] = [
   {
@@ -100,7 +101,7 @@ export const songs: Song[] = [
     artist: "Ludwig van Beethoven",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/ode_alegria_1775056393157.png",
+    coverUrl: COVER_BEETHOVEN,
     difficulty: "Médio",
   },
   {
@@ -110,7 +111,7 @@ export const songs: Song[] = [
     artist: "Ludwig van Beethoven",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/fur_elise_1775056434348.png",
+    coverUrl: COVER_BEETHOVEN,
     difficulty: "Médio",
   },
   {
@@ -166,7 +167,7 @@ export const songs: Song[] = [
     artist: "Johann Sebastian Bach",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/minueto_cover.png",
+    coverUrl: COVER_BACH,
     difficulty: "Médio",
   },
   {
@@ -196,7 +197,7 @@ export const songs: Song[] = [
     artist: "Ludwig van Beethoven",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/moonlight_sonata.png",
+    coverUrl: COVER_BEETHOVEN,
     difficulty: "Médio",
   },
   {
@@ -206,7 +207,7 @@ export const songs: Song[] = [
     artist: "Johann Sebastian Bach",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/bach_prelude.png",
+    coverUrl: COVER_BACH,
     difficulty: "Médio",
   },
   {
@@ -216,7 +217,7 @@ export const songs: Song[] = [
     artist: "Wolfgang Amadeus Mozart",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/turkish_march.png",
+    coverUrl: COVER_MOZART,
     difficulty: "Difícil",
   },
   {
@@ -226,7 +227,7 @@ export const songs: Song[] = [
     artist: "Frédéric Chopin",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/minute_waltz.png",
+    coverUrl: COVER_CHOPIN,
     difficulty: "Difícil",
   },
   {
@@ -236,7 +237,7 @@ export const songs: Song[] = [
     artist: "Frédéric Chopin",
     category: "Clássicos",
     isPremium: true,
-    coverUrl: "/images/covers/nocturne_op9.png",
+    coverUrl: COVER_CHOPIN,
     difficulty: "Médio",
   },
   {

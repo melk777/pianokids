@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Gerar um JSON por musica com 3 arranjos:
+Gerar um JSON canonico por musica com 3 arranjos:
 
 - `easy`
 - `medium`
@@ -16,31 +16,27 @@ O formato final fica compativel com o jogo e tambem preserva compatibilidade com
 
 ## Comando
 
-Processar todos os arquivos `.mid` em `public/midi`:
+Reconstruir toda a biblioteca a partir do manifesto em `scripts/song-manifest.js`:
 
 ```powershell
 npm.cmd run parse-midi-graded
 ```
 
-Processar um arquivo especifico:
-
-```powershell
-node scripts/midi-to-graded-json.js nome-da-musica.mid
-```
-
 ## Regras atuais
 
-- `hard`: versao mais completa e proxima do MIDI mestre
-- `medium`: reduz densidade de acordes e remove ornamentos muito curtos
-- `easy`: prioriza melodia principal e simplifica bastante a textura
+- `hard`: usa a fonte MIDI mais completa da musica
+- `medium`: usa a fonte intermediaria quando existir; caso contrario simplifica a versao `hard`
+- `easy`: usa a fonte mais simples quando existir; caso contrario simplifica a versao `hard`
+- antes de gerar, o script apaga todos os JSONs antigos de `public/songs`
 
 ## Fluxo recomendado
 
 1. Coloque os MIDIs em `public/midi`
-2. Rode `npm.cmd run parse-midi-graded`
-3. Revise os JSONs gerados em `public/songs`
-4. Ajuste manualmente as musicas mais complexas
-5. Atualize metadados em `src/lib/songs.ts`
+2. Atualize o manifesto em `scripts/song-manifest.js`
+3. Rode `npm.cmd run parse-midi-graded`
+4. Revise os JSONs gerados em `public/songs`
+5. Ajuste manualmente as musicas mais complexas
+6. Atualize metadados em `src/lib/songs.ts` quando entrar repertorio novo
 
 ## Observacao importante
 
