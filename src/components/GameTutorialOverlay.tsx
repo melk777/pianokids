@@ -9,8 +9,6 @@ type TutorialStep = {
   title: string;
   description: string;
   badge: string;
-  desktopCardClassName: string;
-  mobileCardClassName: string;
   desktopSpotlightClassName: string;
   mobileSpotlightClassName: string;
   desktopLabelClassName?: string;
@@ -21,9 +19,8 @@ const STEPS: TutorialStep[] = [
   {
     badge: "Controles",
     title: "Velocidade da musica",
-    description: "Use menos e mais para adaptar a queda das notas ao nivel do aluno. Em trechos novos, reduzir a velocidade costuma acelerar o aprendizado.",
-    desktopCardClassName: "top-20 right-52",
-    mobileCardClassName: "top-20 left-4 right-4",
+    description:
+      "Use menos e mais para adaptar a queda das notas ao nivel do aluno. Em trechos novos, reduzir a velocidade costuma acelerar o aprendizado.",
     desktopSpotlightClassName: "top-2 right-[14.5rem] h-10 w-36 rounded-2xl",
     mobileSpotlightClassName: "top-[4.25rem] left-[54%] h-10 w-36 -translate-x-1/2 rounded-2xl",
     desktopLabelClassName: "top-14 right-[15rem]",
@@ -32,9 +29,8 @@ const STEPS: TutorialStep[] = [
   {
     badge: "Atalho",
     title: "Pause e retomada",
-    description: "A barra de espaco pausa e retoma a musica. Isso e ideal para corrigir postura, revisar um compasso ou explicar um acorde sem sair da tela.",
-    desktopCardClassName: "top-20 right-4",
-    mobileCardClassName: "top-32 left-4 right-4",
+    description:
+      "A barra de espaco pausa e retoma a musica. Isso e ideal para corrigir postura, revisar um compasso ou explicar um acorde sem sair da tela.",
     desktopSpotlightClassName: "top-2 right-0 h-10 w-28 rounded-2xl",
     mobileSpotlightClassName: "top-[4.25rem] right-4 h-10 w-28 rounded-2xl",
     desktopLabelClassName: "top-14 right-3",
@@ -43,10 +39,9 @@ const STEPS: TutorialStep[] = [
   {
     badge: "Acao",
     title: "Reiniciar rapidamente",
-    description: "O botao Reiniciar volta ao inicio da musica sem trocar de tela. Bom para repetir passagens dificeis e recomecar a pratica em segundos.",
-    desktopCardClassName: "top-24 right-4",
-    mobileCardClassName: "top-44 left-4 right-4",
-    desktopSpotlightClassName: "top-2 right-[-0.25rem] h-10 w-28 rounded-2xl lg:w-36",
+    description:
+      "O botao Reiniciar volta ao inicio da musica sem trocar de tela. Bom para repetir passagens dificeis e recomecar a pratica em segundos.",
+    desktopSpotlightClassName: "top-2 right-0 h-10 w-28 rounded-2xl lg:w-36",
     mobileSpotlightClassName: "top-[4.25rem] right-4 h-10 w-28 rounded-2xl",
     desktopLabelClassName: "top-14 right-4",
     mobileLabelClassName: "top-[11rem] right-4",
@@ -54,9 +49,8 @@ const STEPS: TutorialStep[] = [
   {
     badge: "HUD",
     title: "Pontuacao total",
-    description: "Aqui o aluno acompanha os pontos acumulados. Quanto mais notas e acordes corretos em sequencia, maior a pontuacao final.",
-    desktopCardClassName: "top-28 left-6",
-    mobileCardClassName: "top-56 left-4 right-4",
+    description:
+      "Aqui o aluno acompanha os pontos acumulados. Quanto mais notas e acordes corretos em sequencia, maior a pontuacao final.",
     desktopSpotlightClassName: "top-16 left-6 h-20 w-32 rounded-3xl",
     mobileSpotlightClassName: "top-24 left-3 h-16 w-28 rounded-2xl",
     desktopLabelClassName: "top-11 left-8",
@@ -65,9 +59,8 @@ const STEPS: TutorialStep[] = [
   {
     badge: "Desempenho",
     title: "Combo e precisao",
-    description: "O combo mostra consistencia e a precisao resume a qualidade da execucao. Esses dois indicadores ajudam a medir a evolucao do aluno na hora.",
-    desktopCardClassName: "top-24 left-1/2 -translate-x-1/2",
-    mobileCardClassName: "top-[19rem] left-4 right-4",
+    description:
+      "O combo mostra consistencia e a precisao resume a qualidade da execucao. Esses dois indicadores ajudam a medir a evolucao do aluno na hora.",
     desktopSpotlightClassName: "top-16 left-1/2 h-20 w-[21rem] -translate-x-1/2 rounded-3xl",
     mobileSpotlightClassName: "top-24 left-1/2 h-16 w-[17rem] -translate-x-1/2 rounded-2xl",
     desktopLabelClassName: "top-11 left-1/2 -translate-x-1/2",
@@ -76,9 +69,8 @@ const STEPS: TutorialStep[] = [
   {
     badge: "Fluxo",
     title: "Progresso e teclado virtual",
-    description: "A barra superior mostra onde a musica esta, e o teclado na base ajuda a visualizar a regiao e o desenho de cada nota ou acorde.",
-    desktopCardClassName: "bottom-32 left-1/2 -translate-x-1/2",
-    mobileCardClassName: "bottom-36 left-4 right-4",
+    description:
+      "A barra superior mostra onde a musica esta, e o teclado na base ajuda a visualizar a regiao e o desenho de cada nota ou acorde.",
     desktopSpotlightClassName: "bottom-0 left-0 right-0 h-[34%] rounded-t-[2rem]",
     mobileSpotlightClassName: "bottom-0 left-0 right-0 h-[32%] rounded-t-[2rem]",
     desktopLabelClassName: "bottom-[34%] left-1/2 -translate-x-1/2",
@@ -137,32 +129,20 @@ export default function GameTutorialOverlay({ open, onClose }: GameTutorialOverl
           mobileClassName={currentStep.mobileLabelClassName}
         />
 
-        <div className={`absolute hidden max-w-sm md:block ${currentStep.desktopCardClassName}`}>
-          <TutorialCard
-            badge={currentStep.badge}
-            title={currentStep.title}
-            description={currentStep.description}
-            stepIndex={stepIndex}
-            totalSteps={STEPS.length}
-            dontShowAgain={dontShowAgain}
-            setDontShowAgain={setDontShowAgain}
-            onSkip={handleFinish}
-            onNext={handleNext}
-          />
-        </div>
-
-        <div className={`absolute md:hidden ${currentStep.mobileCardClassName}`}>
-          <TutorialCard
-            badge={currentStep.badge}
-            title={currentStep.title}
-            description={currentStep.description}
-            stepIndex={stepIndex}
-            totalSteps={STEPS.length}
-            dontShowAgain={dontShowAgain}
-            setDontShowAgain={setDontShowAgain}
-            onSkip={handleFinish}
-            onNext={handleNext}
-          />
+        <div className="absolute inset-x-0 bottom-0 z-50 px-4 pb-4 pt-24 md:top-0 md:flex md:items-end md:justify-end md:px-6 md:pb-6 md:pt-6">
+          <div className="mx-auto w-full max-w-[26rem] md:mx-0">
+            <TutorialCard
+              badge={currentStep.badge}
+              title={currentStep.title}
+              description={currentStep.description}
+              stepIndex={stepIndex}
+              totalSteps={STEPS.length}
+              dontShowAgain={dontShowAgain}
+              setDontShowAgain={setDontShowAgain}
+              onSkip={handleFinish}
+              onNext={handleNext}
+            />
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>
@@ -278,11 +258,11 @@ function TutorialCard({
       initial={{ opacity: 0, y: 16, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -12 }}
-      className="rounded-3xl border border-white/10 bg-zinc-950/96 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+      className="rounded-3xl border border-white/10 bg-zinc-950/96 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.55)] md:p-6"
     >
       <p className="text-[11px] font-black uppercase tracking-[0.26em] text-cyan">{badge}</p>
-      <h3 className="mt-2 text-xl font-black text-white">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-white/70">{description}</p>
+      <h3 className="mt-2 text-xl font-black text-white md:text-2xl">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-white/70 md:text-[15px]">{description}</p>
 
       <div className="mt-4 flex gap-2">
         {Array.from({ length: totalSteps }).map((_, index) => (
