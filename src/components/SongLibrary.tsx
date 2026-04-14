@@ -1,19 +1,21 @@
 "use client";
 
+import { memo, useDeferredValue, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { Song } from "@/lib/songs";
-import { 
-  Lock, 
-  Play, 
-  Search, 
-  X
-} from "lucide-react";
+import type { Song } from "@/lib/songs";
+import { Lock, Play, Search, X } from "lucide-react";
 import { useSFX } from "@/hooks/useSFX";
-import { useState, useMemo } from "react";
-import MusicRecommendation from "./MusicRecommendation";
-import SongSummaryModal from "./SongSummaryModal";
+
+const MusicRecommendation = dynamic(() => import("./MusicRecommendation"), {
+  loading: () => null,
+});
+
+const SongSummaryModal = dynamic(() => import("./SongSummaryModal"), {
+  loading: () => null,
+});
 
 interface SongLibraryProps {
   songs: Song[];
@@ -29,88 +31,139 @@ const CATEGORIES = [
   { id: "Grandes Sucessos", label: "Grandes Sucessos" },
 ];
 
+const INITIAL_CATEGORY_LIMIT = 10;
+const CATEGORY_INCREMENT = 10;
+const FILTERED_PAGE_SIZE = 20;
+
 export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
   const { playClick } = useSFX();
   const [searchTerm, setSearchTerm] = useState("");
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedSongForSummary, setSelectedSongForSummary] = useState<Song | null>(null);
+  const [visibleFilteredCount, setVisibleFilteredCount] = useState(FILTERED_PAGE_SIZE);
+  const [categoryVisibleCounts, setCategoryVisibleCounts] = useState<Record<string, number>>({});
 
   const filteredSongs = useMemo(() => {
-    return songs.filter((song) => {
-      const matchesSearch = 
-        song.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        song.artist.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesCategory = 
-        selectedCategory === "all" || song.category === selectedCategory;
+    const normalizedSearch = deferredSearchTerm.trim().toLowerCase();
 
+    return songs.filter((song) => {
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        song.title.toLowerCase().includes(normalizedSearch) ||
+        song.artist.toLowerCase().includes(normalizedSearch);
+
+      const matchesCategory = selectedCategory === "all" || song.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [songs, searchTerm, selectedCategory]);
+  }, [songs, deferredSearchTerm, selectedCategory]);
 
-  const isFiltering = searchTerm.length > 0 || selectedCategory !== "all";
+  const isFiltering = deferredSearchTerm.length > 0 || selectedCategory !== "all";
 
-  // Extract unique categories from filtered results for the grouped view
   const categoriesToRender = useMemo(() => {
-    if (isFiltering) return []; // In grid mode, we don't group by category rows
-    return Array.from(new Set(songs.map((s) => s.category)));
+    if (isFiltering) return [];
+    return Array.from(new Set(songs.map((song) => song.category)));
   }, [isFiltering, songs]);
 
-  const getDifficultyStars = (diff: string) => {
-    switch (diff) {
-      case "Fácil": return "★☆☆";
-      case "Médio": return "★★☆";
-      case "Difícil": return "★★★";
-      default: return "★☆☆";
+  const groupedSongs = useMemo(() => {
+    const grouped = new Map<string, Song[]>();
+
+    for (const category of categoriesToRender) {
+      grouped.set(
+        category,
+        songs.filter((song) => song.category === category),
+      );
+    }
+
+    return grouped;
+  }, [categoriesToRender, songs]);
+
+  const visibleFilteredSongs = useMemo(
+    () => filteredSongs.slice(0, visibleFilteredCount),
+    [filteredSongs, visibleFilteredCount],
+  );
+
+  useEffect(() => {
+    setVisibleFilteredCount(FILTERED_PAGE_SIZE);
+  }, [deferredSearchTerm, selectedCategory]);
+
+  useEffect(() => {
+    setCategoryVisibleCounts((current) => {
+      const nextCounts: Record<string, number> = {};
+      for (const category of categoriesToRender) {
+        nextCounts[category] = current[category] ?? INITIAL_CATEGORY_LIMIT;
+      }
+      return nextCounts;
+    });
+  }, [categoriesToRender]);
+
+  const getDifficultyStars = (difficulty: string) => {
+    switch (difficulty) {
+      case "Fácil":
+        return "★☆☆";
+      case "Médio":
+        return "★★☆";
+      case "Difícil":
+        return "★★★";
+      default:
+        return "★☆☆";
     }
   };
 
+  const showMoreInCategory = (category: string) => {
+    setCategoryVisibleCounts((current) => ({
+      ...current,
+      [category]: (current[category] ?? INITIAL_CATEGORY_LIMIT) + CATEGORY_INCREMENT,
+    }));
+  };
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("all");
+  };
+
   return (
-    <div className="flex flex-col gap-8 mt-4">
-      
-      {/* ── Filter Bar ──────────────────────────── */}
-      <div className="flex flex-col md:flex-row gap-6 items-end md:items-center justify-between mb-4 px-2">
-        {/* Category Buttons */}
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0 w-full md:w-auto">
-          {CATEGORIES.map((cat) => {
-            const isActive = selectedCategory === cat.id;
+    <div className="mt-4 flex flex-col gap-8">
+      <div className="mb-4 flex flex-col items-end justify-between gap-6 px-2 md:flex-row md:items-center">
+        <div className="scrollbar-hide flex w-full items-center gap-2 overflow-x-auto pb-2 md:w-auto md:pb-0">
+          {CATEGORIES.map((category) => {
+            const isActive = selectedCategory === category.id;
             return (
               <button
-                key={cat.id}
+                key={category.id}
                 onClick={() => {
                   playClick();
-                  setSelectedCategory(cat.id);
+                  setSelectedCategory(category.id);
                 }}
-                className={`flex items-center justify-center px-6 py-2.5 rounded-2xl whitespace-nowrap transition-all duration-300 border ${
+                className={`whitespace-nowrap rounded-2xl border px-6 py-2.5 transition-all duration-300 ${
                   isActive
-                    ? "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-                    : "bg-white/5 text-white/40 border-white/5 hover:bg-white/10 hover:text-white/60"
+                    ? "border-white bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                    : "border-white/5 bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60"
                 }`}
               >
-                <span className="text-sm font-medium">{cat.label}</span>
+                <span className="text-sm font-medium">{category.label}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Search Input */}
-        <div className="relative w-full md:w-80 group">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <Search className="w-4 h-4 text-white/20 group-focus-within:text-cyan transition-colors" />
+        <div className="group relative w-full md:w-80">
+          <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
+            <Search className="h-4 w-4 text-white/20 transition-colors group-focus-within:text-cyan" />
           </div>
           <input
             type="text"
             placeholder="O que vamos tocar hoje?"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-3 pl-11 pr-11 text-sm text-white placeholder:text-white/20 outline-none focus:border-cyan/50 focus:bg-white/[0.06] transition-all"
+            onChange={(event) => setSearchTerm(event.target.value)}
+            className="w-full rounded-2xl border border-white/10 bg-white/[0.03] py-3 pl-11 pr-11 text-sm text-white outline-none transition-all placeholder:text-white/20 focus:border-cyan/50 focus:bg-white/[0.06]"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
-              className="absolute inset-y-0 right-4 flex items-center text-white/20 hover:text-white/60 transition-colors"
+              className="absolute inset-y-0 right-4 flex items-center text-white/20 transition-colors hover:text-white/60"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -118,7 +171,6 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
 
       <AnimatePresence mode="wait">
         {!isFiltering ? (
-          /* ── Grouped Carousel View ──────────────────────────── */
           <motion.div
             key="grouped"
             initial={{ opacity: 0 }}
@@ -126,36 +178,53 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
             exit={{ opacity: 0 }}
             className="space-y-12"
           >
-            {categoriesToRender.map((category, catIndex) => {
-              const categorySongs = songs.filter((s) => s.category === category);
+            {categoriesToRender.map((category, categoryIndex) => {
+              const categorySongs = groupedSongs.get(category) ?? [];
+              const visibleCount = categoryVisibleCounts[category] ?? INITIAL_CATEGORY_LIMIT;
+              const visibleSongs = categorySongs.slice(0, visibleCount);
+              const hasMoreSongs = visibleCount < categorySongs.length;
+
               if (categorySongs.length === 0) return null;
 
               return (
                 <div key={category} className="flex flex-col">
-                  <h2 className="text-xl md:text-2xl font-bold text-white/90 mb-4 px-2">
-                    {category}
-                  </h2>
+                  <div className="mb-4 flex items-center justify-between gap-4 px-2">
+                    <h2 className="text-xl font-bold text-white/90 md:text-2xl">{category}</h2>
+                    <span className="text-xs font-medium uppercase tracking-[0.24em] text-white/30">
+                      {categorySongs.length} músicas
+                    </span>
+                  </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-2">
-                    {categorySongs.map((song, i) => (
-                      <SongCard 
-                        key={song.id} 
-                        song={song} 
-                        hasPremium={hasPremium} 
-                        catIndex={catIndex} 
-                        i={i} 
-                        playClick={playClick} 
-                        getDifficultyStars={getDifficultyStars} 
+                  <div className="grid grid-cols-2 gap-6 px-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    {visibleSongs.map((song, index) => (
+                      <SongCard
+                        key={song.id}
+                        song={song}
+                        hasPremium={hasPremium}
+                        categoryIndex={categoryIndex}
+                        index={index}
+                        playClick={playClick}
+                        getDifficultyStars={getDifficultyStars}
                         onSelect={() => setSelectedSongForSummary(song)}
                       />
                     ))}
                   </div>
+
+                  {hasMoreSongs && (
+                    <div className="mt-5 px-2">
+                      <button
+                        onClick={() => showMoreInCategory(category)}
+                        className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-white/75 transition hover:border-cyan/30 hover:bg-cyan/10 hover:text-white"
+                      >
+                        Ver mais {Math.min(CATEGORY_INCREMENT, categorySongs.length - visibleCount)} músicas
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </motion.div>
         ) : (
-          /* ── Filtered Grid View ──────────────────────────── */
           <motion.div
             key="grid"
             initial={{ opacity: 0, y: 20 }}
@@ -163,39 +232,46 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
             exit={{ opacity: 0, y: 20 }}
             className="flex flex-col"
           >
-            <div className="flex items-center justify-between mb-6 px-2">
-              <h2 className="text-xl md:text-2xl font-bold text-white/90">
-                {searchTerm ? `Resultados para "${searchTerm}"` : selectedCategory}
+            <div className="mb-6 flex items-center justify-between px-2">
+              <h2 className="text-xl font-bold text-white/90 md:text-2xl">
+                {deferredSearchTerm ? `Resultados para "${deferredSearchTerm}"` : selectedCategory}
               </h2>
               <span className="text-sm text-white/40">{filteredSongs.length} músicas encontradas</span>
             </div>
 
             {filteredSongs.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-2">
-                {filteredSongs.map((song, i) => (
-                  <SongCard 
-                    key={song.id} 
-                    song={song} 
-                    hasPremium={hasPremium} 
-                    catIndex={0} 
-                    i={i} 
-                    playClick={playClick} 
-                    getDifficultyStars={getDifficultyStars} 
-                    onSelect={() => setSelectedSongForSummary(song)}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-6 px-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {visibleFilteredSongs.map((song, index) => (
+                    <SongCard
+                      key={song.id}
+                      song={song}
+                      hasPremium={hasPremium}
+                      categoryIndex={0}
+                      index={index}
+                      playClick={playClick}
+                      getDifficultyStars={getDifficultyStars}
+                      onSelect={() => setSelectedSongForSummary(song)}
+                    />
+                  ))}
+                </div>
+
+                {visibleFilteredCount < filteredSongs.length && (
+                  <div className="mt-6 px-2">
+                    <button
+                      onClick={() => setVisibleFilteredCount((current) => current + FILTERED_PAGE_SIZE)}
+                      className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-white/75 transition hover:border-cyan/30 hover:bg-cyan/10 hover:text-white"
+                    >
+                      Carregar mais resultados
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-white/20 gap-4">
-                <Search className="w-12 h-12 opacity-50" />
+              <div className="flex flex-col items-center justify-center gap-4 py-20 text-white/20">
+                <Search className="h-12 w-12 opacity-50" />
                 <p className="text-lg">Nenhuma música encontrada...</p>
-                <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setSelectedCategory("all");
-                  }}
-                  className="text-sm text-cyan hover:underline"
-                >
+                <button onClick={clearFilters} className="text-sm text-cyan hover:underline">
                   Limpar todos os filtros
                 </button>
               </div>
@@ -204,11 +280,9 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
         )}
       </AnimatePresence>
 
-      {/* ── Music Recommendation Section (Gemini Style) ── */}
       <MusicRecommendation hasPremium={hasPremium} />
 
-      {/* ── Song Summary Modal (Pre-Game) ── */}
-      <SongSummaryModal 
+      <SongSummaryModal
         song={selectedSongForSummary}
         isOpen={!!selectedSongForSummary}
         onClose={() => setSelectedSongForSummary(null)}
@@ -217,96 +291,95 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
   );
 }
 
-/* ── Song Card Sub-component ── */
 interface SongCardProps {
   song: Song;
   hasPremium: boolean;
-  catIndex: number;
-  i: number;
+  categoryIndex: number;
+  index: number;
   playClick: () => void;
-  getDifficultyStars: (diff: string) => string;
+  getDifficultyStars: (difficulty: string) => string;
   onSelect: () => void;
 }
 
-function SongCard({ song, hasPremium, catIndex, i, playClick, getDifficultyStars, onSelect }: SongCardProps) {
+const SongCard = memo(function SongCard({
+  song,
+  hasPremium,
+  categoryIndex,
+  index,
+  playClick,
+  getDifficultyStars,
+  onSelect,
+}: SongCardProps) {
   const isLocked = song.isPremium && !hasPremium;
-  
-  const handleClick = (e: React.MouseEvent) => {
-    if (!isLocked) {
-      e.preventDefault();
-      playClick();
-      onSelect();
-    }
+
+  const handleClick = (event: React.MouseEvent) => {
+    if (isLocked) return;
+    event.preventDefault();
+    playClick();
+    onSelect();
   };
 
   return (
     <Link
       href={isLocked ? "/#pricing" : "#"}
       onClick={handleClick}
-      className="w-full group relative transition-transform duration-300 hover:scale-105"
+      className="group relative w-full transition-transform duration-300 hover:scale-105"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: catIndex * 0.1 + i * 0.05 }}
-        className="relative rounded-2xl overflow-hidden aspect-[4/5] bg-zinc-900 border border-white/10"
+        viewport={{ once: true, margin: "120px" }}
+        transition={{ delay: categoryIndex * 0.04 + index * 0.02 }}
+        className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-zinc-900"
       >
         {song.coverUrl && (
           <Image
             src={song.coverUrl}
             alt={song.title}
             fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
             className={`object-cover transition-all duration-500 group-hover:blur-sm ${
               isLocked ? "grayscale opacity-50" : "opacity-80 group-hover:brightness-50"
             }`}
           />
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-4">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4">
+          <div className="mb-1 flex items-center gap-2">
             <span
-              className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+              className={`rounded-full px-2 py-0.5 text-xs font-bold ${
                 song.isPremium
-                  ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                  : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                  ? "border border-amber-500/30 bg-amber-500/20 text-amber-400"
+                  : "border border-emerald-500/30 bg-emerald-500/20 text-emerald-400"
               }`}
             >
               {song.isPremium ? "Premium" : "Grátis"}
             </span>
           </div>
-          <h3 className="text-lg font-bold text-white truncate mb-1">
-            {song.title}
-          </h3>
-          <p className="text-sm text-white/60 mb-2 truncate">{song.artist}</p>
+          <h3 className="mb-1 truncate text-lg font-bold text-white">{song.title}</h3>
+          <p className="mb-2 truncate text-sm text-white/60">{song.artist}</p>
 
           <div className="flex items-center justify-between">
-            <span className="text-gradient font-black text-sm tracking-widest">
-              {getDifficultyStars(song.difficulty)}
-            </span>
+            <span className="text-gradient text-sm font-black tracking-widest">{getDifficultyStars(song.difficulty)}</span>
             <span className="text-xs text-white/40">{song.notes.length} notas</span>
           </div>
         </div>
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <div
-            className={`w-14 h-14 rounded-full flex items-center justify-center backdrop-blur-md shadow-2xl ${
+            className={`flex h-14 w-14 items-center justify-center rounded-full border shadow-2xl backdrop-blur-md ${
               isLocked
-                ? "bg-rose-500/30 border border-rose-500/50 text-rose-300"
-                : "bg-cyan/30 border border-cyan/50 icon-gradient"
+                ? "border-rose-500/50 bg-rose-500/30 text-rose-300"
+                : "border-cyan/50 bg-cyan/30 icon-gradient"
             }`}
           >
-            {isLocked ? (
-              <Lock size={24} className="ml-0.5" />
-            ) : (
-              <Play size={24} className="ml-1" />
-            )}
+            {isLocked ? <Lock size={24} className="ml-0.5" /> : <Play size={24} className="ml-1" />}
           </div>
         </div>
 
         {isLocked && (
-          <div className="absolute top-4 right-4 group-hover:opacity-0 transition-opacity">
-            <div className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/10">
+          <div className="absolute right-4 top-4 transition-opacity group-hover:opacity-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-black/60 backdrop-blur-md">
               <Lock size={14} className="text-white/60" />
             </div>
           </div>
@@ -314,4 +387,4 @@ function SongCard({ song, hasPremium, catIndex, i, playClick, getDifficultyStars
       </motion.div>
     </Link>
   );
-}
+});

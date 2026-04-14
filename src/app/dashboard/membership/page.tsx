@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Header from "@/components/Header";
 import {
   Crown,
   Music,
@@ -74,7 +73,6 @@ export default function MembershipPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-black">
-        <Header />
         <div className="pt-32 flex flex-col items-center justify-center gap-4">
           <Loader2 className="w-8 h-8 icon-gradient animate-spin" />
           <p className="text-sm text-white/40">Verificando assinatura...</p>
@@ -138,8 +136,6 @@ export default function MembershipPage() {
 
   return (
     <main className="min-h-screen bg-black">
-      <Header />
-
       <div className="pt-24 pb-16 px-6 max-w-3xl mx-auto">
         {/* Back */}
         <motion.div

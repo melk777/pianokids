@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Music, Star, BarChart3, ChevronDown } from "lucide-react";
@@ -7,11 +8,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 import HeroVideo from "@/components/HeroVideo";
-import PartnerMarquee from "@/components/PartnerMarquee";
-import TestimonialsCarousel from "@/components/TestimonialsCarousel";
-import FAQ from "@/components/FAQ";
 import PricingCard from "@/components/PricingCard";
-import TeacherAffiliateSection from "@/components/TeacherAffiliateSection";
+const PartnerMarquee = dynamic(() => import("@/components/PartnerMarquee"), { loading: () => null });
+const TestimonialsCarousel = dynamic(() => import("@/components/TestimonialsCarousel"), { loading: () => null });
+const FAQ = dynamic(() => import("@/components/FAQ"), { loading: () => null });
+const TeacherAffiliateSection = dynamic(() => import("@/components/TeacherAffiliateSection"), { loading: () => null });
 
 
 

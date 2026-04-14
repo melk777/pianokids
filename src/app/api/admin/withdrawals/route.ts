@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -16,12 +16,11 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    if (adminProfile?.role !== 'admin') {
+    const { data: adminProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    if (adminProfile?.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Join withdrawal using foreign key
     const { data: withdrawals, error } = await supabase
       .from("withdrawals")
       .select(`
@@ -43,9 +42,20 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { withdrawal_id, status, receipt_url, teacher_id, amount } = await request.json();
-    if (!withdrawal_id || !status) return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
+    const normalizedAmount = Number(amount);
+    const allowedStatuses = new Set(["pendente", "aprovado", "concluido", "rejeitado"]);
 
-    const cookieStore = cookies();
+    if (
+      !withdrawal_id ||
+      !teacher_id ||
+      !allowedStatuses.has(status) ||
+      !Number.isFinite(normalizedAmount) ||
+      normalizedAmount < 0
+    ) {
+      return NextResponse.json({ error: "Dados invalidos" }, { status: 400 });
+    }
+
+    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -55,26 +65,28 @@ export async function POST(request: Request) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    if (adminProfile?.role !== 'admin') return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const { data: adminProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    if (adminProfile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    // Atualiza o documento de saque!
     const { error: updErr } = await supabase
       .from("withdrawals")
       .update({ status, receipt_url, updated_at: new Date().toISOString() })
-      .eq('id', withdrawal_id);
+      .eq("id", withdrawal_id);
 
     if (updErr) throw updErr;
 
-    // Se aprovado, debitar na conta espelho do professor (marcar como sacado)
-    if (status === 'concluido' || status === 'aprovado') {
-        const { data: profBase } = await supabase.from('profiles').select('balance_withdrawn_total').eq('id', teacher_id).single();
-        const currentSum = Number(profBase?.balance_withdrawn_total || 0);
-        
-        await supabase
-          .from("profiles")
-          .update({ balance_withdrawn_total: currentSum + Number(amount) })
-          .eq('id', teacher_id);
+    if (status === "concluido" || status === "aprovado") {
+      const { data: profBase } = await supabase
+        .from("profiles")
+        .select("balance_withdrawn_total")
+        .eq("id", teacher_id)
+        .single();
+      const currentSum = Number(profBase?.balance_withdrawn_total || 0);
+
+      await supabase
+        .from("profiles")
+        .update({ balance_withdrawn_total: currentSum + normalizedAmount })
+        .eq("id", teacher_id);
     }
 
     return NextResponse.json({ success: true });

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Music, Sparkles, Lock, CheckCircle2, Loader2 } from "lucide-react";
@@ -141,12 +142,12 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
                     O chat de sugestões é um recurso exclusivo para nossa **Comunidade Premium**.
                   </p>
                 </div>
-                <a 
-                  href="/#pricing" 
+                <Link
+                  href="/#pricing"
                   className="text-sm font-bold text-magenta hover:text-magenta/80 transition-colors underline underline-offset-4"
                 >
                   Ver Planos Premium
-                </a>
+                </Link>
               </motion.div>
             )}
           </div>

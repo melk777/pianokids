@@ -1,4 +1,4 @@
-import type { SongNote } from "./songs";
+import type { Song, SongNote, ArrangementLevel } from "./songs";
 
 /* ──────────────────────────────────────────────────────
    Difficulty Filters
@@ -24,6 +24,12 @@ export const TIMING_WINDOWS: Record<Difficulty, number> = {
   medium: 0.25,   // standard
   pro: 0.15,      // strict
 };
+
+export function difficultyToArrangementLevel(difficulty: Difficulty): ArrangementLevel {
+  if (difficulty === "beginner") return "easy";
+  if (difficulty === "medium") return "medium";
+  return "hard";
+}
 
 /**
  * Filter song notes based on difficulty level.
@@ -72,4 +78,28 @@ export function getAccompanimentNotes(
   // For medium/pro, only auto-play left hand as backing
   const leftHand = notes.filter((n) => n.hand === "left" || n.midi < 60);
   return leftHand.length > 0 ? leftHand : [];
+}
+
+export function getSongNotesForDifficulty(
+  song: Song,
+  difficulty: Difficulty,
+  options?: { preferOneHand?: boolean }
+): SongNote[] {
+  const preferOneHand = options?.preferOneHand ?? false;
+  const arrangementLevel = difficultyToArrangementLevel(difficulty);
+  const arrangementNotes = song.arrangements?.[arrangementLevel];
+
+  if (arrangementNotes && arrangementNotes.length > 0) {
+    return arrangementNotes;
+  }
+
+  if (preferOneHand && song.notes1Hand && song.notes1Hand.length > 0) {
+    return song.notes1Hand;
+  }
+
+  if (!preferOneHand && song.notes2Hands && song.notes2Hands.length > 0) {
+    return song.notes2Hands;
+  }
+
+  return filterNotesByDifficulty(song.notes, difficulty);
 }

@@ -26,6 +26,14 @@ export interface SongNote {
   velocity?: number;
 }
 
+export type ArrangementLevel = "easy" | "medium" | "hard";
+
+export interface SongArrangements {
+  easy?: SongNote[] | null;
+  medium?: SongNote[] | null;
+  hard?: SongNote[] | null;
+}
+
 export interface Song {
   id: string;
   title: string;
@@ -37,6 +45,7 @@ export interface Song {
   isPremium: boolean;
   coverUrl?: string;
   notes: SongNote[];
+  arrangements?: SongArrangements | null;
   notes1Hand?: SongNote[] | null;
   notes2Hands?: SongNote[] | null;
 }

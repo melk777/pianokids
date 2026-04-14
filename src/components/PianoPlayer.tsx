@@ -7,8 +7,6 @@ import type { Difficulty } from "@/lib/songFilters";
 import { TIMING_WINDOWS } from "@/lib/songFilters";
 import VirtualKeyboard from "./VirtualKeyboard";
 
-/* ── Types ───────────────────────────────────────────── */
-
 interface PianoPlayerProps {
   notes: SongNote[];
   difficulty: Difficulty;
@@ -34,38 +32,6 @@ interface PianoPlayerProps {
   metronomeVolume?: number;
 }
 
-
-/* ── Constants ───────────────────────────────────────── */
-
-const VIEWPORT_SECONDS = 4;
-
-
-/* ── Colors (Dark Mode, Clean & Bright) ───────────── */
-
-const COLORS = {
-  rightHandFill: "rgba(0, 234, 255, 0.55)",
-  rightHandStroke: "#00EAFF",
-  leftHandFill: "rgba(16, 185, 129, 0.55)",
-  leftHandStroke: "#10B981",
-
-  hitNormal: "rgba(255, 255, 255, 0.7)",
-  hitStroke: "#FFFFFF",
-
-  comboGlow: "rgba(252, 211, 77, 0.8)",
-  missedFill: "rgba(255, 0, 229, 0.3)",
-  missedStroke: "#FF00E5",
-
-  hitZoneLine: "rgba(255, 255, 255, 0.3)",
-  grid: "rgba(255, 255, 255, 0.12)",
-  gridHorizontal: "rgba(255, 255, 255, 0.06)",
-  textDim: "rgba(255, 255, 255, 0.65)",
-  textFaded: "rgba(255, 255, 255, 0.15)",
-};
-
-/* ── Functions ───────────────────────────────────────── */
-const isBlackKey = (midi: number) => [1, 3, 6, 8, 10].includes(midi % 12);
-
-/* ── Visual Effect Interface ── */
 interface VisualEffect {
   id: number;
   note: number;
@@ -85,7 +51,44 @@ interface Particle {
   size: number;
 }
 
-/* ── Component ───────────────────────────────────────── */
+interface NoteGroup {
+  time: number;
+  indices: number[];
+}
+
+const VIEWPORT_SECONDS = 4;
+const CHORD_GROUP_WINDOW = 0.09;
+
+const COLORS = {
+  hitZoneLine: "rgba(255, 255, 255, 0.3)",
+  grid: "rgba(255, 255, 255, 0.12)",
+  gridHorizontal: "rgba(255, 255, 255, 0.06)",
+  textFaded: "rgba(255, 255, 255, 0.15)",
+};
+
+const isBlackKey = (midi: number) => [1, 3, 6, 8, 10].includes(midi % 12);
+
+function buildNoteGroups(notes: SongNote[]) {
+  if (notes.length === 0) return [] as NoteGroup[];
+
+  const sorted = notes
+    .map((note, index) => ({ note, index }))
+    .sort((a, b) => a.note.time - b.note.time || a.note.midi - b.note.midi);
+
+  const groups: NoteGroup[] = [];
+
+  for (const item of sorted) {
+    const previous = groups[groups.length - 1];
+    if (!previous || Math.abs(item.note.time - previous.time) > CHORD_GROUP_WINDOW) {
+      groups.push({ time: item.note.time, indices: [item.index] });
+      continue;
+    }
+
+    previous.indices.push(item.index);
+  }
+
+  return groups;
+}
 
 export default function PianoPlayer({
   notes,
@@ -108,12 +111,15 @@ export default function PianoPlayer({
   isWaitingMode = false,
   onPlayAccompaniment,
   accompanimentNotes = [],
-  playbackSpeed = 1.0,
+  playbackSpeed = 1,
   metronomeVolume = 0.08,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animFrameRef = useRef<number>(0);
+  const timingWindow = TIMING_WINDOWS[difficulty];
+  const lastActiveNotesState = useRef("");
+  const noteGroups = useMemo(() => buildNoteGroups(notes), [notes]);
 
-  // Core Game State (Refs — NO React State so NO re-renders during gameplay!)
   const stateRef = useRef({
     score: 0,
     combo: 0,
@@ -131,28 +137,19 @@ export default function PianoPlayer({
     playedAccompaniment: new Set<number>(),
   });
 
-  const animFrameRef = useRef<number>(0);
-  const timingWindow = TIMING_WINDOWS[difficulty];
-  const lastActiveNotesState = useRef<string>("");
-
-  // Refs para os elementos de HUD (atualização fora do React DOM Tree)
   const scoreUIRef = useRef<HTMLParagraphElement>(null);
   const comboUIRef = useRef<HTMLParagraphElement>(null);
   const accuracyUIRef = useRef<HTMLParagraphElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  
-  // Memoize whiteNotes and totalWidth for both Canvas and JSX
+
   const whiteNotes = useMemo(() => {
     const list: number[] = [];
-    for (let i = startNote; i <= endNote; i++) {
-      if (!isBlackKey(i)) list.push(i);
+    for (let midi = startNote; midi <= endNote; midi++) {
+      if (!isBlackKey(midi)) list.push(midi);
     }
     return list;
   }, [startNote, endNote]);
 
-  const totalWidth = whiteNotes.length * 60;
-
-  // Initialize/Reset State
   useEffect(() => {
     stateRef.current = {
       score: 0,
@@ -171,7 +168,7 @@ export default function PianoPlayer({
       playedAccompaniment: new Set(),
     };
     lastActiveNotesState.current = "";
-    
+
     if (scoreUIRef.current) scoreUIRef.current.innerText = "0";
     if (comboUIRef.current) {
       comboUIRef.current.innerText = "0x";
@@ -180,380 +177,324 @@ export default function PianoPlayer({
     if (accuracyUIRef.current) accuracyUIRef.current.innerText = "100%";
   }, [notes]);
 
-  // Função auxiliar para atualizar as pontuações na DOM
   const updateHUD = useCallback(() => {
-    const s = stateRef.current;
-    
-    if (scoreUIRef.current) {
-      scoreUIRef.current.innerText = s.score.toLocaleString();
-    }
-    
+    const state = stateRef.current;
+
+    if (scoreUIRef.current) scoreUIRef.current.innerText = state.score.toLocaleString();
+
     if (comboUIRef.current) {
-      comboUIRef.current.innerText = `${s.combo}x`;
-      const isLegendary = s.combo >= 25;
-      const isStreak = s.combo >= 10;
-      
+      comboUIRef.current.innerText = `${state.combo}x`;
+      const isLegendary = state.combo >= 25;
+      const isStreak = state.combo >= 10;
       comboUIRef.current.className = `text-2xl md:text-4xl font-black tabular-nums relative z-10 transition-colors ${
         isLegendary
           ? "text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.7)]"
           : isStreak
           ? "text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]"
-          : s.combo > 0
+          : state.combo > 0
           ? "text-white"
           : "text-white/30"
       }`;
     }
-    
+
     if (accuracyUIRef.current) {
-      const total = s.hits + s.misses;
-      const acc = total > 0 ? Math.round((s.hits / total) * 100) : 100;
-      accuracyUIRef.current.innerText = `${acc}%`;
+      const total = state.hits + state.misses;
+      const accuracy = total > 0 ? Math.round((state.hits / total) * 100) : 100;
+      accuracyUIRef.current.innerText = `${accuracy}%`;
     }
 
     if (progressBarRef.current && songDuration > 0) {
-      const progress = Math.min(100, (s.gameTime / songDuration) * 100);
+      const progress = Math.min(100, (state.gameTime / songDuration) * 100);
       progressBarRef.current.style.width = `${progress}%`;
     }
   }, [songDuration]);
 
-  // ── Render Loop (Canvas Imperativa O(1)) ────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
     let width = canvas.clientWidth;
     let height = canvas.clientHeight;
-    
+
     const resizeCanvas = () => {
       width = canvas.parentElement?.clientWidth || canvas.clientWidth;
       height = canvas.parentElement?.clientHeight || canvas.clientHeight;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    
+    const getNoteRect = (midi: number, laneWidth: number) => {
+      if (!isBlackKey(midi)) {
+        const index = whiteNotes.indexOf(midi);
+        return { x: index * laneWidth, w: laneWidth, isBlack: false };
+      }
+
+      const previousWhite = midi - 1;
+      const index = whiteNotes.indexOf(previousWhite);
+      const widthBlack = laneWidth * 0.55;
+      const x = (index + 1) * laneWidth - widthBlack / 2;
+      return { x, w: widthBlack, isBlack: true };
+    };
+
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // LOOP PRINCIPAL
     const tick = () => {
       if (!isPlaying) {
         ctx.fillStyle = "#0A0A0A";
         ctx.fillRect(0, 0, width, height);
-        
-        // 25% da altura para teclado
-        const KEYBOARD_HEIGHT_IDLE = Math.round(height * 0.30);
-        const HIT_Y_IDLE = height - KEYBOARD_HEIGHT_IDLE; 
-
+        const keyboardHeight = Math.round(height * 0.3);
         ctx.fillStyle = COLORS.hitZoneLine;
-        ctx.fillRect(0, HIT_Y_IDLE, width, 1.5);
+        ctx.fillRect(0, height - keyboardHeight, width, 1.5);
         if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
         return;
       }
 
       const state = stateRef.current;
+      const laneWidth = width / whiteNotes.length;
+      const keyboardHeight = Math.round(height * 0.3);
+      const hitY = height - keyboardHeight;
+      const speed = (height - keyboardHeight) / VIEWPORT_SECONDS;
 
-      const laneW = width / whiteNotes.length;
-      
-      const getNoteRect = (midi: number) => {
-        if (!isBlackKey(midi)) {
-            const idx = whiteNotes.indexOf(midi);
-            return { x: idx * laneW, w: laneW, isBlack: false };
-        } else {
-            const prevWhite = midi - 1;
-            const idx = whiteNotes.indexOf(prevWhite);
-            const w = laneW * 0.55; // Tecla preta mais fina
-            const x = (idx + 1) * laneW - (w / 2);
-            return { x, w, isBlack: true };
-        }
-      };
-
-      // ── PROPORÇÃO 70/30: Teclado = 30% da altura ──
-      const KEYBOARD_HEIGHT = Math.round(height * 0.30);
-      const HIT_Y = height - KEYBOARD_HEIGHT; 
-      const SPEED_PX_PER_SEC = (height - KEYBOARD_HEIGHT) / VIEWPORT_SECONDS;
-
-      // --- Cálculo de Delta Time para Relógio Interno ---
       const nowMs = performance.now();
       if (state.lastTickTime === 0) state.lastTickTime = nowMs;
       const dt = (nowMs - state.lastTickTime) / 1000;
       state.lastTickTime = nowMs;
 
       const rawAudioTime = getAudioTime();
-      
       if (state.internalGameTime === 0 && rawAudioTime < 0) {
-         state.internalGameTime = rawAudioTime;
+        state.internalGameTime = rawAudioTime;
       }
 
-      const isWaiting = isWaitingMode && notes.some((n, idx) => !state.hitNotes.has(idx) && !state.missedNotes.has(idx) && state.internalGameTime >= n.time);
-
-      if (!isWaiting) {
-        state.internalGameTime += Math.min(dt * playbackSpeed, 2.0);
-      }
+      const isWaiting = isWaitingMode && notes.some((note, index) => !state.hitNotes.has(index) && !state.missedNotes.has(index) && state.internalGameTime >= note.time);
+      if (!isWaiting) state.internalGameTime += Math.min(dt * playbackSpeed, 2);
 
       const elapsed = state.internalGameTime;
       state.gameTime = elapsed;
 
-      // --- Metrônomo ---
       const bpm = 120;
       const secondsPerBeat = 60 / bpm;
       const currentBeat = Math.floor(elapsed / secondsPerBeat);
-      
+
       if (currentBeat > state.lastBeat && elapsed >= 0) {
         state.lastBeat = currentBeat;
-        const isWaitingNow = isWaitingMode && notes.some((n, idx) => !state.hitNotes.has(idx) && !state.missedNotes.has(idx) && elapsed >= n.time);
-        if (!isWaitingNow) {
-          onPlayTick?.(metronomeVolume); 
-        }
+        const waitingNow = isWaitingMode && notes.some((note, index) => !state.hitNotes.has(index) && !state.missedNotes.has(index) && elapsed >= note.time);
+        if (!waitingNow) onPlayTick?.(metronomeVolume);
       }
 
-      // Limpar Canvas
       ctx.fillStyle = "#09090B";
       ctx.fillRect(0, 0, width, height);
 
-      // --- 1. Grade ---
       ctx.lineWidth = 1;
-
-      // 1a. Linhas Horizontais
       ctx.strokeStyle = COLORS.gridHorizontal;
-      const beatSpacing = secondsPerBeat * SPEED_PX_PER_SEC;
-      const firstBeatY = (elapsed % secondsPerBeat) * SPEED_PX_PER_SEC;
-      
+      const beatSpacing = secondsPerBeat * speed;
+      const firstBeatY = (elapsed % secondsPerBeat) * speed;
       ctx.beginPath();
       for (let y = firstBeatY; y < height; y += beatSpacing) {
-        ctx.moveTo(0, HIT_Y - y);
-        ctx.lineTo(width, HIT_Y - y);
-        ctx.moveTo(0, HIT_Y + y);
-        ctx.lineTo(width, HIT_Y + y);
+        ctx.moveTo(0, hitY - y);
+        ctx.lineTo(width, hitY - y);
+        ctx.moveTo(0, hitY + y);
+        ctx.lineTo(width, hitY + y);
       }
       ctx.stroke();
 
-      // 1b. Linhas Verticais
       ctx.strokeStyle = COLORS.grid;
       ctx.beginPath();
       for (let i = 0; i <= whiteNotes.length; i++) {
-        ctx.moveTo(i * laneW, 0);
-        ctx.lineTo(i * laneW, height);
+        ctx.moveTo(i * laneWidth, 0);
+        ctx.lineTo(i * laneWidth, height);
       }
       ctx.stroke();
 
-      // --- 2. Hit Zone Gradient ---
-      const gradient = ctx.createLinearGradient(0, HIT_Y - 40, 0, HIT_Y);
-      gradient.addColorStop(0, "rgba(0,234,255,0)");
-      gradient.addColorStop(1, "rgba(0,234,255,0.1)");
-      
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, HIT_Y - 40, width, 40);
+      const hitGradient = ctx.createLinearGradient(0, hitY - 40, 0, hitY);
+      hitGradient.addColorStop(0, "rgba(0,234,255,0)");
+      hitGradient.addColorStop(1, "rgba(0,234,255,0.1)");
+      ctx.fillStyle = hitGradient;
+      ctx.fillRect(0, hitY - 40, width, 40);
 
-      // ── GLOW VIBRANTE nas teclas ativas ──
-      activeNotes.forEach((_val, midi) => {
-        const rect = getNoteRect(midi);
-        const isRight = midi >= 60;
-        const glowGradient = ctx.createRadialGradient(
-          rect.x + rect.w / 2, HIT_Y, 0,
-          rect.x + rect.w / 2, HIT_Y, rect.w * 1.5
-        );
-        if (isRight) {
-          glowGradient.addColorStop(0, "rgba(234, 179, 8, 0.35)");
-          glowGradient.addColorStop(1, "rgba(234, 179, 8, 0)");
+      activeNotes.forEach((_value, midi) => {
+        const rect = getNoteRect(midi, laneWidth);
+        const isRightHand = midi >= 60;
+        const glow = ctx.createRadialGradient(rect.x + rect.w / 2, hitY, 0, rect.x + rect.w / 2, hitY, rect.w * 1.5);
+        if (isRightHand) {
+          glow.addColorStop(0, "rgba(234, 179, 8, 0.35)");
+          glow.addColorStop(1, "rgba(234, 179, 8, 0)");
         } else {
-          glowGradient.addColorStop(0, "rgba(34, 197, 94, 0.35)");
-          glowGradient.addColorStop(1, "rgba(34, 197, 94, 0)");
+          glow.addColorStop(0, "rgba(34, 197, 94, 0.35)");
+          glow.addColorStop(1, "rgba(34, 197, 94, 0)");
         }
-        ctx.fillStyle = glowGradient;
-        ctx.fillRect(rect.x - rect.w, HIT_Y - rect.w * 1.5, rect.w * 3, rect.w * 3);
+        ctx.fillStyle = glow;
+        ctx.fillRect(rect.x - rect.w, hitY - rect.w * 1.5, rect.w * 3, rect.w * 3);
       });
-      
-      // Labels de nota na base
+
       ctx.font = "11px var(--font-geist-mono), monospace";
       ctx.textAlign = "center";
       ctx.fillStyle = COLORS.textFaded;
-      whiteNotes.forEach((midi: number, i: number) => {
-        ctx.fillText(midiNoteToName(midi).replace(/\d/, ""), i * laneW + laneW / 2, height - 8);
+      whiteNotes.forEach((midi, index) => {
+        ctx.fillText(midiNoteToName(midi).replace(/\d/, ""), index * laneWidth + laneWidth / 2, height - 8);
       });
 
-      // --- 3. Cleanup de Passos ---
       const missedSet = state.missedNotes;
       const hitSet = state.hitNotes;
-      
       let missesAdded = false;
 
-      notes.forEach((ns, i) => {
-        if (hitSet.has(i) || missedSet.has(i)) return;
-        if (elapsed > ns.time + timingWindow) {
-          missedSet.add(i);
-          state.combo = 0;
+      noteGroups.forEach((group) => {
+        const pendingIndices = group.indices.filter((index) => !hitSet.has(index) && !missedSet.has(index));
+        if (pendingIndices.length === 0) return;
+        if (elapsed <= group.time + timingWindow) return;
+
+        state.combo = 0;
+        missesAdded = true;
+
+        pendingIndices.forEach((index) => {
+          const note = notes[index];
+          missedSet.add(index);
           state.misses += 1;
-          missesAdded = true;
-          onNoteMiss?.(ns.midi);
-          
+          onNoteMiss?.(note.midi);
           state.effects.push({
             id: state.effectId++,
-            note: ns.midi,
+            note: note.midi,
             type: "miss",
             startTime: rawAudioTime,
           });
-        }
+        });
       });
-      
+
       if (missesAdded) updateHUD();
 
-      // --- 4. Tocar Acompanhamento ---
       if (onPlayAccompaniment) {
-        accompanimentNotes.forEach((ns, i) => {
-          if (!state.playedAccompaniment.has(i) && elapsed >= ns.time) {
-            state.playedAccompaniment.add(i);
-            onPlayAccompaniment(ns.midi, ns.duration);
+        accompanimentNotes.forEach((note, index) => {
+          if (!state.playedAccompaniment.has(index) && elapsed >= note.time) {
+            state.playedAccompaniment.add(index);
+            onPlayAccompaniment(note.midi, note.duration);
           }
         });
       }
 
-      // --- 5. Renderizar Notas Dinamicamente ---
-      for (let i = 0; i < notes.length; i++) {
-        const ns = notes[i];
-        
-        const timeDiff = ns.time - elapsed;
-        const noteHeight = Math.max((ns.duration * SPEED_PX_PER_SEC), 4);
-        const yPos = HIT_Y - (timeDiff * SPEED_PX_PER_SEC) - noteHeight;
-        
-        if (yPos + noteHeight < -50 || yPos > height + 50) {
-          continue;
-        }
+      for (let index = 0; index < notes.length; index++) {
+        const note = notes[index];
+        const timeDiff = note.time - elapsed;
+        const noteHeight = Math.max(note.duration * speed, 4);
+        const yPos = hitY - timeDiff * speed - noteHeight;
+        if (yPos + noteHeight < -50 || yPos > height + 50) continue;
 
-        const rectInfo = getNoteRect(ns.midi);
-        const isSharp = rectInfo.isBlack;
-        // Notas sustenidas: mais finas, sem padding extra
-        const xPos = isSharp ? rectInfo.x : rectInfo.x + rectInfo.w * 0.1;
-        const rectW = isSharp ? rectInfo.w : rectInfo.w * 0.8;
-        
-        const isHit = hitSet.has(i);
-        const isMiss = missedSet.has(i);
-        
-        const isRightHand = ns.midi >= 60; 
-        
+        const rect = getNoteRect(note.midi, laneWidth);
+        const xPos = rect.isBlack ? rect.x : rect.x + rect.w * 0.1;
+        const rectWidth = rect.isBlack ? rect.w : rect.w * 0.8;
+        const isHit = hitSet.has(index);
+        const isMiss = missedSet.has(index);
+        const isRightHand = note.midi >= 60;
+
         let alpha = 0.9;
-        if (isHit) alpha = Math.max(0, 1 - (elapsed - ns.time) * 4);
-        else if (isMiss) alpha = Math.max(0, 0.5 - (elapsed - ns.time));
-
+        if (isHit) alpha = Math.max(0, 1 - (elapsed - note.time) * 4);
+        else if (isMiss) alpha = Math.max(0, 0.5 - (elapsed - note.time));
         if (alpha <= 0) continue;
-        ctx.globalAlpha = alpha;
 
-        // ── Note Body: Sustenidas mais saturadas, normais translúcidas ──
-        const noteGradient = ctx.createLinearGradient(xPos, yPos, xPos, yPos + noteHeight);
-        if (isSharp) {
-          // Cores FORTES para sustenidos
+        ctx.globalAlpha = alpha;
+        const gradient = ctx.createLinearGradient(xPos, yPos, xPos, yPos + noteHeight);
+        if (rect.isBlack) {
           if (isRightHand) {
-            noteGradient.addColorStop(0, "#F59E0B"); // Amber 500
-            noteGradient.addColorStop(1, "#B45309"); // Amber 700
+            gradient.addColorStop(0, "#F59E0B");
+            gradient.addColorStop(1, "#B45309");
           } else {
-            noteGradient.addColorStop(0, "#059669"); // Emerald 600
-            noteGradient.addColorStop(1, "#065F46"); // Emerald 800
+            gradient.addColorStop(0, "#059669");
+            gradient.addColorStop(1, "#065F46");
           }
         } else {
           if (isRightHand) {
-            noteGradient.addColorStop(0, "#FEF08A"); // Yellow 200
-            noteGradient.addColorStop(1, "#EAB308"); // Yellow 600
+            gradient.addColorStop(0, "#FEF08A");
+            gradient.addColorStop(1, "#EAB308");
           } else {
-            noteGradient.addColorStop(0, "#BBF7D0"); // Green 200
-            noteGradient.addColorStop(1, "#16A34A"); // Green 600
+            gradient.addColorStop(0, "#BBF7D0");
+            gradient.addColorStop(1, "#16A34A");
           }
         }
 
-        ctx.fillStyle = isHit ? "#FFFFFF" : noteGradient;
-        ctx.strokeStyle = isHit ? "#FFFFFF" : isSharp ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.2)";
-        ctx.lineWidth = isSharp ? 2 : 1.5;
+        ctx.fillStyle = isHit ? "#FFFFFF" : gradient;
+        ctx.strokeStyle = isHit ? "#FFFFFF" : rect.isBlack ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.2)";
+        ctx.lineWidth = rect.isBlack ? 2 : 1.5;
+        ctx.shadowBlur = isHit ? 25 : rect.isBlack ? 14 : 10;
+        ctx.shadowColor = isRightHand
+          ? rect.isBlack
+            ? "rgba(245, 158, 11, 0.8)"
+            : "rgba(234, 179, 8, 0.6)"
+          : rect.isBlack
+          ? "rgba(5, 150, 105, 0.8)"
+          : "rgba(34, 197, 94, 0.6)";
 
-        // Glow
-        ctx.shadowBlur = isHit ? 25 : isSharp ? 14 : 10;
-        ctx.shadowColor = isRightHand 
-          ? (isSharp ? "rgba(245, 158, 11, 0.8)" : "rgba(234, 179, 8, 0.6)") 
-          : (isSharp ? "rgba(5, 150, 105, 0.8)" : "rgba(34, 197, 94, 0.6)");
-
-        // Draw Rounded Rect Note
         ctx.beginPath();
-        ctx.roundRect(xPos, yPos, rectW, noteHeight, isSharp ? 4 : 6);
+        ctx.roundRect(xPos, yPos, rectWidth, noteHeight, rect.isBlack ? 4 : 6);
         ctx.fill();
         ctx.stroke();
-
         ctx.shadowBlur = 0;
 
-        // Inner Label
         if (noteHeight > 25) {
-          ctx.fillStyle = isSharp ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)";
-          ctx.font = `bold ${isSharp ? 11 : 13}px sans-serif`;
+          ctx.fillStyle = rect.isBlack ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)";
+          ctx.font = `bold ${rect.isBlack ? 11 : 13}px sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          
-          const label = midiNoteToName(ns.midi);
-          ctx.fillText(label, xPos + rectW / 2, yPos + noteHeight - 12);
+          ctx.fillText(midiNoteToName(note.midi), xPos + rectWidth / 2, yPos + noteHeight - 12);
         }
       }
 
-      ctx.globalAlpha = 1.0;
+      ctx.globalAlpha = 1;
 
-      // --- 5. Renderizar Efeitos Visuais ---
       const activeEffects: VisualEffect[] = [];
-      
-      for (const eff of state.effects) {
-        const effAge = rawAudioTime - eff.startTime;
-        if (effAge > 0.6) continue;
-        
-        activeEffects.push(eff);
-        
-        const isMiss = eff.type === "miss";
-        const isPerf = eff.type === "perfect";
-        
-        // ── PARTÍCULAS VIBRANTES ──
-        if (!eff.sparked && !isMiss) {
-          eff.sparked = true;
-          const effRect = getNoteRect(eff.note);
-          const isRightHand = eff.note >= 60;
-          
-          // Quantidade de partículas baseada no combo
-          const particleCount = isPerf ? 24 : 14;
-          const baseColors = isRightHand 
-            ? ["#FACC15", "#FDE68A", "#F59E0B", "#FFFFFF"] 
+      for (const effect of state.effects) {
+        const age = rawAudioTime - effect.startTime;
+        if (age > 0.6) continue;
+
+        activeEffects.push(effect);
+        const isMiss = effect.type === "miss";
+        const isPerfect = effect.type === "perfect";
+
+        if (!effect.sparked && !isMiss) {
+          effect.sparked = true;
+          const rect = getNoteRect(effect.note, laneWidth);
+          const isRightHand = effect.note >= 60;
+          const particleCount = isPerfect ? 24 : 14;
+          const colors = isRightHand
+            ? ["#FACC15", "#FDE68A", "#F59E0B", "#FFFFFF"]
             : ["#4ADE80", "#86EFAC", "#10B981", "#FFFFFF"];
-          
+
           for (let i = 0; i < particleCount; i++) {
             state.particles.push({
-              x: effRect.x + effRect.w / 2 + (Math.random() - 0.5) * effRect.w,
-              y: HIT_Y,
+              x: rect.x + rect.w / 2 + (Math.random() - 0.5) * rect.w,
+              y: hitY,
               vx: (Math.random() - 0.5) * 10,
               vy: -Math.random() * 8 - 2,
               life: Math.random() * 0.4 + 0.2,
               maxLife: 0.6,
-              color: baseColors[Math.floor(Math.random() * baseColors.length)],
+              color: colors[Math.floor(Math.random() * colors.length)],
               size: Math.random() * 3 + 1.5,
             });
           }
         }
 
-        const tScale = Math.min(effAge * 4, 1);
-        const opacity = Math.max(0, 1 - effAge * 1.5);
-        
-        const effRect2 = getNoteRect(eff.note);
-        const baseX = effRect2.x + effRect2.w / 2;
-        const baseY = HIT_Y - (effAge * 80);
-        
+        const scale = Math.min(age * 4, 1);
+        const opacity = Math.max(0, 1 - age * 1.5);
+        const rect = getNoteRect(effect.note, laneWidth);
+        const baseX = rect.x + rect.w / 2;
+        const baseY = hitY - age * 80;
+
         ctx.globalAlpha = opacity;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = `bold ${16 + tScale * 14}px sans-serif`;
-        
+        ctx.font = `bold ${16 + scale * 14}px sans-serif`;
         ctx.shadowBlur = 15;
-        if (isPerf) {
+        if (isPerfect) {
           ctx.fillStyle = "#34D399";
           ctx.shadowColor = "rgba(52,211,153,0.8)";
           ctx.fillText("★", baseX, baseY);
         } else if (isMiss) {
           ctx.fillStyle = "#FF00E5";
           ctx.shadowColor = "rgba(255,0,229,0.8)";
-          ctx.fillText("✗", baseX, baseY);
+          ctx.fillText("✕", baseX, baseY);
         } else {
           ctx.fillStyle = "#34D399";
           ctx.shadowColor = "rgba(52,211,153,0.5)";
@@ -562,33 +503,28 @@ export default function PianoPlayer({
       }
       state.effects = activeEffects;
 
-      // --- 6. Renderizar Partículas Dinâmicas ---
       const activeParticles: Particle[] = [];
-      for (const p of state.particles) {
-        p.life -= (1 / 60);
-        if (p.life <= 0) continue;
-        
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.25;
+      for (const particle of state.particles) {
+        particle.life -= 1 / 60;
+        if (particle.life <= 0) continue;
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vy += 0.25;
 
-        ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
-        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, particle.life / particle.maxLife);
+        ctx.fillStyle = particle.color;
         ctx.shadowBlur = 8;
-        ctx.shadowColor = p.color;
-        
+        ctx.shadowColor = particle.color;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fill();
-        
-        activeParticles.push(p);
+        activeParticles.push(particle);
       }
       state.particles = activeParticles;
 
-      ctx.globalAlpha = 1.0;
+      ctx.globalAlpha = 1;
       ctx.shadowBlur = 0;
 
-      // Fim do loop - Checar se música acabou
       if (!isFreePlay) {
         const lastNote = notes[notes.length - 1];
         if (lastNote && elapsed > lastNote.time + lastNote.duration + 2) {
@@ -600,7 +536,6 @@ export default function PianoPlayer({
         }
       }
 
-      // Atualizar progresso
       if (progressBarRef.current && songDuration > 0) {
         const progress = Math.min(100, (elapsed / songDuration) * 100);
         progressBarRef.current.style.left = `calc(${progress}% - 12px)`;
@@ -610,127 +545,146 @@ export default function PianoPlayer({
     };
 
     animFrameRef.current = requestAnimationFrame(tick);
-
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isPlaying, getAudioTime, notes, difficulty, onNoteMiss, onScoreUpdate, onSongEnd, timingWindow, updateHUD, startNote, endNote, isFreePlay, whiteNotes, totalWidth, onPlayTick, songDuration, isWaitingMode, accompanimentNotes, onPlayAccompaniment, playbackSpeed, metronomeVolume, activeNotes]);
+  }, [
+    isPlaying,
+    getAudioTime,
+    notes,
+    noteGroups,
+    timingWindow,
+    updateHUD,
+    startNote,
+    endNote,
+    isFreePlay,
+    whiteNotes,
+    onPlayTick,
+    songDuration,
+    isWaitingMode,
+    accompanimentNotes,
+    onPlayAccompaniment,
+    playbackSpeed,
+    metronomeVolume,
+    activeNotes,
+    onNoteMiss,
+    onScoreUpdate,
+    onSongEnd,
+  ]);
 
-
-  // ── Input Binding Dinâmico via MIDI ──
   useEffect(() => {
     if (!isPlaying) return;
-    
+
     const activeStateHash = Array.from(activeNotes.entries())
-      .map(([k, v]) => `${k}-${v.velocity}`)
+      .map(([midi, note]) => `${midi}-${note.velocity}`)
       .join("|");
-      
+
     if (activeStateHash === lastActiveNotesState.current) return;
     lastActiveNotesState.current = activeStateHash;
 
-    const s = stateRef.current;
+    const state = stateRef.current;
     let uiChanged = false;
+    const eventTime = getAudioTime();
 
-    activeNotes.forEach((midiNote) => {
-      if (isFreePlay) {
-         const isAlreadyHitThisFrame = s.effects.some((eff: VisualEffect) => eff.note === midiNote.note && (getAudioTime() - eff.startTime) < 0.1);
-         
-         if (!isAlreadyHitThisFrame) {
-            s.score += 10;
-            uiChanged = true;
-            s.effects.push({
-              id: s.effectId++,
-              note: midiNote.note,
-              type: "perfect",
-              startTime: getAudioTime(),
-            });
-            onNoteHit?.(midiNote.note, 0.5, midiNote.velocity ?? 0.8);
-         }
-      } else {
-        const matchIdx = notes.findIndex((ns, i) => {
-          if (s.hitNotes.has(i) || s.missedNotes.has(i)) return false;
-          if (ns.midi !== midiNote.note) return false;
-          return Math.abs(s.gameTime - ns.time) <= timingWindow;
+    if (isFreePlay) {
+      activeNotes.forEach((midiNote) => {
+        const alreadyRegistered = state.effects.some((effect) => effect.note === midiNote.note && eventTime - effect.startTime < 0.1);
+        if (alreadyRegistered) return;
+
+        state.score += 10;
+        uiChanged = true;
+        state.effects.push({
+          id: state.effectId++,
+          note: midiNote.note,
+          type: "perfect",
+          startTime: eventTime,
+        });
+        onNoteHit?.(midiNote.note, 0.5, midiNote.velocity ?? 0.8);
+      });
+    } else {
+      const playedNotes = new Set(activeNotes.keys());
+      const candidateGroups = noteGroups
+        .filter((group) => Math.abs(state.gameTime - group.time) <= timingWindow)
+        .filter((group) => group.indices.some((index) => !state.hitNotes.has(index) && !state.missedNotes.has(index)))
+        .sort((a, b) => {
+          const delta = Math.abs(state.gameTime - a.time) - Math.abs(state.gameTime - b.time);
+          if (delta !== 0) return delta;
+          return b.indices.length - a.indices.length;
         });
 
-        if (matchIdx !== -1) {
-          s.hitNotes.add(matchIdx);
-          const ns = notes[matchIdx];
+      for (const group of candidateGroups) {
+        const pendingIndices = group.indices.filter((index) => !state.hitNotes.has(index) && !state.missedNotes.has(index));
+        if (pendingIndices.length === 0) continue;
 
-          s.combo += 1;
-          const comboMultiplier = Math.floor(s.combo / 5) + 1;
-          s.score += 100 * comboMultiplier;
-          s.hits += 1;
+        const allNotesPresent = pendingIndices.every((index) => playedNotes.has(notes[index].midi));
+        if (!allNotesPresent) continue;
+
+        pendingIndices.forEach((index) => {
+          const note = notes[index];
+          state.hitNotes.add(index);
+          state.combo += 1;
+          state.hits += 1;
+          const comboMultiplier = Math.floor(state.combo / 5) + 1;
+          state.score += 100 * comboMultiplier;
           uiChanged = true;
 
-          s.effects.push({
-            id: s.effectId++,
-            note: ns.midi,
-            type: s.combo >= 10 ? "perfect" : "hit",
-            startTime: getAudioTime(),
+          state.effects.push({
+            id: state.effectId++,
+            note: note.midi,
+            type: state.combo >= 10 ? "perfect" : "hit",
+            startTime: eventTime,
           });
 
-          onNoteHit?.(ns.midi, ns.duration, ns.velocity ?? 0.8);
-        }
+          onNoteHit?.(note.midi, note.duration, note.velocity ?? 0.8);
+        });
       }
-    });
+    }
 
     if (uiChanged) updateHUD();
-  }, [activeNotes, isPlaying, timingWindow, onNoteHit, notes, updateHUD, getAudioTime, isFreePlay]);
-
+  }, [activeNotes, getAudioTime, isFreePlay, isPlaying, noteGroups, notes, onNoteHit, timingWindow, updateHUD]);
 
   return (
-    <div className="relative w-full flex-1 rounded-3xl overflow-hidden border border-white/[0.1] bg-zinc-950 shadow-2xl">
-      
-      {/* ── Dark Grid Background ── */}
-      <div className="absolute inset-0 opacity-20" 
-        style={{ 
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }} 
+    <div className="relative w-full flex-1 overflow-hidden rounded-3xl border border-white/[0.1] bg-zinc-950 shadow-2xl">
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
       />
-      
-      {/* ── Camada de Vinheta ── */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black/60 pointer-events-none" />
 
-      {/* ── BARRA DE PROGRESSO ── */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black via-transparent to-black/60" />
+
       {!isFreePlay && songDuration > 0 && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[80%] max-w-2xl h-6 bg-zinc-900/80 border border-white/10 rounded-full z-40 flex items-center px-1 overflow-hidden backdrop-blur-md">
-          <div className="absolute inset-0 flex justify-between px-4 pointer-events-none opacity-20">
-            {Array.from({ length: 40 }).map((_, i) => (
-              <div key={i} className={`w-[1px] bg-white ${i % 5 === 0 ? 'h-3' : 'h-1.5'} self-center`} />
+        <div className="absolute left-1/2 top-4 z-40 flex h-6 w-[80%] max-w-2xl -translate-x-1/2 items-center overflow-hidden rounded-full border border-white/10 bg-zinc-900/80 px-1 backdrop-blur-md">
+          <div className="pointer-events-none absolute inset-0 flex justify-between px-4 opacity-20">
+            {Array.from({ length: 40 }).map((_, index) => (
+              <div key={index} className={`self-center bg-white ${index % 5 === 0 ? "h-3 w-[1px]" : "h-1.5 w-[1px]"}`} />
             ))}
           </div>
-          
-          <div className="relative w-full h-full">
-            <div 
+
+          <div className="relative h-full w-full">
+            <div
               ref={progressBarRef}
-              className="absolute top-1/2 -translate-y-1/2 h-3 w-6 bg-red-600 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.8)] transition-[left] duration-300 ease-linear"
-              style={{ left: '0%' }}
+              className="absolute top-1/2 h-3 w-6 -translate-y-1/2 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.8)] transition-[left] duration-300 ease-linear"
+              style={{ left: "0%" }}
             />
           </div>
         </div>
       )}
 
-      {/* ── CONTAINER UNIFICADO (Notas + Teclado) ── */}
-      <div className="absolute inset-0 overflow-hidden z-10">
-        <div className="relative w-full h-full">
-          
-          {/* Canvas de Notas (100%) */}
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 block w-full h-full pointer-events-none"
-          />
-
-          {/* TECLADO VIRTUAL: 25% da altura */}
-          <div className="absolute bottom-0 left-0 right-0 pointer-events-auto" style={{ height: '30%' }}>
-            <VirtualKeyboard 
+      <div className="absolute inset-0 z-10 overflow-hidden">
+        <div className="relative h-full w-full">
+          <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 block h-full w-full" />
+          <div className="pointer-events-auto absolute bottom-0 left-0 right-0" style={{ height: "30%" }}>
+            <VirtualKeyboard
               onPlayNote={(midi) => {
                 resumeAudio?.();
                 onPlayNote?.(midi);
-              }} 
-              onReleaseNote={onReleaseNote || (() => {})} 
+              }}
+              onReleaseNote={onReleaseNote || (() => {})}
               activeNotes={activeNotes as unknown as Map<number, boolean>}
               startNote={startNote}
               endNote={endNote}
@@ -739,26 +693,28 @@ export default function PianoPlayer({
         </div>
       </div>
 
-
-
-      {/* ── HUD de Score ── */}
-      <div className="absolute top-3 md:top-6 left-3 md:left-6 right-3 md:right-6 flex items-center justify-between pointer-events-none z-30">
-        <div className="glass rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3 border border-white/10 shadow-lg">
-          <p className="text-[8px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0 md:mb-1">Pontos</p>
-          <p ref={scoreUIRef} className="text-lg md:text-2xl font-black tabular-nums text-gradient">0</p>
+      <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex items-center justify-between md:left-6 md:right-6 md:top-6">
+        <div className="glass rounded-xl border border-white/10 px-3 py-2 shadow-lg md:rounded-2xl md:px-5 md:py-3">
+          <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px]">Pontos</p>
+          <p ref={scoreUIRef} className="text-gradient text-lg font-black tabular-nums md:text-2xl">
+            0
+          </p>
         </div>
 
-        <div className="glass rounded-xl md:rounded-2xl px-5 md:px-8 py-2 md:py-4 text-center border border-white/10 shadow-lg min-w-[100px] md:min-w-[130px]">
-          <p className="text-[9px] md:text-xs text-white/40 uppercase tracking-[3px] font-black mb-0 md:mb-1">Combos</p>
-          <p ref={comboUIRef} className="text-2xl md:text-4xl font-black tabular-nums text-white/30">0x</p>
+        <div className="glass min-w-[100px] rounded-xl border border-white/10 px-5 py-2 text-center shadow-lg md:min-w-[130px] md:rounded-2xl md:px-8 md:py-4">
+          <p className="mb-0 text-[9px] font-black uppercase tracking-[3px] text-white/40 md:mb-1 md:text-xs">Combos</p>
+          <p ref={comboUIRef} className="text-2xl font-black tabular-nums text-white/30 md:text-4xl">
+            0x
+          </p>
         </div>
 
-        <div className="glass rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-3 text-right border border-white/10 shadow-lg">
-          <p className="text-[8px] md:text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0 md:mb-1">Precisão</p>
-          <p ref={accuracyUIRef} className="text-lg md:text-2xl font-black text-white tabular-nums">100%</p>
+        <div className="glass rounded-xl border border-white/10 px-3 py-2 text-right shadow-lg md:rounded-2xl md:px-5 md:py-3">
+          <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px]">Precisao</p>
+          <p ref={accuracyUIRef} className="text-lg font-black tabular-nums text-white md:text-2xl">
+            100%
+          </p>
         </div>
       </div>
-
     </div>
   );
 }

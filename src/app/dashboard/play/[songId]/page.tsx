@@ -7,28 +7,45 @@ import Link from "next/link";
 import ScoreScreen from "@/components/ScoreScreen";
 import OrientationOverlay from "@/components/OrientationOverlay";
 import PianoPlayer from "@/components/PianoPlayer";
+import GameTutorialOverlay, { shouldAutoOpenGameTutorial } from "@/components/GameTutorialOverlay";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useKeyboardInput } from "@/hooks/useKeyboardInput";
 import { useAudioInput } from "@/hooks/useAudioInput";
-import { getSongById, type Song, type SongNote } from "@/lib/songs";
-
+import type { Song, SongNote } from "@/lib/types";
+import { loadSongById } from "@/lib/songCatalog";
 import {
   type Difficulty,
   filterNotesByDifficulty,
   getAccompanimentNotes,
+  getSongNotesForDifficulty,
 } from "@/lib/songFilters";
-import { Volume2, Mic, MicOff, Play, Pause, RotateCcw } from "lucide-react";
+import { Volume2, Mic, MicOff, Play, Pause, RotateCcw, CircleHelp } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 
-
+const FREE_PLAY_SONG: Song = {
+  id: "freeplay",
+  title: "Pratica Livre",
+  artist: "Sintetizador Livre",
+  category: "Para Iniciantes",
+  isPremium: false,
+  difficulty: "Facil",
+  duration: 0,
+  bpm: 120,
+  coverUrl: "",
+  notes: [],
+};
 
 export default function PlayPage() {
   return (
-    <Suspense fallback={<div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-8">
-      <div className="w-12 h-12 border-4 border-cyan/20 border-t-cyan rounded-full animate-spin mb-4" />
-      <span className="text-xs font-bold tracking-[4px] uppercase opacity-40">Sincronizando...</span>
-    </div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col items-center justify-center bg-black p-8 text-white">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-cyan/20 border-t-cyan" />
+          <span className="text-xs font-bold uppercase tracking-[4px] opacity-40">Sincronizando...</span>
+        </div>
+      }
+    >
       <PlayPageContent />
     </Suspense>
   );
@@ -40,31 +57,17 @@ function PlayPageContent() {
   const router = useRouter();
   const songId = params.songId as string;
   const isFreePlay = songId === "freeplay";
-  
-  const song = useMemo<Song | undefined>(() => {
-    if (isFreePlay) {
-      return { 
-        id: "freeplay", 
-        title: "Prática Livre", 
-        artist: "Sintetizador Livre", 
-        category: "Para Iniciantes", 
-        isPremium: false, 
-        difficulty: "Fácil", 
-        duration: 0, 
-        bpm: 120, 
-        coverUrl: "", 
-        notes: [] 
-      };
-    }
-    return getSongById(songId);
-  }, [isFreePlay, songId]);
+  const [song, setSong] = useState<Song | undefined>(isFreePlay ? FREE_PLAY_SONG : undefined);
+  const [songLoading, setSongLoading] = useState(!isFreePlay);
 
   const { isPro, loading: subLoading } = useSubscription();
 
-  // ── Hook de microfone — UMA ÚNICA instância (bug fix: antes eram 4 instâncias separadas)
   const {
     isListening: isMicActive,
     activeAudioNote,
+    activeAudioNotes,
+    inputLevel,
+    calibrationProfile,
     start: startMic,
     stop: stopMic,
   } = useAudioInput();
@@ -72,14 +75,33 @@ function PlayPageContent() {
   const { pauseBackgroundMusic } = useBackgroundMusic();
   const audio = useAudioEngine();
 
-  // ── Pausar música ambiente ao entrar no jogo, restaurar ao sair ──
   useEffect(() => {
     pauseBackgroundMusic();
     return () => {
-      // Não auto-retoma ao sair — o usuário pode querer manter desligada
+      // Intentionally keep background music paused after leaving the game.
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pauseBackgroundMusic]);
+
+  useEffect(() => {
+    if (isFreePlay) {
+      setSong(FREE_PLAY_SONG);
+      setSongLoading(false);
+      return;
+    }
+
+    let mounted = true;
+    setSongLoading(true);
+
+    loadSongById(songId).then((loadedSong) => {
+      if (!mounted) return;
+      setSong(loadedSong);
+      setSongLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [isFreePlay, songId]);
 
   type PianoNoteRecord = {
     note: number;
@@ -89,38 +111,84 @@ function PlayPageContent() {
   };
 
   const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "countdown" | "playing" | "ended">("idle");
   const [countdown, setCountdown] = useState<number | null>(null);
   const [audioStartTime, setAudioStartTime] = useState(0);
-
-  useEffect(() => {
-    // placeholder
-  }, [startMic]);
-
   const [finalScore, setFinalScore] = useState({ score: 0, combo: 0, accuracy: 100 });
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [isWaitingMode, setIsWaitingMode] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [metronomeVolume, setMetronomeVolume] = useState(0.08);
+  const [showMicHint, setShowMicHint] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    setShowTutorial(shouldAutoOpenGameTutorial());
+  }, []);
 
   useKeyboardInput();
 
   const activeNotes = useMemo(() => {
     const merged = new Map<number, PianoNoteRecord>();
-    
-    if (activeAudioNote) {
-      merged.set(activeAudioNote.note, {
-        note: activeAudioNote.note,
+
+    const detectedNotes = activeAudioNotes.length > 0 ? activeAudioNotes : activeAudioNote ? [activeAudioNote] : [];
+
+    for (const detectedNote of detectedNotes) {
+      merged.set(detectedNote.note, {
+        note: detectedNote.note,
         velocity: 80,
         channel: 1,
-        timestamp: performance.now()
+        timestamp: detectedNote.timestamp || performance.now(),
       });
     }
+
     return merged;
-  }, [activeAudioNote]);
+  }, [activeAudioNote, activeAudioNotes]);
+
+  const micHealth = useMemo(() => {
+    if (!isMicActive) {
+      return {
+        tone: "neutral" as const,
+        title: "Microfone desligado",
+        message: "Ligue o microfone para validar as notas pelo piano real.",
+      };
+    }
+
+    if (!calibrationProfile) {
+      return {
+        tone: "warning" as const,
+        title: "Calibracao recomendada",
+        message: "Esse aluno ainda nao calibrou o microfone neste navegador. A precisao pode cair em acordes.",
+      };
+    }
+
+    const noiseRatio = inputLevel / Math.max(calibrationProfile.silenceRms, 0.0001);
+    const signalRatio = inputLevel / Math.max(calibrationProfile.minSignalRms, 0.0001);
+
+    if (noiseRatio > 1.8 && activeNotes.size === 0) {
+      return {
+        tone: "warning" as const,
+        title: "Ruido ambiente alto",
+        message: "O microfone esta ouvindo muito ruido sem notas claras. Afaste-se de caixas de som ou recalibre o ambiente.",
+      };
+    }
+
+    if (activeNotes.size > 0 && signalRatio < 0.9) {
+      return {
+        tone: "warning" as const,
+        title: "Sinal fraco",
+        message: "As notas estao chegando perto do limite minimo. Aumente o ganho do microfone ou aproxime o dispositivo do piano.",
+      };
+    }
+
+    return {
+      tone: "good" as const,
+      title: "Microfone estavel",
+      message: "A captura esta dentro do perfil calibrado para o jogo.",
+    };
+  }, [activeNotes.size, calibrationProfile, inputLevel, isMicActive]);
 
   const startGame = useCallback(() => {
     setGameState("countdown");
@@ -134,17 +202,17 @@ function PlayPageContent() {
     setIsPaused(false);
     setGameState("idle");
     setFinalScore({ score: 0, combo: 0, accuracy: 100 });
+    setShowMicHint(true);
   }, []);
 
-  // ── ATALHO ESPAÇO: Pausar/Retomar ──
   useEffect(() => {
-    const handleSpaceBar = (e: KeyboardEvent) => {
-      if (e.code !== "Space") return;
-      e.preventDefault();
-      
+    const handleSpaceBar = (event: KeyboardEvent) => {
+      if (event.code !== "Space") return;
+      event.preventDefault();
+
       if (gameState === "playing") {
-        setIsPaused(prev => !prev);
-        setIsPlaying(prev => !prev);
+        setIsPaused((current) => !current);
+        setIsPlaying((current) => !current);
       } else if (gameState === "idle") {
         startGame();
       }
@@ -154,27 +222,25 @@ function PlayPageContent() {
     return () => window.removeEventListener("keydown", handleSpaceBar);
   }, [gameState, startGame]);
 
-  // Lógica da Contagem Regressiva
   useEffect(() => {
     if (gameState !== "countdown" || countdown === null) return;
 
     audio.playTick(0.15);
 
     if (countdown > 0) {
-      const timer = setTimeout(() => {
+      const timer = window.setTimeout(() => {
         setCountdown(countdown - 1);
       }, 1000);
-      return () => clearTimeout(timer);
-    } else {
-      const LEAD_TIME = 4;
-      const startTime = audio.getCurrentTime() + LEAD_TIME;
-      setAudioStartTime(startTime);
-      
-      setGameState("playing");
-      setIsPlaying(true);
-      setCountdown(null);
+      return () => window.clearTimeout(timer);
     }
-  }, [countdown, gameState, audio, song, isFreePlay, difficulty]);
+
+    const leadTime = 4;
+    const startTime = audio.getCurrentTime() + leadTime;
+    setAudioStartTime(startTime);
+    setGameState("playing");
+    setIsPlaying(true);
+    setCountdown(null);
+  }, [countdown, gameState, audio]);
 
   const handleScoreUpdate = useCallback((score: number, combo: number, accuracy: number) => {
     setFinalScore({ score, combo, accuracy });
@@ -185,26 +251,32 @@ function PlayPageContent() {
     setGameState("ended");
   }, []);
 
-  const handlePlayAccompaniment = useCallback((midi: number, duration: number) => {
-    if (audioEnabled) {
-      audio.scheduleAccompaniment(midi, audio.getCurrentTime(), duration, 0.6);
-    }
-  }, [audio, audioEnabled]);
+  const handlePlayAccompaniment = useCallback(
+    (midi: number, duration: number) => {
+      if (audioEnabled) {
+        audio.scheduleAccompaniment(midi, audio.getCurrentTime(), duration, 0.6);
+      }
+    },
+    [audio, audioEnabled],
+  );
 
-  // AUTO-START Logic from URL Params
   useEffect(() => {
-    const lHand = searchParams.get("leftHand") === "true";
-    const rHand = searchParams.get("rightHand") === "true";
+    const leftHand = searchParams.get("leftHand") === "true";
+    const rightHand = searchParams.get("rightHand") === "true";
     const mic = searchParams.get("mic") === "true";
-    
-    if (lHand || rHand) {
-      const isBoth = lHand && rHand;
-      setDifficulty(isBoth ? "pro" : "medium");
+    const queryDifficulty = searchParams.get("difficulty");
+
+    if (leftHand || rightHand) {
+      const isBothHands = leftHand && rightHand;
+      if (queryDifficulty === "beginner" || queryDifficulty === "medium" || queryDifficulty === "pro") {
+        setDifficulty(queryDifficulty);
+      } else {
+        setDifficulty(isBothHands ? "pro" : "medium");
+      }
       if (mic) startMic();
     }
   }, [searchParams, startMic]);
 
-  // ESCUTAR TOQUE PARA INICIAR
   useEffect(() => {
     if (gameState !== "idle") return;
 
@@ -213,8 +285,8 @@ function PlayPageContent() {
       return;
     }
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space") return; // Space handled separately
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === "Space") return;
       startGame();
     };
 
@@ -224,44 +296,45 @@ function PlayPageContent() {
 
   const filteredNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
-    
-    const lHand = searchParams.get("leftHand") === "true";
-    const rHand = searchParams.get("rightHand") === "true";
-    const isBoth = lHand && rHand;
 
-    if (!isBoth && song.notes1Hand) {
-      return song.notes1Hand;
-    }
+    const leftHand = searchParams.get("leftHand") === "true";
+    const rightHand = searchParams.get("rightHand") === "true";
+    const isBothHands = leftHand && rightHand;
 
-    if (isBoth && song.notes2Hands) {
-      return song.notes2Hands;
-    }
+    const arrangementNotes = getSongNotesForDifficulty(song, difficulty, { preferOneHand: !isBothHands });
+    if (arrangementNotes.length > 0) return arrangementNotes;
 
     return filterNotesByDifficulty(song.notes, difficulty);
   }, [song, difficulty, searchParams]);
 
   const accompanimentNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
-    
-    const lHand = searchParams.get("leftHand") === "true";
-    const rHand = searchParams.get("rightHand") === "true";
-    const isBoth = lHand && rHand;
 
-    if (!isBoth && song.notes1Hand) {
-      return getAccompanimentNotes(song.notes1Hand, difficulty);
-    }
+    const leftHand = searchParams.get("leftHand") === "true";
+    const rightHand = searchParams.get("rightHand") === "true";
+    const isBothHands = leftHand && rightHand;
 
-    if (isBoth && song.notes2Hands) {
-      return getAccompanimentNotes(song.notes2Hands, difficulty);
+    const arrangementNotes = getSongNotesForDifficulty(song, difficulty, { preferOneHand: !isBothHands });
+    if (arrangementNotes.length > 0) {
+      return getAccompanimentNotes(arrangementNotes, difficulty);
     }
 
     return getAccompanimentNotes(song.notes, difficulty);
   }, [song, difficulty, searchParams]);
 
+  if (songLoading || subLoading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black p-8 text-white">
+        <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-cyan/20 border-t-cyan" />
+        <span className="text-xs font-bold uppercase tracking-[4px] opacity-40">Carregando musica...</span>
+      </div>
+    );
+  }
+
   if (!song) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <h1 className="text-2xl font-bold mb-4">Música não encontrada</h1>
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <h1 className="mb-4 text-2xl font-bold">Musica nao encontrada</h1>
         <Link href="/dashboard/songs" className="text-cyan hover:underline">
           Voltar para a biblioteca
         </Link>
@@ -269,150 +342,147 @@ function PlayPageContent() {
     );
   }
 
-  // ── Bloqueio de Segurança ──
-  if (!subLoading && song.isPremium && !isPro) {
+  if (song.isPremium && !isPro) {
     router.push("/dashboard/songs");
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-8">
-        <div className="w-12 h-12 border-4 border-rose-500/20 border-t-rose-500 rounded-full animate-spin mb-4" />
-        <span className="text-sm font-bold tracking-widest uppercase text-rose-400">Acesso Restrito</span>
-        <p className="text-xs text-white/40 mt-2">Esta música requer uma assinatura PRO. Redirecionando...</p>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-black p-8 text-white">
+        <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-rose-500/20 border-t-rose-500" />
+        <span className="text-sm font-bold uppercase tracking-widest text-rose-400">Acesso Restrito</span>
+        <p className="mt-2 text-xs text-white/40">Esta musica requer uma assinatura PRO. Redirecionando...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white font-sans overflow-hidden">
+    <div className="flex min-h-screen flex-col overflow-hidden bg-black font-sans text-white">
       <OrientationOverlay />
-      
-      {/* ── HEADER MODERNO TRANSPARENTE ── */}
-      <div 
-        className="h-12 flex items-center justify-between px-3 md:px-5 z-20 shrink-0 border-b border-white/[0.06]"
-        style={{ background: 'rgba(0, 0, 0, 0.45)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+
+      <div
+        className="z-20 flex h-12 shrink-0 items-center justify-between border-b border-white/[0.06] px-3 md:px-5"
+        style={{ background: "rgba(0, 0, 0, 0.45)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
       >
-        {/* Esquerda: Voltar + Título */}
         <div className="flex items-center gap-2">
-          <Link href="/dashboard/songs" className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-white/50 hover:text-white">
+          <Link href="/dashboard/songs" className="rounded-lg p-1.5 text-white/50 transition-colors hover:bg-white/5 hover:text-white">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </Link>
           <div>
             <h1 className="text-sm font-bold leading-none">{song.title}</h1>
-            <p className="text-[8px] text-white/35 uppercase tracking-widest mt-0.5">
-              {song.artist}
-            </p>
+            <p className="mt-0.5 text-[8px] uppercase tracking-widest text-white/35">{song.artist}</p>
           </div>
         </div>
 
-        {/* Centro/Direita: Todos os controles inline */}
         <div className="flex items-center gap-1.5 md:gap-2">
-          
-          {/* Volume */}
-          <button 
+          <button
             onClick={() => setAudioEnabled(!audioEnabled)}
-            className={`p-1.5 rounded-lg transition-colors ${audioEnabled ? 'text-cyan' : 'text-white/25'}`}
+            className={`rounded-lg p-1.5 transition-colors ${audioEnabled ? "text-cyan" : "text-white/25"}`}
             title="Volume"
           >
             <Volume2 size={16} />
           </button>
 
-          {/* Microfone (CORRIGIDO) */}
-          <button 
-            onClick={() => isMicActive ? stopMic() : startMic()}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-all text-[9px] font-bold uppercase tracking-wider ${
-              isMicActive 
-                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' 
-                : 'text-white/30 border border-transparent hover:text-white/50'
+          <button
+            onClick={() => setShowTutorial(true)}
+            className="rounded-lg p-1.5 text-white/35 transition-colors hover:text-white"
+            title="Tutorial da tela"
+          >
+            <CircleHelp size={16} />
+          </button>
+
+          <button
+            onClick={() => (isMicActive ? stopMic() : startMic())}
+            className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-bold uppercase tracking-wider transition-all ${
+              isMicActive
+                ? "border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
+                : "border-transparent text-white/30 hover:text-white/50"
             }`}
             title="Microfone"
           >
             {isMicActive ? <Mic size={13} /> : <MicOff size={13} />}
             <span className="hidden md:inline">{isMicActive ? "MIC ON" : "MIC OFF"}</span>
           </button>
-          
+
           <div className="h-5 w-px bg-white/10" />
 
-          {/* Resolução */}
           <div className="flex items-center gap-1">
             <div className="text-right">
-              <p className="text-[8px] text-white/25 uppercase tracking-widest font-bold leading-none">Resolução</p>
-              <p className="text-[10px] font-black text-white leading-none mt-0.5">Full HD</p>
+              <p className="text-[8px] font-bold uppercase leading-none tracking-widest text-white/25">Resolucao</p>
+              <p className="mt-0.5 text-[10px] font-black leading-none text-white">Full HD</p>
             </div>
-            <div className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center">
-              <div className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="flex h-5 w-5 items-center justify-center rounded bg-emerald-500/20">
+              <div className="h-1 w-1 animate-pulse rounded-full bg-emerald-400" />
             </div>
           </div>
 
           <div className="h-5 w-px bg-white/10" />
 
-          {/* Velocidade: [-] 100% [+] */}
           <div className="flex items-center gap-1">
-            <span className="text-[8px] text-white/25 font-bold uppercase tracking-wider hidden md:inline">Vel</span>
-            <button 
+            <span className="hidden text-[8px] font-bold uppercase tracking-wider text-white/25 md:inline">Vel</span>
+            <button
               onClick={() => setPlaybackSpeed(Math.max(0.15, playbackSpeed - 0.05))}
-              className="w-5 h-5 flex items-center justify-center rounded bg-white/8 hover:bg-white/15 transition-colors text-white/60 text-xs font-bold"
-            >−</button>
-            <span className="min-w-[36px] text-center text-[10px] font-black text-cyan">
-              {Math.round(playbackSpeed * 100)}%
-            </span>
-            <button 
+              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
+            >
+              -
+            </button>
+            <span className="min-w-[36px] text-center text-[10px] font-black text-cyan">{Math.round(playbackSpeed * 100)}%</span>
+            <button
               onClick={() => setPlaybackSpeed(Math.min(1.1, playbackSpeed + 0.05))}
-              className="w-5 h-5 flex items-center justify-center rounded bg-white/8 hover:bg-white/15 transition-colors text-white/60 text-xs font-bold"
-            >+</button>
+              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
+            >
+              +
+            </button>
           </div>
 
           <div className="h-5 w-px bg-white/10" />
 
-          {/* Modo Espera */}
-          <button 
+          <button
             onClick={() => setIsWaitingMode(!isWaitingMode)}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg transition-all text-[9px] font-black uppercase tracking-wider ${
-              isWaitingMode 
-                ? 'bg-cyan/15 text-cyan border border-cyan/30' 
-                : 'text-white/30 border border-transparent hover:text-white/50'
+            className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-black uppercase tracking-wider transition-all ${
+              isWaitingMode ? "border-cyan/30 bg-cyan/15 text-cyan" : "border-transparent text-white/30 hover:text-white/50"
             }`}
           >
             <Play size={11} className={isWaitingMode ? "fill-cyan" : ""} />
             <span className="hidden md:inline">Espera</span>
-            <span className={`text-[9px] font-black ${isWaitingMode ? 'text-cyan' : 'text-white/40'}`}>
+            <span className={`text-[9px] font-black ${isWaitingMode ? "text-cyan" : "text-white/40"}`}>
               {isWaitingMode ? "ON" : "OFF"}
             </span>
           </button>
 
           <div className="h-5 w-px bg-white/10" />
 
-          {/* Metrônomo: [-] 8% [+] */}
           <div className="flex items-center gap-1">
-            <span className="text-[8px] text-white/25 font-bold uppercase tracking-wider hidden md:inline">Met</span>
-            <button 
+            <span className="hidden text-[8px] font-bold uppercase tracking-wider text-white/25 md:inline">Met</span>
+            <button
               onClick={() => setMetronomeVolume(Math.max(0, metronomeVolume - 0.02))}
-              className="w-5 h-5 flex items-center justify-center rounded bg-white/8 hover:bg-white/15 transition-colors text-white/60 text-xs font-bold"
-            >−</button>
+              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
+            >
+              -
+            </button>
             <span className="min-w-[30px] text-center text-[10px] font-black text-white/60">
               {Math.round(metronomeVolume * 100)}%
             </span>
-            <button 
+            <button
               onClick={() => setMetronomeVolume(Math.min(0.5, metronomeVolume + 0.02))}
-              className="w-5 h-5 flex items-center justify-center rounded bg-white/8 hover:bg-white/15 transition-colors text-white/60 text-xs font-bold"
-            >+</button>
+              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
+            >
+              +
+            </button>
           </div>
 
           <div className="h-5 w-px bg-white/10" />
 
-          {/* Reiniciar Música */}
           <button
             onClick={restartGame}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg text-white/30 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
-            title="Reiniciar Música"
+            className="flex items-center gap-1 rounded-lg px-2 py-1 text-white/30 transition-all hover:bg-rose-500/10 hover:text-rose-400"
+            title="Reiniciar musica"
           >
             <RotateCcw size={13} />
-            <span className="text-[9px] font-bold uppercase tracking-wider hidden lg:inline">Reiniciar</span>
+            <span className="hidden text-[9px] font-bold uppercase tracking-wider lg:inline">Reiniciar</span>
           </button>
 
-          {/* Indicador de Pausa */}
           {isPaused && gameState === "playing" && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            <div className="flex items-center gap-1 rounded-lg border border-amber-500/30 bg-amber-500/15 px-2 py-1 text-amber-400">
               <Pause size={12} />
               <span className="text-[9px] font-black uppercase tracking-wider">Pausado</span>
             </div>
@@ -420,43 +490,78 @@ function PlayPageContent() {
         </div>
       </div>
 
-      <div className="flex-1 relative flex flex-col overflow-hidden">
-        
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        <GameTutorialOverlay open={showTutorial} onClose={() => setShowTutorial(false)} />
+
+        {showMicHint && (
+          <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex justify-center md:left-auto md:right-5 md:top-4 md:justify-end">
+            <div
+              className={`pointer-events-auto max-w-md rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-md ${
+                micHealth.tone === "good"
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-100"
+                  : micHealth.tone === "warning"
+                    ? "border-amber-500/30 bg-amber-500/10 text-amber-100"
+                    : "border-white/10 bg-black/45 text-white/75"
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-black uppercase tracking-[0.24em]">{micHealth.title}</p>
+                  <p className="mt-1 text-xs leading-relaxed opacity-90">{micHealth.message}</p>
+                  {micHealth.tone !== "good" && (
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        onClick={() => router.push("/dashboard/test-audio")}
+                        className="rounded-xl bg-white px-3 py-1.5 text-[11px] font-bold text-black transition hover:bg-white/90"
+                      >
+                        Recalibrar
+                      </button>
+                      <button
+                        onClick={() => setShowMicHint(false)}
+                        className="rounded-xl border border-white/15 px-3 py-1.5 text-[11px] font-bold text-current/80 transition hover:border-white/30 hover:text-current"
+                      >
+                        Fechar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <AnimatePresence mode="wait">
           {gameState === "idle" && (
-            <motion.div 
-              key="idle" 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
-              className="flex flex-col items-center justify-center p-12 text-center h-full cursor-pointer select-none"
+            <motion.div
+              key="idle"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex h-full cursor-pointer select-none flex-col items-center justify-center p-12 text-center"
               onClick={startGame}
             >
-              <motion.div 
+              <motion.div
                 animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.7, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 className="flex flex-col items-center gap-6"
               >
-                <div className="w-24 h-24 rounded-full border border-white/20 flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 bg-white/10 rounded-full animate-pulse blur-xl" />
-                  <Play size={40} className="text-white absolute" />
+                <div className="relative mb-4 flex h-24 w-24 items-center justify-center rounded-full border border-white/20">
+                  <div className="h-12 w-12 animate-pulse rounded-full bg-white/10 blur-xl" />
+                  <Play size={40} className="absolute text-white" />
                 </div>
-                <h2 className="text-3xl font-black text-white tracking-[8px] uppercase">
-                  Aperte uma tecla para começar
-                </h2>
-                <p className="text-cyan/60 text-xs font-bold tracking-[4px] uppercase">O Estúdio está pronto e te esperando</p>
+                <h2 className="text-3xl font-black uppercase tracking-[8px] text-white">Aperte uma tecla para comecar</h2>
+                <p className="text-xs font-bold uppercase tracking-[4px] text-cyan/60">O estudio esta pronto e te esperando</p>
               </motion.div>
             </motion.div>
           )}
 
           {gameState === "countdown" && (
-            <motion.div 
+            <motion.div
               key="countdown"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.5 }}
-              className="flex flex-col items-center justify-center p-12 text-center h-full"
+              className="flex h-full flex-col items-center justify-center p-12 text-center"
             >
               <motion.div
                 key={countdown}
@@ -465,16 +570,16 @@ function PlayPageContent() {
                 transition={{ type: "spring", damping: 12 }}
                 className="flex flex-col items-center"
               >
-                <span className="text-8xl md:text-9xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]">
-                   {countdown === 0 ? "VAI!" : countdown}
+                <span className="text-8xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] md:text-9xl">
+                  {countdown === 0 ? "VAI!" : countdown}
                 </span>
-                <p className="text-cyan text-xs font-bold tracking-[10px] uppercase mt-8 animate-pulse">Prepare-se</p>
+                <p className="mt-8 animate-pulse text-xs font-bold uppercase tracking-[10px] text-cyan">Prepare-se</p>
               </motion.div>
             </motion.div>
           )}
 
           {gameState === "playing" && (
-            <motion.div key="playing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col">
+            <motion.div key="playing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-1 flex-col">
               <PianoPlayer
                 notes={filteredNotes}
                 difficulty={difficulty}
@@ -485,7 +590,7 @@ function PlayPageContent() {
                 metronomeVolume={metronomeVolume}
                 onScoreUpdate={handleScoreUpdate}
                 onSongEnd={handleSongEnd}
-                onPlayTick={(v) => audio.playTick(v || metronomeVolume)}
+                onPlayTick={(value) => audio.playTick(value || metronomeVolume)}
                 isWaitingMode={isWaitingMode}
                 onPlayAccompaniment={handlePlayAccompaniment}
                 accompanimentNotes={accompanimentNotes}
@@ -497,10 +602,10 @@ function PlayPageContent() {
           )}
 
           {gameState === "ended" && (
-            <ScoreScreen 
-              score={finalScore.score} 
-              combo={finalScore.combo} 
-              accuracy={finalScore.accuracy} 
+            <ScoreScreen
+              score={finalScore.score}
+              combo={finalScore.combo}
+              accuracy={finalScore.accuracy}
               onRestart={() => {
                 setGameState("idle");
               }}
