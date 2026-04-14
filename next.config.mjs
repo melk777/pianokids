@@ -18,6 +18,10 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'wlqyvygbxzkuufeaixmi.supabase.co',
             },
+            {
+                protocol: 'https',
+                hostname: 'upload.wikimedia.org',
+            },
         ],
     },
     // Headers de seguranÃ§a (boa prÃ¡tica para produÃ§Ã£o)

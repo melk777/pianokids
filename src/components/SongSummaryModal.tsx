@@ -1,18 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Mic, 
-  MicOff, 
-  Hand, 
-  Play,
-  ArrowLeft
-} from "lucide-react";
+import { Mic, MicOff, Hand, Play, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { Song } from "@/lib/songs";
 import { useRouter } from "next/navigation";
 import { useSFX } from "@/hooks/useSFX";
+import { type Difficulty, DIFFICULTY_LABELS } from "@/lib/songFilters";
 
 interface SongSummaryModalProps {
   song: Song | null;
@@ -20,238 +15,213 @@ interface SongSummaryModalProps {
   onClose: () => void;
 }
 
+const difficultyCards: Array<{ id: Difficulty; label: string; tone: string }> = [
+  { id: "beginner", label: "Facil", tone: "emerald" },
+  { id: "medium", label: "Intermediario", tone: "amber" },
+  { id: "pro", label: "Dificil", tone: "rose" },
+];
+
 export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryModalProps) {
   const router = useRouter();
   const { playClick } = useSFX();
-  
-  // States based on logic from Image_2
+
   const [leftHand, setLeftHand] = useState(false);
-  const [rightHand, setRightHand] = useState(true); // Default one hand
+  const [rightHand, setRightHand] = useState(true);
   const [micEnabled, setMicEnabled] = useState(false);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("beginner");
 
-  // Difficulty Logic: 1 Hand = Fácil (Verde), 2 Hands = Difícil (Vermelho)
-  const activeHandsCount = (leftHand ? 1 : 0) + (rightHand ? 1 : 0);
-  const isHard = activeHandsCount === 2;
-  const difficultyLabel = isHard ? "DIFÍCIL" : "FÁCIL";
-
-
-  // Reset state when opening a new song
   useEffect(() => {
-    if (isOpen) {
-      setLeftHand(false);
-      setRightHand(true);
-      setMicEnabled(false);
-    }
+    if (!isOpen) return;
+    setLeftHand(false);
+    setRightHand(true);
+    setMicEnabled(false);
+    setSelectedDifficulty("beginner");
   }, [isOpen]);
+
+  const difficultyAccent = useMemo(() => {
+    if (selectedDifficulty === "pro") return "text-rose-300";
+    if (selectedDifficulty === "medium") return "text-amber-300";
+    return "text-emerald-300";
+  }, [selectedDifficulty]);
 
   if (!song) return null;
 
   const handleStart = () => {
     playClick();
-    // Navigate to play page with settings
     const params = new URLSearchParams();
     params.set("leftHand", leftHand.toString());
     params.set("rightHand", rightHand.toString());
     params.set("mic", micEnabled.toString());
-    
+    params.set("difficulty", selectedDifficulty);
     router.push(`/dashboard/play/${song.id}?${params.toString()}`);
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-8"
-        >
-          {/* Overlay Escuro com Estrelas (Inspirado no Game Engine) */}
-          <div 
-            className="absolute inset-0 bg-black/90 backdrop-blur-sm"
-            onClick={onClose}
-          >
-             {/* Starry Effect Background Overlay */}
-             <div className="absolute inset-0 opacity-40 pointer-events-none" 
-               style={{ 
-                 backgroundImage: `radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)), 
-                                   radial-gradient(1px 1px at 40px 70px, white, rgba(0,0,0,0)),
-                                   radial-gradient(2px 2px at 50px 160px, white, rgba(0,0,0,0)),
-                                   radial-gradient(2px 2px at 90px 40px, white, rgba(0,0,0,0)),
-                                   radial-gradient(1px 1px at 130px 80px, white, rgba(0,0,0,0))`,
-                 backgroundSize: '200px 200px'
-               }}
-             />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-8">
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={onClose}>
+            <div
+              className="pointer-events-none absolute inset-0 opacity-40"
+              style={{
+                backgroundImage:
+                  "radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)), radial-gradient(1px 1px at 40px 70px, white, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, white, rgba(0,0,0,0)), radial-gradient(2px 2px at 90px 40px, white, rgba(0,0,0,0)), radial-gradient(1px 1px at 130px 80px, white, rgba(0,0,0,0))",
+                backgroundSize: "200px 200px",
+              }}
+            />
           </div>
 
           <motion.div
             initial={{ scale: 0.9, y: 20, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.9, y: 20, opacity: 0 }}
-            className="relative w-full max-w-4xl flex flex-col md:flex-row gap-6 items-center"
-            onClick={(e) => e.stopPropagation()}
+            className="relative flex w-full max-w-5xl flex-col items-center gap-6 md:flex-row"
+            onClick={(event) => event.stopPropagation()}
           >
-            {/* ── BOTÃO VOLTAR (Canto Superior Esquerdo) ── */}
-            <button 
-              onClick={onClose}
-              className="absolute -top-12 left-0 md:top-0 md:-left-16 text-white/40 hover:text-white transition-colors"
-            >
+            <button onClick={onClose} className="absolute left-0 -top-12 text-white/40 transition-colors hover:text-white md:-left-16 md:top-0">
               <ArrowLeft size={32} />
             </button>
 
-            {/* ── SEÇÃO ESQUERDA: MEDALHÃO (Image_2 Style) ── */}
-            <div className="relative group perspective-1000">
-               {/* Moldura Ornamentada (CSS Rings) */}
-               <div className="absolute -inset-4 border border-white/5 rounded-full animate-pulse-slow" />
-               <div className="absolute -inset-8 border border-white/5 rounded-full opacity-50" />
-               
-               <div className="relative w-48 h-48 md:w-72 md:h-72 rounded-full overflow-hidden border-8 border-zinc-800 shadow-[0_0_50px_rgba(0,0,0,1)] ring-2 ring-white/10 group-hover:scale-[1.02] transition-transform duration-500">
-                  <Image 
-                    src={song.coverUrl || "/images/covers/default.png"} 
-                    alt={song.title}
-                    fill
-                    className="object-cover brightness-75 group-hover:brightness-100 transition-all duration-700"
-                  />
-                  {/* Overlay Gradiente Pós-Capa */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-               </div>
+            <div className="group perspective-1000 relative">
+              <div className="animate-pulse-slow absolute -inset-4 rounded-full border border-white/5" />
+              <div className="absolute -inset-8 rounded-full border border-white/5 opacity-50" />
 
-               {/* Ornamentos Laterais (Símbolo de Estrelas / Pontos) */}
-               <div className="absolute -right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
-                 {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/20" />)}
-               </div>
+              <div className="relative h-48 w-48 overflow-hidden rounded-full border-8 border-zinc-800 shadow-[0_0_50px_rgba(0,0,0,1)] ring-2 ring-white/10 transition-transform duration-500 group-hover:scale-[1.02] md:h-72 md:w-72">
+                <Image
+                  src={song.coverUrl || "/images/covers/default.png"}
+                  alt={song.title}
+                  fill
+                  className="object-cover brightness-75 transition-all duration-700 group-hover:brightness-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              </div>
             </div>
 
-            {/* ── SEÇÃO DIREITA: PAINEL DE INFORMAÇÕES (Image_2 Style) ── */}
-            <div className="flex-1 w-full bg-zinc-900/60 backdrop-blur-2xl border border-white/10 rounded-[32px] p-6 md:p-8 shadow-2xl flex flex-col gap-6">
-              
-              {/* Título e Compositor */}
+            <div className="flex w-full flex-1 flex-col gap-6 rounded-[32px] border border-white/10 bg-zinc-900/60 p-6 shadow-2xl backdrop-blur-2xl md:p-8">
               <div className="space-y-2">
-                <span className="text-xs font-bold text-cyan/60 tracking-widest uppercase mb-2 block">{song.category}</span>
-                <h2 className="text-3xl md:text-4xl font-black text-[#FDFCF0] drop-shadow-lg">{song.title}</h2>
-                <p className="text-lg text-white/40 font-medium">{song.artist}</p>
+                <span className="block text-xs font-bold uppercase tracking-widest text-cyan/60">{song.category}</span>
+                <h2 className="text-3xl font-black text-[#FDFCF0] md:text-4xl">{song.title}</h2>
+                <p className="text-lg font-medium text-white/40">{song.artist}</p>
               </div>
 
-              {/* Seleção de Mãos de Prática */}
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white/30 uppercase tracking-[4px]">Selecionar mãos de prática</h3>
-                  
-                  {/* Barra de Dificuldade Dinâmica */}
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-4">
+                  <h3 className="text-sm font-bold uppercase tracking-[4px] text-white/30">Nivel e modo de pratica</h3>
                   <div className="flex items-center gap-3">
-                    <span className={`text-[10px] font-black tracking-widest ${isHard ? 'text-red-400' : 'text-emerald-400'}`}>
-                      NÍVEL {difficultyLabel}
-                    </span>
-                    <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <motion.div 
-                        animate={{ 
-                          width: isHard ? '100%' : '50%',
-                          backgroundColor: isHard ? '#EF4444' : '#10B981'
+                    <span className={`text-[10px] font-black tracking-widest ${difficultyAccent}`}>NIVEL {DIFFICULTY_LABELS[selectedDifficulty].toUpperCase()}</span>
+                    <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/5">
+                      <motion.div
+                        animate={{
+                          width: selectedDifficulty === "pro" ? "100%" : selectedDifficulty === "medium" ? "66%" : "33%",
+                          backgroundColor: selectedDifficulty === "pro" ? "#FB7185" : selectedDifficulty === "medium" ? "#F59E0B" : "#10B981",
                         }}
-                        className="h-full rounded-full" 
-                        style={{ boxShadow: isHard ? '0 0 10px rgba(239,68,68,0.5)' : '0 0 10px rgba(16,185,129,0.5)' }}
+                        className="h-full rounded-full"
                       />
                     </div>
                   </div>
                 </div>
 
+                <div className="grid grid-cols-3 gap-3">
+                  {difficultyCards.map((level) => {
+                    const isActive = selectedDifficulty === level.id;
+                    return (
+                      <button
+                        key={level.id}
+                        onClick={() => {
+                          playClick();
+                          setSelectedDifficulty(level.id);
+                        }}
+                        className={`rounded-2xl border px-3 py-3 text-center transition-all ${
+                          isActive
+                            ? level.tone === "emerald"
+                              ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-300"
+                              : level.tone === "amber"
+                              ? "border-amber-400/40 bg-amber-400/15 text-amber-200"
+                              : "border-rose-400/40 bg-rose-400/15 text-rose-200"
+                            : "border-white/8 bg-white/[0.03] text-white/40 hover:border-white/15 hover:text-white/70"
+                        }`}
+                      >
+                        <span className="block text-[11px] font-black uppercase tracking-[0.22em]">{level.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <div className="flex gap-4">
-                  {/* Botão Mão Esquerda (Opcional) */}
-                  <button 
-                    onClick={() => { playClick(); setLeftHand(!leftHand); }}
-                    className={`flex-1 h-24 rounded-2xl border-2 flex flex-col items-center justify-center gap-2 transition-all duration-300 relative group ${
-                      leftHand 
-                        ? "bg-zinc-100 border-white shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10" 
-                        : "bg-white/5 border-white/5 text-white/20 hover:bg-white/10"
+                  <button
+                    onClick={() => {
+                      playClick();
+                      setLeftHand(!leftHand);
+                    }}
+                    className={`relative flex-1 rounded-2xl border-2 transition-all duration-300 ${
+                      leftHand
+                        ? "border-white bg-zinc-100 text-zinc-900 shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10"
+                        : "border-white/5 bg-white/5 text-white/20 hover:bg-white/10"
                     }`}
                   >
-                    <Hand 
-                      size={28} 
-                      className={`transition-all duration-500 transform -scale-x-100 ${leftHand ? "text-zinc-900 scale-110 drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)]" : "text-white/20"}`} 
-                    />
-                    <span className={`text-[9px] font-black tracking-widest uppercase ${leftHand ? "text-zinc-900" : "text-white/20"}`}>Mão Esquerda</span>
-                    
-                    {/* Status Dot */}
-                    <div className={`absolute top-3 right-3 w-1.5 h-1.5 rounded-full transition-all duration-500 ${leftHand ? "bg-emerald-500 shadow-[0_0_8px_#10B981]" : "bg-white/5"}`} />
+                    <div className="flex h-24 flex-col items-center justify-center gap-2">
+                      <Hand size={28} className={`-scale-x-100 transition-all duration-500 ${leftHand ? "scale-110 text-zinc-900" : "text-white/20"}`} />
+                      <span className={`text-[9px] font-black uppercase tracking-widest ${leftHand ? "text-zinc-900" : "text-white/20"}`}>Mao Esquerda</span>
+                    </div>
                   </button>
 
-                  {/* Painel Mão Direita (Obrigatória) */}
-                  <div 
-                    className="flex-1 h-24 rounded-2xl border-2 bg-zinc-100 border-white shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10 flex flex-col items-center justify-center gap-2 relative transition-all duration-300"
-                  >
-                    <Hand 
-                      size={28} 
-                      className="text-zinc-900 scale-110 drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)]" 
-                    />
-                    <div className="flex flex-col items-center">
-                      <span className="text-[9px] font-black tracking-widest uppercase text-zinc-900">Mão Direita</span>
-                      <span className="text-[7px] font-bold text-zinc-900/40 uppercase">Obrigatória</span>
+                  <div className="relative flex-1 rounded-2xl border-2 border-white bg-zinc-100 text-zinc-900 shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10">
+                    <div className="flex h-24 flex-col items-center justify-center gap-2">
+                      <Hand size={28} className="scale-110 text-zinc-900" />
+                      <div className="flex flex-col items-center">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-900">Mao Direita</span>
+                        <span className="text-[7px] font-bold uppercase text-zinc-900/40">Obrigatoria</span>
+                      </div>
                     </div>
-                    
-                    {/* Active Dot */}
-                    <div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981]" />
                   </div>
                 </div>
               </div>
 
-              {/* Ativação do Microfone */}
-              <div className="flex items-center justify-between p-6 bg-white/[0.03] border border-white/5 rounded-3xl group hover:bg-white/[0.05] transition-all cursor-pointer"
-                onClick={() => { playClick(); setMicEnabled(!micEnabled); }}
+              <div
+                className="group flex cursor-pointer items-center justify-between rounded-3xl border border-white/5 bg-white/[0.03] p-6 transition-all hover:bg-white/[0.05]"
+                onClick={() => {
+                  playClick();
+                  setMicEnabled(!micEnabled);
+                }}
               >
                 <div className="flex items-center gap-6">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${
-                    micEnabled ? "bg-cyan shadow-[0_0_20px_rgba(0,234,255,0.4)] text-black" : "bg-white/5 text-white/20"
-                  }`}>
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-500 ${micEnabled ? "bg-cyan text-black shadow-[0_0_20px_rgba(0,234,255,0.4)]" : "bg-white/5 text-white/20"}`}>
                     {micEnabled ? <Mic size={24} /> : <MicOff size={24} />}
                   </div>
                   <div>
-                    <h4 className="text-white font-bold">Modo Reconhecimento</h4>
+                    <h4 className="font-bold text-white">Modo Reconhecimento</h4>
                     <p className="text-sm text-white/30">Usar microfone para validar notas</p>
                   </div>
                 </div>
-                
-                {/* Custom Toggle Switch */}
-                <div className={`w-12 h-6 rounded-full transition-all duration-300 relative p-1 ${micEnabled ? "bg-cyan" : "bg-red-500/20"}`}>
-                  <motion.div 
-                    animate={{ x: micEnabled ? 24 : 0 }}
-                    className={`w-4 h-4 rounded-full shadow-lg ${micEnabled ? "bg-white" : "bg-red-500"}`} 
-                  />
+
+                <div className={`relative h-6 w-12 rounded-full p-1 transition-all duration-300 ${micEnabled ? "bg-cyan" : "bg-red-500/20"}`}>
+                  <motion.div animate={{ x: micEnabled ? 24 : 0 }} className={`h-4 w-4 rounded-full shadow-lg ${micEnabled ? "bg-white" : "bg-red-500"}`} />
                 </div>
               </div>
 
-              {/* Botão Começar o Jogo (Image_2 Gradient Style) */}
               <button
                 onClick={handleStart}
                 disabled={!micEnabled}
-                className={`group relative w-full h-16 rounded-full overflow-hidden transition-all duration-500 mt-2 ${
-                  micEnabled 
-                    ? "hover:scale-[1.02] active:scale-[0.98] shadow-[0_20px_40px_-10px_rgba(239,68,68,0.4)] opacity-100" 
-                    : "opacity-40 cursor-not-allowed filter grayscale-[0.5]"
+                className={`group relative mt-2 h-16 w-full overflow-hidden rounded-full transition-all duration-500 ${
+                  micEnabled ? "opacity-100 shadow-[0_20px_40px_-10px_rgba(239,68,68,0.4)] hover:scale-[1.02] active:scale-[0.98]" : "cursor-not-allowed opacity-40 grayscale-[0.5]"
                 }`}
               >
-                {/* Animated Background Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-r from-[#F97316] via-[#EF4444] to-[#F97316] bg-[length:200%_100%] ${micEnabled ? "animate-gradient-slow" : ""}`} />
-                
-                <div className="relative h-full flex items-center justify-between px-8">
-                  <span className="text-lg font-black uppercase text-white tracking-[2px]">
-                    {micEnabled ? "Começar o Jogo" : "Ative o Microfone"}
-                  </span>
-                  
-                  <div className={`w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 transition-all ${micEnabled ? "group-hover:bg-white/40" : ""}`}>
-                    {micEnabled ? (
-                      <Play size={20} fill="currentColor" className="ml-1 text-white" />
-                    ) : (
-                      <MicOff size={20} className="text-white/60" />
-                    )}
+                <div className={`absolute inset-0 bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 bg-[length:200%_100%] ${micEnabled ? "animate-gradient-slow" : ""}`} />
+
+                <div className="relative flex h-full items-center justify-between px-8">
+                  <span className="text-lg font-black uppercase tracking-[2px] text-white">{micEnabled ? "Comecar o Jogo" : "Ative o Microfone"}</span>
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-md transition-all ${micEnabled ? "group-hover:bg-white/40" : ""}`}>
+                    {micEnabled ? <Play size={20} fill="currentColor" className="ml-1 text-white" /> : <MicOff size={20} className="text-white/60" />}
                   </div>
                 </div>
               </button>
 
-              {/* Footer text based on Image_2 UI hints */}
-              <div className="flex justify-center gap-8 text-[10px] font-black text-white/10 uppercase tracking-widest">
+              <div className="flex justify-center gap-8 text-[10px] font-black uppercase tracking-widest text-white/10">
                 <span>MIDI SUPPORT: ON</span>
                 <span>BPM: {song.bpm}</span>
-                <span>ESTIMATED: {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, '0')}</span>
+                <span>
+                  ESTIMATED: {Math.floor(song.duration / 60)}:{(song.duration % 60).toString().padStart(2, "0")}
+                </span>
               </div>
             </div>
           </motion.div>

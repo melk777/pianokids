@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { songs } from "@/lib/songs";
 import { useState, useEffect, useMemo } from "react";
 import { User } from "@supabase/supabase-js";
 import {
@@ -25,6 +24,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { createClientComponent } from "@/lib/supabase";
+import { loadSongs } from "@/lib/songCatalog";
 const TeacherDashboard = dynamic(() => import("@/components/TeacherDashboard"), {
   loading: () => null,
 });
@@ -41,7 +41,13 @@ export default function Dashboard() {
   const isSubscribed = isPro; // No Dashboard, 'isSubscribed' agora significa ter acesso PRO (pago)
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { isSupported, isListening, start: startMic, error: audioError, activeAudioNote } = useAudioInput();
+  const [songCount, setSongCount] = useState(0);
+  const { isSupported, isListening, start: startMic, error: audioError, activeAudioNote, activeAudioNotes } = useAudioInput();
+  const detectedNoteNames = activeAudioNotes.length > 0
+    ? activeAudioNotes.map((note) => note.name)
+    : activeAudioNote
+    ? [activeAudioNote.name]
+    : [];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -53,6 +59,17 @@ export default function Dashboard() {
     };
     checkAuth();
   }, [supabase]);
+
+  useEffect(() => {
+    let mounted = true;
+    loadSongs().then((catalog) => {
+      if (!mounted) return;
+      setSongCount(catalog.length);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Ativação automática do microfone
   useEffect(() => {
@@ -220,10 +237,10 @@ export default function Dashboard() {
                         )}
 
                         {/* Audio Note Feedback */}
-                        {isListening && activeAudioNote && (
+                        {isListening && detectedNoteNames.length > 0 && (
                           <div className="mt-2 flex items-center gap-2">
                              <div className="text-xs px-2 py-0.5 rounded bg-cyan/10 border border-cyan/20 text-white font-bold animate-pulse">
-                               Capturando: <span className="text-gradient font-black">{activeAudioNote.name}</span>
+                               Capturando: <span className="text-gradient font-black">{detectedNoteNames.join(" + ")}</span>
                              </div>
                           </div>
                         )}
@@ -567,7 +584,7 @@ export default function Dashboard() {
                       Músicas Concluídas
                     </span>
                     <span className="text-sm font-medium text-white">
-                      {profile?.songs_completed || 0} / {songs.length}
+                      {profile?.songs_completed || 0} / {songCount || "..."}
                     </span>
                   </div>
                 </div>
