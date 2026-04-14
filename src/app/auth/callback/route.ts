@@ -3,14 +3,25 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getURL } from "@/lib/utils/url";
 
+function getSafeRedirectPath(nextParam: string | null): string {
+  if (!nextParam || !nextParam.startsWith("/")) {
+    return "/dashboard";
+  }
+
+  if (nextParam.startsWith("//") || /[\r\n]/.test(nextParam)) {
+    return "/dashboard";
+  }
+
+  return nextParam;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  // if "next" is in search params, use it as the redirect URL
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = getSafeRedirectPath(searchParams.get("next"));
 
   if (code) {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -34,6 +45,5 @@ export async function GET(request: Request) {
     }
   }
 
-  // return the user to an error page with instructions
   return NextResponse.redirect(`${getURL()}/auth/auth-code-error`);
 }

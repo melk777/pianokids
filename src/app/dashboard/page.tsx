@@ -1,9 +1,10 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { songs } from "@/lib/songs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { User } from "@supabase/supabase-js";
 import {
   Play,
@@ -24,13 +25,16 @@ import { useProfile } from "@/hooks/useProfile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { createClientComponent } from "@/lib/supabase";
-
-import TeacherDashboard from "@/components/TeacherDashboard";
-import AdminDashboard from "@/components/AdminDashboard";
+const TeacherDashboard = dynamic(() => import("@/components/TeacherDashboard"), {
+  loading: () => null,
+});
+const AdminDashboard = dynamic(() => import("@/components/AdminDashboard"), {
+  loading: () => null,
+});
 
 export default function Dashboard() {
   const router = useRouter();
-  const supabase = createClientComponent();
+  const supabase = useMemo(() => createClientComponent(), []);
   const { playClick } = useSFX();
   const { profile, loading: profileLoading } = useProfile();
   const { status, currentPeriodEnd, isPro, loading: subscriptionLoading, planType } = useSubscription();

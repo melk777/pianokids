@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -24,40 +24,48 @@ export async function POST(req: NextRequest) {
     const userId = user?.id;
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "Não autenticado." },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Nao autenticado." }, { status: 401 });
     }
 
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("stripe_customer_id")
+      .eq("id", userId)
+      .maybeSingle();
+
     const stripe = getStripe();
+    let customerId = profile?.stripe_customer_id || undefined;
 
-    // Buscar customer pelas subscriptions ativas (via checkout sessions)
-    // Listamos sessions recentes e encontramos a que pertence ao userId
-    const sessions = await stripe.checkout.sessions.list({ limit: 100 });
+    if (!customerId) {
+      const sessions = await stripe.checkout.sessions.list({ limit: 100 });
 
-    let customerId: string | undefined;
-
-    for (const session of sessions.data) {
-      if (
-        session.client_reference_id === userId ||
-        session.metadata?.userId === userId
-      ) {
-        if (session.customer) {
-          customerId =
-            typeof session.customer === "string"
-              ? session.customer
-              : session.customer.id;
+      for (const session of sessions.data) {
+        if (
+          session.client_reference_id === userId ||
+          session.metadata?.userId === userId
+        ) {
+          if (session.customer) {
+            customerId =
+              typeof session.customer === "string"
+                ? session.customer
+                : session.customer.id;
+          }
+          break;
         }
-        break;
+      }
+
+      if (customerId) {
+        await supabase
+          .from("profiles")
+          .update({ stripe_customer_id: customerId })
+          .eq("id", userId);
       }
     }
 
     if (!customerId) {
       return NextResponse.json(
         {
-          error:
-            "Nenhuma assinatura encontrada. Assine um plano antes de gerenciar.",
+          error: "Nenhuma assinatura encontrada. Assine um plano antes de gerenciar.",
         },
         { status: 404 }
       );

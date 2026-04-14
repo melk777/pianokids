@@ -16,7 +16,6 @@ import {
 import { useRouter } from "next/navigation";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
-import Header from "@/components/Header";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
@@ -89,8 +88,6 @@ export default function SubscriptionPage() {
 
   return (
     <>
-      <Header />
-      
       <main className="min-h-screen bg-black text-white pt-28 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Back Button */}

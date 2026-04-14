@@ -1,8 +1,8 @@
 "use client";
 
-import useSound from "use-sound";
+import { useEffect, useRef } from "react";
 
-type PlayFunction = (options?: unknown) => void;
+type PlayFunction = () => void;
 
 interface SFXHook {
   playClick: PlayFunction;
@@ -11,17 +11,47 @@ interface SFXHook {
   playError: PlayFunction;
 }
 
+const AUDIO_SRC = "/audio/sweep-click.mp3";
+let sharedAudio: HTMLAudioElement | null = null;
+
+function getSharedAudio() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  if (!sharedAudio) {
+    sharedAudio = new Audio(AUDIO_SRC);
+    sharedAudio.preload = "auto";
+  }
+
+  return sharedAudio;
+}
+
 export const useSFX = (): SFXHook => {
-  const [playClick] = useSound("/audio/sweep-click.mp3", { volume: 0.5 });
-  
-  const [playSuccess] = useSound("/audio/sweep-click.mp3", { volume: 0.5 });
-  const [playMessage] = useSound("/audio/sweep-click.mp3", { volume: 0.4 });
-  const [playError] = useSound("/audio/sweep-click.mp3", { volume: 0.5 });
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = getSharedAudio();
+  }, []);
+
+  const play = () => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+
+    try {
+      audio.currentTime = 0;
+      void audio.play();
+    } catch {
+      // Ignore autoplay and transient audio errors for UI sound effects.
+    }
+  };
 
   return {
-    playClick: playClick as PlayFunction,
-    playSuccess: playSuccess as PlayFunction,
-    playMessage: playMessage as PlayFunction,
-    playError: playError as PlayFunction,
+    playClick: play,
+    playSuccess: play,
+    playMessage: play,
+    playError: play,
   };
 };

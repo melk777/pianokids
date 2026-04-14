@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Header from "@/components/Header";
 import { songs } from "@/lib/songs";
 import SongLibrary from "@/components/SongLibrary";
 import { Loader2 } from "lucide-react";
@@ -13,8 +12,6 @@ export default function SongsPage() {
 
   return (
     <main className="min-h-screen bg-[#0A0A0A]">
-      <Header />
-
       <div className="pt-28 pb-32 px-4 md:px-8 max-w-[1400px] mx-auto overflow-hidden">
         {/* Header Hero */}
         <motion.div

@@ -239,6 +239,17 @@ export default function AdminDashboard() {
     setIsUploading(true);
 
     try {
+      const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+      const maxFileSize = 5 * 1024 * 1024;
+
+      if (!allowedTypes.has(uploadFile.type)) {
+        throw new Error("Formato de comprovante nao suportado.");
+      }
+
+      if (uploadFile.size > maxFileSize) {
+        throw new Error("O comprovante deve ter no maximo 5 MB.");
+      }
+
       const fileExt = uploadFile.name.split('.').pop();
       const fileName = `${selectedWithdrawal.id}_${Date.now()}.${fileExt}`;
       const { error: uploadError } = await supabase.storage
@@ -268,9 +279,9 @@ export default function AdminDashboard() {
       } else {
         throw new Error("Falha na API");
       }
-    } catch {
+    } catch (error) {
       playError();
-      alert("Erro ao processar o comprovante. Tente novamente.");
+      alert(error instanceof Error ? error.message : "Erro ao processar o comprovante. Tente novamente.");
     } finally {
       setIsUploading(false);
     }

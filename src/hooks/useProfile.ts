@@ -2,11 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClientComponent } from "@/lib/supabase";
-
 import { Profile } from "@/lib/types";
+
 export type { Profile };
-
-
 
 export function useProfile() {
   const supabase = createClientComponent();
@@ -18,7 +16,7 @@ export function useProfile() {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         setProfile(null);
         setLoading(false);
@@ -33,7 +31,6 @@ export function useProfile() {
 
       if (fetchError) {
         if (fetchError.code === "PGRST116") {
-          // Profile doesn't exist? Create it (failsafe for all users)
           const newProfile = {
             id: user.id,
             full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Aluno",
@@ -46,8 +43,10 @@ export function useProfile() {
             .insert(newProfile)
             .select()
             .single();
-          
-          if (insertError) throw insertError;
+
+          if (insertError) {
+            throw insertError;
+          }
           setProfile(inserted);
         } else {
           throw fetchError;
@@ -67,18 +66,15 @@ export function useProfile() {
   const updateProfile = async (updates: Partial<Profile>) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Usuário não autenticado");
+      if (!user) throw new Error("Usuario nao autenticado");
 
-      // Verificação de alteração de username (Regra de 1 alteração)
       if (updates.username && updates.username !== profile?.username) {
         if ((profile?.username_changes_count || 0) >= 1) {
-          throw new Error("Você já alterou seu nome de usuário uma vez e não pode alterá-lo novamente.");
+          throw new Error("Voce ja alterou seu nome de usuario uma vez e nao pode altera-lo novamente.");
         }
-        // Se está alterando pela primeira vez, marcamos o contador
         updates.username_changes_count = 1;
       }
 
-      // Clean up updates to avoid sending extra fields
       const cleanUpdates = { ...updates };
       delete cleanUpdates.id;
       delete cleanUpdates.updated_at;
@@ -95,12 +91,11 @@ export function useProfile() {
 
       if (updateError) {
         if (updateError.code === "23505") {
-          throw new Error("Este nome de usuário já está sendo usado por outro aluno.");
+          throw new Error("Este nome de usuario ja esta sendo usado por outro aluno.");
         }
         throw updateError;
       }
-      
-      // Update local state with fresh copy
+
       setProfile({ ...data });
       return { success: true };
     } catch (err: unknown) {
@@ -113,22 +108,33 @@ export function useProfile() {
   const uploadAvatar = async (file: File) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Usuário não autenticado");
+      if (!user) throw new Error("Usuario nao autenticado");
 
-      const fileExt = file.name.split('.').pop();
+      const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+      const maxFileSize = 2 * 1024 * 1024;
+
+      if (!allowedTypes.has(file.type)) {
+        throw new Error("Envie uma imagem JPG, PNG ou WEBP.");
+      }
+
+      if (file.size > maxFileSize) {
+        throw new Error("A imagem deve ter no maximo 2 MB.");
+      }
+
+      const fileExt = file.name.split(".").pop();
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, file, { 
-          cacheControl: '3600', 
-          upsert: true 
+        .from("avatars")
+        .upload(fileName, file, {
+          cacheControl: "3600",
+          upsert: true,
         });
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
+        .from("avatars")
         .getPublicUrl(fileName);
 
       const res = await updateProfile({ avatar_url: publicUrl });
@@ -144,9 +150,9 @@ export function useProfile() {
 
   const recordPracticeSession = async (seconds: number, accuracy: number, completed: boolean) => {
     if (!profile) return;
-    
-    const newAccuracy = profile.songs_played === 0 
-      ? accuracy 
+
+    const newAccuracy = profile.songs_played === 0
+      ? accuracy
       : (profile.average_accuracy * profile.songs_played + accuracy) / (profile.songs_played + 1);
 
     const updates: Partial<Profile> = {
@@ -156,7 +162,7 @@ export function useProfile() {
       songs_completed: completed ? profile.songs_completed + 1 : profile.songs_completed,
     };
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     if (profile.last_practice_date !== today) {
       updates.streak_days = (profile.streak_days || 0) + 1;
       updates.last_practice_date = today;
@@ -172,7 +178,7 @@ export function useProfile() {
         .select("*")
         .eq("username", username)
         .single();
-      
+
       if (error) throw error;
       return { success: true, data: data as Profile };
     } catch (err: unknown) {
@@ -193,6 +199,6 @@ export function useProfile() {
     updateProfile,
     uploadAvatar,
     recordPracticeSession,
-    getPublicProfile
+    getPublicProfile,
   };
 }

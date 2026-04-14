@@ -1,6 +1,13 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Permissões de imagens
+    outputFileTracingRoot: __dirname,
+    // PermissÃµes de imagens
     images: {
         remotePatterns: [
             {
@@ -13,7 +20,7 @@ const nextConfig = {
             },
         ],
     },
-    // Headers de segurança (boa prática para produção)
+    // Headers de seguranÃ§a (boa prÃ¡tica para produÃ§Ã£o)
     async headers() {
         return [
             {
@@ -25,7 +32,7 @@ const nextConfig = {
                 ],
             },
             {
-                // Webhook do Stripe não deve ter cache
+                // Webhook do Stripe nÃ£o deve ter cache
                 source: "/api/stripe/webhook",
                 headers: [
                     { key: "Cache-Control", value: "no-store" },
@@ -34,7 +41,7 @@ const nextConfig = {
         ];
     },
 
-    // Redireciona /dashboard para login se não autenticado
+    // Redireciona /dashboard para login se nÃ£o autenticado
     async redirects() {
         return [];
     },

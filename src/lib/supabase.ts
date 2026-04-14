@@ -1,20 +1,46 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createBrowserClient } from "@supabase/ssr";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const FALLBACK_SUPABASE_URL = "http://127.0.0.1:54321";
+const FALLBACK_SUPABASE_ANON_KEY = "public-anon-key";
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    "⚠️ Supabase environment variables are missing. Check your Project Settings."
+function getSupabaseEnv({ allowFallbackOnServer = false }: { allowFallbackOnServer?: boolean } = {}) {
+  if (supabaseUrl && supabaseAnonKey) {
+    return {
+      supabaseUrl,
+      supabaseAnonKey,
+    };
+  }
+
+  if (allowFallbackOnServer && typeof window === "undefined") {
+    return {
+      supabaseUrl: FALLBACK_SUPABASE_URL,
+      supabaseAnonKey: FALLBACK_SUPABASE_ANON_KEY,
+    };
+  }
+
+  throw new Error(
+    "Supabase environment variables are missing. Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
   );
 }
 
-export const supabase = (supabaseUrl && supabaseAnonKey)
-  ? (typeof window !== "undefined" 
-    ? createBrowserClient(supabaseUrl!, supabaseAnonKey!) 
-    : createClient(supabaseUrl!, supabaseAnonKey!))
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  : ({} as any);
+let browserClient: SupabaseClient | null = null;
 
-export const createClientComponent = () => createBrowserClient(supabaseUrl || "", supabaseAnonKey || "");
+export const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? (typeof window !== "undefined"
+      ? createBrowserClient(supabaseUrl, supabaseAnonKey)
+      : createClient(supabaseUrl, supabaseAnonKey))
+    : null;
+
+export const createClientComponent = () => {
+  if (browserClient) {
+    return browserClient;
+  }
+
+  const env = getSupabaseEnv({ allowFallbackOnServer: true });
+  browserClient = createBrowserClient(env.supabaseUrl, env.supabaseAnonKey);
+  return browserClient;
+};

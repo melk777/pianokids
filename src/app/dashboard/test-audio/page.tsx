@@ -1,14 +1,11 @@
 "use client";
 
 import AudioEngine from "@/components/AudioEngine";
-import Header from "@/components/Header";
 import { motion } from "framer-motion";
 
 export default function TestAudioPage() {
   return (
     <main className="min-h-screen bg-black">
-      <Header />
-      
       <section className="pt-32 pb-20 px-6 max-w-5xl mx-auto flex flex-col items-center">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
