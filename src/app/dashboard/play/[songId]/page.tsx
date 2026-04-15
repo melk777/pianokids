@@ -15,9 +15,11 @@ import type { Song, SongNote } from "@/lib/types";
 import { loadSongById } from "@/lib/songCatalog";
 import {
   type Difficulty,
+  filterNotesByHandSelection,
   filterNotesByDifficulty,
   getAccompanimentNotes,
   getSongNotesForDifficulty,
+  type HandSelection,
 } from "@/lib/songFilters";
 import { Volume2, Mic, MicOff, Play, Pause, RotateCcw, CircleHelp } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -148,6 +150,17 @@ function PlayPageContent() {
   }, []);
 
   useKeyboardInput();
+
+  const handSelection = useMemo<HandSelection>(() => {
+    const includeLeftHand = searchParams.get("leftHand") === "true";
+    const rightHandParam = searchParams.get("rightHand");
+    const includeRightHand = rightHandParam === null ? true : rightHandParam === "true";
+
+    return {
+      includeLeftHand,
+      includeRightHand,
+    };
+  }, [searchParams]);
 
   const activeNotes = useMemo(() => {
     const merged = new Map<number, PianoNoteRecord>();
@@ -327,8 +340,8 @@ function PlayPageContent() {
   );
 
   useEffect(() => {
-    const leftHand = searchParams.get("leftHand") === "true";
-    const rightHand = searchParams.get("rightHand") === "true";
+    const leftHand = handSelection.includeLeftHand;
+    const rightHand = handSelection.includeRightHand;
     const mic = searchParams.get("mic") === "true";
     const queryDifficulty = searchParams.get("difficulty");
 
@@ -341,7 +354,7 @@ function PlayPageContent() {
       }
       if (mic) startMic();
     }
-  }, [searchParams, startMic]);
+  }, [handSelection, searchParams, startMic]);
 
   useEffect(() => {
     if (gameState !== "idle") return;
@@ -363,30 +376,42 @@ function PlayPageContent() {
   const filteredNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
 
-    const leftHand = searchParams.get("leftHand") === "true";
-    const rightHand = searchParams.get("rightHand") === "true";
-    const isBothHands = leftHand && rightHand;
+    const isBothHands = handSelection.includeLeftHand && handSelection.includeRightHand;
 
-    const arrangementNotes = getSongNotesForDifficulty(song, difficulty, { preferOneHand: !isBothHands });
+    const arrangementNotes = getSongNotesForDifficulty(song, difficulty, {
+      preferOneHand: !isBothHands,
+      handSelection,
+    });
     if (arrangementNotes.length > 0) return arrangementNotes;
 
-    return filterNotesByDifficulty(song.notes, difficulty);
-  }, [song, difficulty, searchParams]);
+    return filterNotesByHandSelection(filterNotesByDifficulty(song.notes, difficulty), handSelection);
+  }, [song, difficulty, handSelection]);
 
   const accompanimentNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
 
-    const leftHand = searchParams.get("leftHand") === "true";
-    const rightHand = searchParams.get("rightHand") === "true";
-    const isBothHands = leftHand && rightHand;
+    const isBothHands = handSelection.includeLeftHand && handSelection.includeRightHand;
 
-    const arrangementNotes = getSongNotesForDifficulty(song, difficulty, { preferOneHand: !isBothHands });
+    const arrangementNotes = getSongNotesForDifficulty(song, difficulty, {
+      preferOneHand: !isBothHands,
+      handSelection: { includeLeftHand: true, includeRightHand: true },
+    });
     if (arrangementNotes.length > 0) {
+      if (!isBothHands && handSelection.includeRightHand) {
+        const leftHandBacking = filterNotesByHandSelection(arrangementNotes, {
+          includeLeftHand: true,
+          includeRightHand: false,
+        });
+        if (leftHandBacking.length > 0) {
+          return leftHandBacking;
+        }
+      }
+
       return getAccompanimentNotes(arrangementNotes, difficulty);
     }
 
     return getAccompanimentNotes(song.notes, difficulty);
-  }, [song, difficulty, searchParams]);
+  }, [song, difficulty, handSelection]);
 
   if (songLoading || subLoading) {
     return (

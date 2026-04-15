@@ -21,18 +21,29 @@ const difficultyCards: Array<{ id: Difficulty; label: string; tone: string }> = 
   { id: "pro", label: "Dificil", tone: "rose" },
 ];
 
+type PracticeHandMode = "right" | "both";
+
+const practiceModeCards: Array<{
+  id: PracticeHandMode;
+  label: string;
+  description: string;
+  iconClassName?: string;
+}> = [
+  { id: "right", label: "Mao direita", description: "Treino focado para iniciar com clareza." },
+  { id: "both", label: "Duas maos", description: "Versao completa da musica no teclado." },
+];
+
 export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryModalProps) {
   const router = useRouter();
   const { playClick } = useSFX();
 
-  const [leftHand, setLeftHand] = useState(false);
-  const [rightHand] = useState(true);
+  const [practiceHandMode, setPracticeHandMode] = useState<PracticeHandMode>("right");
   const [micEnabled, setMicEnabled] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("beginner");
 
   useEffect(() => {
     if (!isOpen) return;
-    setLeftHand(false);
+    setPracticeHandMode("right");
     setMicEnabled(false);
     setSelectedDifficulty("beginner");
   }, [isOpen]);
@@ -50,8 +61,8 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
   const handleStart = () => {
     playClick();
     const params = new URLSearchParams();
-    params.set("leftHand", leftHand.toString());
-    params.set("rightHand", rightHand.toString());
+    params.set("leftHand", String(practiceHandMode === "both"));
+    params.set("rightHand", "true");
     params.set("mic", micEnabled.toString());
     params.set("difficulty", selectedDifficulty);
     router.push(`/dashboard/play/${song.id}?${params.toString()}`);
@@ -148,33 +159,50 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                   })}
                 </div>
 
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => {
-                      playClick();
-                      setLeftHand(!leftHand);
-                    }}
-                    className={`relative flex-1 rounded-2xl border-2 transition-all duration-300 ${
-                      leftHand
-                        ? "border-white bg-zinc-100 text-zinc-900 shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10"
-                        : "border-white/5 bg-white/5 text-white/20 hover:bg-white/10"
-                    }`}
-                  >
-                    <div className="flex h-24 flex-col items-center justify-center gap-2">
-                      <Hand size={28} className={`-scale-x-100 transition-all duration-500 ${leftHand ? "scale-110 text-zinc-900" : "text-white/20"}`} />
-                      <span className={`text-[9px] font-black uppercase tracking-widest ${leftHand ? "text-zinc-900" : "text-white/20"}`}>Mao Esquerda</span>
-                    </div>
-                  </button>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {practiceModeCards.map((mode) => {
+                    const isActive = practiceHandMode === mode.id;
 
-                  <div className="relative flex-1 rounded-2xl border-2 border-white bg-zinc-100 text-zinc-900 shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10">
-                    <div className="flex h-24 flex-col items-center justify-center gap-2">
-                      <Hand size={28} className="scale-110 text-zinc-900" />
-                      <div className="flex flex-col items-center">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-900">Mao Direita</span>
-                        <span className="text-[7px] font-bold uppercase text-zinc-900/40">Obrigatoria</span>
-                      </div>
-                    </div>
-                  </div>
+                    return (
+                      <button
+                        key={mode.id}
+                        onClick={() => {
+                          playClick();
+                          setPracticeHandMode(mode.id);
+                        }}
+                        className={`relative rounded-2xl border-2 p-5 text-left transition-all duration-300 ${
+                          isActive
+                            ? "border-white bg-zinc-100 text-zinc-900 shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10"
+                            : "border-white/5 bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80"
+                        }`}
+                      >
+                        <div className="flex items-start gap-4">
+                          <div
+                            className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-300 ${
+                              isActive ? "bg-zinc-900 text-white" : "bg-white/5 text-white/40"
+                            }`}
+                          >
+                            <Hand
+                              size={24}
+                              className={mode.id === "both" ? "scale-110" : "scale-110 -translate-x-0.5"}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <span
+                              className={`block text-[11px] font-black uppercase tracking-[0.22em] ${
+                                isActive ? "text-zinc-900" : "text-white/70"
+                              }`}
+                            >
+                              {mode.label}
+                            </span>
+                            <p className={`text-sm leading-relaxed ${isActive ? "text-zinc-700" : "text-white/35"}`}>
+                              {mode.description}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "parse-midi": "node scripts/midi-to-json.js",
-    "parse-midi-graded": "node scripts/midi-to-graded-json.js"
+    "parse-midi-graded": "node scripts/midi-to-graded-json.js",
+    "validate-song-hands": "node scripts/validate-song-hands.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

@@ -5,6 +5,10 @@ import type { Song, SongNote, ArrangementLevel } from "./songs";
    ────────────────────────────────────────────────────── */
 
 export type Difficulty = "beginner" | "medium" | "pro";
+export interface HandSelection {
+  includeLeftHand: boolean;
+  includeRightHand: boolean;
+}
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   beginner: "Iniciante",
@@ -62,6 +66,31 @@ export function filterNotesByDifficulty(
   });
 }
 
+function isLeftHandNote(note: SongNote): boolean {
+  if (note.hand === "left") return true;
+  if (note.hand === "right") return false;
+  return note.midi < 60;
+}
+
+export function filterNotesByHandSelection(
+  notes: SongNote[],
+  selection: HandSelection
+): SongNote[] {
+  if (selection.includeLeftHand && selection.includeRightHand) {
+    return notes;
+  }
+
+  if (selection.includeRightHand && !selection.includeLeftHand) {
+    return notes.filter((note) => !isLeftHandNote(note));
+  }
+
+  if (selection.includeLeftHand && !selection.includeRightHand) {
+    return notes.filter((note) => isLeftHandNote(note));
+  }
+
+  return [];
+}
+
 /**
  * Get the accompaniment notes (notes the engine plays for the student to hear).
  * In beginner mode, plays the full song; in medium/pro, only left-hand/bass.
@@ -83,23 +112,29 @@ export function getAccompanimentNotes(
 export function getSongNotesForDifficulty(
   song: Song,
   difficulty: Difficulty,
-  options?: { preferOneHand?: boolean }
+  options?: { preferOneHand?: boolean; handSelection?: HandSelection }
 ): SongNote[] {
   const preferOneHand = options?.preferOneHand ?? false;
+  const handSelection = options?.handSelection;
   const arrangementLevel = difficultyToArrangementLevel(difficulty);
   const arrangementNotes = song.arrangements?.[arrangementLevel];
 
+  const applyHandSelection = (resolvedNotes: SongNote[]): SongNote[] => {
+    if (!handSelection) return resolvedNotes;
+    return filterNotesByHandSelection(resolvedNotes, handSelection);
+  };
+
   if (arrangementNotes && arrangementNotes.length > 0) {
-    return arrangementNotes;
+    return applyHandSelection(arrangementNotes);
   }
 
   if (preferOneHand && song.notes1Hand && song.notes1Hand.length > 0) {
-    return song.notes1Hand;
+    return applyHandSelection(song.notes1Hand);
   }
 
   if (!preferOneHand && song.notes2Hands && song.notes2Hands.length > 0) {
-    return song.notes2Hands;
+    return applyHandSelection(song.notes2Hands);
   }
 
-  return filterNotesByDifficulty(song.notes, difficulty);
+  return applyHandSelection(filterNotesByDifficulty(song.notes, difficulty));
 }

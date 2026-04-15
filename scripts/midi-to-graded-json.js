@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { Midi } = require("@tonejs/midi");
 const songManifest = require("./song-manifest");
+const { normalizeSongHands, sanitizeSingleHandArrangements, validateSongHands } = require("./song-hand-utils");
 
 const MIDI_DIR = path.resolve(__dirname, "../public/midi");
 const SONGS_DIR = path.resolve(__dirname, "../public/songs");
@@ -272,10 +273,16 @@ function cleanSongsDir() {
 }
 
 function writeSongJson(entry) {
-  const songJson = buildSongJson(entry);
+  const rawSongJson = normalizeSongHands(buildSongJson(entry));
   const outputPath = path.join(SONGS_DIR, entry.outputFile);
+  const { warnings } = validateSongHands(rawSongJson);
+  const songJson = sanitizeSingleHandArrangements(rawSongJson);
 
   fs.writeFileSync(outputPath, `${JSON.stringify(songJson, null, 2)}\n`);
+
+  warnings.forEach((warning) => {
+    console.warn(`WARN ${entry.outputFile}: ${warning.message} Corrigido automaticamente.`);
+  });
 
   return {
     id: songJson.id,
@@ -285,19 +292,26 @@ function writeSongJson(entry) {
       medium: songJson.arrangements.medium.length,
       hard: songJson.arrangements.hard.length,
     },
+    warningCount: warnings.length,
   };
 }
 
 function main() {
   cleanSongsDir();
+  let warningCount = 0;
 
   console.log(`Reconstruindo ${songManifest.length} musica(s) em public/songs...`);
 
   for (const entry of songManifest) {
     const result = writeSongJson(entry);
+    warningCount += result.warningCount;
     console.log(
       `OK ${result.outputFile}: easy=${result.counts.easy}, medium=${result.counts.medium}, hard=${result.counts.hard}`,
     );
+  }
+
+  if (warningCount > 0) {
+    console.warn(`Pipeline concluido com ${warningCount} alerta(s) de mao para revisao.`);
   }
 
   console.log("Biblioteca JSON regenerada com sucesso.");
