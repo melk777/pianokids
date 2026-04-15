@@ -13,7 +13,6 @@ const PricingCard = dynamic(() => import("@/components/PricingCard"), {
 const SupportedVideo = dynamic(() => import("@/components/SupportedVideo"), {
   loading: () => <div className="relative aspect-[16/10] w-full bg-black/60" />,
 });
-const PartnerMarquee = dynamic(() => import("@/components/PartnerMarquee"), { loading: () => null });
 const TestimonialsCarousel = dynamic(() => import("@/components/TestimonialsCarousel"), { loading: () => null });
 const FAQ = dynamic(() => import("@/components/FAQ"), { loading: () => null });
 
@@ -307,7 +306,6 @@ export default function Home() {
 
         {/* ── Pricing Section ───────────────────────── */}
 
-        <PartnerMarquee />
 
         {/* ── Features Section ──────────────────────── */}
         <section className="py-32 lg:py-48 px-6 lg:px-12">
