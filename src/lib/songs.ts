@@ -14,6 +14,7 @@ import nocturneOp9Data from "../../public/songs/nocturne-op9.json";
 import goldenHourData from "../../public/songs/golden-hour.json";
 import parabensData from "../../public/songs/parabens.json";
 import ballade4Data from "../../public/songs/ballade-4chopin.json";
+import bellaCiaoData from "../../public/songs/bella-ciao-lacasadepapel.json";
 import fantaisieImpromptuData from "../../public/songs/chopin-fantaisie-impromptuchopin.json";
 import wtcPrelude2Data from "../../public/songs/das-wohltemperierte-clavier-ii-praeludium-iijsbach.json";
 import doumkaData from "../../public/songs/doumkatchaikosvky.json";
@@ -189,6 +190,17 @@ export const songs: Song[] = [
     isPremium: false,
     coverUrl: "/images/covers/parabens_cover.png",
     difficulty: "Fácil",
+  },
+  {
+    ...(bellaCiaoData as Song),
+    id: "bella-ciao-lacasadepapel",
+    title: "Bella Ciao",
+    artist: "La Casa de Papel (Intro)",
+    category: "Intro de Filmes",
+    categories: ["Infantis", "Intro de Filmes"],
+    isPremium: false,
+    coverUrl: "/images/covers/golden-hour.png",
+    difficulty: "Médio",
   },
   {
     ...(moonlightSonataData as Song),

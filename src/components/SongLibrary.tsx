@@ -25,6 +25,7 @@ interface SongLibraryProps {
 const CATEGORIES = [
   { id: "all", label: "Todas" },
   { id: "Infantis", label: "Infantis" },
+  { id: "Intro de Filmes", label: "Intro de Filmes" },
   { id: "Clássicos", label: "Clássicos" },
   { id: "Sertanejos", label: "Sertanejos" },
   { id: "Religiosos", label: "Religiosos" },
@@ -34,6 +35,10 @@ const CATEGORIES = [
 const INITIAL_CATEGORY_LIMIT = 10;
 const CATEGORY_INCREMENT = 10;
 const FILTERED_PAGE_SIZE = 20;
+
+function getSongCategories(song: Song) {
+  return song.categories?.length ? song.categories : [song.category];
+}
 
 export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
   const { playClick } = useSFX();
@@ -53,7 +58,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
         song.title.toLowerCase().includes(normalizedSearch) ||
         song.artist.toLowerCase().includes(normalizedSearch);
 
-      const matchesCategory = selectedCategory === "all" || song.category === selectedCategory;
+      const matchesCategory = selectedCategory === "all" || getSongCategories(song).includes(selectedCategory);
       return matchesSearch && matchesCategory;
     });
   }, [songs, deferredSearchTerm, selectedCategory]);
@@ -62,7 +67,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
 
   const categoriesToRender = useMemo(() => {
     if (isFiltering) return [];
-    return Array.from(new Set(songs.map((song) => song.category)));
+    return Array.from(new Set(songs.flatMap((song) => getSongCategories(song))));
   }, [isFiltering, songs]);
 
   const groupedSongs = useMemo(() => {
@@ -71,7 +76,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
     for (const category of categoriesToRender) {
       grouped.set(
         category,
-        songs.filter((song) => song.category === category),
+        songs.filter((song) => getSongCategories(song).includes(category)),
       );
     }
 
@@ -198,7 +203,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
                   <div className="grid grid-cols-2 gap-6 px-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     {visibleSongs.map((song, index) => (
                       <SongCard
-                        key={song.id}
+                        key={`${category}-${song.id}`}
                         song={song}
                         hasPremium={hasPremium}
                         categoryIndex={categoryIndex}

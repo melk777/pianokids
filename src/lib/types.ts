@@ -42,6 +42,7 @@ export interface Song {
   bpm: number;
   duration: number;
   category: string;
+  categories?: string[] | null;
   isPremium: boolean;
   coverUrl?: string;
   notes: SongNote[];

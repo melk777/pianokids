@@ -26,14 +26,13 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
   const { playClick } = useSFX();
 
   const [leftHand, setLeftHand] = useState(false);
-  const [rightHand, setRightHand] = useState(true);
+  const [rightHand] = useState(true);
   const [micEnabled, setMicEnabled] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("beginner");
 
   useEffect(() => {
     if (!isOpen) return;
     setLeftHand(false);
-    setRightHand(true);
     setMicEnabled(false);
     setSelectedDifficulty("beginner");
   }, [isOpen]);
@@ -45,6 +44,8 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
   }, [selectedDifficulty]);
 
   if (!song) return null;
+
+  const categoryLabel = song.categories?.length ? song.categories.join(" • ") : song.category;
 
   const handleStart = () => {
     playClick();
@@ -99,7 +100,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
             <div className="flex w-full flex-1 flex-col gap-6 rounded-[32px] border border-white/10 bg-zinc-900/60 p-6 shadow-2xl backdrop-blur-2xl md:p-8">
               <div className="space-y-2">
-                <span className="block text-xs font-bold uppercase tracking-widest text-cyan/60">{song.category}</span>
+                <span className="block text-xs font-bold uppercase tracking-widest text-cyan/60">{categoryLabel}</span>
                 <h2 className="text-3xl font-black text-[#FDFCF0] md:text-4xl">{song.title}</h2>
                 <p className="text-lg font-medium text-white/40">{song.artist}</p>
               </div>
@@ -136,8 +137,8 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                             ? level.tone === "emerald"
                               ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-300"
                               : level.tone === "amber"
-                              ? "border-amber-400/40 bg-amber-400/15 text-amber-200"
-                              : "border-rose-400/40 bg-rose-400/15 text-rose-200"
+                                ? "border-amber-400/40 bg-amber-400/15 text-amber-200"
+                                : "border-rose-400/40 bg-rose-400/15 text-rose-200"
                             : "border-white/8 bg-white/[0.03] text-white/40 hover:border-white/15 hover:text-white/70"
                         }`}
                       >

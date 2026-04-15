@@ -80,6 +80,11 @@ module.exports = [
     midiFiles: ["ballade-4chopin.mid"],
   },
   {
+    id: "bella-ciao-lacasadepapel",
+    outputFile: "bella-ciao-lacasadepapel.json",
+    midiFiles: ["bella-ciao-lacasadepapel.mid"],
+  },
+  {
     id: "chopin-fantaisie-impromptuchopin",
     outputFile: "chopin-fantaisie-impromptuchopin.json",
     midiFiles: ["chopin_fantaisie-impromptuchopin.mid"],
