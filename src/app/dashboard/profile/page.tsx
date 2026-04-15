@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useProfile } from "@/hooks/useProfile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { 
@@ -310,10 +309,9 @@ export default function ProfilePage() {
                     <span>{profile?.songs_played || 0}</span>
                   </div>
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.min((profile?.songs_played || 0) * 10, 100)}%` }}
-                      className="h-full bg-white/20 rounded-full"
+                    <div
+                      className="h-full rounded-full bg-white/20 transition-[width] duration-500"
+                      style={{ width: `${Math.min((profile?.songs_played || 0) * 10, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -324,10 +322,9 @@ export default function ProfilePage() {
                     <span>{profile?.songs_completed || 0}</span>
                   </div>
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.min((profile?.songs_completed || 0) * 10, 100)}%` }}
-                      className="h-full bg-gradient-to-r from-cyan to-magenta rounded-full shadow-[0_0_10px_rgba(0,234,255,0.4)]"
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan to-magenta shadow-[0_0_10px_rgba(0,234,255,0.4)] transition-[width] duration-500"
+                      style={{ width: `${Math.min((profile?.songs_completed || 0) * 10, 100)}%` }}
                     />
                   </div>
                 </div>

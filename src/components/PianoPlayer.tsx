@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback, useMemo } from "react";
+import { useRef, useEffect, useCallback, useMemo, type MutableRefObject } from "react";
 import type { SongNote } from "@/lib/songs";
 import { midiNoteToName, type MIDINote } from "@/hooks/useMIDI";
 import type { Difficulty } from "@/lib/songFilters";
@@ -30,6 +30,19 @@ interface PianoPlayerProps {
   accompanimentNotes?: SongNote[];
   playbackSpeed?: number;
   metronomeVolume?: number;
+  loopRegion?: {
+    enabled: boolean;
+    start: number;
+    end: number;
+  };
+  onProgressChange?: (time: number) => void;
+  tutorialTargets?: {
+    scoreRef?: MutableRefObject<HTMLDivElement | null>;
+    comboRef?: MutableRefObject<HTMLDivElement | null>;
+    accuracyRef?: MutableRefObject<HTMLDivElement | null>;
+    progressRef?: MutableRefObject<HTMLDivElement | null>;
+    keyboardRef?: MutableRefObject<HTMLDivElement | null>;
+  };
 }
 
 interface VisualEffect {
@@ -113,6 +126,9 @@ export default function PianoPlayer({
   accompanimentNotes = [],
   playbackSpeed = 1,
   metronomeVolume = 0.08,
+  loopRegion,
+  onProgressChange,
+  tutorialTargets,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
@@ -141,6 +157,47 @@ export default function PianoPlayer({
   const comboUIRef = useRef<HTMLParagraphElement>(null);
   const accuracyUIRef = useRef<HTMLParagraphElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const lastProgressEmitRef = useRef(-1);
+
+  const resetLoopWindowState = useCallback(
+    (state: (typeof stateRef.current), start: number, end: number) => {
+      const refreshedHits = new Set<number>();
+      const refreshedMisses = new Set<number>();
+
+      state.hitNotes.forEach((index) => {
+        const note = notes[index];
+        if (!note) return;
+        if (note.time < start || note.time > end) refreshedHits.add(index);
+      });
+
+      state.missedNotes.forEach((index) => {
+        const note = notes[index];
+        if (!note) return;
+        if (note.time < start || note.time > end) refreshedMisses.add(index);
+      });
+
+      state.hitNotes = refreshedHits;
+      state.missedNotes = refreshedMisses;
+      state.effects = [];
+
+      if (state.playedAccompaniment.size > 0 && accompanimentNotes.length > 0) {
+        const refreshedAccompaniment = new Set<number>();
+        state.playedAccompaniment.forEach((index) => {
+          const note = accompanimentNotes[index];
+          if (!note) return;
+          if (note.time < start || note.time > end) refreshedAccompaniment.add(index);
+        });
+        state.playedAccompaniment = refreshedAccompaniment;
+      }
+
+      const hits = refreshedHits.size;
+      const misses = refreshedMisses.size;
+      state.hits = hits;
+      state.misses = misses;
+      state.combo = 0;
+    },
+    [accompanimentNotes, notes],
+  );
 
   const whiteNotes = useMemo(() => {
     const list: number[] = [];
@@ -175,6 +232,7 @@ export default function PianoPlayer({
       comboUIRef.current.className = "text-2xl md:text-4xl font-black tabular-nums relative z-10 transition-colors text-white/30";
     }
     if (accuracyUIRef.current) accuracyUIRef.current.innerText = "100%";
+    lastProgressEmitRef.current = -1;
   }, [notes]);
 
   const updateHUD = useCallback(() => {
@@ -276,6 +334,21 @@ export default function PianoPlayer({
 
       const elapsed = state.internalGameTime;
       state.gameTime = elapsed;
+      const roundedProgress = Math.max(0, Math.round(elapsed * 10) / 10);
+      if (roundedProgress !== lastProgressEmitRef.current) {
+        lastProgressEmitRef.current = roundedProgress;
+        onProgressChange?.(roundedProgress);
+      }
+
+      if (loopRegion?.enabled && loopRegion.end > loopRegion.start && elapsed >= loopRegion.end) {
+        state.internalGameTime = loopRegion.start;
+        state.gameTime = loopRegion.start;
+        state.lastBeat = Math.floor(loopRegion.start / (60 / 120)) - 1;
+        resetLoopWindowState(state, loopRegion.start, loopRegion.end);
+        updateHUD();
+        animFrameRef.current = requestAnimationFrame(tick);
+        return;
+      }
 
       const bpm = 120;
       const secondsPerBeat = 60 / bpm;
@@ -568,9 +641,12 @@ export default function PianoPlayer({
     playbackSpeed,
     metronomeVolume,
     activeNotes,
+    loopRegion,
     onNoteMiss,
+    onProgressChange,
     onScoreUpdate,
     onSongEnd,
+    resetLoopWindowState,
   ]);
 
   useEffect(() => {
@@ -658,7 +734,10 @@ export default function PianoPlayer({
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black via-transparent to-black/60" />
 
       {!isFreePlay && songDuration > 0 && (
-        <div className="absolute left-1/2 top-4 z-40 flex h-6 w-[80%] max-w-2xl -translate-x-1/2 items-center overflow-hidden rounded-full border border-white/10 bg-zinc-900/80 px-1 backdrop-blur-md">
+        <div
+          ref={tutorialTargets?.progressRef}
+          className="absolute left-1/2 top-4 z-40 flex h-6 w-[80%] max-w-2xl -translate-x-1/2 items-center overflow-hidden rounded-full border border-white/10 bg-zinc-900/80 px-1 backdrop-blur-md"
+        >
           <div className="pointer-events-none absolute inset-0 flex justify-between px-4 opacity-20">
             {Array.from({ length: 40 }).map((_, index) => (
               <div key={index} className={`self-center bg-white ${index % 5 === 0 ? "h-3 w-[1px]" : "h-1.5 w-[1px]"}`} />
@@ -678,7 +757,11 @@ export default function PianoPlayer({
       <div className="absolute inset-0 z-10 overflow-hidden">
         <div className="relative h-full w-full">
           <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 block h-full w-full" />
-          <div className="pointer-events-auto absolute bottom-0 left-0 right-0" style={{ height: "30%" }}>
+          <div
+            ref={tutorialTargets?.keyboardRef}
+            className="pointer-events-auto absolute bottom-0 left-0 right-0"
+            style={{ height: "30%" }}
+          >
             <VirtualKeyboard
               onPlayNote={(midi) => {
                 resumeAudio?.();
@@ -694,21 +777,27 @@ export default function PianoPlayer({
       </div>
 
       <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex items-center justify-between md:left-6 md:right-6 md:top-6">
-        <div className="glass rounded-xl border border-white/10 px-3 py-2 shadow-lg md:rounded-2xl md:px-5 md:py-3">
+        <div ref={tutorialTargets?.scoreRef} className="glass rounded-xl border border-white/10 px-3 py-2 shadow-lg md:rounded-2xl md:px-5 md:py-3">
           <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px]">Pontos</p>
           <p ref={scoreUIRef} className="text-gradient text-lg font-black tabular-nums md:text-2xl">
             0
           </p>
         </div>
 
-        <div className="glass min-w-[100px] rounded-xl border border-white/10 px-5 py-2 text-center shadow-lg md:min-w-[130px] md:rounded-2xl md:px-8 md:py-4">
+        <div
+          ref={tutorialTargets?.comboRef}
+          className="glass min-w-[100px] rounded-xl border border-white/10 px-5 py-2 text-center shadow-lg md:min-w-[130px] md:rounded-2xl md:px-8 md:py-4"
+        >
           <p className="mb-0 text-[9px] font-black uppercase tracking-[3px] text-white/40 md:mb-1 md:text-xs">Combos</p>
           <p ref={comboUIRef} className="text-2xl font-black tabular-nums text-white/30 md:text-4xl">
             0x
           </p>
         </div>
 
-        <div className="glass rounded-xl border border-white/10 px-3 py-2 text-right shadow-lg md:rounded-2xl md:px-5 md:py-3">
+        <div
+          ref={tutorialTargets?.accuracyRef}
+          className="glass rounded-xl border border-white/10 px-3 py-2 text-right shadow-lg md:rounded-2xl md:px-5 md:py-3"
+        >
           <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px]">Precisao</p>
           <p ref={accuracyUIRef} className="text-lg font-black tabular-nums text-white md:text-2xl">
             100%

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { User } from "@supabase/supabase-js";
@@ -153,12 +152,7 @@ export default function Dashboard() {
     <main className="min-h-screen bg-black text-white selection:bg-cyan/30">
       <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto">
           {/* ── Greeting ────────────────────────── */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="mb-12"
-          >
+          <div className="mb-12">
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-3 text-balance">
               {getGreeting()},{" "}
               <Link href="/dashboard/profile" className="text-gradient font-black hover:opacity-80 transition-opacity">
@@ -172,7 +166,7 @@ export default function Dashboard() {
                 ? "Você está indo muito bem! Continue praticando para ganhar mais troféus." 
                 : "Seu primeiro troféu de boas-vindas já está na sua estante! Vamos tocar?"}
             </p>
-          </motion.div>
+          </div>
 
           {profile?.role === "admin" ? (
              <AdminDashboard />
@@ -183,12 +177,7 @@ export default function Dashboard() {
               {/* Left Column: MIDI Status + Actions + Lessons */}
             <div className="lg:col-span-2 space-y-8">
               {/* ── MIDI Status Card (Apple-style) ── */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1, duration: 0.5 }}
-                className="relative overflow-hidden rounded-2xl border border-white/[0.06]"
-              >
+              <div className="relative overflow-hidden rounded-2xl border border-white/[0.06]">
                 {/* Subtle gradient background */}
                 <div
                   className={`absolute inset-0 transition-colors duration-700 ${
@@ -256,9 +245,7 @@ export default function Dashboard() {
 
                     {/* Connect button */}
                     {!isListening && (
-                      <motion.button
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
+                      <button
                         onClick={() => {
                           playClick();
                           startMic();
@@ -267,7 +254,7 @@ export default function Dashboard() {
                         className="shrink-0 px-4 py-2 text-xs font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         Ligar Microfone
-                      </motion.button>
+                      </button>
                     )}
                   </div>
 
@@ -278,14 +265,10 @@ export default function Dashboard() {
                     </p>
                   )}
                 </div>
-              </motion.div>
+              </div>
 
               {/* ── Giant Redirect Card ── */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-              >
+              <div>
                 <Link 
                   href="/dashboard/songs" 
                   onClick={() => playClick()}
@@ -312,14 +295,10 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
 
               {/* ── Gamification: Meu Progresso ── */}
-              <motion.section
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-              >
+              <section>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-semibold">Meu Progresso</h2>
                   <Link href="/dashboard/profile" className="text-xs font-bold text-white/40 hover:text-cyan transition-colors flex items-center gap-1">
@@ -382,19 +361,14 @@ export default function Dashboard() {
                     </div>
                   </div>
                 )}
-              </motion.section>
+              </section>
             </div>
 
             {/* ── Right Column: Subscription + Stats ── */}
             <div className="space-y-6">
               {/* Trial Remaining Card (Static) */}
               {status === "trialing" && diffDays !== null && (
-                <motion.div
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.35, duration: 0.5 }}
-                  className="glass rounded-2xl p-6 border border-cyan/20 bg-cyan/5 relative overflow-hidden"
-                >
+                <div className="glass rounded-2xl p-6 border border-cyan/20 bg-cyan/5 relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-4 opacity-10">
                     <Clock size={48} className="text-cyan" />
                   </div>
@@ -416,16 +390,11 @@ export default function Dashboard() {
                   >
                     Garantir acesso vitalício <ChevronRight className="w-3 h-3" />
                   </Link>
-                </motion.div>
+                </div>
               )}
 
               {/* Subscription Card */}
-              <motion.div
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="glass rounded-2xl p-1 relative overflow-hidden group"
-              >
+              <div className="glass rounded-2xl p-1 relative overflow-hidden group">
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${
                     isSubscribed
@@ -527,15 +496,10 @@ export default function Dashboard() {
                     </>
                   )}
                 </div>
-              </motion.div>
+              </div>
 
               {/* ── Quick Stats Summary ── */}
-              <motion.div
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                className="glass rounded-2xl p-6 border border-white/5"
-              >
+              <div className="glass rounded-2xl p-6 border border-white/5">
                 <h3 className="text-sm font-medium text-white/40 uppercase tracking-widest mb-6">
                   Resumo de Progresso
                 </h3>
@@ -588,7 +552,7 @@ export default function Dashboard() {
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
             </div>
           )}

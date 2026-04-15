@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
+import { useState, useCallback, useEffect, useMemo, Suspense, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -52,6 +52,21 @@ export default function PlayPage() {
 }
 
 function PlayPageContent() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  const volumeControlRef = useRef<HTMLButtonElement>(null);
+  const tutorialControlRef = useRef<HTMLButtonElement>(null);
+  const micControlRef = useRef<HTMLButtonElement>(null);
+  const loopControlRef = useRef<HTMLDivElement>(null);
+  const speedControlRef = useRef<HTMLDivElement>(null);
+  const waitingControlRef = useRef<HTMLButtonElement>(null);
+  const metronomeControlRef = useRef<HTMLDivElement>(null);
+  const restartControlRef = useRef<HTMLButtonElement>(null);
+  const scoreTargetRef = useRef<HTMLDivElement>(null);
+  const comboTargetRef = useRef<HTMLDivElement>(null);
+  const accuracyTargetRef = useRef<HTMLDivElement>(null);
+  const progressTargetRef = useRef<HTMLDivElement>(null);
+  const keyboardTargetRef = useRef<HTMLDivElement>(null);
+
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -123,6 +138,10 @@ function PlayPageContent() {
   const [metronomeVolume, setMetronomeVolume] = useState(0.08);
   const [showMicHint, setShowMicHint] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
+  const [loopStart, setLoopStart] = useState(0);
+  const [loopEnd, setLoopEnd] = useState(0);
+  const [isLoopEnabled, setIsLoopEnabled] = useState(false);
 
   useEffect(() => {
     setShowTutorial(shouldAutoOpenGameTutorial());
@@ -194,6 +213,7 @@ function PlayPageContent() {
     setGameState("countdown");
     setCountdown(3);
     setIsPaused(false);
+    setCurrentPlaybackTime(0);
     audio.resume();
   }, [audio]);
 
@@ -203,6 +223,7 @@ function PlayPageContent() {
     setGameState("idle");
     setFinalScore({ score: 0, combo: 0, accuracy: 100 });
     setShowMicHint(true);
+    setCurrentPlaybackTime(0);
   }, []);
 
   useEffect(() => {
@@ -250,6 +271,51 @@ function PlayPageContent() {
     setIsPlaying(false);
     setGameState("ended");
   }, []);
+
+  const handleSetLoopStart = useCallback(() => {
+    const safeCurrent = Math.max(0, Math.min(currentPlaybackTime, Math.max(song?.duration ?? 0, 0)));
+    setLoopStart(safeCurrent);
+    setLoopEnd((currentEnd) => {
+      if (currentEnd <= safeCurrent) {
+        return Math.min((song?.duration ?? 0), safeCurrent + 8);
+      }
+      return currentEnd;
+    });
+    setIsLoopEnabled(true);
+  }, [currentPlaybackTime, song?.duration]);
+
+  const handleSetLoopEnd = useCallback(() => {
+    const duration = song?.duration ?? 0;
+    const safeCurrent = Math.max(0, Math.min(currentPlaybackTime, duration));
+    setLoopEnd(safeCurrent <= loopStart ? Math.min(duration, loopStart + 8) : safeCurrent);
+    setIsLoopEnabled(true);
+  }, [currentPlaybackTime, loopStart, song?.duration]);
+
+  const handleClearLoop = useCallback(() => {
+    setIsLoopEnabled(false);
+    setLoopStart(0);
+    setLoopEnd(song?.duration ?? 0);
+  }, [song?.duration]);
+
+  useEffect(() => {
+    const duration = song?.duration ?? 0;
+    setCurrentPlaybackTime(0);
+    setLoopStart(0);
+    setLoopEnd(duration);
+    setIsLoopEnabled(false);
+  }, [song?.duration, song?.id, difficulty]);
+
+  const loopDuration = Math.max(0, loopEnd - loopStart);
+  const formatLoopTime = useCallback((value: number) => {
+    const safe = Math.max(0, Math.floor(value));
+    const minutes = Math.floor(safe / 60);
+    const seconds = safe % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }, []);
+  const songDuration = Math.max(song?.duration ?? 0, 0);
+  const playbackProgress = songDuration > 0 ? Math.min(100, (currentPlaybackTime / songDuration) * 100) : 0;
+  const loopStartProgress = songDuration > 0 ? Math.min(100, (loopStart / songDuration) * 100) : 0;
+  const loopEndProgress = songDuration > 0 ? Math.min(100, (loopEnd / songDuration) * 100) : 100;
 
   const handlePlayAccompaniment = useCallback(
     (midi: number, duration: number) => {
@@ -354,8 +420,29 @@ function PlayPageContent() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col overflow-hidden bg-black font-sans text-white">
+    <div ref={pageRef} className="relative flex min-h-screen flex-col overflow-hidden bg-black font-sans text-white">
       <OrientationOverlay />
+
+      <GameTutorialOverlay
+        open={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        containerRef={pageRef}
+        targets={{
+          volume: volumeControlRef,
+          tutorial: tutorialControlRef,
+          mic: micControlRef,
+          loop: loopControlRef,
+          speed: speedControlRef,
+          waiting: waitingControlRef,
+          metronome: metronomeControlRef,
+          restart: restartControlRef,
+          score: scoreTargetRef,
+          combo: comboTargetRef,
+          accuracy: accuracyTargetRef,
+          progress: progressTargetRef,
+          keyboard: keyboardTargetRef,
+        }}
+      />
 
       <div
         className="z-20 flex h-12 shrink-0 items-center justify-between border-b border-white/[0.06] px-3 md:px-5"
@@ -375,6 +462,7 @@ function PlayPageContent() {
 
         <div className="flex items-center gap-1.5 md:gap-2">
           <button
+            ref={volumeControlRef}
             onClick={() => setAudioEnabled(!audioEnabled)}
             className={`rounded-lg p-1.5 transition-colors ${audioEnabled ? "text-cyan" : "text-white/25"}`}
             title="Volume"
@@ -383,6 +471,7 @@ function PlayPageContent() {
           </button>
 
           <button
+            ref={tutorialControlRef}
             onClick={() => setShowTutorial(true)}
             className="rounded-lg p-1.5 text-white/35 transition-colors hover:text-white"
             title="Tutorial da tela"
@@ -391,6 +480,7 @@ function PlayPageContent() {
           </button>
 
           <button
+            ref={micControlRef}
             onClick={() => (isMicActive ? stopMic() : startMic())}
             className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-bold uppercase tracking-wider transition-all ${
               isMicActive
@@ -415,9 +505,74 @@ function PlayPageContent() {
             </div>
           </div>
 
-          <div className="h-5 w-px bg-white/10" />
+          {!isFreePlay && song.duration > 0 && (
+            <>
+              <div className="h-5 w-px bg-white/10" />
 
-          <div className="flex items-center gap-1">
+              <div ref={loopControlRef} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-2 py-1">
+                <button
+                  onClick={() => setIsLoopEnabled((current) => !current)}
+                  className={`rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] transition-colors ${
+                    isLoopEnabled ? "bg-cyan/15 text-cyan" : "text-white/40 hover:text-white/70"
+                  }`}
+                  title="Ativar loop do trecho"
+                >
+                  Loop
+                </button>
+                <button
+                  onClick={handleSetLoopStart}
+                  className="rounded-lg bg-white/8 px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/70 transition-colors hover:bg-white/15"
+                  title="Marcar inicio do loop no ponto atual"
+                >
+                  A
+                </button>
+                <button
+                  onClick={handleSetLoopEnd}
+                  className="rounded-lg bg-white/8 px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/70 transition-colors hover:bg-white/15"
+                  title="Marcar fim do loop no ponto atual"
+                >
+                  B
+                </button>
+                <button
+                  onClick={handleClearLoop}
+                  className="rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/35 transition-colors hover:text-rose-300"
+                  title="Limpar loop"
+                >
+                  Limpar
+                </button>
+                <div className="hidden min-w-[180px] lg:block">
+                  <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.16em] text-white/45">
+                    <span>
+                      {isLoopEnabled && loopDuration > 0
+                        ? `${formatLoopTime(loopStart)} - ${formatLoopTime(loopEnd)}`
+                        : "Trecho completo"}
+                    </span>
+                    <span>{formatLoopTime(currentPlaybackTime)}</span>
+                  </div>
+                  <div className="relative mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
+                    <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-white/5 via-white/10 to-white/5" />
+                    <div
+                      className={`absolute inset-y-0 rounded-full transition-all ${
+                        isLoopEnabled && loopDuration > 0 ? "bg-cyan/60" : "bg-white/20"
+                      }`}
+                      style={{
+                        left: `${loopStartProgress}%`,
+                        width: `${Math.max(loopEndProgress - loopStartProgress, isLoopEnabled ? 2 : 100)}%`,
+                      }}
+                    />
+                    <div
+                      className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border border-white/30 bg-white shadow-[0_0_10px_rgba(255,255,255,0.35)] transition-[left] duration-150"
+                      style={{ left: `calc(${playbackProgress}% - 6px)` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-5 w-px bg-white/10" />
+            </>
+          )}
+
+          <div ref={speedControlRef} className="flex items-center gap-1">
             <span className="hidden text-[8px] font-bold uppercase tracking-wider text-white/25 md:inline">Vel</span>
             <button
               onClick={() => setPlaybackSpeed(Math.max(0.15, playbackSpeed - 0.05))}
@@ -437,6 +592,7 @@ function PlayPageContent() {
           <div className="h-5 w-px bg-white/10" />
 
           <button
+            ref={waitingControlRef}
             onClick={() => setIsWaitingMode(!isWaitingMode)}
             className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-black uppercase tracking-wider transition-all ${
               isWaitingMode ? "border-cyan/30 bg-cyan/15 text-cyan" : "border-transparent text-white/30 hover:text-white/50"
@@ -451,7 +607,7 @@ function PlayPageContent() {
 
           <div className="h-5 w-px bg-white/10" />
 
-          <div className="flex items-center gap-1">
+          <div ref={metronomeControlRef} className="flex items-center gap-1">
             <span className="hidden text-[8px] font-bold uppercase tracking-wider text-white/25 md:inline">Met</span>
             <button
               onClick={() => setMetronomeVolume(Math.max(0, metronomeVolume - 0.02))}
@@ -473,6 +629,7 @@ function PlayPageContent() {
           <div className="h-5 w-px bg-white/10" />
 
           <button
+            ref={restartControlRef}
             onClick={restartGame}
             className="flex items-center gap-1 rounded-lg px-2 py-1 text-white/30 transition-all hover:bg-rose-500/10 hover:text-rose-400"
             title="Reiniciar musica"
@@ -491,8 +648,6 @@ function PlayPageContent() {
       </div>
 
       <div className="relative flex flex-1 flex-col overflow-hidden">
-        <GameTutorialOverlay open={showTutorial} onClose={() => setShowTutorial(false)} />
-
         {showMicHint && (
           <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex justify-center md:left-auto md:right-5 md:top-4 md:justify-end">
             <div
@@ -597,6 +752,19 @@ function PlayPageContent() {
                 playbackSpeed={playbackSpeed}
                 startNote={36}
                 endNote={84}
+                loopRegion={{
+                  enabled: isLoopEnabled && loopDuration >= 1,
+                  start: loopStart,
+                  end: loopEnd,
+                }}
+                onProgressChange={setCurrentPlaybackTime}
+                tutorialTargets={{
+                  scoreRef: scoreTargetRef,
+                  comboRef: comboTargetRef,
+                  accuracyRef: accuracyTargetRef,
+                  progressRef: progressTargetRef,
+                  keyboardRef: keyboardTargetRef,
+                }}
               />
             </motion.div>
           )}

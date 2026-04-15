@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { useProfile, Profile } from "@/hooks/useProfile";
 import { 
@@ -165,10 +164,9 @@ export default function PublicCareerPage() {
                 <span>{profile.songs_played || 0}</span>
               </div>
               <div className="h-3 bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((profile.songs_played || 0) * 10, 100)}%` }}
-                  className="h-full bg-white/20 rounded-full"
+                <div
+                  className="h-full rounded-full bg-white/20 transition-[width] duration-500"
+                  style={{ width: `${Math.min((profile.songs_played || 0) * 10, 100)}%` }}
                 />
               </div>
             </div>
@@ -179,10 +177,9 @@ export default function PublicCareerPage() {
                 <span>{profile.songs_completed || 0}</span>
               </div>
               <div className="h-3 bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((profile.songs_completed || 0) * 10, 100)}%` }}
-                  className="h-full bg-gradient-to-r from-cyan to-magenta rounded-full"
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-cyan to-magenta transition-[width] duration-500"
+                  style={{ width: `${Math.min((profile.songs_completed || 0) * 10, 100)}%` }}
                 />
               </div>
             </div>

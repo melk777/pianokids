@@ -1,14 +1,16 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { createClientComponent } from "@/lib/supabase";
 import { Mail, Lock, Loader2, ArrowRight, Calendar, User, Phone, CreditCard, Hash } from "lucide-react";
 import Link from "next/link";
 import { getURL } from "@/lib/utils/url";
 import { useSearchParams } from "next/navigation";
-import Image from "next/image";
-import TeacherTermsModal from "./TeacherTermsModal";
+
+const TeacherTermsModal = dynamic(() => import("./TeacherTermsModal"), {
+  loading: () => null,
+});
 
 export default function AuthForm() {
   const supabase = createClientComponent();
@@ -139,33 +141,22 @@ export default function AuthForm() {
         }} 
       />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass rounded-3xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/10"
-      >
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center shadow-[0_8px_32px_rgba(255,255,255,0.1)] overflow-hidden">
-            <Image 
-              src="/logo.png" 
-              alt="Pianify Logo" 
-              width={64} 
-              height={64} 
-              className="w-full h-full object-contain p-2"
-            />
-          </div>
+      <div className="glass rounded-3xl border border-white/10 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+        <div className="mb-6 text-center">
+          <span className="text-2xl font-semibold tracking-tight text-white/90">
+            Pian<span className="text-gradient font-black">ify</span>
+          </span>
         </div>
 
         {/* Role Toggle Selector */}
         <div className="p-1 gap-1 flex bg-white/5 rounded-2xl mb-8 relative border border-white/5">
-           <motion.div 
+           <div
              className="absolute inset-y-1 bg-white rounded-xl shadow-lg"
-             initial={false}
-             animate={{ 
-               x: role === "student" ? 0 : "100%",
-               width: "calc(50% - 4px)"
+             style={{
+               transform: role === "student" ? "translateX(0)" : "translateX(100%)",
+               width: "calc(50% - 4px)",
+               transition: "transform 200ms ease",
              }}
-             transition={{ type: "spring", stiffness: 300, damping: 30 }}
            />
            <button 
              onClick={() => setRole("student")}
@@ -181,14 +172,8 @@ export default function AuthForm() {
            </button>
         </div>
 
-        <AnimatePresence mode="wait">
-          {message?.type === "success" ? (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-8"
-            >
+        {message?.type === "success" ? (
+            <div className="text-center py-8">
               <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-6">
                 <Mail className="w-10 h-10 text-emerald-400 animate-bounce" />
               </div>
@@ -205,7 +190,7 @@ export default function AuthForm() {
               >
                 Voltar para o Login <ArrowRight className="w-4 h-4" />
               </button>
-            </motion.div>
+            </div>
           ) : (
             <>
               <h2 className="text-2xl font-bold text-center text-white mb-2 tracking-tight uppercase">
@@ -220,13 +205,9 @@ export default function AuthForm() {
               </p>
 
               {message && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="mb-6 p-4 rounded-xl text-sm bg-red-500/10 text-red-400 border border-red-500/20"
-                >
+                <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
                   {message.text}
-                </motion.div>
+                </div>
               )}
 
               <form onSubmit={handleAuth} className="space-y-4">
@@ -265,11 +246,7 @@ export default function AuthForm() {
 
                 {/* Registration-only fields */}
                 {!isLogin && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="space-y-4 pt-2"
-                  >
+                  <div className="space-y-4 pt-2">
                     {/* Common Field: Birth Date */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-medium text-white/40 ml-1 uppercase tracking-wider">Data de Nascimento</label>
@@ -287,11 +264,7 @@ export default function AuthForm() {
 
                     {/* Conditional: Guardian Email for Minors */}
                     {role === "student" && age !== null && age < 18 && (
-                      <motion.div 
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="space-y-1.5"
-                      >
+                      <div className="space-y-1.5">
                         <label className="text-xs font-medium text-cyan/70 ml-1 uppercase tracking-wider italic">E-mail do Responsável (Obrigatório)</label>
                         <div className="relative group">
                           <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan/30 group-focus-within:icon-gradient transition-colors" />
@@ -304,7 +277,7 @@ export default function AuthForm() {
                             className="input-field pl-11 border-cyan/30 focus:border-cyan"
                           />
                         </div>
-                      </motion.div>
+                      </div>
                     )}
 
                     {/* Teacher Exclusive Fields */}
@@ -373,7 +346,7 @@ export default function AuthForm() {
                         </div>
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 )}
 
                 <button
@@ -413,8 +386,7 @@ export default function AuthForm() {
               </div>
             </>
           )}
-        </AnimatePresence>
-      </motion.div>
+      </div>
 
       <div className="mt-8 text-center">
         <Link href="/" className="text-white/30 text-xs hover:text-white transition-colors">

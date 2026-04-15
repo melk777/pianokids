@@ -1,91 +1,201 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState, type RefObject } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-const STORAGE_KEY = "pianokids_game_tutorial_seen_v1";
+const STORAGE_KEY = "pianokids_game_tutorial_seen_v2";
+const SPOTLIGHT_PADDING = 8;
+const CARD_GAP = 16;
+const CARD_MAX_WIDTH = 340;
+
+export type GameTutorialTargetId =
+  | "volume"
+  | "tutorial"
+  | "mic"
+  | "loop"
+  | "speed"
+  | "waiting"
+  | "metronome"
+  | "restart"
+  | "score"
+  | "combo"
+  | "accuracy"
+  | "progress"
+  | "keyboard";
 
 type TutorialStep = {
+  badge: string;
   title: string;
   description: string;
-  badge: string;
-  desktopSpotlightClassName: string;
-  mobileSpotlightClassName: string;
-  desktopLabelClassName?: string;
-  mobileLabelClassName?: string;
+  targetId: GameTutorialTargetId;
+  preferredPlacement?: "top" | "bottom" | "left" | "right";
+};
+
+type TutorialRect = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 };
 
 const STEPS: TutorialStep[] = [
   {
-    badge: "Controles",
+    badge: "Audio",
+    title: "Volume e retorno",
+    description: "Aqui o aluno liga ou silencia o som de apoio do jogo sem sair da pratica.",
+    targetId: "volume",
+    preferredPlacement: "bottom",
+  },
+  {
+    badge: "Captura",
+    title: "Microfone do piano",
+    description: "Este controle ativa a escuta do instrumento real para validar notas e acordes durante a musica.",
+    targetId: "mic",
+    preferredPlacement: "bottom",
+  },
+  {
+    badge: "Estudo",
+    title: "Loop de trecho",
+    description: "Use Loop, A e B para repetir exatamente a parte em que o aluno esta com dificuldade ate ganhar seguranca.",
+    targetId: "loop",
+    preferredPlacement: "bottom",
+  },
+  {
+    badge: "Ritmo",
     title: "Velocidade da musica",
-    description:
-      "Use menos e mais para adaptar a queda das notas ao nivel do aluno. Em trechos novos, reduzir a velocidade costuma acelerar o aprendizado.",
-    desktopSpotlightClassName: "top-2 right-[14.5rem] h-10 w-36 rounded-2xl",
-    mobileSpotlightClassName: "top-[4.25rem] left-[54%] h-10 w-36 -translate-x-1/2 rounded-2xl",
-    desktopLabelClassName: "top-14 right-[15rem]",
-    mobileLabelClassName: "top-[3.2rem] left-1/2 -translate-x-1/2",
+    description: "Diminua ou aumente a velocidade da queda das notas para adaptar a pratica ao nivel do aluno.",
+    targetId: "speed",
+    preferredPlacement: "bottom",
   },
   {
-    badge: "Atalho",
-    title: "Pause e retomada",
-    description:
-      "A barra de espaco pausa e retoma a musica. Isso e ideal para corrigir postura, revisar um compasso ou explicar um acorde sem sair da tela.",
-    desktopSpotlightClassName: "top-2 right-0 h-10 w-28 rounded-2xl",
-    mobileSpotlightClassName: "top-[4.25rem] right-4 h-10 w-28 rounded-2xl",
-    desktopLabelClassName: "top-14 right-3",
-    mobileLabelClassName: "top-[7.2rem] right-4",
+    badge: "Didatica",
+    title: "Modo espera",
+    description: "Quando ativado, a musica segura o andamento nos pontos importantes para ajudar o aluno a acompanhar.",
+    targetId: "waiting",
+    preferredPlacement: "bottom",
   },
   {
-    badge: "Acao",
+    badge: "Referencia",
+    title: "Metronomo",
+    description: "Ajuste o volume do pulso para reforcar o tempo e a precisao ritmica durante o estudo.",
+    targetId: "metronome",
+    preferredPlacement: "bottom",
+  },
+  {
+    badge: "Controle",
     title: "Reiniciar rapidamente",
-    description:
-      "O botao Reiniciar volta ao inicio da musica sem trocar de tela. Bom para repetir passagens dificeis e recomecar a pratica em segundos.",
-    desktopSpotlightClassName: "top-2 right-0 h-10 w-28 rounded-2xl lg:w-36",
-    mobileSpotlightClassName: "top-[4.25rem] right-4 h-10 w-28 rounded-2xl",
-    desktopLabelClassName: "top-14 right-4",
-    mobileLabelClassName: "top-[11rem] right-4",
+    description: "Recomece a musica sem sair da tela. Ideal para repetir o trecho inteiro do estudo atual.",
+    targetId: "restart",
+    preferredPlacement: "bottom",
   },
   {
-    badge: "HUD",
-    title: "Pontuacao total",
-    description:
-      "Aqui o aluno acompanha os pontos acumulados. Quanto mais notas e acordes corretos em sequencia, maior a pontuacao final.",
-    desktopSpotlightClassName: "top-16 left-6 h-20 w-32 rounded-3xl",
-    mobileSpotlightClassName: "top-24 left-3 h-16 w-28 rounded-2xl",
-    desktopLabelClassName: "top-11 left-8",
-    mobileLabelClassName: "top-[9.2rem] left-4",
+    badge: "Resultado",
+    title: "Pontuacao",
+    description: "Mostra os pontos acumulados ao longo da execucao.",
+    targetId: "score",
+    preferredPlacement: "bottom",
   },
   {
     badge: "Desempenho",
-    title: "Combo e precisao",
-    description:
-      "O combo mostra consistencia e a precisao resume a qualidade da execucao. Esses dois indicadores ajudam a medir a evolucao do aluno na hora.",
-    desktopSpotlightClassName: "top-16 left-1/2 h-20 w-[21rem] -translate-x-1/2 rounded-3xl",
-    mobileSpotlightClassName: "top-24 left-1/2 h-16 w-[17rem] -translate-x-1/2 rounded-2xl",
-    desktopLabelClassName: "top-11 left-1/2 -translate-x-1/2",
-    mobileLabelClassName: "top-[15.2rem] left-1/2 -translate-x-1/2",
+    title: "Combo",
+    description: "O combo revela constancia. Quanto mais acertos seguidos, maior o impacto na evolucao do aluno.",
+    targetId: "combo",
+    preferredPlacement: "bottom",
+  },
+  {
+    badge: "Analise",
+    title: "Precisao",
+    description: "Aqui o aluno acompanha a qualidade da execucao em tempo real.",
+    targetId: "accuracy",
+    preferredPlacement: "bottom",
   },
   {
     badge: "Fluxo",
-    title: "Progresso e teclado virtual",
-    description:
-      "A barra superior mostra onde a musica esta, e o teclado na base ajuda a visualizar a regiao e o desenho de cada nota ou acorde.",
-    desktopSpotlightClassName: "bottom-0 left-0 right-0 h-[34%] rounded-t-[2rem]",
-    mobileSpotlightClassName: "bottom-0 left-0 right-0 h-[32%] rounded-t-[2rem]",
-    desktopLabelClassName: "bottom-[34%] left-1/2 -translate-x-1/2",
-    mobileLabelClassName: "bottom-[32%] left-1/2 -translate-x-1/2",
+    title: "Progresso da musica",
+    description: "A barra superior mostra a posicao atual da musica e ajuda a localizar rapidamente o trecho estudado.",
+    targetId: "progress",
+    preferredPlacement: "bottom",
+  },
+  {
+    badge: "Teclado",
+    title: "Mapa visual das notas",
+    description: "O teclado na base mostra a regiao tocada e ajuda a enxergar a distribuicao das notas e acordes.",
+    targetId: "keyboard",
+    preferredPlacement: "top",
   },
 ];
+
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+function getRelativeRect(element: HTMLElement, container: HTMLElement): TutorialRect {
+  const targetRect = element.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+
+  return {
+    left: targetRect.left - containerRect.left,
+    top: targetRect.top - containerRect.top,
+    width: targetRect.width,
+    height: targetRect.height,
+  };
+}
+
+function getCardPosition(
+  rect: TutorialRect,
+  containerWidth: number,
+  containerHeight: number,
+  preferredPlacement: TutorialStep["preferredPlacement"],
+) {
+  const cardWidth = Math.min(CARD_MAX_WIDTH, containerWidth - 24);
+  const cardHeight = 230;
+  const centerX = rect.left + rect.width / 2 - cardWidth / 2;
+  const centerY = rect.top + rect.height / 2 - cardHeight / 2;
+  const fitsBottom = rect.top + rect.height + CARD_GAP + cardHeight < containerHeight - 16;
+  const fitsTop = rect.top - CARD_GAP - cardHeight > 16;
+  const fitsRight = rect.left + rect.width + CARD_GAP + cardWidth < containerWidth - 16;
+  const fitsLeft = rect.left - CARD_GAP - cardWidth > 16;
+
+  let left = centerX;
+  let top = centerY;
+  let placement = preferredPlacement ?? "bottom";
+
+  if (placement === "bottom" && !fitsBottom) placement = fitsTop ? "top" : fitsRight ? "right" : fitsLeft ? "left" : "bottom";
+  if (placement === "top" && !fitsTop) placement = fitsBottom ? "bottom" : fitsRight ? "right" : fitsLeft ? "left" : "top";
+  if (placement === "right" && !fitsRight) placement = fitsBottom ? "bottom" : fitsTop ? "top" : fitsLeft ? "left" : "right";
+  if (placement === "left" && !fitsLeft) placement = fitsBottom ? "bottom" : fitsTop ? "top" : fitsRight ? "right" : "left";
+
+  if (placement === "bottom") {
+    left = rect.left + rect.width / 2 - cardWidth / 2;
+    top = rect.top + rect.height + CARD_GAP;
+  } else if (placement === "top") {
+    left = rect.left + rect.width / 2 - cardWidth / 2;
+    top = rect.top - cardHeight - CARD_GAP;
+  } else if (placement === "right") {
+    left = rect.left + rect.width + CARD_GAP;
+    top = rect.top + rect.height / 2 - cardHeight / 2;
+  } else {
+    left = rect.left - cardWidth - CARD_GAP;
+    top = rect.top + rect.height / 2 - cardHeight / 2;
+  }
+
+  return {
+    width: cardWidth,
+    left: clamp(left, 12, containerWidth - cardWidth - 12),
+    top: clamp(top, 12, containerHeight - cardHeight - 12),
+  };
+}
 
 interface GameTutorialOverlayProps {
   open: boolean;
   onClose: () => void;
+  containerRef: RefObject<HTMLElement | null>;
+  targets: Partial<Record<GameTutorialTargetId, RefObject<HTMLElement | null>>>;
 }
 
-export default function GameTutorialOverlay({ open, onClose }: GameTutorialOverlayProps) {
+export default function GameTutorialOverlay({ open, onClose, containerRef, targets }: GameTutorialOverlayProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [spotlightRect, setSpotlightRect] = useState<TutorialRect | null>(null);
+  const [cardRect, setCardRect] = useState<{ left: number; top: number; width: number } | null>(null);
 
   const currentStep = useMemo(() => STEPS[stepIndex], [stepIndex]);
 
@@ -93,8 +203,55 @@ export default function GameTutorialOverlay({ open, onClose }: GameTutorialOverl
     if (!open) {
       setStepIndex(0);
       setDontShowAgain(false);
+      setSpotlightRect(null);
+      setCardRect(null);
     }
   }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    const measure = () => {
+      const container = containerRef.current;
+      const target = targets[currentStep.targetId]?.current;
+      if (!container || !target) return;
+
+      const rect = getRelativeRect(target, container);
+      const paddedRect = {
+        left: rect.left - SPOTLIGHT_PADDING,
+        top: rect.top - SPOTLIGHT_PADDING,
+        width: rect.width + SPOTLIGHT_PADDING * 2,
+        height: rect.height + SPOTLIGHT_PADDING * 2,
+      };
+
+      setSpotlightRect(paddedRect);
+      setCardRect(getCardPosition(paddedRect, container.clientWidth, container.clientHeight, currentStep.preferredPlacement));
+    };
+
+    measure();
+
+    const observer =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => {
+            measure();
+          })
+        : null;
+
+    if (observer) {
+      if (containerRef.current) observer.observe(containerRef.current);
+      const target = targets[currentStep.targetId]?.current;
+      if (target) observer.observe(target);
+    }
+
+    window.addEventListener("resize", measure);
+    window.addEventListener("scroll", measure, true);
+
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", measure, true);
+    };
+  }, [containerRef, currentStep, open, targets]);
 
   const handleFinish = () => {
     if (dontShowAgain && typeof window !== "undefined") {
@@ -108,193 +265,85 @@ export default function GameTutorialOverlay({ open, onClose }: GameTutorialOverl
       handleFinish();
       return;
     }
+
     setStepIndex((current) => current + 1);
   };
 
-  if (!open) return null;
+  if (!open || !spotlightRect || !cardRect) return null;
 
   return (
     <AnimatePresence>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-40">
-        <div className="absolute inset-0 bg-black/76 backdrop-blur-[2px]" />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-50">
+        <div className="absolute inset-0 bg-black/74 backdrop-blur-[3px]" />
 
-        <Spotlight
-          desktopClassName={currentStep.desktopSpotlightClassName}
-          mobileClassName={currentStep.mobileSpotlightClassName}
-        />
-
-        <SpotlightLabel
-          badge={currentStep.badge}
-          desktopClassName={currentStep.desktopLabelClassName}
-          mobileClassName={currentStep.mobileLabelClassName}
-        />
-
-        <div className="absolute inset-x-0 bottom-0 z-50 px-4 pb-4 pt-24 md:top-0 md:flex md:items-end md:justify-end md:px-6 md:pb-6 md:pt-6">
-          <div className="mx-auto w-full max-w-[26rem] md:mx-0">
-            <TutorialCard
-              badge={currentStep.badge}
-              title={currentStep.title}
-              description={currentStep.description}
-              stepIndex={stepIndex}
-              totalSteps={STEPS.length}
-              dontShowAgain={dontShowAgain}
-              setDontShowAgain={setDontShowAgain}
-              onSkip={handleFinish}
-              onNext={handleNext}
-            />
+        <motion.div
+          key={`${currentStep.targetId}-spotlight`}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute rounded-2xl border border-cyan/70 bg-cyan/5 shadow-[0_0_0_9999px_rgba(0,0,0,0.74),0_0_0_1px_rgba(255,255,255,0.08),0_0_36px_rgba(34,211,238,0.28)]"
+          style={{
+            left: spotlightRect.left,
+            top: spotlightRect.top,
+            width: spotlightRect.width,
+            height: spotlightRect.height,
+          }}
+        >
+          <motion.div
+            animate={{ opacity: [0.35, 0.85, 0.35] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 rounded-[inherit] border border-cyan/60"
+          />
+          <div className="absolute -top-10 left-0 rounded-full border border-cyan/25 bg-cyan/12 px-3 py-1 text-[10px] font-black uppercase tracking-[0.28em] text-cyan backdrop-blur-md">
+            {currentStep.badge}
           </div>
-        </div>
+        </motion.div>
+
+        <motion.div
+          key={currentStep.title}
+          initial={{ opacity: 0, y: 14, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="absolute rounded-3xl border border-white/10 bg-zinc-950/96 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+          style={{ left: cardRect.left, top: cardRect.top, width: cardRect.width }}
+        >
+          <p className="text-[11px] font-black uppercase tracking-[0.26em] text-cyan">{currentStep.badge}</p>
+          <h3 className="mt-2 text-xl font-black text-white">{currentStep.title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-white/70">{currentStep.description}</p>
+
+          <div className="mt-4 flex gap-2">
+            {Array.from({ length: STEPS.length }).map((_, index) => (
+              <span key={index} className={`h-1.5 flex-1 rounded-full ${index === stepIndex ? "bg-cyan" : "bg-white/10"}`} />
+            ))}
+          </div>
+
+          <label className="mt-4 flex items-center gap-2 text-xs text-white/55">
+            <input
+              type="checkbox"
+              checked={dontShowAgain}
+              onChange={(event) => setDontShowAgain(event.target.checked)}
+              className="h-4 w-4 rounded border-white/20 bg-transparent accent-cyan"
+            />
+            Nao mostrar novamente
+          </label>
+
+          <div className="mt-5 flex items-center justify-between gap-3">
+            <button
+              onClick={handleFinish}
+              className="rounded-xl border border-white/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white/60 transition hover:border-white/20 hover:text-white"
+            >
+              Fechar
+            </button>
+            <button
+              onClick={handleNext}
+              className="rounded-xl bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-black transition hover:bg-white/90"
+            >
+              {stepIndex === STEPS.length - 1 ? "Concluir" : "Proximo"}
+            </button>
+          </div>
+        </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
-}
-
-function Spotlight({
-  desktopClassName,
-  mobileClassName,
-}: {
-  desktopClassName: string;
-  mobileClassName: string;
-}) {
-  const spotlightClasses =
-    "absolute border border-cyan/60 bg-white/[0.02] shadow-[0_0_0_9999px_rgba(0,0,0,0.72),0_0_0_1px_rgba(255,255,255,0.1),0_0_30px_rgba(34,211,238,0.28)]";
-
-  return (
-    <>
-      <motion.div
-        key={`desktop-${desktopClassName}`}
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0 }}
-        className={`hidden md:block ${spotlightClasses} ${desktopClassName}`}
-      >
-        <motion.div
-          animate={{ opacity: [0.35, 0.9, 0.35], scale: [0.98, 1.01, 0.98] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 rounded-[inherit] border border-cyan/70"
-        />
-      </motion.div>
-
-      <motion.div
-        key={`mobile-${mobileClassName}`}
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0 }}
-        className={`md:hidden ${spotlightClasses} ${mobileClassName}`}
-      >
-        <motion.div
-          animate={{ opacity: [0.35, 0.9, 0.35], scale: [0.98, 1.01, 0.98] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 rounded-[inherit] border border-cyan/70"
-        />
-      </motion.div>
-    </>
-  );
-}
-
-function SpotlightLabel({
-  badge,
-  desktopClassName,
-  mobileClassName,
-}: {
-  badge: string;
-  desktopClassName?: string;
-  mobileClassName?: string;
-}) {
-  const baseClassName =
-    "absolute rounded-full border border-cyan/25 bg-cyan/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.26em] text-cyan backdrop-blur-md";
-
-  return (
-    <>
-      {desktopClassName && (
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className={`hidden md:block ${baseClassName} ${desktopClassName}`}
-        >
-          {badge}
-        </motion.div>
-      )}
-
-      {mobileClassName && (
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className={`md:hidden ${baseClassName} ${mobileClassName}`}
-        >
-          {badge}
-        </motion.div>
-      )}
-    </>
-  );
-}
-
-function TutorialCard({
-  badge,
-  title,
-  description,
-  stepIndex,
-  totalSteps,
-  dontShowAgain,
-  setDontShowAgain,
-  onSkip,
-  onNext,
-}: {
-  badge: string;
-  title: string;
-  description: string;
-  stepIndex: number;
-  totalSteps: number;
-  dontShowAgain: boolean;
-  setDontShowAgain: (value: boolean) => void;
-  onSkip: () => void;
-  onNext: () => void;
-}) {
-  return (
-    <motion.div
-      key={title}
-      initial={{ opacity: 0, y: 16, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -12 }}
-      className="rounded-3xl border border-white/10 bg-zinc-950/96 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.55)] md:p-6"
-    >
-      <p className="text-[11px] font-black uppercase tracking-[0.26em] text-cyan">{badge}</p>
-      <h3 className="mt-2 text-xl font-black text-white md:text-2xl">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-white/70 md:text-[15px]">{description}</p>
-
-      <div className="mt-4 flex gap-2">
-        {Array.from({ length: totalSteps }).map((_, index) => (
-          <span key={index} className={`h-1.5 flex-1 rounded-full ${index === stepIndex ? "bg-cyan" : "bg-white/10"}`} />
-        ))}
-      </div>
-
-      <label className="mt-4 flex items-center gap-2 text-xs text-white/55">
-        <input
-          type="checkbox"
-          checked={dontShowAgain}
-          onChange={(event) => setDontShowAgain(event.target.checked)}
-          className="h-4 w-4 rounded border-white/20 bg-transparent accent-cyan"
-        />
-        Nao mostrar novamente
-      </label>
-
-      <div className="mt-5 flex items-center justify-between gap-3">
-        <button
-          onClick={onSkip}
-          className="rounded-xl border border-white/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white/60 transition hover:border-white/20 hover:text-white"
-        >
-          Fechar
-        </button>
-        <button
-          onClick={onNext}
-          className="rounded-xl bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-black transition hover:bg-white/90"
-        >
-          {stepIndex === totalSteps - 1 ? "Concluir" : "Proximo"}
-        </button>
-      </div>
-    </motion.div>
   );
 }
 

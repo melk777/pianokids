@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
-import { motion } from "framer-motion";
 
 export default function LoginPage() {
   return (
@@ -11,16 +10,11 @@ export default function LoginPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan/10 blur-[120px] rounded-full" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 blur-[120px] rounded-full" />
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="w-full relative z-10"
-      >
+      <div className="relative z-10 w-full">
         <Suspense fallback={<div className="text-white/50 text-sm mt-10 text-center">Carregando...</div>}>
           <AuthForm />
         </Suspense>
-      </motion.div>
+      </div>
 
       {/* Decorative text */}
       <div className="absolute bottom-10 left-10 hidden lg:block opacity-10 pointer-events-none">
