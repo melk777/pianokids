@@ -1,10 +1,9 @@
 const partners = [
-  "Stripe",
-  "GitHub",
-  "Visa",
-  "Mastercard",
-  "Pix",
-  "Google Cloud",
+  { label: "Stripe", color: "#635BFF" },
+  { label: "Visa", color: "#1A1F71" },
+  { label: "Mastercard", color: "#EB001B" },
+  { label: "Pix", color: "#32BCAD" },
+  { label: "Google Cloud", color: "#4285F4" },
 ] as const;
 
 const doubledPartners = [...partners, ...partners];
@@ -25,11 +24,12 @@ export default function PartnerMarquee() {
             <div className="partner-marquee-track flex w-max items-center gap-16">
               {doubledPartners.map((partner, index) => (
                 <div
-                  key={`${partner}-${index}`}
-                  className="shrink-0 px-4 text-xs font-medium tracking-wide text-white/30 transition-colors duration-300 hover:text-white/70"
-                  title={partner}
+                  key={`${partner.label}-${index}`}
+                  className="shrink-0 px-4 text-xs font-semibold tracking-wide transition-transform duration-300 hover:-translate-y-0.5"
+                  style={{ color: partner.color }}
+                  title={partner.label}
                 >
-                  {partner}
+                  {partner.label}
                 </div>
               ))}
             </div>
