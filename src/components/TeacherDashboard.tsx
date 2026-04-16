@@ -40,6 +40,7 @@ export default function TeacherDashboard() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [withdrawals, setWithdrawals] = useState<WithdrawalData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [withdrawMessage, setWithdrawMessage] = useState<{type: 'success'|'error', text: string} | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -51,12 +52,19 @@ export default function TeacherDashboard() {
     const fetchStats = async () => {
       try {
         const res = await fetch("/api/teacher/stats");
-        if (res.ok) {
-          const data = await res.json();
-          setStats(data);
+        const data = await res.json();
+
+        if (!res.ok) {
+          setLoadError(data?.error || "Nao foi possivel carregar o dashboard do professor.");
+          setStats(null);
+          return;
         }
+
+        setStats(data);
+        setLoadError(null);
       } catch (err) {
         console.error(err);
+        setLoadError("Falha de comunicacao ao carregar o painel do professor.");
       } finally {
         setLoading(false);
       }
@@ -176,7 +184,12 @@ export default function TeacherDashboard() {
   }
 
   if (!stats) {
-    return <div className="text-white/50 text-center py-20">Não foi possível carregar o dashboard do professor.</div>;
+    return (
+      <div className="rounded-2xl border border-red-500/15 bg-red-500/5 px-6 py-10 text-center">
+        <p className="text-base font-semibold text-red-300">Nao foi possivel carregar o dashboard do professor.</p>
+        <p className="mt-2 text-sm text-white/45">{loadError || "Tente novamente em alguns instantes."}</p>
+      </div>
+    );
   }
 
   const renderTabsNav = () => (

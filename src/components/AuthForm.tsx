@@ -7,6 +7,7 @@ import { Mail, Lock, Loader2, ArrowRight, Calendar, User, Phone, CreditCard, Has
 import Link from "next/link";
 import { getURL } from "@/lib/utils/url";
 import { useSearchParams } from "next/navigation";
+import TurnstileWidget from "./TurnstileWidget";
 
 const TeacherTermsModal = dynamic(() => import("./TeacherTermsModal"), {
   loading: () => null,
@@ -28,8 +29,11 @@ export default function AuthForm() {
   const [pixKey, setPixKey] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaRefreshKey, setCaptchaRefreshKey] = useState(0);
   
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const [role, setRole] = useState<"student" | "teacher">(
     (searchParams.get("role") as "student" | "teacher") || "student"
@@ -62,8 +66,26 @@ export default function AuthForm() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    setCaptchaToken(null);
+    setCaptchaRefreshKey((value) => value + 1);
+  }, [isLogin, role]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!turnstileSiteKey) {
+      setMessage({
+        type: "error",
+        text: "A verificacao anti-robo ainda nao foi configurada. Defina a chave publica do Turnstile.",
+      });
+      return;
+    }
+
+    if (!captchaToken) {
+      setMessage({ type: "error", text: "Confirme a verificacao anti-robo antes de continuar." });
+      return;
+    }
     
     // Validation for Teacher Terms
     if (!isLogin && role === "teacher" && !agreedToTerms) {
@@ -88,6 +110,9 @@ export default function AuthForm() {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
+          options: {
+            captchaToken,
+          },
         });
         if (error) throw error;
         window.location.href = "/dashboard";
@@ -97,6 +122,7 @@ export default function AuthForm() {
           password,
           options: {
             emailRedirectTo: `${getURL()}/auth/callback`,
+            captchaToken,
             data: {
               role,
               referred_by_code,
@@ -126,6 +152,8 @@ export default function AuthForm() {
         errorMessage = "Este e-mail já está cadastrado.";
       }
       setMessage({ type: "error", text: errorMessage });
+      setCaptchaToken(null);
+      setCaptchaRefreshKey((value) => value + 1);
     } finally {
       setLoading(false);
     }
@@ -349,9 +377,15 @@ export default function AuthForm() {
                   </div>
                 )}
 
+                <TurnstileWidget
+                  siteKey={turnstileSiteKey}
+                  onTokenChange={setCaptchaToken}
+                  refreshKey={`${isLogin ? "login" : "signup"}-${role}-${captchaRefreshKey}`}
+                />
+
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !captchaToken || !turnstileSiteKey}
                   className="w-full bg-white text-black font-bold py-4 rounded-2xl mt-4 flex items-center justify-center gap-2 hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed group shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
                 >
                   {loading ? (

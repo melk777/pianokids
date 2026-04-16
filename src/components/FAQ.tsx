@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronDown, Keyboard, CreditCard, ShieldCheck, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const faqs = [
   {
@@ -38,6 +39,12 @@ const faqs = [
 ];
 
 export default function FAQ() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <section className="py-24 px-6">
       <div className="max-w-3xl mx-auto">
@@ -62,33 +69,54 @@ export default function FAQ() {
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
         >
-          <Accordion.Root type="single" collapsible className="space-y-3">
-            {faqs.map((faq, i) => (
-              <Accordion.Item
-                key={i}
-                value={`item-${i}`}
-                className="glass rounded-2xl border border-white/[0.06] overflow-hidden group data-[state=open]:border-cyan/20 transition-colors duration-300"
-              >
-                <Accordion.Trigger className="w-full flex items-center gap-4 px-6 py-5 text-left group cursor-pointer">
-                  <div className="w-8 h-8 rounded-lg bg-white/[0.04] group-data-[state=open]:bg-cyan/10 flex items-center justify-center text-white/30 group-data-[state=open]:icon-gradient transition-all duration-300 shrink-0">
-                    {faq.icon}
-                  </div>
-                  <span className="flex-1 text-[15px] font-medium text-white/80 group-data-[state=open]:text-white transition-colors">
-                    {faq.question}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-white/25 group-data-[state=open]:icon-gradient transition-all duration-300 group-data-[state=open]:rotate-180 shrink-0" />
-                </Accordion.Trigger>
+          {isMounted ? (
+            <Accordion.Root type="single" collapsible className="space-y-3">
+              {faqs.map((faq, i) => (
+                <Accordion.Item
+                  key={i}
+                  value={`item-${i}`}
+                  className="glass rounded-2xl border border-white/[0.06] overflow-hidden group data-[state=open]:border-cyan/20 transition-colors duration-300"
+                >
+                  <Accordion.Trigger className="w-full flex items-center gap-4 px-6 py-5 text-left group cursor-pointer">
+                    <div className="w-8 h-8 rounded-lg bg-white/[0.04] group-data-[state=open]:bg-cyan/10 flex items-center justify-center text-white/30 group-data-[state=open]:icon-gradient transition-all duration-300 shrink-0">
+                      {faq.icon}
+                    </div>
+                    <span className="flex-1 text-[15px] font-medium text-white/80 group-data-[state=open]:text-white transition-colors">
+                      {faq.question}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-white/25 group-data-[state=open]:icon-gradient transition-all duration-300 group-data-[state=open]:rotate-180 shrink-0" />
+                  </Accordion.Trigger>
 
-                <Accordion.Content className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-                  <div className="px-6 pb-6 pt-0 pl-[72px]">
-                    <p className="text-sm text-white/45 leading-relaxed">
-                      {faq.answer}
-                    </p>
+                  <Accordion.Content className="overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
+                    <div className="px-6 pb-6 pt-0 pl-[72px]">
+                      <p className="text-sm text-white/45 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </Accordion.Content>
+                </Accordion.Item>
+              ))}
+            </Accordion.Root>
+          ) : (
+            <div className="space-y-3">
+              {faqs.map((faq, i) => (
+                <div
+                  key={i}
+                  className="glass rounded-2xl border border-white/[0.06] overflow-hidden"
+                >
+                  <div className="flex items-center gap-4 px-6 py-5">
+                    <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white/30 shrink-0">
+                      {faq.icon}
+                    </div>
+                    <span className="flex-1 text-[15px] font-medium text-white/80">
+                      {faq.question}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-white/25 shrink-0" />
                   </div>
-                </Accordion.Content>
-              </Accordion.Item>
-            ))}
-          </Accordion.Root>
+                </div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

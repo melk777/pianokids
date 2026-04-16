@@ -43,11 +43,19 @@ export async function GET() {
       },
     });
 
-    const { data: teacherProfile } = await supabase
+    const { data: teacherProfile, error: teacherProfileError } = await supabaseAdmin
       .from("profiles")
       .select("role, referral_code, balance_withdrawn_total")
       .eq("id", user.id)
       .single();
+
+    if (teacherProfileError) {
+      console.error("Teacher profile stats error:", teacherProfileError);
+      return NextResponse.json(
+        { error: "Nao foi possivel localizar o perfil do professor." },
+        { status: 500 }
+      );
+    }
 
     if (teacherProfile?.role !== "teacher") {
       return NextResponse.json({ error: "Acesso negado. Apenas professores." }, { status: 403 });
@@ -60,8 +68,8 @@ export async function GET() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error(error);
-      return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });
+      console.error("Teacher students stats error:", error);
+      return NextResponse.json({ error: "Nao foi possivel carregar os alunos do professor." }, { status: 500 });
     }
 
     let activeStudentsCount = 0;
@@ -113,6 +121,7 @@ export async function GET() {
     });
   } catch (error: unknown) {
     const errBase = error instanceof Error ? error.message : "Error";
+    console.error("Teacher stats route error:", error);
     return NextResponse.json({ error: errBase }, { status: 500 });
   }
 }

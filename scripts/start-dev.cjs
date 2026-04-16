@@ -13,7 +13,12 @@ try {
 }
 
 const nextBin = path.join(projectRoot, "node_modules", "next", "dist", "bin", "next");
-const child = spawn(process.execPath, [nextBin, "dev", ...process.argv.slice(2)], {
+const extraArgs = process.argv.slice(2);
+const hasBundlerFlag = extraArgs.includes("--turbopack") || extraArgs.includes("--webpack");
+const child = spawn(
+  process.execPath,
+  [nextBin, "dev", ...(hasBundlerFlag ? [] : ["--turbopack"]), ...extraArgs],
+  {
   cwd: projectRoot,
   stdio: "inherit",
   env: process.env,

@@ -7,16 +7,6 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingRoot: __dirname,
-  experimental: {
-    devtoolSegmentExplorer: false,
-  },
-  webpack(config, { dev }) {
-    if (dev) {
-      config.cache = false;
-    }
-
-    return config;
-  },
   images: {
     remotePatterns: [
       {
