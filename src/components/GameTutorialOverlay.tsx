@@ -274,7 +274,38 @@ export default function GameTutorialOverlay({ open, onClose, containerRef, targe
   return (
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-50">
-        <div className="absolute inset-0 bg-black/74 backdrop-blur-[3px]" />
+        <div
+          className="absolute left-0 top-0 bg-black/74 backdrop-blur-[3px]"
+          style={{
+            width: "100%",
+            height: Math.max(0, spotlightRect.top),
+          }}
+        />
+        <div
+          className="absolute left-0 bg-black/74 backdrop-blur-[3px]"
+          style={{
+            top: spotlightRect.top,
+            width: Math.max(0, spotlightRect.left),
+            height: spotlightRect.height,
+          }}
+        />
+        <div
+          className="absolute bg-black/74 backdrop-blur-[3px]"
+          style={{
+            top: spotlightRect.top,
+            left: spotlightRect.left + spotlightRect.width,
+            right: 0,
+            height: spotlightRect.height,
+          }}
+        />
+        <div
+          className="absolute left-0 bg-black/74 backdrop-blur-[3px]"
+          style={{
+            top: spotlightRect.top + spotlightRect.height,
+            width: "100%",
+            bottom: 0,
+          }}
+        />
 
         <motion.div
           key={`${currentStep.targetId}-spotlight`}

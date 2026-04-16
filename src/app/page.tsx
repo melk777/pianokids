@@ -71,25 +71,33 @@ export default function Home() {
 
   /* ── Stripe checkout (com redirect p/ login se não autenticado) ── */
   const handleSubscribe = async (planKey: string) => {
-    const res = await fetch("/api/stripe/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ planKey }),
-    });
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planKey }),
+      });
 
-    const data = await res.json();
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json") ? await res.json() : null;
 
-    // Usuário não autenticado → redireciona para cadastro
-    if (res.status === 401 && data.redirect) {
-      router.push(data.redirect);
-      return;
-    }
+      // Usuário não autenticado → redireciona para cadastro
+      if (res.status === 401 && data?.redirect) {
+        router.push(data.redirect);
+        return;
+      }
 
-    if (data.url) {
-      window.location.assign(data.url);
-    } else if (data.error) {
-      alert(`Erro: ${data.error}`);
-      console.error("Checkout error:", data.error);
+      if (data?.url) {
+        window.location.assign(data.url);
+      } else if (data?.error) {
+        alert(`Erro: ${data.error}`);
+        console.error("Checkout error:", data.error);
+      } else {
+        throw new Error("Resposta inesperada ao iniciar checkout.");
+      }
+    } catch (error) {
+      console.error("Checkout request failed:", error);
+      alert("Nao foi possivel iniciar a compra agora. Tente novamente em instantes.");
     }
   };
 
