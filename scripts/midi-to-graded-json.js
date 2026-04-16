@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { Midi } = require("@tonejs/midi");
 const songManifest = require("./song-manifest");
+const songCatalogMetadata = require("./song-catalog-metadata");
 const { normalizeSongHands, sanitizeSingleHandArrangements, validateSongHands } = require("./song-hand-utils");
 
 const MIDI_DIR = path.resolve(__dirname, "../public/midi");
@@ -56,6 +57,23 @@ function humanize(value) {
   return value
     .replace(/[-_]+/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function isUnusableSourceTitle(value) {
+  if (!value) return true;
+
+  const normalized = value.replace(/\0/g, "").trim().toLowerCase();
+  if (!normalized) return true;
+
+  return (
+    normalized === "control track" ||
+    normalized === "track 0" ||
+    normalized === "piano" ||
+    normalized === "piano0" ||
+    normalized.includes("control track") ||
+    normalized.includes("left hand") ||
+    normalized.includes("right hand")
+  );
 }
 
 function inferHand(track, note) {
@@ -214,6 +232,7 @@ function readMidiFile(fileName) {
 }
 
 function buildSongJson(entry) {
+  const metadata = songCatalogMetadata[entry.id] || {};
   const sources = entry.midiFiles.map((fileName) => ({
     fileName,
     ...readMidiFile(fileName),
@@ -234,16 +253,22 @@ function buildSongJson(entry) {
         : simplifyEasy(hardSource.notes, hardSource.bpm);
   const medium = middleSource ? stripTrackIndex(middleSource.notes) : simplifyMedium(hardSource.notes, hardSource.bpm);
   const hard = stripTrackIndex(hardSource.notes);
+  const sourceTitle = isUnusableSourceTitle(hardSource.title) ? "" : hardSource.title.trim();
 
   return {
     id: entry.id,
-    title: entry.title || hardSource.title || humanize(entry.id),
-    artist: entry.artist || "MIDI Source",
-    difficulty: "Médio",
+    title: metadata.title || entry.title || sourceTitle || humanize(entry.id),
+    artist: metadata.artist || entry.artist || "MIDI Source",
+    difficulty: metadata.difficulty || "M�dio",
     bpm: hardSource.bpm,
     duration: Math.max(...sources.map((source) => source.duration)),
-    category: entry.category || "A revisar",
-    isPremium: typeof entry.isPremium === "boolean" ? entry.isPremium : true,
+    category: metadata.category || entry.category || "A revisar",
+    isPremium:
+      typeof metadata.isPremium === "boolean"
+        ? metadata.isPremium
+        : typeof entry.isPremium === "boolean"
+          ? entry.isPremium
+          : true,
     coverUrl: entry.coverUrl || "/images/covers/placeholder.png",
     notes: hard,
     arrangements: {
@@ -318,3 +343,4 @@ function main() {
 }
 
 main();
+

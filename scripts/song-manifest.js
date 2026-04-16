@@ -22,7 +22,7 @@ module.exports = [
   {
     id: "ode-to-joy",
     outputFile: "ode-to-joy.json",
-    midiFiles: ["Ode_to_Joy_(Ode_à_Alegria)_-_very_easy_piano_version.mid"],
+    midiFiles: ["ode_to_joy_full.mid"],
   },
   {
     id: "fur-elise",
@@ -47,17 +47,17 @@ module.exports = [
   {
     id: "bach-prelude",
     outputFile: "bach-prelude.json",
-    midiFiles: ["bach_prelude_facil.mid", "bach_prelude_dificil.mid"],
+    midiFiles: ["bach_prelude_full.mid"],
   },
   {
     id: "turkish-march",
     outputFile: "turkish-march.json",
-    midiFiles: ["turkish_march_facil.mid", "turkish_march_dificil.mid"],
+    midiFiles: ["turkish_march_full.mid"],
   },
   {
     id: "minute-waltz",
     outputFile: "minute-waltz.json",
-    midiFiles: ["minute_waltz_facil.mid", "minute_waltz_dificil.mid"],
+    midiFiles: ["minute_waltz_full.mid"],
   },
   {
     id: "nocturne-op9",
@@ -230,3 +230,4 @@ module.exports = [
     midiFiles: ["Trois Nouvelles Etudes, No. 1 F MinorChopin.mid"],
   },
 ];
+
