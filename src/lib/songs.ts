@@ -53,7 +53,7 @@ const COVER_BACH = "https://upload.wikimedia.org/wikipedia/commons/6/6a/Johann_S
 const COVER_MOZART = "https://upload.wikimedia.org/wikipedia/commons/f/fc/Barbara_Krafft_-_Portr%C3%A4t_Wolfgang_Amadeus_Mozart_%281819%29.jpg";
 const COVER_TCHAIKOVSKY = "https://upload.wikimedia.org/wikipedia/commons/d/db/Tchaikovsky%2C_head-and-shoulders_portrait.jpg";
 const COVER_DEBUSSY = "https://upload.wikimedia.org/wikipedia/commons/1/12/Claude_Debussy_portrait.jpg";
-const COVER_RIMSKY = "https://upload.wikimedia.org/wikipedia/commons/3/34/1905_Nikolai_Rimsky-Korsakov.jpg";
+const COVER_RIMSKY = "https://upload.wikimedia.org/wikipedia/commons/a/aa/Nikolai_A._Rimsky-Korsakov.jpg";
 const COVER_BEETHOVEN = "https://upload.wikimedia.org/wikipedia/commons/6/6f/Beethoven.jpg";
 
 export const songs: Song[] = [
