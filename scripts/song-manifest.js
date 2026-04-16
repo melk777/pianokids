@@ -62,7 +62,7 @@ module.exports = [
   {
     id: "nocturne-op9",
     outputFile: "nocturne-op9.json",
-    midiFiles: ["nocturne_op9_facil.mid", "nocturne_op9_dificil.mid"],
+    midiFiles: ["nocturne_op9_full.mid"],
   },
   {
     id: "golden-hour",
