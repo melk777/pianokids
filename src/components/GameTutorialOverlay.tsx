@@ -29,6 +29,7 @@ type TutorialStep = {
   description: string;
   targetId: GameTutorialTargetId;
   preferredPlacement?: "top" | "bottom" | "left" | "right";
+  preferredAlign?: "start" | "center" | "end";
 };
 
 type TutorialRect = {
@@ -94,6 +95,7 @@ const STEPS: TutorialStep[] = [
     description: "Mostra os pontos acumulados ao longo da execucao.",
     targetId: "score",
     preferredPlacement: "bottom",
+    preferredAlign: "start",
   },
   {
     badge: "Desempenho",
@@ -101,6 +103,7 @@ const STEPS: TutorialStep[] = [
     description: "O combo revela constancia. Quanto mais acertos seguidos, maior o impacto na evolucao do aluno.",
     targetId: "combo",
     preferredPlacement: "bottom",
+    preferredAlign: "center",
   },
   {
     badge: "Analise",
@@ -108,6 +111,7 @@ const STEPS: TutorialStep[] = [
     description: "Aqui o aluno acompanha a qualidade da execucao em tempo real.",
     targetId: "accuracy",
     preferredPlacement: "bottom",
+    preferredAlign: "end",
   },
   {
     badge: "Fluxo",
@@ -115,6 +119,7 @@ const STEPS: TutorialStep[] = [
     description: "A barra superior mostra a posicao atual da musica e ajuda a localizar rapidamente o trecho estudado.",
     targetId: "progress",
     preferredPlacement: "bottom",
+    preferredAlign: "center",
   },
   {
     badge: "Teclado",
@@ -122,6 +127,7 @@ const STEPS: TutorialStep[] = [
     description: "O teclado na base mostra a regiao tocada e ajuda a enxergar a distribuicao das notas e acordes.",
     targetId: "keyboard",
     preferredPlacement: "top",
+    preferredAlign: "center",
   },
 ];
 
@@ -144,10 +150,17 @@ function getCardPosition(
   containerWidth: number,
   containerHeight: number,
   preferredPlacement: TutorialStep["preferredPlacement"],
+  preferredAlign: TutorialStep["preferredAlign"],
 ) {
   const cardWidth = Math.min(CARD_MAX_WIDTH, containerWidth - 24);
   const cardHeight = 230;
-  const centerX = rect.left + rect.width / 2 - cardWidth / 2;
+  const alignedLeft =
+    preferredAlign === "start"
+      ? rect.left
+      : preferredAlign === "end"
+        ? rect.left + rect.width - cardWidth
+        : rect.left + rect.width / 2 - cardWidth / 2;
+  const centerX = alignedLeft;
   const centerY = rect.top + rect.height / 2 - cardHeight / 2;
   const fitsBottom = rect.top + rect.height + CARD_GAP + cardHeight < containerHeight - 16;
   const fitsTop = rect.top - CARD_GAP - cardHeight > 16;
@@ -164,10 +177,10 @@ function getCardPosition(
   if (placement === "left" && !fitsLeft) placement = fitsBottom ? "bottom" : fitsTop ? "top" : fitsRight ? "right" : "left";
 
   if (placement === "bottom") {
-    left = rect.left + rect.width / 2 - cardWidth / 2;
+    left = alignedLeft;
     top = rect.top + rect.height + CARD_GAP;
   } else if (placement === "top") {
-    left = rect.left + rect.width / 2 - cardWidth / 2;
+    left = alignedLeft;
     top = rect.top - cardHeight - CARD_GAP;
   } else if (placement === "right") {
     left = rect.left + rect.width + CARD_GAP;
@@ -225,7 +238,15 @@ export default function GameTutorialOverlay({ open, onClose, containerRef, targe
       };
 
       setSpotlightRect(paddedRect);
-      setCardRect(getCardPosition(paddedRect, container.clientWidth, container.clientHeight, currentStep.preferredPlacement));
+      setCardRect(
+        getCardPosition(
+          paddedRect,
+          container.clientWidth,
+          container.clientHeight,
+          currentStep.preferredPlacement,
+          currentStep.preferredAlign,
+        ),
+      );
     };
 
     measure();
