@@ -65,7 +65,12 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
     params.set("rightHand", "true");
     params.set("mic", micEnabled.toString());
     params.set("difficulty", selectedDifficulty);
-    router.push(`/dashboard/play/${song.id}?${params.toString()}`);
+    const targetHref = `/dashboard/play/${song.id}?${params.toString()}`;
+    if (typeof window !== "undefined") {
+      window.location.assign(targetHref);
+      return;
+    }
+    router.push(targetHref);
   };
 
   return (
@@ -229,6 +234,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
               </div>
 
               <button
+                type="button"
                 onClick={handleStart}
                 className="group relative mt-2 h-16 w-full overflow-hidden rounded-full opacity-100 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]"
               >
