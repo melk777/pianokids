@@ -16,9 +16,9 @@ interface SongSummaryModalProps {
 }
 
 const difficultyCards: Array<{ id: Difficulty; label: string; tone: string }> = [
-  { id: "beginner", label: "Facil", tone: "emerald" },
-  { id: "medium", label: "Intermediario", tone: "amber" },
-  { id: "pro", label: "Dificil", tone: "rose" },
+  { id: "beginner", label: "Fácil", tone: "emerald" },
+  { id: "medium", label: "Intermediário", tone: "amber" },
+  { id: "pro", label: "Difícil", tone: "rose" },
 ];
 
 type PracticeHandMode = "right" | "both";
@@ -29,8 +29,8 @@ const practiceModeCards: Array<{
   description: string;
   iconClassName?: string;
 }> = [
-  { id: "right", label: "Mao direita", description: "Treino focado para iniciar com clareza." },
-  { id: "both", label: "Duas maos", description: "Versao completa da musica no teclado." },
+  { id: "right", label: "Mão direita", description: "Treino focado para iniciar com clareza." },
+  { id: "both", label: "Duas mãos", description: "Versão completa da música no teclado." },
 ];
 
 export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryModalProps) {
@@ -65,6 +65,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
     params.set("rightHand", "true");
     params.set("mic", micEnabled.toString());
     params.set("difficulty", selectedDifficulty);
+    onClose();
     router.push(`/dashboard/play/${song.id}?${params.toString()}`);
   };
 
@@ -118,9 +119,9 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
               <div className="space-y-5">
                 <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-sm font-bold uppercase tracking-[4px] text-white/30">Nivel e modo de pratica</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-[4px] text-white/30">Nível e modo de prática</h3>
                   <div className="flex items-center gap-3">
-                    <span className={`text-[10px] font-black tracking-widest ${difficultyAccent}`}>NIVEL {DIFFICULTY_LABELS[selectedDifficulty].toUpperCase()}</span>
+                    <span className={`text-[10px] font-black tracking-widest ${difficultyAccent}`}>NÍVEL {DIFFICULTY_LABELS[selectedDifficulty].toUpperCase()}</span>
                     <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/5">
                       <motion.div
                         animate={{
@@ -218,7 +219,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                     {micEnabled ? <Mic size={24} /> : <MicOff size={24} />}
                   </div>
                   <div>
-                    <h4 className="font-bold text-white">Modo Reconhecimento</h4>
+                    <h4 className="font-bold text-white">Modo reconhecimento</h4>
                     <p className="text-sm text-white/30">Usar microfone para validar notas</p>
                   </div>
                 </div>
@@ -230,17 +231,29 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
               <button
                 onClick={handleStart}
-                disabled={!micEnabled}
                 className={`group relative mt-2 h-16 w-full overflow-hidden rounded-full transition-all duration-500 ${
-                  micEnabled ? "opacity-100 shadow-[0_20px_40px_-10px_rgba(239,68,68,0.4)] hover:scale-[1.02] active:scale-[0.98]" : "cursor-not-allowed opacity-40 grayscale-[0.5]"
+                  micEnabled
+                    ? "opacity-100 shadow-[0_20px_40px_-10px_rgba(239,68,68,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+                    : "opacity-100 shadow-[0_20px_40px_-10px_rgba(59,130,246,0.28)] hover:scale-[1.02] active:scale-[0.98]"
                 }`}
               >
-                <div className={`absolute inset-0 bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 bg-[length:200%_100%] ${micEnabled ? "animate-gradient-slow" : ""}`} />
+                <div
+                  className={`absolute inset-0 bg-[length:200%_100%] ${
+                    micEnabled
+                      ? "animate-gradient-slow bg-gradient-to-r from-orange-500 via-red-500 to-orange-500"
+                      : "bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-500"
+                  }`}
+                />
 
                 <div className="relative flex h-full items-center justify-between px-8">
-                  <span className="text-lg font-black uppercase tracking-[2px] text-white">{micEnabled ? "Comecar o Jogo" : "Ative o Microfone"}</span>
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-md transition-all ${micEnabled ? "group-hover:bg-white/40" : ""}`}>
-                    {micEnabled ? <Play size={20} fill="currentColor" className="ml-1 text-white" /> : <MicOff size={20} className="text-white/60" />}
+                  <div className="flex flex-col items-start">
+                    <span className="text-lg font-black tracking-[2px] text-white">Começar a tocar.</span>
+                    <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">
+                      {micEnabled ? "Microfone ligado" : "Sem microfone"}
+                    </span>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-md transition-all group-hover:bg-white/40">
+                    <Play size={20} fill="currentColor" className="ml-1 text-white" />
                   </div>
                 </div>
               </button>
