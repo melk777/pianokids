@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SongLibrary from "@/components/SongLibrary";
 import { Loader2 } from "lucide-react";
-import type { Song } from "@/lib/songs";
+import type { Song } from "@/lib/types";
 import { loadSongs } from "@/lib/songCatalog";
 import { useSubscription } from "@/hooks/useSubscription";
 

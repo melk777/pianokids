@@ -1,4 +1,4 @@
-import type { Song, SongNote, ArrangementLevel } from "./songs";
+import type { Song, SongNote, ArrangementLevel } from "./types";
 
 /* ──────────────────────────────────────────────────────
    Difficulty Filters

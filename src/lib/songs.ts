@@ -11,7 +11,6 @@ import bachPreludeData from "../../public/songs/bach-prelude.json";
 import turkishMarchData from "../../public/songs/turkish-march.json";
 import minuteWaltzData from "../../public/songs/minute-waltz.json";
 import nocturneOp9Data from "../../public/songs/nocturne-op9.json";
-import goldenHourData from "../../public/songs/golden-hour.json";
 import parabensData from "../../public/songs/parabens.json";
 import ballade4Data from "../../public/songs/ballade-4chopin.json";
 import bellaCiaoData from "../../public/songs/bella-ciao-lacasadepapel.json";
@@ -35,6 +34,21 @@ import ohQueBelasLaranjasData from "../../public/songs/oh-que-belas-laranjas.jso
 import passarinhoDaLagoaData from "../../public/songs/passarinho-da-lagoa.json";
 import tutuMarambaData from "../../public/songs/tutu-maramba.json";
 import ondeEstaMargaridaData from "../../public/songs/onde-esta-a-margarida.json";
+import amazingGraceData from "../../public/songs/amazing-grace.json";
+import casteloForteData from "../../public/songs/castelo-forte.json";
+import maisPertoData from "../../public/songs/mais-perto-quero-estar.json";
+import santoSantoSantoData from "../../public/songs/santo-santo-santo.json";
+import noiteFelizData from "../../public/songs/noite-feliz.json";
+import rochaEternaData from "../../public/songs/rocha-eterna.json";
+import vindeFieisData from "../../public/songs/vinde-fieis.json";
+import oVemEmanuelData from "../../public/songs/o-vem-o-vem-emanuel.json";
+import jubilosoData from "../../public/songs/jubiloso-te-adoramos.json";
+import firmePromessasData from "../../public/songs/firme-nas-promessas.json";
+import contaBencaosData from "../../public/songs/conta-as-bencaos.json";
+import souFelizData from "../../public/songs/sou-feliz-com-jesus.json";
+import coroaiData from "../../public/songs/coroai.json";
+import mansoSuaveData from "../../public/songs/manso-e-suave.json";
+import aosPesData from "../../public/songs/aos-pes-da-cruz.json";
 import fantaisieImpromptuData from "../../public/songs/chopin-fantaisie-impromptuchopin.json";
 import wtcPrelude2Data from "../../public/songs/das-wohltemperierte-clavier-ii-praeludium-iijsbach.json";
 import doumkaData from "../../public/songs/doumkatchaikosvky.json";
@@ -76,6 +90,7 @@ const COVER_DEBUSSY = "https://upload.wikimedia.org/wikipedia/commons/1/12/Claud
 const COVER_RIMSKY = "https://upload.wikimedia.org/wikipedia/commons/a/aa/Nikolai_A._Rimsky-Korsakov.jpg";
 const COVER_BEETHOVEN = "https://upload.wikimedia.org/wikipedia/commons/6/6f/Beethoven.jpg";
 const infantisCover = (id: string) => `/images/covers/infantis/${id}.svg`;
+const religiosaCover = (id: string) => `/images/covers/religiosos/${id}.svg`;
 
 export const songs: Song[] = [
   {
@@ -137,18 +152,6 @@ export const songs: Song[] = [
     difficulty: "Médio",
   },
   {
-    id: "evidencias",
-    title: "Evidências",
-    artist: "Chitãozinho & Xororó",
-    category: "Sertanejos",
-    isPremium: true,
-    difficulty: "Médio",
-    bpm: 90,
-    duration: 120,
-    coverUrl: "https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?w=500&auto=format&fit=crop&q=60",
-    notes: [],
-  },
-  {
     id: "hallelujah",
     title: "Hallelujah",
     artist: "Leonard Cohen",
@@ -158,18 +161,6 @@ export const songs: Song[] = [
     bpm: 60,
     duration: 180,
     coverUrl: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=500&auto=format&fit=crop&q=60",
-    notes: [],
-  },
-  {
-    id: "flowers",
-    title: "Flowers",
-    artist: "Miley Cyrus",
-    category: "Grandes Sucessos",
-    isPremium: true,
-    difficulty: "Médio",
-    bpm: 112,
-    duration: 200,
-    coverUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&auto=format&fit=crop&q=60",
     notes: [],
   },
   {
@@ -193,16 +184,6 @@ export const songs: Song[] = [
     difficulty: "Médio",
   },
   {
-    ...(goldenHourData as Song),
-    id: "golden-hour",
-    title: "Golden Hour",
-    artist: "JVKE",
-    category: "Grandes Sucessos",
-    isPremium: true,
-    coverUrl: "/images/covers/golden_hour_cover.png",
-    difficulty: "Médio",
-  },
-  {
     ...(parabensData as Song),
     id: "parabens-pra-voce",
     title: "Parabéns pra Você",
@@ -220,7 +201,7 @@ export const songs: Song[] = [
     category: "Intro de Filmes",
     categories: ["Infantis", "Intro de Filmes"],
     isPremium: false,
-    coverUrl: "/images/covers/golden-hour.png",
+    coverUrl: "/images/covers/default.png",
     difficulty: "Médio",
   },
   {
@@ -422,6 +403,146 @@ export const songs: Song[] = [
     isPremium: false,
     coverUrl: infantisCover("onde-esta-a-margarida"),
     difficulty: "Fácil",
+  },
+  {
+    ...(amazingGraceData as Song),
+    id: "amazing-grace",
+    title: "Amazing Grace",
+    artist: "John Newton",
+    category: "Religiosos",
+    isPremium: false,
+    coverUrl: religiosaCover("amazing-grace"),
+    difficulty: "FÃ¡cil",
+  },
+  {
+    ...(casteloForteData as Song),
+    id: "castelo-forte",
+    title: "Castelo Forte",
+    artist: "Martinho Lutero",
+    category: "Religiosos",
+    isPremium: false,
+    coverUrl: religiosaCover("castelo-forte"),
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(maisPertoData as Song),
+    id: "mais-perto-quero-estar",
+    title: "Mais Perto Quero Estar",
+    artist: "Sarah Flower Adams",
+    category: "Religiosos",
+    isPremium: false,
+    coverUrl: religiosaCover("mais-perto-quero-estar"),
+    difficulty: "FÃ¡cil",
+  },
+  {
+    ...(santoSantoSantoData as Song),
+    id: "santo-santo-santo",
+    title: "Santo, Santo, Santo",
+    artist: "Reginald Heber",
+    category: "Religiosos",
+    isPremium: false,
+    coverUrl: religiosaCover("santo-santo-santo"),
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(noiteFelizData as Song),
+    id: "noite-feliz",
+    title: "Noite Feliz",
+    artist: "Franz Xaver Gruber",
+    category: "Religiosos",
+    isPremium: false,
+    coverUrl: religiosaCover("noite-feliz"),
+    difficulty: "FÃ¡cil",
+  },
+  {
+    ...(rochaEternaData as Song),
+    id: "rocha-eterna",
+    title: "Rocha Eterna",
+    artist: "Augustus Toplady",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "FÃ¡cil",
+  },
+  {
+    ...(vindeFieisData as Song),
+    id: "vinde-fieis",
+    title: "Vinde Fieis",
+    artist: "John Francis Wade",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "FÃ¡cil",
+  },
+  {
+    ...(oVemEmanuelData as Song),
+    id: "o-vem-o-vem-emanuel",
+    title: "O Vem, O Vem, Emanuel",
+    artist: "Tradicional",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(jubilosoData as Song),
+    id: "jubiloso-te-adoramos",
+    title: "Jubiloso, Te Adoramos",
+    artist: "Henry van Dyke / Beethoven",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(firmePromessasData as Song),
+    id: "firme-nas-promessas",
+    title: "Firme nas Promessas",
+    artist: "Russell Kelso Carter",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(contaBencaosData as Song),
+    id: "conta-as-bencaos",
+    title: "Conta as Bencaos",
+    artist: "Johnson Oatman Jr.",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(souFelizData as Song),
+    id: "sou-feliz-com-jesus",
+    title: "Sou Feliz com Jesus",
+    artist: "Horatio Spafford",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(coroaiData as Song),
+    id: "coroai",
+    title: "Coroai",
+    artist: "Matthew Bridges",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "MÃ©dio",
+  },
+  {
+    ...(mansoSuaveData as Song),
+    id: "manso-e-suave",
+    title: "Manso e Suave",
+    artist: "Will L. Thompson",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "FÃ¡cil",
+  },
+  {
+    ...(aosPesData as Song),
+    id: "aos-pes-da-cruz",
+    title: "Aos Pes da Cruz",
+    artist: "Isaac Watts / Ralph E. Hudson",
+    category: "Religiosos",
+    isPremium: false,
+    difficulty: "MÃ©dio",
   },
   {
     ...(moonlightSonataData as Song),

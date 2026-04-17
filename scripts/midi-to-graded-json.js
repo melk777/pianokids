@@ -48,6 +48,13 @@ const CLASSICAL_IDS = new Set([
   "the-seasons-januarytchaikovsky",
   "trois-nouvelles-etudes-no-1-f-minorchopin",
 ]);
+const FILM_INTRO_IDS = new Set([
+  "toccata-and-fugue-d-minor",
+  "in-the-hall-of-the-mountain-king",
+  "gymnopedie-no-1",
+  "ave-maria-schubert",
+  "swan-lake-napolitan-dance",
+]);
 
 function round(value, digits = 3) {
   return Number(value.toFixed(digits));
@@ -196,26 +203,29 @@ function simplifyEasy(notes, bpm, options = {}) {
   const groups = groupNotesByTime(notes);
   const simplified = [];
   const strictRightHand = options.strictRightHand ?? false;
-  const minimumDuration = strictRightHand ? beatSeconds / 5 : beatSeconds / 8;
-  const repeatGap = strictRightHand ? beatSeconds / 1.75 : beatSeconds / 4;
+  const minimumDuration = options.minimumDuration ?? (strictRightHand ? beatSeconds / 5 : beatSeconds / 8);
+  const repeatGap = options.repeatGap ?? (strictRightHand ? beatSeconds / 1.75 : beatSeconds / 4);
+  const minimumMidi = options.minimumMidi ?? 60;
+  const minimumAcceptedGap = options.minimumAcceptedGap ?? (strictRightHand ? beatSeconds / 2 : 0);
+  const forcedDuration = options.forcedDuration ?? (strictRightHand ? beatSeconds / 2 : beatSeconds / 3);
   let lastAcceptedTime = -Infinity;
 
   for (const group of groups) {
     const usable = group.notes.filter((note) => note.duration >= minimumDuration);
     if (usable.length === 0) continue;
 
-    const rightHand = usable.filter((note) => note.hand !== "left" && note.midi >= 60);
+    const rightHand = usable.filter((note) => note.hand !== "left" && note.midi >= minimumMidi);
     const source = strictRightHand ? rightHand : rightHand.length > 0 ? rightHand : usable;
     if (source.length === 0) continue;
     const melody = [...source].sort((a, b) => b.midi - a.midi)[0];
 
-    if (strictRightHand && melody.time - lastAcceptedTime < beatSeconds / 2) {
+    if (minimumAcceptedGap > 0 && melody.time - lastAcceptedTime < minimumAcceptedGap) {
       continue;
     }
 
     simplified.push({
       ...melody,
-      duration: round(Math.max(melody.duration, strictRightHand ? beatSeconds / 2 : beatSeconds / 3)),
+      duration: round(Math.max(melody.duration, forcedDuration)),
       hand: "right",
     });
     lastAcceptedTime = melody.time;
@@ -244,10 +254,21 @@ function buildSongJson(entry) {
   const hardSource = sources[sources.length - 1];
   const middleSource = sources.length > 2 ? sources[Math.floor(sources.length / 2)] : null;
   const strictRightHandEasy = CLASSICAL_IDS.has(entry.id);
+  const cinematicEasy = FILM_INTRO_IDS.has(entry.id);
+  const easyOptions = cinematicEasy
+    ? {
+        strictRightHand: true,
+        minimumDuration: hardSource.bpm >= 120 ? 60 / hardSource.bpm / 3 : 60 / hardSource.bpm / 4,
+        minimumAcceptedGap: 60 / hardSource.bpm,
+        repeatGap: 60 / hardSource.bpm / 1.2,
+        minimumMidi: 62,
+        forcedDuration: 60 / hardSource.bpm / 1.5,
+      }
+    : { strictRightHand: true };
 
   const easy =
-    strictRightHandEasy
-      ? simplifyEasy(hardSource.notes, hardSource.bpm, { strictRightHand: true })
+    strictRightHandEasy || cinematicEasy
+      ? simplifyEasy(hardSource.notes, hardSource.bpm, easyOptions)
       : sources.length > 1
         ? stripTrackIndex(easySource.notes)
         : simplifyEasy(hardSource.notes, hardSource.bpm);

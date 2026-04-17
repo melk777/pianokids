@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback, useMemo, type MutableRefObject } from "react";
-import type { SongNote } from "@/lib/songs";
+import type { SongNote } from "@/lib/types";
 import { midiNoteToName, type MIDINote } from "@/hooks/useMIDI";
 import type { Difficulty } from "@/lib/songFilters";
 import { TIMING_WINDOWS } from "@/lib/songFilters";

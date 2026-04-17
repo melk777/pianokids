@@ -70,6 +70,8 @@ export interface Song {
   categories?: string[] | null;
   isPremium: boolean;
   coverUrl?: string;
+  noteCount?: number;
+  jsonPath?: string | null;
   notes: SongNote[];
   arrangements?: SongArrangements | null;
   notes1Hand?: SongNote[] | null;

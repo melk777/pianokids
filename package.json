@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/start-dev.cjs",
-    "build": "next build",
+    "build": "node scripts/build-song-catalog-index.js && node --max-old-space-size=4096 ./node_modules/next/dist/bin/next build",
     "start": "next start",
     "lint": "next lint",
     "parse-midi": "node scripts/midi-to-json.js",
-    "parse-midi-graded": "node scripts/midi-to-graded-json.js",
+    "parse-midi-graded": "node scripts/midi-to-graded-json.js && node scripts/build-song-catalog-index.js",
+    "build-song-catalog-index": "node scripts/build-song-catalog-index.js",
     "validate-song-hands": "node scripts/validate-song-hands.js",
     "audit-song-library": "node scripts/audit-song-library.js"
   },

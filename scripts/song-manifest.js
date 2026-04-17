@@ -65,11 +65,6 @@ module.exports = [
     midiFiles: ["nocturne_op9_full.mid"],
   },
   {
-    id: "golden-hour",
-    outputFile: "golden-hour.json",
-    midiFiles: ["golden-hour-1.mid", "golden-hour-2.mid"],
-  },
-  {
     id: "parabens-pra-voce",
     outputFile: "parabens.json",
     midiFiles: ["parabens-1.mid", "parabens-2.mid"],
@@ -183,6 +178,106 @@ module.exports = [
     id: "onde-esta-a-margarida",
     outputFile: "onde-esta-a-margarida.json",
     midiFiles: ["onde_esta_a_margarida.mid"],
+  },
+  {
+    id: "amazing-grace",
+    outputFile: "amazing-grace.json",
+    midiFiles: ["amazing_grace.mid"],
+  },
+  {
+    id: "castelo-forte",
+    outputFile: "castelo-forte.json",
+    midiFiles: ["castelo_forte.mid"],
+  },
+  {
+    id: "mais-perto-quero-estar",
+    outputFile: "mais-perto-quero-estar.json",
+    midiFiles: ["mais_perto_quero_estar.mid"],
+  },
+  {
+    id: "santo-santo-santo",
+    outputFile: "santo-santo-santo.json",
+    midiFiles: ["santo_santo_santo.mid"],
+  },
+  {
+    id: "noite-feliz",
+    outputFile: "noite-feliz.json",
+    midiFiles: ["noite_feliz.mid"],
+  },
+  {
+    id: "rocha-eterna",
+    outputFile: "rocha-eterna.json",
+    midiFiles: ["rocha_eterna.mid"],
+  },
+  {
+    id: "vinde-fieis",
+    outputFile: "vinde-fieis.json",
+    midiFiles: ["vinde_fieis.mid"],
+  },
+  {
+    id: "o-vem-o-vem-emanuel",
+    outputFile: "o-vem-o-vem-emanuel.json",
+    midiFiles: ["o_vem_o_vem_emanuel.mid"],
+  },
+  {
+    id: "jubiloso-te-adoramos",
+    outputFile: "jubiloso-te-adoramos.json",
+    midiFiles: ["jubiloso_te_adoramos.mid"],
+  },
+  {
+    id: "firme-nas-promessas",
+    outputFile: "firme-nas-promessas.json",
+    midiFiles: ["firme_nas_promessas.mid"],
+  },
+  {
+    id: "conta-as-bencaos",
+    outputFile: "conta-as-bencaos.json",
+    midiFiles: ["conta_as_bencaos.mid"],
+  },
+  {
+    id: "sou-feliz-com-jesus",
+    outputFile: "sou-feliz-com-jesus.json",
+    midiFiles: ["sou_feliz_com_jesus.mid"],
+  },
+  {
+    id: "coroai",
+    outputFile: "coroai.json",
+    midiFiles: ["coroai.mid"],
+  },
+  {
+    id: "manso-e-suave",
+    outputFile: "manso-e-suave.json",
+    midiFiles: ["manso_e_suave.mid"],
+  },
+  {
+    id: "aos-pes-da-cruz",
+    outputFile: "aos-pes-da-cruz.json",
+    midiFiles: ["aos_pes_da_cruz.mid"],
+  },
+  {
+    id: "alvo-mais-que-a-neve",
+    outputFile: "alvo-mais-que-a-neve.json",
+    midiFiles: ["alvo_mais_que_a_neve.mid"],
+  },
+  {
+    id: "chuvas-de-graca",
+    outputFile: "chuvas-de-graca.json",
+    midiFiles: ["chuvas_de_graca.mid"],
+  },
+  {
+    id: "deus-velara-por-ti",
+    outputFile: "deus-velara-por-ti.json",
+    midiFiles: ["deus_velara_por_ti.mid"],
+  },
+  {
+    id: "gloria-gloria-aleluia",
+    outputFile: "gloria-gloria-aleluia.json",
+    midiFiles: ["gloria_gloria_aleluia.mid"],
+  },
+  {
+    id: "tao-sublime-sacramento",
+    outputFile: "tao-sublime-sacramento.json",
+    midiFiles: ["tao_sublime_sacramento.mid"],
   },
   {
     id: "chopin-fantaisie-impromptuchopin",
@@ -328,6 +423,31 @@ module.exports = [
     id: "trois-nouvelles-etudes-no-1-f-minorchopin",
     outputFile: "trois-nouvelles-etudes-no-1-f-minorchopin.json",
     midiFiles: ["Trois Nouvelles Etudes, No. 1 F MinorChopin.mid"],
+  },
+  {
+    id: "toccata-and-fugue-d-minor",
+    outputFile: "toccata-and-fugue-d-minor.json",
+    midiFiles: ["toccata_fugue_d_minor.mid"],
+  },
+  {
+    id: "in-the-hall-of-the-mountain-king",
+    outputFile: "in-the-hall-of-the-mountain-king.json",
+    midiFiles: ["in_the_hall_of_the_mountain_king.mid"],
+  },
+  {
+    id: "gymnopedie-no-1",
+    outputFile: "gymnopedie-no-1.json",
+    midiFiles: ["gymnopedie_no_1.mid"],
+  },
+  {
+    id: "ave-maria-schubert",
+    outputFile: "ave-maria-schubert.json",
+    midiFiles: ["ave_maria_schubert.mid"],
+  },
+  {
+    id: "swan-lake-napolitan-dance",
+    outputFile: "swan-lake-napolitan-dance.json",
+    midiFiles: ["swan_lake_napolitan_dance.mid"],
   },
 ];
 

@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, Hand, Play, ArrowLeft } from "lucide-react";
 import Image from "next/image";
-import { Song } from "@/lib/songs";
+import type { Song } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSFX } from "@/hooks/useSFX";
 import { type Difficulty, DIFFICULTY_LABELS } from "@/lib/songFilters";

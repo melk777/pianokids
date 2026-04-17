@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import type { Song } from "@/lib/songs";
+import type { Song } from "@/lib/types";
 import { Lock, Play, Search, X } from "lucide-react";
 import { useSFX } from "@/hooks/useSFX";
 
@@ -373,7 +373,7 @@ const SongCard = memo(function SongCard({
 
           <div className="flex items-center justify-between">
             <span className="text-gradient text-sm font-black tracking-widest">{getDifficultyStars(song.difficulty)}</span>
-            <span className="text-xs text-white/40">{song.notes.length} notas</span>
+            <span className="text-xs text-white/40">{song.noteCount ?? song.notes.length} notas</span>
           </div>
         </div>
 
