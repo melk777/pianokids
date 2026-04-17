@@ -35,9 +35,12 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaRefreshKey, setCaptchaRefreshKey] = useState(0);
+  const [resolvedTurnstileSiteKey, setResolvedTurnstileSiteKey] = useState(
+    (initialTurnstileSiteKey || process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim(),
+  );
   
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const turnstileSiteKey = (initialTurnstileSiteKey || process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim();
+  const turnstileSiteKey = resolvedTurnstileSiteKey;
 
   const [role, setRole] = useState<"student" | "teacher">(
     (searchParams.get("role") as "student" | "teacher") || "student"
@@ -74,6 +77,29 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
     setCaptchaToken(null);
     setCaptchaRefreshKey((value) => value + 1);
   }, [isLogin, role]);
+
+  useEffect(() => {
+    if (resolvedTurnstileSiteKey) return;
+
+    let active = true;
+
+    fetch("/api/auth/turnstile-key", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) return null;
+        return response.json();
+      })
+      .then((data) => {
+        if (!active || !data?.siteKey) return;
+        setResolvedTurnstileSiteKey(String(data.siteKey).trim());
+      })
+      .catch(() => {
+        // The inline warning remains as the visible fallback if runtime config also fails.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [resolvedTurnstileSiteKey]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
