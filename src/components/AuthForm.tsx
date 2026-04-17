@@ -13,7 +13,11 @@ const TeacherTermsModal = dynamic(() => import("./TeacherTermsModal"), {
   loading: () => null,
 });
 
-export default function AuthForm() {
+interface AuthFormProps {
+  turnstileSiteKey?: string;
+}
+
+export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: AuthFormProps) {
   const supabase = createClientComponent();
   const searchParams = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
@@ -33,7 +37,7 @@ export default function AuthForm() {
   const [captchaRefreshKey, setCaptchaRefreshKey] = useState(0);
   
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const turnstileSiteKey = (initialTurnstileSiteKey || process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim();
 
   const [role, setRole] = useState<"student" | "teacher">(
     (searchParams.get("role") as "student" | "teacher") || "student"

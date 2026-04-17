@@ -1,9 +1,9 @@
-"use client";
-
 import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 
 export default function LoginPage() {
+  const turnstileSiteKey = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim();
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background Orbs */}
@@ -12,7 +12,7 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full">
         <Suspense fallback={<div className="text-white/50 text-sm mt-10 text-center">Carregando...</div>}>
-          <AuthForm />
+          <AuthForm turnstileSiteKey={turnstileSiteKey} />
         </Suspense>
       </div>
 
