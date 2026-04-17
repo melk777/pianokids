@@ -8,7 +8,6 @@ import type { Song } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSFX } from "@/hooks/useSFX";
 import { type Difficulty, DIFFICULTY_LABELS } from "@/lib/songFilters";
-import { useSubscription } from "@/hooks/useSubscription";
 
 interface SongSummaryModalProps {
   song: Song | null;
@@ -37,7 +36,6 @@ const practiceModeCards: Array<{
 export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryModalProps) {
   const router = useRouter();
   const { playClick } = useSFX();
-  const { hasAccess, loading: subscriptionLoading } = useSubscription();
 
   const [practiceHandMode, setPracticeHandMode] = useState<PracticeHandMode>("right");
   const [micEnabled, setMicEnabled] = useState(false);
@@ -62,19 +60,11 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
   const handleStart = () => {
     playClick();
-
-    if (!hasAccess) {
-      onClose();
-      router.push("/dashboard/subscription");
-      return;
-    }
-
     const params = new URLSearchParams();
     params.set("leftHand", String(practiceHandMode === "both"));
     params.set("rightHand", "true");
     params.set("mic", micEnabled.toString());
     params.set("difficulty", selectedDifficulty);
-    onClose();
     router.push(`/dashboard/play/${song.id}?${params.toString()}`);
   };
 
@@ -240,30 +230,15 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
               <button
                 onClick={handleStart}
-                disabled={subscriptionLoading}
-                className={`group relative mt-2 h-16 w-full overflow-hidden rounded-full transition-all duration-500 ${
-                  subscriptionLoading
-                    ? "cursor-wait opacity-70"
-                    : "opacity-100 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] hover:scale-[1.02] active:scale-[0.98]"
-                }`}
+                className="group relative mt-2 h-16 w-full overflow-hidden rounded-full opacity-100 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div
-                  className={`absolute inset-0 bg-gradient-to-r from-orange-500 via-orange-400 to-red-500 bg-[length:200%_100%] ${
-                    subscriptionLoading ? "" : "animate-gradient-slow"
-                  }`}
-                />
+                <div className="absolute inset-0 animate-gradient-slow bg-gradient-to-r from-orange-500 via-orange-400 to-red-500 bg-[length:200%_100%]" />
 
                 <div className="relative flex h-full items-center justify-between px-8">
                   <div className="flex flex-col items-start">
                     <span className="text-lg font-black tracking-[2px] text-white">Começar a tocar.</span>
                     <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">
-                      {subscriptionLoading
-                        ? "Preparando acesso"
-                        : hasAccess
-                          ? micEnabled
-                            ? "Microfone ligado"
-                            : "Sem microfone"
-                          : "Escolha um plano para liberar"}
+                      {micEnabled ? "Microfone ligado" : "Sem microfone"}
                     </span>
                   </div>
                   <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-md transition-all group-hover:bg-white/40">

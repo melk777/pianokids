@@ -22,7 +22,6 @@ import {
   type HandSelection,
 } from "@/lib/songFilters";
 import { Volume2, Mic, MicOff, Play, Pause, RotateCcw, CircleHelp } from "lucide-react";
-import { useSubscription } from "@/hooks/useSubscription";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -79,7 +78,6 @@ function PlayPageContent() {
   const [song, setSong] = useState<Song | undefined>(isFreePlay ? FREE_PLAY_SONG : undefined);
   const [songLoading, setSongLoading] = useState(!isFreePlay);
 
-  const { hasAccess, loading: subLoading } = useSubscription();
   const { profile, recordPracticeSession } = useProfile();
 
   const {
@@ -461,7 +459,7 @@ function PlayPageContent() {
     return getAccompanimentNotes(song.notes, difficulty);
   }, [song, difficulty, handSelection]);
 
-  if (songLoading || subLoading) {
+  if (songLoading) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-black p-8 text-white">
         <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-cyan/20 border-t-cyan" />
@@ -477,17 +475,6 @@ function PlayPageContent() {
         <Link href="/dashboard/songs" className="text-cyan hover:underline">
           Voltar para a biblioteca
         </Link>
-      </div>
-    );
-  }
-
-  if (!hasAccess) {
-    router.push("/dashboard/songs");
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-black p-8 text-white">
-        <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-rose-500/20 border-t-rose-500" />
-        <span className="text-sm font-bold uppercase tracking-widest text-rose-400">Acesso Restrito</span>
-        <p className="mt-2 text-xs text-white/40">Sua assinatura ou periodo gratuito precisa estar ativo para continuar tocando. Redirecionando...</p>
       </div>
     );
   }
