@@ -15,6 +15,26 @@ import goldenHourData from "../../public/songs/golden-hour.json";
 import parabensData from "../../public/songs/parabens.json";
 import ballade4Data from "../../public/songs/ballade-4chopin.json";
 import bellaCiaoData from "../../public/songs/bella-ciao-lacasadepapel.json";
+import cirandaCirandinhaData from "../../public/songs/ciranda-cirandinha.json";
+import atireiPauNoGatoData from "../../public/songs/atirei-o-pau-no-gato.json";
+import escravosDeJoData from "../../public/songs/escravos-de-jo.json";
+import peixeVivoData from "../../public/songs/peixe-vivo.json";
+import fuiNoItororoData from "../../public/songs/fui-no-itororo.json";
+import aCanoaVirouData from "../../public/songs/a-canoa-virou.json";
+import oCravoERosaData from "../../public/songs/o-cravo-e-a-rosa.json";
+import pirulitoData from "../../public/songs/pirulito-que-bate-bate.json";
+import sambaLeleData from "../../public/songs/samba-lele.json";
+import terezinhaDeJesusData from "../../public/songs/teresinha-de-jesus.json";
+import carneirinhoData from "../../public/songs/carneirinho-carneirao.json";
+import paiFranciscoData from "../../public/songs/pai-francisco.json";
+import pezinhoData from "../../public/songs/pezinho.json";
+import sapoCururuData from "../../public/songs/sapo-cururu.json";
+import seEssaRuaData from "../../public/songs/se-essa-rua-fosse-minha.json";
+import minhaMachadinhaData from "../../public/songs/minha-machadinha.json";
+import ohQueBelasLaranjasData from "../../public/songs/oh-que-belas-laranjas.json";
+import passarinhoDaLagoaData from "../../public/songs/passarinho-da-lagoa.json";
+import tutuMarambaData from "../../public/songs/tutu-maramba.json";
+import ondeEstaMargaridaData from "../../public/songs/onde-esta-a-margarida.json";
 import fantaisieImpromptuData from "../../public/songs/chopin-fantaisie-impromptuchopin.json";
 import wtcPrelude2Data from "../../public/songs/das-wohltemperierte-clavier-ii-praeludium-iijsbach.json";
 import doumkaData from "../../public/songs/doumkatchaikosvky.json";
@@ -55,6 +75,7 @@ const COVER_TCHAIKOVSKY = "https://upload.wikimedia.org/wikipedia/commons/d/db/T
 const COVER_DEBUSSY = "https://upload.wikimedia.org/wikipedia/commons/1/12/Claude_Debussy_portrait.jpg";
 const COVER_RIMSKY = "https://upload.wikimedia.org/wikipedia/commons/a/aa/Nikolai_A._Rimsky-Korsakov.jpg";
 const COVER_BEETHOVEN = "https://upload.wikimedia.org/wikipedia/commons/6/6f/Beethoven.jpg";
+const infantisCover = (id: string) => `/images/covers/infantis/${id}.svg`;
 
 export const songs: Song[] = [
   {
@@ -62,7 +83,7 @@ export const songs: Song[] = [
     artist: "Folclore Brasileiro",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "/images/covers/borboletinha.png",
+    coverUrl: infantisCover("borboletinha"),
     difficulty: "Fácil",
   },
   {
@@ -72,7 +93,7 @@ export const songs: Song[] = [
     artist: "Folclore Brasileiro",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "/images/covers/pintinho.png",
+    coverUrl: infantisCover("meu-pintinho-amarelinho"),
     difficulty: "Fácil",
   },
   {
@@ -82,7 +103,7 @@ export const songs: Song[] = [
     artist: "Tradicional",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "/images/covers/brilha_brilha_1775056322794.png",
+    coverUrl: infantisCover("brilha-brilha-estrelinha"),
     difficulty: "Fácil",
   },
   {
@@ -92,7 +113,7 @@ export const songs: Song[] = [
     artist: "Tradicional",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "/images/covers/dona_aranha_1775056352751.png",
+    coverUrl: infantisCover("a-dona-aranha"),
     difficulty: "Fácil",
   },
   {
@@ -158,7 +179,7 @@ export const songs: Song[] = [
     artist: "Folclore Brasileiro",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "/images/covers/o_sapo_cover.png",
+    coverUrl: infantisCover("o-sapo"),
     difficulty: "Fácil",
   },
   {
@@ -188,7 +209,7 @@ export const songs: Song[] = [
     artist: "Tradicional",
     category: "Infantis",
     isPremium: false,
-    coverUrl: "/images/covers/parabens_cover.png",
+    coverUrl: infantisCover("parabens"),
     difficulty: "Fácil",
   },
   {
@@ -201,6 +222,206 @@ export const songs: Song[] = [
     isPremium: false,
     coverUrl: "/images/covers/golden-hour.png",
     difficulty: "Médio",
+  },
+  {
+    ...(cirandaCirandinhaData as Song),
+    id: "ciranda-cirandinha",
+    title: "Ciranda, Cirandinha",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("ciranda-cirandinha"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(atireiPauNoGatoData as Song),
+    id: "atirei-o-pau-no-gato",
+    title: "Atirei o Pau no Gato",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("atirei-o-pau-no-gato"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(escravosDeJoData as Song),
+    id: "escravos-de-jo",
+    title: "Escravos de Jó",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("escravos-de-jo"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(peixeVivoData as Song),
+    id: "peixe-vivo",
+    title: "Peixe Vivo",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("peixe-vivo"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(fuiNoItororoData as Song),
+    id: "fui-no-itororo",
+    title: "Fui no Itororó",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("fui-no-itororo"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(aCanoaVirouData as Song),
+    id: "a-canoa-virou",
+    title: "A Canoa Virou",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("a-canoa-virou"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(oCravoERosaData as Song),
+    id: "o-cravo-e-a-rosa",
+    title: "O Cravo e a Rosa",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("o-cravo-e-a-rosa"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(pirulitoData as Song),
+    id: "pirulito-que-bate-bate",
+    title: "Pirulito que Bate Bate",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("pirulito-que-bate-bate"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(sambaLeleData as Song),
+    id: "samba-lele",
+    title: "Samba Lelê",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("samba-lele"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(terezinhaDeJesusData as Song),
+    id: "teresinha-de-jesus",
+    title: "Teresinha de Jesus",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("teresinha-de-jesus"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(carneirinhoData as Song),
+    id: "carneirinho-carneirao",
+    title: "Carneirinho, Carneirão",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("carneirinho-carneirao"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(paiFranciscoData as Song),
+    id: "pai-francisco",
+    title: "Pai Francisco",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("pai-francisco"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(pezinhoData as Song),
+    id: "pezinho",
+    title: "Pezinho",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("pezinho"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(sapoCururuData as Song),
+    id: "sapo-cururu",
+    title: "Sapo Cururu",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("sapo-cururu"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(seEssaRuaData as Song),
+    id: "se-essa-rua-fosse-minha",
+    title: "Se Essa Rua Fosse Minha",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("se-essa-rua-fosse-minha"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(minhaMachadinhaData as Song),
+    id: "minha-machadinha",
+    title: "Minha Machadinha",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("minha-machadinha"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(ohQueBelasLaranjasData as Song),
+    id: "oh-que-belas-laranjas",
+    title: "Oh! Que Belas Laranjas",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("oh-que-belas-laranjas"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(passarinhoDaLagoaData as Song),
+    id: "passarinho-da-lagoa",
+    title: "Passarinho da Lagoa",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("passarinho-da-lagoa"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(tutuMarambaData as Song),
+    id: "tutu-maramba",
+    title: "Tutu Marambá",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("tutu-maramba"),
+    difficulty: "Fácil",
+  },
+  {
+    ...(ondeEstaMargaridaData as Song),
+    id: "onde-esta-a-margarida",
+    title: "Onde Está a Margarida?",
+    artist: "Tradicional",
+    category: "Infantis",
+    isPremium: false,
+    coverUrl: infantisCover("onde-esta-a-margarida"),
+    difficulty: "Fácil",
   },
   {
     ...(moonlightSonataData as Song),

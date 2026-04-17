@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" rx="72" fill="#FFF9F0"/>
+  <rect x="40" y="40" width="1120" height="1120" rx="56" fill="url(#bg)"/>
+  <circle cx="980" cy="220" r="160" fill="#b8fff1" fill-opacity="0.9"/>
+  <circle cx="240" cy="960" r="180" fill="#b8fff1" fill-opacity="0.6"/>
+  <circle cx="170" cy="240" r="94" fill="#FFFFFF" fill-opacity="0.72"/>
+  <path d="M136 238C136 198 168 166 208 166H350C390 166 422 198 422 238C422 278 390 310 350 310H208C168 310 136 278 136 238Z" fill="#FFFFFF" fill-opacity="0.72"/>
+  <rect x="120" y="120" width="236" height="68" rx="34" fill="#111827" fill-opacity="0.08"/>
+  <text x="238" y="164" text-anchor="middle" fill="#1F2937" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">PIANIFY KIDS</text>
+  <rect x="120" y="688" width="960" height="312" rx="42" fill="#FFFFFF" fill-opacity="0.88"/>
+  <text x="120" y="494" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="126" font-weight="800">AGUA</text>
+  <text x="120" y="790" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800">Fui no Itororo</text>
+  <text x="120" y="872" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="600">Cantiga tradicional brasileira</text>
+  <rect x="120" y="932" width="272" height="18" rx="9" fill="#14b8a6" fill-opacity="0.9"/>
+  <rect x="412" y="932" width="132" height="18" rx="9" fill="#0F172A" fill-opacity="0.15"/>
+  <rect x="560" y="932" width="92" height="18" rx="9" fill="#0F172A" fill-opacity="0.08"/>
+  <path d="M760 434C760 347.961 829.961 278 916 278C1002.04 278 1072 347.961 1072 434V488C1072 574.039 1002.04 644 916 644C829.961 644 760 574.039 760 488V434Z" fill="#14b8a6" fill-opacity="0.92"/>
+  <circle cx="916" cy="434" r="42" fill="#FFF9F0" fill-opacity="0.95"/>
+  <path d="M860 530C882 496 905 479 916 479C927 479 950 496 972 530" stroke="#FFF9F0" stroke-width="22" stroke-linecap="round"/>
+  <rect x="792" y="564" width="248" height="24" rx="12" fill="#FFF9F0" fill-opacity="0.92"/>
+  <defs>
+    <linearGradient id="bg" x1="120" y1="92" x2="1080" y2="1108" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7ED"/>
+      <stop offset="0.58" stop-color="#FEF3C7"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+</svg>

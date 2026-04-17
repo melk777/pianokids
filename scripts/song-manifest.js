@@ -85,6 +85,106 @@ module.exports = [
     midiFiles: ["bella-ciao-lacasadepapel.mid"],
   },
   {
+    id: "ciranda-cirandinha",
+    outputFile: "ciranda-cirandinha.json",
+    midiFiles: ["ciranda_cirandinha.mid"],
+  },
+  {
+    id: "atirei-o-pau-no-gato",
+    outputFile: "atirei-o-pau-no-gato.json",
+    midiFiles: ["atirei_o_pau_no_gato.mid"],
+  },
+  {
+    id: "escravos-de-jo",
+    outputFile: "escravos-de-jo.json",
+    midiFiles: ["escravos_de_jo.mid"],
+  },
+  {
+    id: "peixe-vivo",
+    outputFile: "peixe-vivo.json",
+    midiFiles: ["peixe_vivo.mid"],
+  },
+  {
+    id: "fui-no-itororo",
+    outputFile: "fui-no-itororo.json",
+    midiFiles: ["fui_no_tororo.mid"],
+  },
+  {
+    id: "a-canoa-virou",
+    outputFile: "a-canoa-virou.json",
+    midiFiles: ["a_canoa_virou.mid"],
+  },
+  {
+    id: "o-cravo-e-a-rosa",
+    outputFile: "o-cravo-e-a-rosa.json",
+    midiFiles: ["o_cravo_e_a_rosa.mid"],
+  },
+  {
+    id: "pirulito-que-bate-bate",
+    outputFile: "pirulito-que-bate-bate.json",
+    midiFiles: ["pirulito_que_bate_bate.mid"],
+  },
+  {
+    id: "samba-lele",
+    outputFile: "samba-lele.json",
+    midiFiles: ["samba_lele.mid"],
+  },
+  {
+    id: "teresinha-de-jesus",
+    outputFile: "teresinha-de-jesus.json",
+    midiFiles: ["teresinha_de_jesus.mid"],
+  },
+  {
+    id: "carneirinho-carneirao",
+    outputFile: "carneirinho-carneirao.json",
+    midiFiles: ["carneirinho_carneirao.mid"],
+  },
+  {
+    id: "pai-francisco",
+    outputFile: "pai-francisco.json",
+    midiFiles: ["pai_francisco.mid"],
+  },
+  {
+    id: "pezinho",
+    outputFile: "pezinho.json",
+    midiFiles: ["pezinho.mid"],
+  },
+  {
+    id: "sapo-cururu",
+    outputFile: "sapo-cururu.json",
+    midiFiles: ["sapo_cururu.mid"],
+  },
+  {
+    id: "se-essa-rua-fosse-minha",
+    outputFile: "se-essa-rua-fosse-minha.json",
+    midiFiles: ["se_essa_rua_fosse_minha.mid"],
+  },
+  {
+    id: "minha-machadinha",
+    outputFile: "minha-machadinha.json",
+    midiFiles: ["minha_machadinha.mid"],
+  },
+  {
+    id: "oh-que-belas-laranjas",
+    outputFile: "oh-que-belas-laranjas.json",
+    midiFiles: ["oh_que_belas_laranjas.mid"],
+  },
+  {
+    id: "passarinho-da-lagoa",
+    outputFile: "passarinho-da-lagoa.json",
+    midiFiles: ["passarinho_da_lagoa.mid"],
+  },
+  {
+    id: "tutu-maramba",
+    outputFile: "tutu-maramba.json",
+    midiFiles: ["tutu_maramba.mid"],
+  },
+  {
+    id: "onde-esta-a-margarida",
+    outputFile: "onde-esta-a-margarida.json",
+    midiFiles: ["onde_esta_a_margarida.mid"],
+  },
+  {
     id: "chopin-fantaisie-impromptuchopin",
     outputFile: "chopin-fantaisie-impromptuchopin.json",
     midiFiles: ["chopin_fantaisie-impromptuchopin.mid"],
