@@ -77,6 +77,14 @@ export async function GET() {
       } else {
         const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
         if (profile.subscription_status === "trialing" && trialEndsAt && now < trialEndsAt) {
+          await supabase
+            .from("profiles")
+            .update({
+              subscription_status: "trialing",
+              trial_ends_at: trialEndsAt.toISOString(),
+            })
+            .eq("id", userId);
+
           return NextResponse.json({
             status: "trialing",
             planType: "trial",
@@ -131,6 +139,17 @@ export async function GET() {
       });
       const latestSub = otherSubs.data[0];
       if (latestSub && (latestSub.status === "trialing" || latestSub.status === "past_due")) {
+        await supabase
+          .from("profiles")
+          .update({
+            subscription_status: latestSub.status,
+            trial_ends_at:
+              latestSub.status === "trialing" && latestSub.trial_end
+                ? new Date(latestSub.trial_end * 1000).toISOString()
+                : null,
+          })
+          .eq("id", userId);
+
         return NextResponse.json({
           status: latestSub.status,
           planType: latestSub.status === "trialing" ? "trial" : "past_due",
@@ -160,6 +179,17 @@ export async function GET() {
       date: new Date(inv.created * 1000).toISOString(),
       pdf_url: inv.invoice_pdf,
     }));
+
+    await supabase
+      .from("profiles")
+      .update({
+        subscription_status: "active",
+        trial_ends_at:
+          activeSub.status === "trialing" && activeSub.trial_end
+            ? new Date(activeSub.trial_end * 1000).toISOString()
+            : null,
+      })
+      .eq("id", userId);
 
     return NextResponse.json({
       status: activeSub.status,

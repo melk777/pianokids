@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { hasSpecialAccess } from "@/lib/access-control";
 
 function isStudentExperienceRoute(pathname: string) {
   return (
@@ -98,6 +99,7 @@ export async function middleware(request: NextRequest) {
       .single();
 
     const role = profile?.role ?? user.user_metadata?.role ?? "student";
+    const specialAccess = hasSpecialAccess(user.id, user.email);
 
     if ((role === "teacher" || role === "admin") && isStudentExperienceRoute(pathname)) {
       return NextResponse.redirect(new URL("/dashboard", request.url), {
@@ -116,8 +118,8 @@ export async function middleware(request: NextRequest) {
         profile.subscription_status === "active" ||
         profile.subscription_status === "admin_granted";
 
-      if (!hasTrialAccess && !hasPaidAccess) {
-        return NextResponse.redirect(new URL("/dashboard/songs", request.url), {
+      if (!specialAccess && !hasTrialAccess && !hasPaidAccess) {
+        return NextResponse.redirect(new URL("/dashboard/subscription", request.url), {
           headers: response.headers,
         });
       }
