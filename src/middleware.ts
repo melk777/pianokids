@@ -63,6 +63,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/auth") ||
     request.nextUrl.pathname.startsWith("/professores") ||
     request.nextUrl.pathname.startsWith("/privacidade") ||
+    request.nextUrl.pathname.startsWith("/api/auth/turnstile-key") ||
     request.nextUrl.pathname.startsWith("/api/stripe/checkout") ||
     request.nextUrl.pathname.startsWith("/api/stripe/webhook");
 
