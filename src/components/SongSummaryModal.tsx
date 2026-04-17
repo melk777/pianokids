@@ -40,12 +40,14 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
   const [practiceHandMode, setPracticeHandMode] = useState<PracticeHandMode>("right");
   const [micEnabled, setMicEnabled] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("beginner");
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
     setPracticeHandMode("right");
     setMicEnabled(false);
     setSelectedDifficulty("beginner");
+    setIsStarting(false);
   }, [isOpen]);
 
   const difficultyAccent = useMemo(() => {
@@ -58,14 +60,40 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
   const categoryLabel = song.categories?.length ? song.categories.join(" • ") : song.category;
 
-  const handleStart = () => {
+  const handleStart = async () => {
+    if (isStarting) return;
+
     playClick();
+    setIsStarting(true);
     const params = new URLSearchParams();
     params.set("leftHand", String(practiceHandMode === "both"));
     params.set("rightHand", "true");
     params.set("mic", micEnabled.toString());
     params.set("difficulty", selectedDifficulty);
     const targetHref = `/dashboard/play/${song.id}?${params.toString()}`;
+
+    try {
+      const response = await fetch("/api/auth/stripe-check", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (response.ok) {
+        const data = (await response.json()) as { hasAccess?: boolean };
+        if (!data.hasAccess) {
+          const subscriptionHref = "/dashboard/subscription";
+          if (typeof window !== "undefined") {
+            window.location.assign(subscriptionHref);
+            return;
+          }
+          router.push(subscriptionHref);
+          return;
+        }
+      }
+    } catch {
+      // Se a verificacao falhar momentaneamente, seguimos para o jogo e deixamos o middleware decidir.
+    }
+
     if (typeof window !== "undefined") {
       window.location.assign(targetHref);
       return;
@@ -236,7 +264,10 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
               <button
                 type="button"
                 onClick={handleStart}
-                className="group relative mt-2 h-16 w-full overflow-hidden rounded-full opacity-100 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]"
+                disabled={isStarting}
+                className={`group relative mt-2 h-16 w-full overflow-hidden rounded-full shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] transition-all duration-500 ${
+                  isStarting ? "cursor-wait opacity-90" : "opacity-100 hover:scale-[1.02] active:scale-[0.98]"
+                }`}
               >
                 <div className="absolute inset-0 animate-gradient-slow bg-gradient-to-r from-orange-500 via-orange-400 to-red-500 bg-[length:200%_100%]" />
 
@@ -244,7 +275,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                   <div className="flex flex-col items-start">
                     <span className="text-lg font-black tracking-[2px] text-white">Começar a tocar.</span>
                     <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">
-                      {micEnabled ? "Microfone ligado" : "Sem microfone"}
+                      {isStarting ? "Abrindo..." : micEnabled ? "Microfone ligado" : "Sem microfone"}
                     </span>
                   </div>
                   <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-md transition-all group-hover:bg-white/40">
