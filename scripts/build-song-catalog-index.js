@@ -28,14 +28,6 @@ const SPECIAL_COVERS = {
   hallelujah: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=500&auto=format&fit=crop&q=60",
 };
 
-const CATEGORY_OVERRIDES = {
-  "bella-ciao-lacasadepapel": ["Infantis", "Intro de Filmes"],
-  "ode-to-joy": ["Clássicos", "Intro de Filmes"],
-  "moonlight-sonata": ["Clássicos", "Intro de Filmes"],
-  "turkish-march": ["Clássicos", "Intro de Filmes"],
-  "suite-bergamasque-clair-de-lunedebussy": ["Clássicos", "Intro de Filmes"],
-};
-
 const EXTRA_SONGS = [
   {
     id: "hallelujah",
@@ -97,10 +89,6 @@ function buildEntryFromJsonFile(fileName) {
   const category = sanitizeString(meta.category || parsed.category || "Outros");
   const difficulty = sanitizeString(meta.difficulty || parsed.difficulty || "Fácil");
   const coverUrl = getCoverUrl(parsed.id, artist, sanitizeString(parsed.coverUrl));
-  const categories = Array.isArray(CATEGORY_OVERRIDES[parsed.id] || parsed.categories)
-    ? (CATEGORY_OVERRIDES[parsed.id] || parsed.categories).map((item) => sanitizeString(item))
-    : null;
-
   return {
     id: parsed.id,
     title,
@@ -109,7 +97,7 @@ function buildEntryFromJsonFile(fileName) {
     bpm: Number(parsed.bpm || 0),
     duration: Number(parsed.duration || 0),
     category,
-    categories,
+    categories: null,
     isPremium: meta.isPremium ?? Boolean(parsed.isPremium),
     coverUrl,
     noteCount: Array.isArray(parsed.notes) ? parsed.notes.length : 0,

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { memo, useDeferredValue, useEffect, useMemo, useState, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -24,15 +24,13 @@ interface SongLibraryProps {
 }
 
 const CATEGORIES = [
-  { id: "all", label: "Todas" },
   { id: "Infantis", label: "Infantis" },
-  { id: "Intro de Filmes", label: "Intro de Filmes" },
   { id: "Clássicos", label: "Clássicos" },
-  { id: "Sertanejos", label: "Sertanejos" },
   { id: "Religiosos", label: "Religiosos" },
-  { id: "Grandes Sucessos", label: "Grandes Sucessos" },
-];
+  { id: "Intro de Filmes", label: "Intro de Filmes" },
+] as const;
 
+const CATEGORY_ORDER = CATEGORIES.map((category) => category.id);
 const INITIAL_CATEGORY_LIMIT = 10;
 const CATEGORY_INCREMENT = 10;
 const FILTERED_PAGE_SIZE = 20;
@@ -68,7 +66,9 @@ export default function SongLibrary({ songs, hasPremium, hasAccess }: SongLibrar
 
   const categoriesToRender = useMemo(() => {
     if (isFiltering) return [];
-    return Array.from(new Set(songs.flatMap((song) => getSongCategories(song))));
+
+    const availableCategories = new Set(songs.flatMap((song) => getSongCategories(song)));
+    return CATEGORY_ORDER.filter((category) => availableCategories.has(category));
   }, [isFiltering, songs]);
 
   const groupedSongs = useMemo(() => {
@@ -322,7 +322,7 @@ const SongCard = memo(function SongCard({
 }: SongCardProps) {
   const isLocked = !hasAccess || (song.isPremium && !hasPremium);
 
-  const handleClick = (event: React.MouseEvent) => {
+  const handleClick = (event: MouseEvent) => {
     if (isLocked) return;
     event.preventDefault();
     playClick();
