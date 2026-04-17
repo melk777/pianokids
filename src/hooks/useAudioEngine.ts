@@ -14,6 +14,7 @@ function midiToFreq(midi: number): number {
 interface AudioEngineReturn {
   init: () => Promise<void>;
   resume: () => Promise<void>;
+  suspend: () => Promise<void>;
   getCurrentTime: () => number;
   scheduleAccompaniment: (midi: number, startTime: number, duration: number, velocity?: number) => void;
   playStudent: (midi: number, duration: number, velocity?: number) => void;
@@ -238,9 +239,21 @@ export function useAudioEngine(): AudioEngineReturn {
     }
   }, [init]);
 
+  const suspend = useCallback(async () => {
+    const ctx = ctxRef.current;
+    if (!ctx || ctx.state === "closed") {
+      return;
+    }
+
+    if (ctx.state === "running") {
+      await ctx.suspend();
+    }
+  }, []);
+
   const engine = useMemo(() => ({
     init,
     resume,
+    suspend,
     getCurrentTime,
     scheduleAccompaniment,
     playStudent,
@@ -249,7 +262,7 @@ export function useAudioEngine(): AudioEngineReturn {
     penaltyMiss,
     setVolume,
     destroy,
-  }), [init, resume, getCurrentTime, scheduleAccompaniment, playStudent, playTick, rewardHit, penaltyMiss, setVolume, destroy]);
+  }), [init, resume, suspend, getCurrentTime, scheduleAccompaniment, playStudent, playTick, rewardHit, penaltyMiss, setVolume, destroy]);
 
   return engine;
 }

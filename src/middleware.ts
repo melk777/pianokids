@@ -105,6 +105,24 @@ export async function middleware(request: NextRequest) {
       });
     }
 
+    if (role === "student" && profile && isStudentExperienceRoute(pathname)) {
+      const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
+      const hasTrialAccess =
+        profile.subscription_status === "trialing" &&
+        trialEndsAt &&
+        !Number.isNaN(trialEndsAt.getTime()) &&
+        new Date() < trialEndsAt;
+      const hasPaidAccess =
+        profile.subscription_status === "active" ||
+        profile.subscription_status === "admin_granted";
+
+      if (!hasTrialAccess && !hasPaidAccess) {
+        return NextResponse.redirect(new URL("/dashboard/songs", request.url), {
+          headers: response.headers,
+        });
+      }
+    }
+
   }
 
   return response;

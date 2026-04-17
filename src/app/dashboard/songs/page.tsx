@@ -9,7 +9,7 @@ import { loadSongs } from "@/lib/songCatalog";
 import { useSubscription } from "@/hooks/useSubscription";
 
 export default function SongsPage() {
-  const { isPro: hasPremium, loading: subscriptionLoading } = useSubscription();
+  const { isPro: hasPremium, hasAccess, loading: subscriptionLoading } = useSubscription();
   const [songs, setSongs] = useState<Song[]>([]);
   const [songsLoading, setSongsLoading] = useState(true);
 
@@ -42,7 +42,7 @@ export default function SongsPage() {
           </div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-            <SongLibrary songs={songs} hasPremium={hasPremium} />
+            <SongLibrary songs={songs} hasPremium={hasPremium} hasAccess={hasAccess} />
           </motion.div>
         )}
       </div>

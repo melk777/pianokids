@@ -20,6 +20,7 @@ const SongSummaryModal = dynamic(() => import("./SongSummaryModal"), {
 interface SongLibraryProps {
   songs: Song[];
   hasPremium: boolean;
+  hasAccess: boolean;
 }
 
 const CATEGORIES = [
@@ -40,7 +41,7 @@ function getSongCategories(song: Song) {
   return song.categories?.length ? song.categories : [song.category];
 }
 
-export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
+export default function SongLibrary({ songs, hasPremium, hasAccess }: SongLibraryProps) {
   const { playClick } = useSFX();
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearchTerm = useDeferredValue(searchTerm);
@@ -206,6 +207,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
                         key={`${category}-${song.id}`}
                         song={song}
                         hasPremium={hasPremium}
+                        hasAccess={hasAccess}
                         categoryIndex={categoryIndex}
                         index={index}
                         playClick={playClick}
@@ -252,6 +254,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
                       key={song.id}
                       song={song}
                       hasPremium={hasPremium}
+                      hasAccess={hasAccess}
                       categoryIndex={0}
                       index={index}
                       playClick={playClick}
@@ -299,6 +302,7 @@ export default function SongLibrary({ songs, hasPremium }: SongLibraryProps) {
 interface SongCardProps {
   song: Song;
   hasPremium: boolean;
+  hasAccess: boolean;
   categoryIndex: number;
   index: number;
   playClick: () => void;
@@ -309,13 +313,14 @@ interface SongCardProps {
 const SongCard = memo(function SongCard({
   song,
   hasPremium,
+  hasAccess,
   categoryIndex,
   index,
   playClick,
   getDifficultyStars,
   onSelect,
 }: SongCardProps) {
-  const isLocked = song.isPremium && !hasPremium;
+  const isLocked = !hasAccess || (song.isPremium && !hasPremium);
 
   const handleClick = (event: React.MouseEvent) => {
     if (isLocked) return;
@@ -353,9 +358,11 @@ const SongCard = memo(function SongCard({
           <div className="mb-1 flex items-center gap-2">
             <span
               className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-                song.isPremium
-                  ? "border border-amber-500/30 bg-amber-500/20 text-amber-400"
-                  : "border border-emerald-500/30 bg-emerald-500/20 text-emerald-400"
+                !hasAccess
+                  ? "border border-rose-500/30 bg-rose-500/20 text-rose-300"
+                  : song.isPremium
+                    ? "border border-amber-500/30 bg-amber-500/20 text-amber-400"
+                    : "border border-emerald-500/30 bg-emerald-500/20 text-emerald-400"
               }`}
             >
               {song.isPremium ? "Premium" : "Grátis"}

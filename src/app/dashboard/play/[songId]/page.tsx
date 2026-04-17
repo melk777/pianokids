@@ -79,7 +79,7 @@ function PlayPageContent() {
   const [song, setSong] = useState<Song | undefined>(isFreePlay ? FREE_PLAY_SONG : undefined);
   const [songLoading, setSongLoading] = useState(!isFreePlay);
 
-  const { isPro, loading: subLoading } = useSubscription();
+  const { hasAccess, loading: subLoading } = useSubscription();
   const { profile, recordPracticeSession } = useProfile();
 
   const {
@@ -481,13 +481,13 @@ function PlayPageContent() {
     );
   }
 
-  if (song.isPremium && !isPro) {
+  if (!hasAccess) {
     router.push("/dashboard/songs");
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-black p-8 text-white">
         <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-rose-500/20 border-t-rose-500" />
         <span className="text-sm font-bold uppercase tracking-widest text-rose-400">Acesso Restrito</span>
-        <p className="mt-2 text-xs text-white/40">Esta musica requer uma assinatura PRO. Redirecionando...</p>
+        <p className="mt-2 text-xs text-white/40">Sua assinatura ou periodo gratuito precisa estar ativo para continuar tocando. Redirecionando...</p>
       </div>
     );
   }

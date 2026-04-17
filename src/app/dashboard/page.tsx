@@ -36,7 +36,7 @@ export default function Dashboard() {
   const supabase = useMemo(() => createClientComponent(), []);
   const { playClick } = useSFX();
   const { profile, loading: profileLoading } = useProfile();
-  const { status, currentPeriodEnd, isPro, loading: subscriptionLoading, planType } = useSubscription();
+  const { status, currentPeriodEnd, isPro, hasAccess, loading: subscriptionLoading, planType } = useSubscription();
   const isSubscribed = isPro; // No Dashboard, 'isSubscribed' agora significa ter acesso PRO (pago)
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -105,7 +105,7 @@ export default function Dashboard() {
   };
 
   const handleSubscriptionAction = async () => {
-    if (isSubscribed) {
+    if (hasAccess) {
       router.push("/dashboard/songs");
     } else {
       // Força o checkout do plano mensal por padrão se clicar no botão geral
@@ -443,26 +443,26 @@ export default function Dashboard() {
                           <div className="flex items-center gap-2 mt-0.5">
                             <span
                               className={`w-2 h-2 rounded-full ${
-                                isSubscribed
+                                hasAccess
                                   ? "bg-green-400 animate-pulse"
                                   : "bg-white/20"
                               }`}
                             />
                             <span
                               className={`text-xs font-medium uppercase tracking-widest ${
-                                isSubscribed
+                                hasAccess
                                   ? "text-green-400"
                                   : "text-white/40"
                               }`}
                             >
-                              {isSubscribed ? "Ativo" : "Inativo"}
+                              {hasAccess ? "Ativo" : "Inativo"}
                             </span>
                           </div>
                         </div>
                       </div>
 
                       <p className="text-sm text-white/60 mb-6 leading-relaxed">
-                        {isSubscribed
+                        {hasAccess
                           ? "Você tem acesso ilimitado a todas as lições, músicas e ferramentas de prática da plataforma."
                           : "Você está no plano gratuito. Desbloqueie todo o poder do Pianify assinando o Premium."}
                       </p>
@@ -473,12 +473,12 @@ export default function Dashboard() {
                           handleSubscriptionAction();
                         }}
                         className={`mt-auto w-full py-2.5 px-4 font-semibold rounded-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${
-                          isSubscribed
+                          hasAccess
                             ? "bg-white text-black hover:bg-white/90"
                             : "bg-gradient-to-r from-cyan to-magenta text-white shadow-[0_0_20px_rgba(0,234,255,0.2)] hover:shadow-[0_0_30px_rgba(0,234,255,0.4)]"
                         }`}
                       >
-                        {isSubscribed
+                        {hasAccess
                           ? "Acessar Aulas"
                           : "Assinar Agora"}
                       </button>

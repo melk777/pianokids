@@ -12,6 +12,7 @@ export type GameTutorialTargetId =
   | "volume"
   | "tutorial"
   | "mic"
+  | "pauseShortcut"
   | "loop"
   | "speed"
   | "waiting"
@@ -53,6 +54,14 @@ const STEPS: TutorialStep[] = [
     description: "Este controle ativa a escuta do instrumento real para validar notas e acordes durante a musica.",
     targetId: "mic",
     preferredPlacement: "bottom",
+  },
+  {
+    badge: "Atalho",
+    title: "Tecla Espaco pausa",
+    description: "O aluno pode apertar Espaco para pausar de verdade a musica e continuar exatamente do mesmo ponto quando estiver pronto.",
+    targetId: "pauseShortcut",
+    preferredPlacement: "bottom",
+    preferredAlign: "center",
   },
   {
     badge: "Estudo",
