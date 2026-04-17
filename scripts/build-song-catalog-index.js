@@ -5,6 +5,7 @@ const rootDir = path.resolve(__dirname, "..");
 const songsDir = path.join(rootDir, "public", "songs");
 const outputFile = path.join(rootDir, "public", "song-catalog-index.json");
 const metadata = require("./song-catalog-metadata.js");
+const { repairMojibake } = require("./text-normalization");
 
 const COMPOSER_COVERS = {
   "Ludwig van Beethoven": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Beethoven.jpg",
@@ -17,6 +18,9 @@ const COMPOSER_COVERS = {
     "https://upload.wikimedia.org/wikipedia/commons/d/db/Tchaikovsky%2C_head-and-shoulders_portrait.jpg",
   "Claude Debussy": "https://upload.wikimedia.org/wikipedia/commons/1/12/Claude_Debussy_portrait.jpg",
   "Nikolai Rimsky-Korsakov": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Nikolai_A._Rimsky-Korsakov.jpg",
+  "Edvard Grieg": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Edvard_Grieg_by_Eilif_Peterssen.jpg",
+  "Erik Satie": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Erik_Satie_by_Suzanne_Valadon.jpeg",
+  "Franz Schubert": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Franz_Schubert_by_Wilhelm_August_Rieder_1875.jpg",
 };
 
 const SPECIAL_COVERS = {
@@ -39,7 +43,7 @@ const EXTRA_SONGS = [
     artist: "Leonard Cohen",
     category: "Religiosos",
     isPremium: true,
-    difficulty: "Facil",
+    difficulty: "Fácil",
     bpm: 60,
     duration: 180,
     coverUrl: SPECIAL_COVERS.hallelujah,
@@ -50,7 +54,7 @@ const EXTRA_SONGS = [
 ];
 
 function sanitizeString(value) {
-  return typeof value === "string" ? value.replace(/\u0000/g, "").trim() : value;
+  return typeof value === "string" ? repairMojibake(value) : value;
 }
 
 function getCoverUrl(id, artist, fallbackCoverUrl) {
@@ -91,9 +95,11 @@ function buildEntryFromJsonFile(fileName) {
   const title = sanitizeString(meta.title || parsed.title || parsed.id);
   const artist = sanitizeString(meta.artist || parsed.artist || "Tradicional");
   const category = sanitizeString(meta.category || parsed.category || "Outros");
-  const difficulty = sanitizeString(meta.difficulty || parsed.difficulty || "Facil");
+  const difficulty = sanitizeString(meta.difficulty || parsed.difficulty || "Fácil");
   const coverUrl = getCoverUrl(parsed.id, artist, sanitizeString(parsed.coverUrl));
-  const categories = CATEGORY_OVERRIDES[parsed.id] || parsed.categories || null;
+  const categories = Array.isArray(CATEGORY_OVERRIDES[parsed.id] || parsed.categories)
+    ? (CATEGORY_OVERRIDES[parsed.id] || parsed.categories).map((item) => sanitizeString(item))
+    : null;
 
   return {
     id: parsed.id,

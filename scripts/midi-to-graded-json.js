@@ -1,9 +1,10 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 const path = require("path");
 const { Midi } = require("@tonejs/midi");
 const songManifest = require("./song-manifest");
 const songCatalogMetadata = require("./song-catalog-metadata");
 const { normalizeSongHands, sanitizeSingleHandArrangements, validateSongHands } = require("./song-hand-utils");
+const { repairMojibake } = require("./text-normalization");
 
 const MIDI_DIR = path.resolve(__dirname, "../public/midi");
 const SONGS_DIR = path.resolve(__dirname, "../public/songs");
@@ -61,9 +62,11 @@ function round(value, digits = 3) {
 }
 
 function humanize(value) {
-  return value
-    .replace(/[-_]+/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  return repairMojibake(
+    value
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase()),
+  );
 }
 
 function isUnusableSourceTitle(value) {
@@ -278,12 +281,12 @@ function buildSongJson(entry) {
 
   return {
     id: entry.id,
-    title: metadata.title || entry.title || sourceTitle || humanize(entry.id),
-    artist: metadata.artist || entry.artist || "MIDI Source",
-    difficulty: metadata.difficulty || "M�dio",
+    title: repairMojibake(metadata.title || entry.title || sourceTitle || humanize(entry.id)),
+    artist: repairMojibake(metadata.artist || entry.artist || "MIDI Source"),
+    difficulty: repairMojibake(metadata.difficulty || "Médio"),
     bpm: hardSource.bpm,
     duration: Math.max(...sources.map((source) => source.duration)),
-    category: metadata.category || entry.category || "A revisar",
+    category: repairMojibake(metadata.category || entry.category || "A revisar"),
     isPremium:
       typeof metadata.isPremium === "boolean"
         ? metadata.isPremium
@@ -364,4 +367,6 @@ function main() {
 }
 
 main();
+
+
 
