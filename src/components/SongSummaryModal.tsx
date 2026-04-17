@@ -8,6 +8,7 @@ import type { Song } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSFX } from "@/hooks/useSFX";
 import { type Difficulty, DIFFICULTY_LABELS } from "@/lib/songFilters";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface SongSummaryModalProps {
   song: Song | null;
@@ -36,6 +37,7 @@ const practiceModeCards: Array<{
 export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryModalProps) {
   const router = useRouter();
   const { playClick } = useSFX();
+  const { hasAccess, loading: subscriptionLoading } = useSubscription();
 
   const [practiceHandMode, setPracticeHandMode] = useState<PracticeHandMode>("right");
   const [micEnabled, setMicEnabled] = useState(false);
@@ -60,6 +62,13 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
   const handleStart = () => {
     playClick();
+
+    if (!hasAccess) {
+      onClose();
+      router.push("/dashboard/subscription");
+      return;
+    }
+
     const params = new URLSearchParams();
     params.set("leftHand", String(practiceHandMode === "both"));
     params.set("rightHand", "true");
@@ -231,17 +240,16 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
               <button
                 onClick={handleStart}
+                disabled={subscriptionLoading}
                 className={`group relative mt-2 h-16 w-full overflow-hidden rounded-full transition-all duration-500 ${
-                  micEnabled
-                    ? "opacity-100 shadow-[0_20px_40px_-10px_rgba(239,68,68,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-                    : "opacity-100 shadow-[0_20px_40px_-10px_rgba(59,130,246,0.28)] hover:scale-[1.02] active:scale-[0.98]"
+                  subscriptionLoading
+                    ? "cursor-wait opacity-70"
+                    : "opacity-100 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] hover:scale-[1.02] active:scale-[0.98]"
                 }`}
               >
                 <div
-                  className={`absolute inset-0 bg-[length:200%_100%] ${
-                    micEnabled
-                      ? "animate-gradient-slow bg-gradient-to-r from-orange-500 via-red-500 to-orange-500"
-                      : "bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-500"
+                  className={`absolute inset-0 bg-gradient-to-r from-orange-500 via-orange-400 to-red-500 bg-[length:200%_100%] ${
+                    subscriptionLoading ? "" : "animate-gradient-slow"
                   }`}
                 />
 
@@ -249,7 +257,13 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                   <div className="flex flex-col items-start">
                     <span className="text-lg font-black tracking-[2px] text-white">Começar a tocar.</span>
                     <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">
-                      {micEnabled ? "Microfone ligado" : "Sem microfone"}
+                      {subscriptionLoading
+                        ? "Preparando acesso"
+                        : hasAccess
+                          ? micEnabled
+                            ? "Microfone ligado"
+                            : "Sem microfone"
+                          : "Escolha um plano para liberar"}
                     </span>
                   </div>
                   <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-md transition-all group-hover:bg-white/40">
