@@ -1,7 +1,18 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function isStudentExperienceRoute(pathname: string) {
+  return (
+    pathname.startsWith("/dashboard/songs") ||
+    pathname.startsWith("/dashboard/play") ||
+    pathname.startsWith("/dashboard/practice") ||
+    pathname.startsWith("/dashboard/test-audio")
+  );
+}
+
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -51,32 +62,35 @@ export async function middleware(request: NextRequest) {
           });
         },
       },
-    }
+    },
   );
 
-  // IMPORTANTE: getUser() é essencial para segurança e para renovar a sessão via cookies.
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const isPublicRoute = 
-    request.nextUrl.pathname === "/" ||
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/auth") ||
-    request.nextUrl.pathname.startsWith("/professores") ||
-    request.nextUrl.pathname.startsWith("/privacidade") ||
-    request.nextUrl.pathname.startsWith("/api/auth/turnstile-key") ||
-    request.nextUrl.pathname.startsWith("/api/stripe/checkout") ||
-    request.nextUrl.pathname.startsWith("/api/stripe/webhook");
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/professores") ||
+    pathname.startsWith("/privacidade") ||
+    pathname.startsWith("/api/auth/turnstile-key") ||
+    pathname.startsWith("/api/stripe/checkout") ||
+    pathname.startsWith("/api/stripe/webhook");
 
-  // 1. Redirecionar deslogados de rotas privadas para /login
   if (!user && !isPublicRoute) {
-    const url = new URL("/login", request.url);
-    // IMPORTANTE: Passar os headers da 'response' para manter o estado dos cookies
-    return NextResponse.redirect(url, {
+    return NextResponse.redirect(new URL("/login", request.url), {
       headers: response.headers,
     });
   }
 
-  // 2. Proteção de Rotas e Lógica de Trial/Role
+  if (user && pathname.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url), {
+      headers: response.headers,
+    });
+  }
+
   if (user && !isPublicRoute) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -84,28 +98,24 @@ export async function middleware(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (profile) {
-      // A. Restrição de Professor (Não acessa biblioteca/player)
-      if (profile.role === "teacher") {
-        const path = request.nextUrl.pathname;
-        if (path.startsWith("/dashboard/songs") || path.startsWith("/dashboard/play")) {
-          const url = new URL("/dashboard", request.url);
-          return NextResponse.redirect(url, {
-            headers: response.headers,
-          });
-        }
-      }
+    const role = profile?.role ?? user.user_metadata?.role ?? "student";
 
-      // B. Lógica de Trial Expirado para Alunos
-      const now = new Date();
-      const trialEndsAt = new Date(profile.trial_ends_at);
-      
-      if (!isNaN(trialEndsAt.getTime())) {
-        const isTrialExpired = now > trialEndsAt;
-        const isNotActive = profile.subscription_status !== "active";
+    if ((role === "teacher" || role === "admin") && isStudentExperienceRoute(pathname)) {
+      return NextResponse.redirect(new URL("/dashboard", request.url), {
+        headers: response.headers,
+      });
+    }
 
-        // Professores não precisam de assinatura para acessar o dashboard administrativo
-        if (isTrialExpired && isNotActive && profile.role !== "teacher") {
+    if (role === "student" && profile) {
+      const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
+
+      if (trialEndsAt && !Number.isNaN(trialEndsAt.getTime())) {
+        const isTrialExpired = new Date() > trialEndsAt;
+        const isNotActive =
+          profile.subscription_status !== "active" &&
+          profile.subscription_status !== "admin_granted";
+
+        if (isTrialExpired && isNotActive && isStudentExperienceRoute(pathname)) {
           const url = new URL("/", request.url);
           url.hash = "pricing";
           return NextResponse.redirect(url, {

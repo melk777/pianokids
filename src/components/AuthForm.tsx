@@ -17,6 +17,16 @@ interface AuthFormProps {
   turnstileSiteKey?: string;
 }
 
+function getPostLoginPath(role: string | null | undefined) {
+  switch (role) {
+    case "admin":
+    case "teacher":
+    case "student":
+    default:
+      return "/dashboard";
+  }
+}
+
 export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: AuthFormProps) {
   const supabase = createClientComponent();
   const searchParams = useSearchParams();
@@ -145,7 +155,26 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
           },
         });
         if (error) throw error;
-        window.location.href = "/dashboard";
+
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        let resolvedRole = user?.user_metadata?.role as string | undefined;
+
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .maybeSingle();
+
+          if (profile?.role) {
+            resolvedRole = profile.role;
+          }
+        }
+
+        window.location.assign(getPostLoginPath(resolvedRole));
       } else {
         const { error } = await supabase.auth.signUp({
           email,
