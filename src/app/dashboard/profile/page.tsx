@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile";
+import type { PracticeSession } from "@/lib/types";
 import { useSubscription } from "@/hooks/useSubscription";
 import { 
   User, 
@@ -36,6 +37,8 @@ export default function ProfilePage() {
   const [username, setUsername] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [recentSessions, setRecentSessions] = useState<PracticeSession[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
 
   // Sync initial state when profile or editing mode changes
   useEffect(() => {
@@ -44,6 +47,29 @@ export default function ProfilePage() {
       setUsername(profile.username || "");
     }
   }, [profile, editing]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadHistory = async () => {
+      try {
+        setHistoryLoading(true);
+        const response = await fetch("/api/practice/session", { cache: "no-store" });
+        const data = await response.json();
+        if (!active || !response.ok || !data?.supported) return;
+        setRecentSessions((data.recentSessions || []) as PracticeSession[]);
+      } catch {
+        if (!active) return;
+      } finally {
+        if (active) setHistoryLoading(false);
+      }
+    };
+
+    loadHistory();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleSave = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -433,6 +459,55 @@ export default function ProfilePage() {
             </div>
           </section>
         )}
+
+        {profile?.role !== "teacher" && (
+          <section className="mt-12 glass rounded-[2rem] p-8 border border-white/10">
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-bold">Historico de Pratica</h3>
+                <p className="mt-1 text-sm text-white/40">Ultimas sessoes registradas no seu progresso real.</p>
+              </div>
+            </div>
+
+            {historyLoading ? (
+              <div className="flex items-center gap-3 text-white/40">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm">Carregando historico...</span>
+              </div>
+            ) : recentSessions.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 text-sm text-white/45">
+                Assim que voce concluir uma musica, a sessao aparece aqui com pontuacao, precisao e tempo praticado.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 md:flex-row md:items-center md:justify-between"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-base font-bold text-white">{session.song_title || "Sessao de pratica"}</p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-white/35">
+                        <span>{session.difficulty || "sem dificuldade"}</span>
+                        <span className="h-1 w-1 rounded-full bg-white/20" />
+                        <span>{session.hand_mode || "modo livre"}</span>
+                        <span className="h-1 w-1 rounded-full bg-white/20" />
+                        <span>{new Date(session.created_at).toLocaleDateString("pt-BR")}</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-sm md:min-w-[320px] md:grid-cols-4">
+                      <HistoryMetric label="Pontos" value={session.score.toLocaleString("pt-BR")} />
+                      <HistoryMetric label="Precisao" value={`${session.accuracy}%`} />
+                      <HistoryMetric label="Tempo" value={`${Math.max(1, Math.round(session.duration_seconds / 60))} min`} />
+                      <HistoryMetric label="Status" value={session.completed ? "Concluida" : "Parcial"} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
       </div>
     </main>
   );
@@ -464,6 +539,15 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode, label:
       </div>
       <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">{label}</p>
       <p className="text-xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+function HistoryMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+      <p className="text-[10px] font-black uppercase tracking-widest text-white/30">{label}</p>
+      <p className="mt-1 text-sm font-bold text-white">{value}</p>
     </div>
   );
 }

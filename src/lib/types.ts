@@ -18,6 +18,31 @@ export interface Profile {
   balance_withdrawn_total?: number;
 }
 
+export interface PracticeSession {
+  id: string;
+  user_id: string;
+  song_id: string | null;
+  song_title: string | null;
+  difficulty: string | null;
+  hand_mode: string | null;
+  accuracy: number;
+  score: number;
+  combo: number;
+  duration_seconds: number;
+  completed: boolean;
+  practiced_on: string;
+  created_at: string;
+}
+
+export interface PracticeAggregate {
+  totalPracticeTime: number;
+  songsPlayed: number;
+  songsCompleted: number;
+  averageAccuracy: number;
+  streakDays: number;
+  lastPracticeDate: string | null;
+}
+
 export interface SongNote {
   midi: number;
   time: number;

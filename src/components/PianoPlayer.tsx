@@ -14,7 +14,7 @@ interface PianoPlayerProps {
   isPlaying: boolean;
   getAudioTime: () => number;
   onScoreUpdate?: (score: number, combo: number, accuracy: number) => void;
-  onSongEnd?: () => void;
+  onSongEnd?: (summary: { score: number; combo: number; accuracy: number; elapsed: number; completed: boolean }) => void;
   onNoteHit?: (midi: number, duration: number, velocity: number) => void;
   onNoteMiss?: (midi: number) => void;
   onPlayTick?: (velocity?: number) => void;
@@ -604,7 +604,13 @@ export default function PianoPlayer({
           const total = state.hits + state.misses;
           const accuracy = total > 0 ? (state.hits / total) * 100 : 100;
           onScoreUpdate?.(state.score, state.combo, accuracy);
-          onSongEnd?.();
+          onSongEnd?.({
+            score: state.score,
+            combo: state.combo,
+            accuracy,
+            elapsed: Math.max(0, elapsed),
+            completed: true,
+          });
           return;
         }
       }

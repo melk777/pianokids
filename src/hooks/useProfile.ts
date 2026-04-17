@@ -3,14 +3,53 @@
 import { useEffect, useState, useCallback } from "react";
 import { createClientComponent } from "@/lib/supabase";
 import { Profile } from "@/lib/types";
+import { mergeProfileWithPracticeAggregate } from "@/lib/practiceHistory";
 
 export type { Profile };
+
+function normalizeProfile(profile: Partial<Profile>): Profile {
+  return {
+    id: profile.id || "",
+    username: profile.username ?? null,
+    username_changes_count: profile.username_changes_count ?? 0,
+    full_name: profile.full_name ?? null,
+    avatar_url: profile.avatar_url ?? null,
+    trophies: profile.trophies ?? 0,
+    streak_days: profile.streak_days ?? 0,
+    total_practice_time: profile.total_practice_time ?? 0,
+    average_accuracy: profile.average_accuracy ?? 0,
+    songs_played: profile.songs_played ?? 0,
+    songs_completed: profile.songs_completed ?? 0,
+    last_practice_date: profile.last_practice_date ?? null,
+    updated_at: profile.updated_at ?? new Date().toISOString(),
+    role: profile.role ?? "student",
+    subscription_status: profile.subscription_status ?? null,
+    subscription_plan_interval: profile.subscription_plan_interval ?? null,
+    balance_withdrawn_total: profile.balance_withdrawn_total ?? 0,
+  };
+}
 
 export function useProfile() {
   const supabase = createClientComponent();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const hydratePracticeSnapshot = useCallback(async (baseProfile: Profile) => {
+    try {
+      const response = await fetch("/api/practice/session", { cache: "no-store" });
+      if (!response.ok) return baseProfile;
+
+      const data = await response.json();
+      if (!data?.supported || !data?.aggregate) {
+        return baseProfile;
+      }
+
+      return mergeProfileWithPracticeAggregate(baseProfile, data.aggregate);
+    } catch {
+      return baseProfile;
+    }
+  }, []);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -37,6 +76,13 @@ export function useProfile() {
             username: user.email?.split("@")[0] || `user_${user.id.slice(0, 5)}`,
             username_changes_count: 0,
             role: user.user_metadata?.role || "student",
+            trophies: 1,
+            streak_days: 0,
+            total_practice_time: 0,
+            average_accuracy: 0,
+            songs_played: 0,
+            songs_completed: 0,
+            last_practice_date: null,
           };
           const { data: inserted, error: insertError } = await supabase
             .from("profiles")
@@ -47,12 +93,14 @@ export function useProfile() {
           if (insertError) {
             throw insertError;
           }
-          setProfile(inserted);
+          const normalizedProfile = normalizeProfile(inserted);
+          setProfile(await hydratePracticeSnapshot(normalizedProfile));
         } else {
           throw fetchError;
         }
       } else {
-        setProfile(data);
+        const normalizedProfile = normalizeProfile(data);
+        setProfile(await hydratePracticeSnapshot(normalizedProfile));
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro desconhecido";
@@ -61,7 +109,7 @@ export function useProfile() {
     } finally {
       setLoading(false);
     }
-  }, [supabase]);
+  }, [hydratePracticeSnapshot, supabase]);
 
   const updateProfile = async (updates: Partial<Profile>) => {
     try {
@@ -96,7 +144,7 @@ export function useProfile() {
         throw updateError;
       }
 
-      setProfile({ ...data });
+      setProfile(normalizeProfile(data));
       return { success: true };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro ao atualizar";
@@ -148,27 +196,63 @@ export function useProfile() {
     }
   };
 
-  const recordPracticeSession = async (seconds: number, accuracy: number, completed: boolean) => {
-    if (!profile) return;
+  const recordPracticeSession = async ({
+    seconds,
+    accuracy,
+    completed,
+    score,
+    combo,
+    songId,
+    songTitle,
+    difficulty,
+    handMode,
+  }: {
+    seconds: number;
+    accuracy: number;
+    completed: boolean;
+    score?: number;
+    combo?: number;
+    songId?: string;
+    songTitle?: string;
+    difficulty?: string;
+    handMode?: string;
+  }) => {
+    try {
+      const response = await fetch("/api/practice/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          durationSeconds: seconds,
+          accuracy,
+          completed,
+          score,
+          combo,
+          songId,
+          songTitle,
+          difficulty,
+          handMode,
+        }),
+      });
 
-    const newAccuracy = profile.songs_played === 0
-      ? accuracy
-      : (profile.average_accuracy * profile.songs_played + accuracy) / (profile.songs_played + 1);
+      const data = await response.json();
 
-    const updates: Partial<Profile> = {
-      total_practice_time: profile.total_practice_time + seconds,
-      songs_played: profile.songs_played + 1,
-      average_accuracy: Math.round(newAccuracy),
-      songs_completed: completed ? profile.songs_completed + 1 : profile.songs_completed,
-    };
+      if (!response.ok) {
+        throw new Error(data?.error || "Nao foi possivel salvar a sessao.");
+      }
 
-    const today = new Date().toISOString().split("T")[0];
-    if (profile.last_practice_date !== today) {
-      updates.streak_days = (profile.streak_days || 0) + 1;
-      updates.last_practice_date = today;
+      if (data?.profile) {
+        const normalized = normalizeProfile(data.profile);
+        setProfile(mergeProfileWithPracticeAggregate(normalized, data.aggregate));
+      } else if (profile && data?.aggregate) {
+        setProfile(mergeProfileWithPracticeAggregate(profile, data.aggregate));
+      }
+
+      return { success: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro ao salvar sessao";
+      console.error("Error recording practice session:", msg);
+      return { success: false, error: msg };
     }
-
-    return await updateProfile(updates);
   };
 
   const getPublicProfile = useCallback(async (username: string) => {
@@ -180,7 +264,7 @@ export function useProfile() {
         .single();
 
       if (error) throw error;
-      return { success: true, data: data as Profile };
+      return { success: true, data: normalizeProfile(data) };
     } catch (err: unknown) {
       console.error("Public profile error:", err);
       return { success: false, error: err instanceof Error ? err.message : "Erro ao carregar" };

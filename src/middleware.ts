@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from "next/server";
 
 function isStudentExperienceRoute(pathname: string) {
   return (
-    pathname.startsWith("/dashboard/songs") ||
     pathname.startsWith("/dashboard/play") ||
     pathname.startsWith("/dashboard/practice") ||
     pathname.startsWith("/dashboard/test-audio")
@@ -106,24 +105,6 @@ export async function middleware(request: NextRequest) {
       });
     }
 
-    if (role === "student" && profile) {
-      const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
-
-      if (trialEndsAt && !Number.isNaN(trialEndsAt.getTime())) {
-        const isTrialExpired = new Date() > trialEndsAt;
-        const isNotActive =
-          profile.subscription_status !== "active" &&
-          profile.subscription_status !== "admin_granted";
-
-        if (isTrialExpired && isNotActive && isStudentExperienceRoute(pathname)) {
-          const url = new URL("/", request.url);
-          url.hash = "pricing";
-          return NextResponse.redirect(url, {
-            headers: response.headers,
-          });
-        }
-      }
-    }
   }
 
   return response;

@@ -24,6 +24,7 @@ import {
 import { Volume2, Mic, MicOff, Play, Pause, RotateCcw, CircleHelp } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
+import { useProfile } from "@/hooks/useProfile";
 
 const FREE_PLAY_SONG: Song = {
   id: "freeplay",
@@ -58,6 +59,7 @@ function PlayPageContent() {
   const volumeControlRef = useRef<HTMLButtonElement>(null);
   const tutorialControlRef = useRef<HTMLButtonElement>(null);
   const micControlRef = useRef<HTMLButtonElement>(null);
+  const pauseShortcutRef = useRef<HTMLDivElement>(null);
   const loopControlRef = useRef<HTMLDivElement>(null);
   const speedControlRef = useRef<HTMLDivElement>(null);
   const waitingControlRef = useRef<HTMLButtonElement>(null);
@@ -78,6 +80,7 @@ function PlayPageContent() {
   const [songLoading, setSongLoading] = useState(!isFreePlay);
 
   const { isPro, loading: subLoading } = useSubscription();
+  const { profile, recordPracticeSession } = useProfile();
 
   const {
     isListening: isMicActive,
@@ -144,6 +147,7 @@ function PlayPageContent() {
   const [loopStart, setLoopStart] = useState(0);
   const [loopEnd, setLoopEnd] = useState(0);
   const [isLoopEnabled, setIsLoopEnabled] = useState(false);
+  const hasRecordedSessionRef = useRef(false);
 
   useEffect(() => {
     setShowTutorial(shouldAutoOpenGameTutorial());
@@ -161,6 +165,10 @@ function PlayPageContent() {
       includeRightHand,
     };
   }, [searchParams]);
+
+  useEffect(() => {
+    hasRecordedSessionRef.current = false;
+  }, [song?.id, difficulty, handSelection.includeLeftHand, handSelection.includeRightHand]);
 
   const activeNotes = useMemo(() => {
     const merged = new Map<number, PianoNoteRecord>();
@@ -245,8 +253,16 @@ function PlayPageContent() {
       event.preventDefault();
 
       if (gameState === "playing") {
-        setIsPaused((current) => !current);
-        setIsPlaying((current) => !current);
+        setIsPaused((current) => {
+          const nextPaused = !current;
+          if (nextPaused) {
+            void audio.suspend();
+          } else {
+            void audio.resume();
+          }
+          setIsPlaying(!nextPaused);
+          return nextPaused;
+        });
       } else if (gameState === "idle") {
         startGame();
       }
@@ -254,7 +270,7 @@ function PlayPageContent() {
 
     window.addEventListener("keydown", handleSpaceBar);
     return () => window.removeEventListener("keydown", handleSpaceBar);
-  }, [gameState, startGame]);
+  }, [audio, gameState, startGame]);
 
   useEffect(() => {
     if (gameState !== "countdown" || countdown === null) return;
@@ -280,10 +296,42 @@ function PlayPageContent() {
     setFinalScore({ score, combo, accuracy });
   }, []);
 
-  const handleSongEnd = useCallback(() => {
-    setIsPlaying(false);
-    setGameState("ended");
-  }, []);
+  const handleSongEnd = useCallback(
+    async (summary: { score: number; combo: number; accuracy: number; elapsed: number; completed: boolean }) => {
+      setFinalScore({
+        score: summary.score,
+        combo: summary.combo,
+        accuracy: Math.round(summary.accuracy),
+      });
+      setIsPlaying(false);
+      setGameState("ended");
+
+      if (isFreePlay || !profile || !song || hasRecordedSessionRef.current) {
+        return;
+      }
+
+      hasRecordedSessionRef.current = true;
+      await recordPracticeSession({
+        seconds: summary.elapsed,
+        accuracy: summary.accuracy,
+        completed: summary.completed,
+        score: summary.score,
+        combo: summary.combo,
+        songId: song.id,
+        songTitle: song.title,
+        difficulty,
+        handMode:
+          handSelection.includeLeftHand && handSelection.includeRightHand
+            ? "both"
+            : handSelection.includeRightHand
+              ? "right"
+              : handSelection.includeLeftHand
+                ? "left"
+                : "unknown",
+      });
+    },
+    [difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, isFreePlay, profile, recordPracticeSession, song],
+  );
 
   const handleSetLoopStart = useCallback(() => {
     const safeCurrent = Math.max(0, Math.min(currentPlaybackTime, Math.max(song?.duration ?? 0, 0)));
@@ -456,6 +504,7 @@ function PlayPageContent() {
           volume: volumeControlRef,
           tutorial: tutorialControlRef,
           mic: micControlRef,
+          pauseShortcut: pauseShortcutRef,
           loop: loopControlRef,
           speed: speedControlRef,
           waiting: waitingControlRef,
@@ -519,6 +568,17 @@ function PlayPageContent() {
           </button>
 
           <div className="h-5 w-px bg-white/10" />
+
+          <div
+            ref={pauseShortcutRef}
+            className="hidden items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 md:flex"
+            title="Atalho de teclado para pausar"
+          >
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/35">Espaco</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/60">pausa</span>
+          </div>
+
+          <div className="hidden h-5 w-px bg-white/10 md:block" />
 
           <div className="flex items-center gap-1">
             <div className="text-right">
