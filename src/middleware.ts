@@ -1,6 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { hasSpecialAccess } from "@/lib/access-control";
+import { hasSpecialAccess, hasStudentExperienceAccess } from "@/lib/access-control";
 
 function isStudentExperienceRoute(pathname: string) {
   return (
@@ -107,18 +107,8 @@ export async function middleware(request: NextRequest) {
       });
     }
 
-    if (role === "student" && profile && isStudentExperienceRoute(pathname)) {
-      const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
-      const hasTrialAccess =
-        profile.subscription_status === "trialing" &&
-        trialEndsAt &&
-        !Number.isNaN(trialEndsAt.getTime()) &&
-        new Date() < trialEndsAt;
-      const hasPaidAccess =
-        profile.subscription_status === "active" ||
-        profile.subscription_status === "admin_granted";
-
-      if (!specialAccess && !hasTrialAccess && !hasPaidAccess) {
+    if (role === "student" && isStudentExperienceRoute(pathname)) {
+      if (!specialAccess && !hasStudentExperienceAccess(profile)) {
         return NextResponse.redirect(new URL("/dashboard/subscription", request.url), {
           headers: response.headers,
         });
