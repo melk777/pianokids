@@ -20,10 +20,7 @@ export default function PianoEngine() {
       return next;
     });
 
-    // Log elegante solicitado pelo usuário
-    console.log(`%c🎵 Nota tocada: ${midiNote}`, "color: #00EAFF; font-weight: bold; font-size: 14px;");
-    
-    // Futuramente aqui chamaremos o sintetizador de áudio real
+    // Futuramente aqui chamaremos o sintetizador de audio real
   };
 
   const releaseNote = (midiNote: number) => {
@@ -32,8 +29,6 @@ export default function PianoEngine() {
       next.delete(midiNote);
       return next;
     });
-    
-    console.log(`%c🛑 Nota solta: ${midiNote}`, "color: #FF00E5; font-style: italic; font-size: 12px;");
   };
 
   // 2. Conexão com o QWERTY Listener (Hook)

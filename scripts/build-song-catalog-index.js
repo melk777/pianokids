@@ -25,39 +25,40 @@ const COMPOSER_COVERS = {
 
 const SPECIAL_COVERS = {
   "bella-ciao-lacasadepapel": "/images/covers/default.png",
-  hallelujah: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?w=500&auto=format&fit=crop&q=60",
 };
 
-const EXTRA_SONGS = [
-  {
-    id: "hallelujah",
-    title: "Hallelujah",
-    artist: "Leonard Cohen",
-    category: "Religiosos",
-    isPremium: true,
-    difficulty: "Fácil",
-    bpm: 60,
-    duration: 180,
-    coverUrl: SPECIAL_COVERS.hallelujah,
-    noteCount: 0,
-    jsonPath: null,
-    notes: [],
-  },
-];
+const EXTRA_SONGS = [];
 
 function sanitizeString(value) {
   return typeof value === "string" ? repairMojibake(value) : value;
 }
 
-function getCoverUrl(id, artist, fallbackCoverUrl) {
-  const infantisSvg = path.join(rootDir, "public", "images", "covers", "infantis", `${id}.svg`);
-  if (fs.existsSync(infantisSvg)) {
-    return `/images/covers/infantis/${id}.svg`;
+function getLocalCoverUrl(folder, id) {
+  const normalizedId = id.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const candidates = [
+    id,
+    normalizedId,
+    normalizedId.replace(/[^a-z0-9]/gi, "").toLowerCase(),
+  ];
+
+  for (const candidate of [...new Set(candidates)]) {
+    for (const extension of ["png", "jpg", "jpeg", "webp", "svg"]) {
+      const coverPath = path.join(rootDir, "public", "images", "covers", folder, `${candidate}.${extension}`);
+      if (fs.existsSync(coverPath)) {
+        return `/images/covers/${folder}/${candidate}.${extension}`;
+      }
+    }
   }
 
-  const religiososSvg = path.join(rootDir, "public", "images", "covers", "religiosos", `${id}.svg`);
-  if (fs.existsSync(religiososSvg)) {
-    return `/images/covers/religiosos/${id}.svg`;
+  return undefined;
+}
+
+function getCoverUrl(id, artist, fallbackCoverUrl) {
+  for (const folder of ["infantis", "religiosos", "intro-filmes", "classicos"]) {
+    const coverUrl = getLocalCoverUrl(folder, id);
+    if (coverUrl) {
+      return coverUrl;
+    }
   }
 
   if (SPECIAL_COVERS[id]) {

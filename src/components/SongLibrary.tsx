@@ -321,6 +321,7 @@ const SongCard = memo(function SongCard({
   onSelect,
 }: SongCardProps) {
   const isLocked = !hasAccess || (song.isPremium && !hasPremium);
+  const [coverFailed, setCoverFailed] = useState(false);
 
   const handleClick = (event: MouseEvent) => {
     if (isLocked) return;
@@ -342,12 +343,15 @@ const SongCard = memo(function SongCard({
         transition={{ delay: categoryIndex * 0.04 + index * 0.02 }}
         className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-zinc-900"
       >
-        {song.coverUrl && (
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,234,255,0.22),transparent_32%),linear-gradient(135deg,rgba(251,146,60,0.18),rgba(24,24,27,0.95))]" />
+
+        {song.coverUrl && !coverFailed && (
           <Image
             src={song.coverUrl}
             alt={song.title}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+            onError={() => setCoverFailed(true)}
             className={`object-cover transition-all duration-500 group-hover:blur-sm ${
               isLocked ? "grayscale opacity-50" : "opacity-80 group-hover:brightness-50"
             }`}

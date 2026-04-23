@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 640" role="img" aria-labelledby="title desc">
+  <title id="title">Tocata e Fuga em Ré Menor</title>
+  <desc id="desc">Capa da Pianify para Tocata e Fuga em Ré Menor</desc>
+  <defs>
+    <radialGradient id="bg" cx="48%" cy="20%" r="84%">
+      <stop offset="0%" stop-color="#e9d5ff"/>
+      <stop offset="48%" stop-color="#9333ea"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#020617" flood-opacity="0.36"/>
+    </filter>
+  </defs>
+  <rect width="512" height="640" rx="54" fill="#020617"/>
+  <rect width="512" height="640" rx="54" fill="url(#bg)"/>
+  <rect x="54" y="64" width="404" height="384" rx="38" fill="#fff" opacity="0.16" stroke="#fff" stroke-opacity="0.34" stroke-width="3"/>
+  <path d="M70 132h372M70 380h372" stroke="#fff" stroke-opacity="0.28" stroke-width="5"/>
+  <rect x="82" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="82" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="126" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="126" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="170" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="170" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="214" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="214" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="258" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="258" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="302" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="302" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="346" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="346" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="390" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="390" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+  <path d="M92 158l7 14 15 4-15 5-7 14-7-14-15-5 15-4z" fill="#e9d5ff" opacity="0.82"/>
+  <path d="M420 192l7 14 15 4-15 5-7 14-7-14-15-5 15-4z" fill="#e9d5ff" opacity="0.82"/>
+  <g transform="translate(92 330) scale(0.56)" fill="#e9d5ff" opacity="0.7">
+    <path d="M0 44c0-13 16-20 30-14V0h9v58c0 13-16 21-30 15C-4 67-8 51 0 44z"/>
+    <path d="M39 0c22 4 38 14 52 30v13C76 30 60 22 39 18z"/>
+  </g>
+  <g transform="translate(396 338) scale(0.5)" fill="#e9d5ff" opacity="0.7">
+    <path d="M0 44c0-13 16-20 30-14V0h9v58c0 13-16 21-30 15C-4 67-8 51 0 44z"/>
+    <path d="M39 0c22 4 38 14 52 30v13C76 30 60 22 39 18z"/>
+  </g>
+  <path d="M0 424C82 360 146 386 224 426c98 50 176 34 288-38v252H0z" fill="#020617" opacity="0.32"/>
+  <g filter="url(#shadow)">
+    <rect x="132" y="238" width="248" height="142" rx="22" fill="#111827" stroke="#e9d5ff" stroke-width="7"/><path d="M160 238V138h34v100M214 238V104h34v134M268 238V124h34v114M322 238V158h34v80" stroke="#e9d5ff" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M158 324h196" stroke="#e9d5ff" stroke-width="5"/><g><rect x="166" y="324" width="15" height="44" fill="#fff"/><rect x="178" y="324" width="8" height="25" fill="#111827"/><rect x="187" y="324" width="15" height="44" fill="#fff"/><rect x="199" y="324" width="8" height="25" fill="#111827"/><rect x="208" y="324" width="15" height="44" fill="#fff"/><rect x="220" y="324" width="8" height="25" fill="#111827"/><rect x="229" y="324" width="15" height="44" fill="#fff"/><rect x="241" y="324" width="8" height="25" fill="#111827"/><rect x="250" y="324" width="15" height="44" fill="#fff"/><rect x="262" y="324" width="8" height="25" fill="#111827"/><rect x="271" y="324" width="15" height="44" fill="#fff"/><rect x="283" y="324" width="8" height="25" fill="#111827"/><rect x="292" y="324" width="15" height="44" fill="#fff"/><rect x="304" y="324" width="8" height="25" fill="#111827"/><rect x="313" y="324" width="15" height="44" fill="#fff"/><rect x="325" y="324" width="8" height="25" fill="#111827"/><rect x="334" y="324" width="15" height="44" fill="#fff"/><rect x="346" y="324" width="8" height="25" fill="#111827"/></g>
+  </g>
+  <rect x="58" y="474" width="396" height="120" rx="32" fill="#020617" opacity="0.48"/>
+  <text x="256" y="508" text-anchor="middle" fill="#e9d5ff" opacity="0.88" font-family="Arial, sans-serif" font-size="12" font-weight="900" letter-spacing="3.4">INTRO DE FILMES</text>
+  <text x="256" y="546" text-anchor="middle" fill="#fff" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="900">Tocata e Fuga em Ré</text>
+  <text x="256" y="580" text-anchor="middle" fill="#fff" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="900">Menor</text>
+  <text x="256" y="618" text-anchor="middle" fill="#fff" opacity="0.72" font-family="Arial, sans-serif" font-size="12" font-weight="900" letter-spacing="2.6">ÓRGÃO DRAMÁTICO</text>
+</svg>

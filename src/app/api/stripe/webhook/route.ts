@@ -24,10 +24,8 @@ function getWebhookSupabase() {
 
 export async function POST(req: NextRequest) {
   if (!webhookSecret) {
-    return NextResponse.json(
-      { error: "Stripe webhook secret is not configured." },
-      { status: 500 }
-    );
+    console.error("Stripe webhook secret is not configured.");
+    return NextResponse.json({ error: "Webhook unavailable." }, { status: 503 });
   }
 
   const body = await req.text();

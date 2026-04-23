@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 640" role="img" aria-labelledby="title desc">
+  <title id="title">Gymnopédie nº 1</title>
+  <desc id="desc">Capa da Pianify para Gymnopédie nº 1</desc>
+  <defs>
+    <radialGradient id="bg" cx="48%" cy="20%" r="84%">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="48%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#172554"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#020617" flood-opacity="0.36"/>
+    </filter>
+  </defs>
+  <rect width="512" height="640" rx="54" fill="#172554"/>
+  <rect width="512" height="640" rx="54" fill="url(#bg)"/>
+  <rect x="54" y="64" width="404" height="384" rx="38" fill="#fff" opacity="0.16" stroke="#fff" stroke-opacity="0.34" stroke-width="3"/>
+  <path d="M70 132h372M70 380h372" stroke="#fff" stroke-opacity="0.28" stroke-width="5"/>
+  <rect x="82" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="82" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="126" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="126" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="170" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="170" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="214" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="214" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="258" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="258" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="302" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="302" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="346" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="346" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/><rect x="390" y="86" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+      <rect x="390" y="398" width="22" height="28" rx="5" fill="#020617" opacity="0.48"/>
+  <path d="M92 158l7 14 15 4-15 5-7 14-7-14-15-5 15-4z" fill="#e0f2fe" opacity="0.82"/>
+  <path d="M420 192l7 14 15 4-15 5-7 14-7-14-15-5 15-4z" fill="#e0f2fe" opacity="0.82"/>
+  <g transform="translate(92 330) scale(0.56)" fill="#e0f2fe" opacity="0.7">
+    <path d="M0 44c0-13 16-20 30-14V0h9v58c0 13-16 21-30 15C-4 67-8 51 0 44z"/>
+    <path d="M39 0c22 4 38 14 52 30v13C76 30 60 22 39 18z"/>
+  </g>
+  <g transform="translate(396 338) scale(0.5)" fill="#e0f2fe" opacity="0.7">
+    <path d="M0 44c0-13 16-20 30-14V0h9v58c0 13-16 21-30 15C-4 67-8 51 0 44z"/>
+    <path d="M39 0c22 4 38 14 52 30v13C76 30 60 22 39 18z"/>
+  </g>
+  <path d="M0 424C82 360 146 386 224 426c98 50 176 34 288-38v252H0z" fill="#020617" opacity="0.32"/>
+  <g filter="url(#shadow)">
+    <rect x="126" y="258" width="260" height="126" rx="24" fill="#111827" stroke="#e0f2fe" stroke-width="7"/><path d="M154 326h204" stroke="#e0f2fe" stroke-width="5"/><g><rect x="160" y="326" width="14" height="48" fill="#fff"/><rect x="171" y="326" width="8" height="28" fill="#111827"/><rect x="180" y="326" width="14" height="48" fill="#fff"/><rect x="191" y="326" width="8" height="28" fill="#111827"/><rect x="200" y="326" width="14" height="48" fill="#fff"/><rect x="211" y="326" width="8" height="28" fill="#111827"/><rect x="220" y="326" width="14" height="48" fill="#fff"/><rect x="231" y="326" width="8" height="28" fill="#111827"/><rect x="240" y="326" width="14" height="48" fill="#fff"/><rect x="251" y="326" width="8" height="28" fill="#111827"/><rect x="260" y="326" width="14" height="48" fill="#fff"/><rect x="271" y="326" width="8" height="28" fill="#111827"/><rect x="280" y="326" width="14" height="48" fill="#fff"/><rect x="291" y="326" width="8" height="28" fill="#111827"/><rect x="300" y="326" width="14" height="48" fill="#fff"/><rect x="311" y="326" width="8" height="28" fill="#111827"/><rect x="320" y="326" width="14" height="48" fill="#fff"/><rect x="331" y="326" width="8" height="28" fill="#111827"/><rect x="340" y="326" width="14" height="48" fill="#fff"/><rect x="351" y="326" width="8" height="28" fill="#111827"/></g><circle cx="196" cy="196" r="52" fill="#e0f2fe" stroke="#111827" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="316" cy="196" r="52" fill="#e0f2fe" stroke="#111827" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="196" cy="196" r="16" fill="#38bdf8"/><circle cx="316" cy="196" r="16" fill="#38bdf8"/><path d="M196 248h120" stroke="#111827" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <rect x="58" y="474" width="396" height="120" rx="32" fill="#020617" opacity="0.48"/>
+  <text x="256" y="508" text-anchor="middle" fill="#e0f2fe" opacity="0.88" font-family="Arial, sans-serif" font-size="12" font-weight="900" letter-spacing="3.4">INTRO DE FILMES</text>
+  <text x="256" y="564" text-anchor="middle" fill="#fff" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="900">Gymnopédie nº 1</text>
+  
+  <text x="256" y="618" text-anchor="middle" fill="#fff" opacity="0.72" font-family="Arial, sans-serif" font-size="12" font-weight="900" letter-spacing="2.6">PIANO DE CINEMA ANTIGO</text>
+</svg>

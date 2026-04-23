@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 640" role="img" aria-labelledby="title desc">
+  <title id="title">Jubiloso, Te Adoramos</title>
+  <desc id="desc">Capa religiosa da Pianify para Jubiloso, Te Adoramos</desc>
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="20%" r="78%">
+      <stop offset="0%" stop-color="#fef3c7" stop-opacity="1"/>
+      <stop offset="42%" stop-color="#f97316" stop-opacity="0.78"/>
+      <stop offset="100%" stop-color="#7c2d12" stop-opacity="0.98"/>
+    </radialGradient>
+    <linearGradient id="stage" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.96"/>
+      <stop offset="52%" stop-color="#f97316" stop-opacity="0.82"/>
+      <stop offset="100%" stop-color="#7c2d12" stop-opacity="0.96"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.58"/>
+      <stop offset="54%" stop-color="#fef3c7" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.04"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#020617" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+  <rect width="512" height="640" rx="54" fill="#7c2d12"/>
+  <rect width="512" height="640" rx="54" fill="url(#halo)"/>
+  <g opacity="0.34" stroke="#fff" stroke-width="1.4">
+    <path d="M52 96l102 122L52 340"/>
+    <path d="M460 96L358 218l102 122"/>
+    <path d="M154 218h204"/>
+    <path d="M92 426c68-38 130-36 196 0s124 38 184 2"/>
+  </g>
+  <g opacity="0.82">
+    <circle cx="82" cy="116" r="8" fill="#fef3c7"/>
+    <circle cx="430" cy="122" r="10" fill="#fef3c7"/>
+    <circle cx="92" cy="360" r="6" fill="#fef3c7"/>
+    <circle cx="420" cy="356" r="7" fill="#fef3c7"/>
+    <path d="M128 156c16-14 32-14 48 0" stroke="#fef3c7" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M336 156c16-14 32-14 48 0" stroke="#fef3c7" stroke-width="5" stroke-linecap="round" fill="none"/>
+  </g>
+  <path d="M0 420C82 360 142 390 210 420C294 456 372 444 512 360V640H0Z" fill="#020617" opacity="0.30"/>
+  <path d="M36 450C98 410 178 418 256 462C334 418 414 410 476 450V586C402 532 312 536 256 586C200 536 110 532 36 586Z" fill="#fff" opacity="0.18"/>
+  <g filter="url(#softShadow)">
+    <rect x="62" y="72" width="388" height="404" rx="42" fill="url(#glass)" stroke="#fef3c7" stroke-opacity="0.42" stroke-width="2"/>
+    <path d="M96 124h320" stroke="#fef3c7" stroke-opacity="0.24" stroke-width="3"/>
+    <path d="M96 424h320" stroke="#fef3c7" stroke-opacity="0.24" stroke-width="3"/>
+  </g>
+  <g opacity="0.42" fill="#fef3c7">
+    <path d="M112 290c0-16 22-16 22 0v46c0 18-30 18-30 0 0-12 14-20 30-16v-30z"/>
+    <path d="M382 300c0-16 22-16 22 0v46c0 18-30 18-30 0 0-12 14-20 30-16v-30z"/>
+    <path d="M150 372c0-12 17-12 17 0v34c0 14-24 14-24 0 0-9 11-15 24-12v-22z"/>
+  </g>
+  <g transform="translate(0, -18)" filter="url(#glow)">
+    <circle cx="256" cy="258" r="136" fill="url(#stage)" opacity="0.36"/>
+    <circle cx="256" cy="258" r="114" fill="#020617" opacity="0.18"/>
+    <circle cx="256" cy="238" r="70" stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M256 120v42"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M256 314v42"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M138 238h42"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M332 238h42"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M172 154l30 30"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M310 292l30 30"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M340 154l-30 30"/><path stroke="#fef3c7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M202 292l-30 30"/>
+  </g>
+  <g transform="translate(0, 16)">
+    <rect x="86" y="484" width="340" height="92" rx="28" fill="#020617" opacity="0.32"/>
+    <text x="256" y="522" text-anchor="middle" fill="#fef3c7" font-family="Georgia, 'Times New Roman', serif" font-size="35" font-weight="800">
+      Jubiloso, Te Adoramos
+    </text>
+    
+    <text x="256" y="570" text-anchor="middle" fill="#fef3c7" opacity="0.88" font-family="Arial, sans-serif" font-size="13" font-weight="800" letter-spacing="3.2">
+      ALEGRIA E ADORAÇÃO
+    </text>
+  </g>
+</svg>

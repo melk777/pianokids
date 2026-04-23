@@ -79,7 +79,6 @@ export function useAudioEngine(): AudioEngineReturn {
       channelBGain.current = gainB;
 
       isInitRef.current = true;
-      console.log("[AudioEngine] Full Restore: Initialized.", ctx.state);
     } catch (err) {
       console.warn("[AudioEngine] Web Audio API not available:", err);
     }
