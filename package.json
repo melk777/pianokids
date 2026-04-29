@@ -11,7 +11,13 @@
     "parse-midi-graded": "node scripts/midi-to-graded-json.js && node scripts/build-song-catalog-index.js",
     "build-song-catalog-index": "node scripts/build-song-catalog-index.js",
     "validate-song-hands": "node scripts/validate-song-hands.js",
-    "audit-song-library": "node scripts/audit-song-library.js"
+    "audit-song-library": "node scripts/audit-song-library.js",
+    "audit-player-modes": "node scripts/audit-player-modes.js",
+    "audit-launch-readiness": "node scripts/audit-launch-readiness.js",
+    "repair-song-library:phase1": "node scripts/repair-song-library-phase1.js && node scripts/build-song-catalog-index.js",
+    "repair-song-library:phase2": "node scripts/repair-song-library-phase2.js && node scripts/build-song-catalog-index.js",
+    "repair-song-library:phase3": "node scripts/repair-song-library-phase3.js && node scripts/build-song-catalog-index.js",
+    "audit-song-source-fidelity": "node scripts/audit-song-source-fidelity.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

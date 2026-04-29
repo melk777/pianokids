@@ -1,0 +1,4247 @@
+{
+  "generatedAt": "2026-04-28T21:22:35.519Z",
+  "summary": {
+    "songs": 90,
+    "ok": 90,
+    "review": 0,
+    "needsFix": 0,
+    "issuesBySeverity": {
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "issuesByCode": {}
+  },
+  "songs": [
+    {
+      "id": "borboletinha",
+      "title": "Borboletinha",
+      "referenceFile": "borboletinha-1.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 19,
+      "referenceDuration": 17.199,
+      "durationRatio": 1.105,
+      "noteCounts": {
+        "reference": 44,
+        "hard": 53,
+        "medium": 25,
+        "easy": 20
+      },
+      "hardDensityRatio": 1.09,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 44,
+        "matched": 44
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 20,
+        "matched": 20
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 20,
+        "matched": 20
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.977,
+        "compared": 44,
+        "matched": 44
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "pintinho-amarelinho",
+      "title": "Meu Pintinho Amarelinho",
+      "referenceFile": "Meu_pintinho_amarelinho.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 33,
+      "referenceDuration": 31.999,
+      "durationRatio": 1.031,
+      "noteCounts": {
+        "reference": 82,
+        "hard": 98,
+        "medium": 44,
+        "easy": 37
+      },
+      "hardDensityRatio": 1.159,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 82,
+        "matched": 82
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 37,
+        "matched": 37
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 37,
+        "matched": 37
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.901,
+        "compared": 82,
+        "matched": 82
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "twinkle-twinkle",
+      "title": "Brilha Brilha Estrelinha",
+      "referenceFile": "Brilha_Brilha_Estrelinha.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 37,
+      "referenceDuration": 35.879,
+      "durationRatio": 1.031,
+      "noteCounts": {
+        "reference": 90,
+        "hard": 90,
+        "medium": 48,
+        "easy": 42
+      },
+      "hardDensityRatio": 0.97,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 42,
+        "matched": 42
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 24,
+        "matched": 24
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 42,
+        "matched": 42
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 42,
+        "matched": 42
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "a-dona-aranha",
+      "title": "A Dona Aranha",
+      "referenceFile": "A_DONA_ARANHA.mid",
+      "bpm": 150,
+      "referenceBpm": 150,
+      "duration": 40,
+      "referenceDuration": 38.359,
+      "durationRatio": 1.043,
+      "noteCounts": {
+        "reference": 97,
+        "hard": 97,
+        "medium": 61,
+        "easy": 46
+      },
+      "hardDensityRatio": 0.959,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 73,
+        "matched": 73
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 46,
+        "matched": 46
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 46,
+        "matched": 46
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 73,
+        "matched": 73
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "ode-to-joy",
+      "title": "Ode à Alegria",
+      "referenceFile": "ode_to_joy_full.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 40,
+      "referenceDuration": 38.4,
+      "durationRatio": 1.042,
+      "noteCounts": {
+        "reference": 238,
+        "hard": 238,
+        "medium": 48,
+        "easy": 60
+      },
+      "hardDensityRatio": 0.96,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 68,
+        "matched": 68
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 32,
+        "matched": 32
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.983,
+        "compared": 60,
+        "matched": 60
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 68,
+        "matched": 68
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "fur-elise",
+      "title": "Para Elisa",
+      "referenceFile": "Für_Elise_ DIFICIL–_Beethoven.mid",
+      "bpm": 72,
+      "referenceBpm": 72,
+      "duration": 158,
+      "referenceDuration": 156.173,
+      "durationRatio": 1.012,
+      "noteCounts": {
+        "reference": 1040,
+        "hard": 1014,
+        "medium": 219,
+        "easy": 185
+      },
+      "hardDensityRatio": 0.964,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.992,
+        "contourMatch": 0.995,
+        "compared": 747,
+        "matched": 747
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.984,
+        "compared": 185,
+        "matched": 185
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.978,
+        "compared": 185,
+        "matched": 185
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.988,
+        "contourMatch": 0.992,
+        "compared": 747,
+        "matched": 747
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "o-sapo-nao-lava-o-pe",
+      "title": "O Sapo não Lava o Pé",
+      "referenceFile": "o-sapo-2.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 54,
+      "referenceDuration": 52.249,
+      "durationRatio": 1.034,
+      "noteCounts": {
+        "reference": 663,
+        "hard": 653,
+        "medium": 102,
+        "easy": 78
+      },
+      "hardDensityRatio": 0.953,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 303,
+        "matched": 303
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 67,
+        "matched": 67
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.974,
+        "compared": 78,
+        "matched": 78
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 303,
+        "matched": 303
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "minueto-em-sol-maior",
+      "title": "Minueto em Sol Maior",
+      "referenceFile": "minueto-2.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 97,
+      "referenceDuration": 95.999,
+      "durationRatio": 1.01,
+      "noteCounts": {
+        "reference": 430,
+        "hard": 420,
+        "medium": 155,
+        "easy": 115
+      },
+      "hardDensityRatio": 0.967,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 284,
+        "matched": 284
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 115,
+        "matched": 115
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 115,
+        "matched": 115
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 284,
+        "matched": 284
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "moonlight-sonata",
+      "title": "Sonata ao Luar (1º Movimento)",
+      "referenceFile": "moonlight_sonata_dificil.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 34,
+      "referenceDuration": 32,
+      "durationRatio": 1.063,
+      "noteCounts": {
+        "reference": 116,
+        "hard": 106,
+        "medium": 34,
+        "easy": 32
+      },
+      "hardDensityRatio": 0.86,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 96,
+        "matched": 96
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 33,
+        "matched": 33
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.871,
+        "compared": 32,
+        "matched": 32
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 96,
+        "matched": 96
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "bach-prelude",
+      "title": "Prelúdio em Dó Maior (BWV 846)",
+      "referenceFile": "bach_prelude_full.mid",
+      "bpm": 117,
+      "referenceBpm": 117,
+      "duration": 227,
+      "referenceDuration": 225.546,
+      "durationRatio": 1.006,
+      "noteCounts": {
+        "reference": 1284,
+        "hard": 1277,
+        "medium": 296,
+        "easy": 291
+      },
+      "hardDensityRatio": 0.988,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.988,
+        "contourMatch": 0.99,
+        "compared": 927,
+        "matched": 927
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.98,
+        "contourMatch": 0.984,
+        "compared": 255,
+        "matched": 255
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.993,
+        "contourMatch": 0.924,
+        "compared": 291,
+        "matched": 291
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.999,
+        "contourMatch": 0.999,
+        "compared": 927,
+        "matched": 927
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "turkish-march",
+      "title": "Marcha Turca",
+      "referenceFile": "turkish_march_full.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 256,
+      "referenceDuration": 255,
+      "durationRatio": 1.004,
+      "noteCounts": {
+        "reference": 1614,
+        "hard": 1477,
+        "medium": 342,
+        "easy": 255
+      },
+      "hardDensityRatio": 0.912,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.958,
+        "contourMatch": 0.915,
+        "compared": 711,
+        "matched": 711
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.973,
+        "contourMatch": 0.901,
+        "compared": 294,
+        "matched": 294
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.914,
+        "contourMatch": 0.898,
+        "compared": 255,
+        "matched": 255
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.997,
+        "contourMatch": 0.997,
+        "compared": 711,
+        "matched": 711
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "minute-waltz",
+      "title": "Valsa do Minuto (Op. 64 nº 1)",
+      "referenceFile": "minute_waltz_full.mid",
+      "bpm": 180,
+      "referenceBpm": 280,
+      "duration": 91,
+      "referenceDuration": 89.785,
+      "durationRatio": 1.014,
+      "noteCounts": {
+        "reference": 1370,
+        "hard": 1240,
+        "medium": 150,
+        "easy": 127
+      },
+      "hardDensityRatio": 0.893,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.869,
+        "contourMatch": 0.921,
+        "compared": 420,
+        "matched": 420
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.877,
+        "contourMatch": 0.99,
+        "compared": 106,
+        "matched": 106
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.961,
+        "contourMatch": 0.952,
+        "compared": 127,
+        "matched": 127
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.936,
+        "contourMatch": 0.99,
+        "compared": 420,
+        "matched": 420
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "nocturne-op9",
+      "title": "Noturno Op. 9 nº 2",
+      "referenceFile": "nocturne_op9_full.mid",
+      "bpm": 117,
+      "referenceBpm": 117,
+      "duration": 247,
+      "referenceDuration": 245.804,
+      "durationRatio": 1.005,
+      "noteCounts": {
+        "reference": 1299,
+        "hard": 1267,
+        "medium": 334,
+        "easy": 293
+      },
+      "hardDensityRatio": 0.971,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.983,
+        "contourMatch": 0.969,
+        "compared": 573,
+        "matched": 573
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.96,
+        "contourMatch": 0.919,
+        "compared": 247,
+        "matched": 247
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.908,
+        "contourMatch": 0.932,
+        "compared": 293,
+        "matched": 293
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.983,
+        "contourMatch": 0.993,
+        "compared": 573,
+        "matched": 573
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "parabens-pra-voce",
+      "title": "Parabéns pra Você",
+      "referenceFile": "parabens-2.mid",
+      "bpm": 92,
+      "referenceBpm": 92,
+      "duration": 18,
+      "referenceDuration": 16.304,
+      "durationRatio": 1.104,
+      "noteCounts": {
+        "reference": 86,
+        "hard": 75,
+        "medium": 20,
+        "easy": 24
+      },
+      "hardDensityRatio": 0.79,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 28,
+        "matched": 28
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 12,
+        "matched": 12
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 24,
+        "matched": 24
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 28,
+        "matched": 28
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "ballade-4chopin",
+      "title": "Balada nº 4 em Fá Menor",
+      "referenceFile": "ballade-4chopin.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 718,
+      "referenceDuration": 717,
+      "durationRatio": 1.001,
+      "noteCounts": {
+        "reference": 6050,
+        "hard": 5550,
+        "medium": 1211,
+        "easy": 674
+      },
+      "hardDensityRatio": 0.916,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.845,
+        "contourMatch": 0.922,
+        "compared": 2587,
+        "matched": 2587
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.888,
+        "contourMatch": 0.93,
+        "compared": 828,
+        "matched": 828
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.944,
+        "contourMatch": 0.938,
+        "compared": 674,
+        "matched": 674
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.859,
+        "contourMatch": 0.943,
+        "compared": 2587,
+        "matched": 2587
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "bella-ciao-lacasadepapel",
+      "title": "Bella Ciao",
+      "referenceFile": "bella-ciao-lacasadepapel.mid",
+      "bpm": 72,
+      "referenceBpm": 72,
+      "duration": 108,
+      "referenceDuration": 106.666,
+      "durationRatio": 1.013,
+      "noteCounts": {
+        "reference": 436,
+        "hard": 392,
+        "medium": 186,
+        "easy": 128
+      },
+      "hardDensityRatio": 0.888,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.926,
+        "contourMatch": 1,
+        "compared": 216,
+        "matched": 216
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.883,
+        "contourMatch": 1,
+        "compared": 128,
+        "matched": 128
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.883,
+        "contourMatch": 1,
+        "compared": 128,
+        "matched": 128
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.981,
+        "compared": 216,
+        "matched": 216
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "ciranda-cirandinha",
+      "title": "Ciranda, Cirandinha",
+      "referenceFile": "ciranda_cirandinha.mid",
+      "bpm": 80,
+      "referenceBpm": 100,
+      "duration": 77,
+      "referenceDuration": 75.795,
+      "durationRatio": 1.016,
+      "noteCounts": {
+        "reference": 3211,
+        "hard": 1268,
+        "medium": 135,
+        "easy": 90
+      },
+      "hardDensityRatio": 0.389,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 279,
+        "matched": 279
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.956,
+        "contourMatch": 0.978,
+        "compared": 90,
+        "matched": 90
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.956,
+        "contourMatch": 0.978,
+        "compared": 90,
+        "matched": 90
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.746,
+        "contourMatch": 0.59,
+        "compared": 279,
+        "matched": 279
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "atirei-o-pau-no-gato",
+      "title": "Atirei o Pau no Gato",
+      "referenceFile": "atirei_o_pau_no_gato.mid",
+      "bpm": 80,
+      "referenceBpm": 110,
+      "duration": 86,
+      "referenceDuration": 84.862,
+      "durationRatio": 1.013,
+      "noteCounts": {
+        "reference": 4656,
+        "hard": 1481,
+        "medium": 152,
+        "easy": 109
+      },
+      "hardDensityRatio": 0.314,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.855,
+        "contourMatch": 0.986,
+        "compared": 415,
+        "matched": 415
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.761,
+        "contourMatch": 0.898,
+        "compared": 109,
+        "matched": 109
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.761,
+        "contourMatch": 0.88,
+        "compared": 109,
+        "matched": 109
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.696,
+        "contourMatch": 0.954,
+        "compared": 415,
+        "matched": 415
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "escravos-de-jo",
+      "title": "Escravos de Jó",
+      "referenceFile": "escravos_de_jo.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 49,
+      "referenceDuration": 47.941,
+      "durationRatio": 1.022,
+      "noteCounts": {
+        "reference": 2102,
+        "hard": 827,
+        "medium": 87,
+        "easy": 79
+      },
+      "hardDensityRatio": 0.385,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.942,
+        "contourMatch": 0.991,
+        "compared": 224,
+        "matched": 224
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.983,
+        "contourMatch": 1,
+        "compared": 60,
+        "matched": 60
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.937,
+        "contourMatch": 0.987,
+        "compared": 79,
+        "matched": 79
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.786,
+        "contourMatch": 0.946,
+        "compared": 224,
+        "matched": 224
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "peixe-vivo",
+      "title": "Peixe Vivo",
+      "referenceFile": "peixe_vivo.mid",
+      "bpm": 80,
+      "referenceBpm": 80,
+      "duration": 47,
+      "referenceDuration": 45.679,
+      "durationRatio": 1.029,
+      "noteCounts": {
+        "reference": 784,
+        "hard": 671,
+        "medium": 71,
+        "easy": 60
+      },
+      "hardDensityRatio": 0.832,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.794,
+        "contourMatch": 0.92,
+        "compared": 214,
+        "matched": 214
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.817,
+        "contourMatch": 0.915,
+        "compared": 60,
+        "matched": 60
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.817,
+        "contourMatch": 0.915,
+        "compared": 60,
+        "matched": 60
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.855,
+        "contourMatch": 0.901,
+        "compared": 214,
+        "matched": 214
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "fui-no-itororo",
+      "title": "Fui no Itororó",
+      "referenceFile": "fui_no_tororo.mid",
+      "bpm": 80,
+      "referenceBpm": 110,
+      "duration": 91,
+      "referenceDuration": 89.609,
+      "durationRatio": 1.016,
+      "noteCounts": {
+        "reference": 1644,
+        "hard": 1208,
+        "medium": 170,
+        "easy": 119
+      },
+      "hardDensityRatio": 0.724,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.977,
+        "contourMatch": 0.991,
+        "compared": 341,
+        "matched": 341
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.882,
+        "contourMatch": 0.924,
+        "compared": 119,
+        "matched": 119
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.882,
+        "contourMatch": 0.924,
+        "compared": 119,
+        "matched": 119
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.933,
+        "contourMatch": 0.968,
+        "compared": 341,
+        "matched": 341
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "a-canoa-virou",
+      "title": "A Canoa Virou",
+      "referenceFile": "a_canoa_virou.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 40,
+      "referenceDuration": 39,
+      "durationRatio": 1.026,
+      "noteCounts": {
+        "reference": 366,
+        "hard": 366,
+        "medium": 44,
+        "easy": 64
+      },
+      "hardDensityRatio": 0.975,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.951,
+        "contourMatch": 0.967,
+        "compared": 122,
+        "matched": 122
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.955,
+        "contourMatch": 0.907,
+        "compared": 44,
+        "matched": 44
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.938,
+        "contourMatch": 0.937,
+        "compared": 64,
+        "matched": 64
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 122,
+        "matched": 122
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "o-cravo-e-a-rosa",
+      "title": "O Cravo e a Rosa",
+      "referenceFile": "o_cravo_e_a_rosa.mid",
+      "bpm": 80,
+      "referenceBpm": 120,
+      "duration": 58,
+      "referenceDuration": 57.033,
+      "durationRatio": 1.017,
+      "noteCounts": {
+        "reference": 1712,
+        "hard": 944,
+        "medium": 117,
+        "easy": 74
+      },
+      "hardDensityRatio": 0.542,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.895,
+        "contourMatch": 0.988,
+        "compared": 248,
+        "matched": 248
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.77,
+        "contourMatch": 1,
+        "compared": 74,
+        "matched": 74
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.77,
+        "contourMatch": 0.986,
+        "compared": 74,
+        "matched": 74
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.887,
+        "contourMatch": 0.834,
+        "compared": 248,
+        "matched": 248
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "pirulito-que-bate-bate",
+      "title": "Pirulito que Bate Bate",
+      "referenceFile": "pirulito_que_bate_bate.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 20,
+      "referenceDuration": 18.78,
+      "durationRatio": 1.065,
+      "noteCounts": {
+        "reference": 156,
+        "hard": 146,
+        "medium": 32,
+        "easy": 30
+      },
+      "hardDensityRatio": 0.879,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 68,
+        "matched": 68
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 22,
+        "matched": 22
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 30,
+        "matched": 30
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 68,
+        "matched": 68
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "samba-lele",
+      "title": "Samba Lelê",
+      "referenceFile": "samba_lele.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 68,
+      "referenceDuration": 66,
+      "durationRatio": 1.03,
+      "noteCounts": {
+        "reference": 400,
+        "hard": 392,
+        "medium": 117,
+        "easy": 88
+      },
+      "hardDensityRatio": 0.951,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.842,
+        "contourMatch": 0.996,
+        "compared": 234,
+        "matched": 234
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.805,
+        "contourMatch": 1,
+        "compared": 77,
+        "matched": 77
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.818,
+        "contourMatch": 0.862,
+        "compared": 88,
+        "matched": 88
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.897,
+        "contourMatch": 0.974,
+        "compared": 234,
+        "matched": 234
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "teresinha-de-jesus",
+      "title": "Teresinha de Jesus",
+      "referenceFile": "teresinha_de_jesus.mid",
+      "bpm": 80,
+      "referenceBpm": 120,
+      "duration": 99,
+      "referenceDuration": 97.064,
+      "durationRatio": 1.02,
+      "noteCounts": {
+        "reference": 2846,
+        "hard": 1552,
+        "medium": 169,
+        "easy": 119
+      },
+      "hardDensityRatio": 0.535,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.985,
+        "contourMatch": 0.995,
+        "compared": 401,
+        "matched": 401
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.916,
+        "contourMatch": 0.898,
+        "compared": 119,
+        "matched": 119
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.916,
+        "contourMatch": 0.864,
+        "compared": 119,
+        "matched": 119
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.838,
+        "contourMatch": 0.848,
+        "compared": 401,
+        "matched": 401
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "carneirinho-carneirao",
+      "title": "Carneirinho, Carneirão",
+      "referenceFile": "carneirinho_carneirao.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 58,
+      "referenceDuration": 57,
+      "durationRatio": 1.018,
+      "noteCounts": {
+        "reference": 363,
+        "hard": 356,
+        "medium": 91,
+        "easy": 82
+      },
+      "hardDensityRatio": 0.964,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.993,
+        "contourMatch": 1,
+        "compared": 139,
+        "matched": 139
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.98,
+        "contourMatch": 1,
+        "compared": 50,
+        "matched": 50
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.988,
+        "compared": 82,
+        "matched": 82
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 139,
+        "matched": 139
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "pai-francisco",
+      "title": "Pai Francisco",
+      "referenceFile": "pai_francisco.mid",
+      "bpm": 80,
+      "referenceBpm": 100,
+      "duration": 97,
+      "referenceDuration": 95.545,
+      "durationRatio": 1.015,
+      "noteCounts": {
+        "reference": 3280,
+        "hard": 1961,
+        "medium": 149,
+        "easy": 119
+      },
+      "hardDensityRatio": 0.589,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.892,
+        "contourMatch": 0.913,
+        "compared": 425,
+        "matched": 425
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.916,
+        "contourMatch": 0.788,
+        "compared": 119,
+        "matched": 119
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.916,
+        "contourMatch": 0.78,
+        "compared": 119,
+        "matched": 119
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.967,
+        "contourMatch": 0.995,
+        "compared": 425,
+        "matched": 425
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "pezinho",
+      "title": "Pezinho",
+      "referenceFile": "pezinho.mid",
+      "bpm": 130,
+      "referenceBpm": 130,
+      "duration": 65,
+      "referenceDuration": 63.445,
+      "durationRatio": 1.025,
+      "noteCounts": {
+        "reference": 1409,
+        "hard": 631,
+        "medium": 126,
+        "easy": 91
+      },
+      "hardDensityRatio": 0.437,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 272,
+        "matched": 272
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 91,
+        "matched": 91
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.989,
+        "compared": 91,
+        "matched": 91
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 272,
+        "matched": 272
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "sapo-cururu",
+      "title": "Sapo Cururu",
+      "referenceFile": "sapo_cururu.mid",
+      "bpm": 80,
+      "referenceBpm": 80,
+      "duration": 37,
+      "referenceDuration": 36,
+      "durationRatio": 1.028,
+      "noteCounts": {
+        "reference": 254,
+        "hard": 242,
+        "medium": 64,
+        "easy": 45
+      },
+      "hardDensityRatio": 0.927,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.919,
+        "contourMatch": 0.906,
+        "compared": 86,
+        "matched": 86
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.889,
+        "contourMatch": 0.818,
+        "compared": 45,
+        "matched": 45
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.889,
+        "contourMatch": 0.818,
+        "compared": 45,
+        "matched": 45
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.988,
+        "compared": 86,
+        "matched": 86
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "se-essa-rua-fosse-minha",
+      "title": "Se Essa Rua Fosse Minha",
+      "referenceFile": "se_essa_rua_fosse_minha.mid",
+      "bpm": 80,
+      "referenceBpm": 100,
+      "duration": 81,
+      "referenceDuration": 79.267,
+      "durationRatio": 1.022,
+      "noteCounts": {
+        "reference": 3297,
+        "hard": 1345,
+        "medium": 140,
+        "easy": 97
+      },
+      "hardDensityRatio": 0.399,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.993,
+        "contourMatch": 0.99,
+        "compared": 292,
+        "matched": 292
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 97,
+        "matched": 97
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.979,
+        "compared": 97,
+        "matched": 97
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.805,
+        "contourMatch": 0.509,
+        "compared": 292,
+        "matched": 292
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "minha-machadinha",
+      "title": "Minha Machadinha",
+      "referenceFile": "minha_machadinha.mid",
+      "bpm": 80,
+      "referenceBpm": 80,
+      "duration": 37,
+      "referenceDuration": 35.925,
+      "durationRatio": 1.03,
+      "noteCounts": {
+        "reference": 396,
+        "hard": 315,
+        "medium": 56,
+        "easy": 48
+      },
+      "hardDensityRatio": 0.772,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.993,
+        "contourMatch": 1,
+        "compared": 146,
+        "matched": 146
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 48,
+        "matched": 48
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 48,
+        "matched": 48
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.945,
+        "compared": 146,
+        "matched": 146
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "oh-que-belas-laranjas",
+      "title": "Oh! Que Belas Laranjas",
+      "referenceFile": "oh_que_belas_laranjas.mid",
+      "bpm": 80,
+      "referenceBpm": 80,
+      "duration": 25,
+      "referenceDuration": 23.925,
+      "durationRatio": 1.045,
+      "noteCounts": {
+        "reference": 356,
+        "hard": 298,
+        "medium": 32,
+        "easy": 32
+      },
+      "hardDensityRatio": 0.801,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.917,
+        "contourMatch": 0.941,
+        "compared": 120,
+        "matched": 120
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.613,
+        "compared": 32,
+        "matched": 32
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.613,
+        "compared": 32,
+        "matched": 32
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 120,
+        "matched": 120
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "passarinho-da-lagoa",
+      "title": "Passarinho da Lagoa",
+      "referenceFile": "passarinho_da_lagoa.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 18,
+      "referenceDuration": 16.55,
+      "durationRatio": 1.088,
+      "noteCounts": {
+        "reference": 109,
+        "hard": 109,
+        "medium": 30,
+        "easy": 16
+      },
+      "hardDensityRatio": 0.919,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 54,
+        "matched": 54
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 20,
+        "matched": 20
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.867,
+        "compared": 16,
+        "matched": 16
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.925,
+        "compared": 54,
+        "matched": 54
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "tutu-maramba",
+      "title": "Tutu Marambá",
+      "referenceFile": "tutu_maramba.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 40,
+      "referenceDuration": 38.7,
+      "durationRatio": 1.034,
+      "noteCounts": {
+        "reference": 280,
+        "hard": 280,
+        "medium": 56,
+        "easy": 64
+      },
+      "hardDensityRatio": 0.967,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.969,
+        "compared": 132,
+        "matched": 132
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 43,
+        "matched": 43
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.952,
+        "compared": 64,
+        "matched": 64
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 132,
+        "matched": 132
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "onde-esta-a-margarida",
+      "title": "Onde Está a Margarida?",
+      "referenceFile": "onde_esta_a_margarida.mid",
+      "bpm": 80,
+      "referenceBpm": 90,
+      "duration": 91,
+      "referenceDuration": 90.24,
+      "durationRatio": 1.008,
+      "noteCounts": {
+        "reference": 2685,
+        "hard": 1644,
+        "medium": 133,
+        "easy": 102
+      },
+      "hardDensityRatio": 0.607,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.937,
+        "contourMatch": 0.983,
+        "compared": 474,
+        "matched": 474
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.931,
+        "contourMatch": 0.96,
+        "compared": 102,
+        "matched": 102
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.931,
+        "contourMatch": 0.96,
+        "compared": 102,
+        "matched": 102
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.951,
+        "contourMatch": 0.979,
+        "compared": 474,
+        "matched": 474
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "amazing-grace",
+      "title": "Amazing Grace",
+      "referenceFile": "amazing_grace.mid",
+      "bpm": 80,
+      "referenceBpm": 80,
+      "duration": 33,
+      "referenceDuration": 31.5,
+      "durationRatio": 1.048,
+      "noteCounts": {
+        "reference": 127,
+        "hard": 116,
+        "medium": 48,
+        "easy": 28
+      },
+      "hardDensityRatio": 0.872,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 35,
+        "matched": 35
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 28,
+        "matched": 28
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 28,
+        "matched": 28
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 35,
+        "matched": 35
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "castelo-forte",
+      "title": "Castelo Forte",
+      "referenceFile": "castelo_forte.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 48,
+      "referenceDuration": 46.5,
+      "durationRatio": 1.032,
+      "noteCounts": {
+        "reference": 276,
+        "hard": 249,
+        "medium": 60,
+        "easy": 64
+      },
+      "hardDensityRatio": 0.874,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 79,
+        "matched": 79
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 38,
+        "matched": 38
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 64,
+        "matched": 64
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 79,
+        "matched": 79
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "mais-perto-quero-estar",
+      "title": "Mais Perto Quero Estar",
+      "referenceFile": "mais_perto_quero_estar.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 40,
+      "referenceDuration": 38.4,
+      "durationRatio": 1.042,
+      "noteCounts": {
+        "reference": 174,
+        "hard": 155,
+        "medium": 49,
+        "easy": 39
+      },
+      "hardDensityRatio": 0.855,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 44,
+        "matched": 44
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 29,
+        "matched": 29
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 39,
+        "matched": 39
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 44,
+        "matched": 44
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "santo-santo-santo",
+      "title": "Santo, Santo, Santo",
+      "referenceFile": "santo_santo_santo.mid",
+      "bpm": 90,
+      "referenceBpm": 90,
+      "duration": 44,
+      "referenceDuration": 42.667,
+      "durationRatio": 1.031,
+      "noteCounts": {
+        "reference": 197,
+        "hard": 190,
+        "medium": 49,
+        "easy": 54
+      },
+      "hardDensityRatio": 0.935,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 58,
+        "matched": 58
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 31,
+        "matched": 31
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 54,
+        "matched": 54
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 58,
+        "matched": 58
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "noite-feliz",
+      "title": "Noite Feliz",
+      "referenceFile": "noite_feliz.mid",
+      "bpm": 53,
+      "referenceBpm": 53,
+      "duration": 43,
+      "referenceDuration": 41.143,
+      "durationRatio": 1.045,
+      "noteCounts": {
+        "reference": 175,
+        "hard": 165,
+        "medium": 41,
+        "easy": 23
+      },
+      "hardDensityRatio": 0.902,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.978,
+        "contourMatch": 1,
+        "compared": 46,
+        "matched": 46
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.958,
+        "contourMatch": 1,
+        "compared": 24,
+        "matched": 24
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 23,
+        "matched": 23
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 46,
+        "matched": 46
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "rocha-eterna",
+      "title": "Rocha Eterna",
+      "referenceFile": "rocha_eterna.mid",
+      "bpm": 150,
+      "referenceBpm": 150,
+      "duration": 30,
+      "referenceDuration": 28.8,
+      "durationRatio": 1.042,
+      "noteCounts": {
+        "reference": 168,
+        "hard": 160,
+        "medium": 43,
+        "easy": 26
+      },
+      "hardDensityRatio": 0.914,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 42,
+        "matched": 42
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 26,
+        "matched": 26
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 26,
+        "matched": 26
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 42,
+        "matched": 42
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "vinde-fieis",
+      "title": "Vinde Fieis",
+      "referenceFile": "vinde_fieis.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 49,
+      "referenceDuration": 48,
+      "durationRatio": 1.021,
+      "noteCounts": {
+        "reference": 232,
+        "hard": 222,
+        "medium": 63,
+        "easy": 61
+      },
+      "hardDensityRatio": 0.937,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 64,
+        "matched": 64
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 38,
+        "matched": 38
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 61,
+        "matched": 61
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 64,
+        "matched": 64
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "o-vem-o-vem-emanuel",
+      "title": "O Vem, O Vem, Emanuel",
+      "referenceFile": "o_vem_o_vem_emanuel.mid",
+      "bpm": 95,
+      "referenceBpm": 95,
+      "duration": 49,
+      "referenceDuration": 48,
+      "durationRatio": 1.021,
+      "noteCounts": {
+        "reference": 228,
+        "hard": 214,
+        "medium": 51,
+        "easy": 60
+      },
+      "hardDensityRatio": 0.919,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 61,
+        "matched": 61
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 30,
+        "matched": 30
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 60,
+        "matched": 60
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 61,
+        "matched": 61
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "jubiloso-te-adoramos",
+      "title": "Jubiloso, Te Adoramos",
+      "referenceFile": "jubiloso_te_adoramos.mid",
+      "bpm": 110,
+      "referenceBpm": 110,
+      "duration": 36,
+      "referenceDuration": 34.909,
+      "durationRatio": 1.031,
+      "noteCounts": {
+        "reference": 248,
+        "hard": 236,
+        "medium": 43,
+        "easy": 33
+      },
+      "hardDensityRatio": 0.923,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 65,
+        "matched": 65
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 33,
+        "matched": 33
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 33,
+        "matched": 33
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 65,
+        "matched": 65
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "firme-nas-promessas",
+      "title": "Firme nas Promessas",
+      "referenceFile": "firme_nas_promessas.mid",
+      "bpm": 105,
+      "referenceBpm": 105,
+      "duration": 39,
+      "referenceDuration": 37.679,
+      "durationRatio": 1.035,
+      "noteCounts": {
+        "reference": 348,
+        "hard": 342,
+        "medium": 59,
+        "easy": 55
+      },
+      "hardDensityRatio": 0.949,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 92,
+        "matched": 92
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 34,
+        "matched": 34
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 55,
+        "matched": 55
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 92,
+        "matched": 92
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "conta-as-bencaos",
+      "title": "Conta as Bencaos",
+      "referenceFile": "conta_as_bencaos.mid",
+      "bpm": 90,
+      "referenceBpm": 90,
+      "duration": 48,
+      "referenceDuration": 46.174,
+      "durationRatio": 1.04,
+      "noteCounts": {
+        "reference": 342,
+        "hard": 338,
+        "medium": 71,
+        "easy": 55
+      },
+      "hardDensityRatio": 0.951,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 100,
+        "matched": 100
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 41,
+        "matched": 41
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 55,
+        "matched": 55
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 100,
+        "matched": 100
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "sou-feliz-com-jesus",
+      "title": "Sou Feliz com Jesus",
+      "referenceFile": "sou_feliz_com_jesus.mid",
+      "bpm": 90,
+      "referenceBpm": 90,
+      "duration": 58,
+      "referenceDuration": 57.083,
+      "durationRatio": 1.016,
+      "noteCounts": {
+        "reference": 218,
+        "hard": 213,
+        "medium": 58,
+        "easy": 59
+      },
+      "hardDensityRatio": 0.962,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 62,
+        "matched": 62
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 39,
+        "matched": 39
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 59,
+        "matched": 59
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 62,
+        "matched": 62
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "coroai",
+      "title": "Coroai",
+      "referenceFile": "coroai.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 40,
+      "referenceDuration": 38.4,
+      "durationRatio": 1.042,
+      "noteCounts": {
+        "reference": 209,
+        "hard": 198,
+        "medium": 43,
+        "easy": 50
+      },
+      "hardDensityRatio": 0.909,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 54,
+        "matched": 54
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 26,
+        "matched": 26
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 50,
+        "matched": 50
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 54,
+        "matched": 54
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "manso-e-suave",
+      "title": "Manso e Suave",
+      "referenceFile": "manso_e_suave.mid",
+      "bpm": 45,
+      "referenceBpm": 45,
+      "duration": 72,
+      "referenceDuration": 70.855,
+      "durationRatio": 1.016,
+      "noteCounts": {
+        "reference": 272,
+        "hard": 269,
+        "medium": 62,
+        "easy": 38
+      },
+      "hardDensityRatio": 0.973,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 71,
+        "matched": 71
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 41,
+        "matched": 41
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 38,
+        "matched": 38
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 71,
+        "matched": 71
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "aos-pes-da-cruz",
+      "title": "Aos Pes da Cruz",
+      "referenceFile": "aos_pes_da_cruz.mid",
+      "bpm": 90,
+      "referenceBpm": 90,
+      "duration": 44,
+      "referenceDuration": 42.667,
+      "durationRatio": 1.031,
+      "noteCounts": {
+        "reference": 289,
+        "hard": 273,
+        "medium": 61,
+        "easy": 54
+      },
+      "hardDensityRatio": 0.916,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 77,
+        "matched": 77
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 33,
+        "matched": 33
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 54,
+        "matched": 54
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 77,
+        "matched": 77
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "alvo-mais-que-a-neve",
+      "title": "Alvo Mais que a Neve",
+      "referenceFile": "alvo_mais_que_a_neve.mid",
+      "bpm": 80,
+      "referenceBpm": 85,
+      "duration": 207,
+      "referenceDuration": 207.276,
+      "durationRatio": 0.999,
+      "noteCounts": {
+        "reference": 3231,
+        "hard": 1884,
+        "medium": 453,
+        "easy": 287
+      },
+      "hardDensityRatio": 0.584,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.834,
+        "contourMatch": 0.971,
+        "compared": 736,
+        "matched": 736
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.878,
+        "contourMatch": 0.983,
+        "compared": 287,
+        "matched": 287
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.878,
+        "contourMatch": 0.909,
+        "compared": 287,
+        "matched": 287
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.586,
+        "contourMatch": 0.707,
+        "compared": 736,
+        "matched": 736
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "chuvas-de-graca",
+      "title": "Chuvas de Graca",
+      "referenceFile": "chuvas_de_graca.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 199,
+      "referenceDuration": 197.677,
+      "durationRatio": 1.007,
+      "noteCounts": {
+        "reference": 2111,
+        "hard": 1256,
+        "medium": 335,
+        "easy": 195
+      },
+      "hardDensityRatio": 0.591,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 423,
+        "matched": 423
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 204,
+        "matched": 204
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 195,
+        "matched": 195
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 423,
+        "matched": 423
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "deus-velara-por-ti",
+      "title": "Deus Velara por Ti",
+      "referenceFile": "deus_velara_por_ti.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 242,
+      "referenceDuration": 241.5,
+      "durationRatio": 1.002,
+      "noteCounts": {
+        "reference": 2789,
+        "hard": 2048,
+        "medium": 296,
+        "easy": 240
+      },
+      "hardDensityRatio": 0.733,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.967,
+        "contourMatch": 0.967,
+        "compared": 514,
+        "matched": 514
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.968,
+        "contourMatch": 0.952,
+        "compared": 250,
+        "matched": 250
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.946,
+        "contourMatch": 0.87,
+        "compared": 240,
+        "matched": 240
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 514,
+        "matched": 514
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "gloria-gloria-aleluia",
+      "title": "Gloria, Gloria, Aleluia",
+      "referenceFile": "gloria_gloria_aleluia.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 33,
+      "referenceDuration": 31.25,
+      "durationRatio": 1.056,
+      "noteCounts": {
+        "reference": 324,
+        "hard": 234,
+        "medium": 55,
+        "easy": 30
+      },
+      "hardDensityRatio": 0.684,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.815,
+        "contourMatch": 1,
+        "compared": 81,
+        "matched": 81
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.967,
+        "contourMatch": 1,
+        "compared": 30,
+        "matched": 30
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.833,
+        "contourMatch": 1,
+        "compared": 30,
+        "matched": 30
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.963,
+        "contourMatch": 1,
+        "compared": 81,
+        "matched": 81
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "tao-sublime-sacramento",
+      "title": "Tao Sublime Sacramento",
+      "referenceFile": "tao_sublime_sacramento.mid",
+      "bpm": 50,
+      "referenceBpm": 50,
+      "duration": 163,
+      "referenceDuration": 160.865,
+      "durationRatio": 1.013,
+      "noteCounts": {
+        "reference": 2652,
+        "hard": 1477,
+        "medium": 239,
+        "easy": 132
+      },
+      "hardDensityRatio": 0.55,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.977,
+        "contourMatch": 0.998,
+        "compared": 522,
+        "matched": 522
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.993,
+        "contourMatch": 1,
+        "compared": 149,
+        "matched": 149
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.992,
+        "contourMatch": 1,
+        "compared": 132,
+        "matched": 132
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.99,
+        "contourMatch": 0.998,
+        "compared": 522,
+        "matched": 522
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "chopin-fantaisie-impromptuchopin",
+      "title": "Fantasia-Impromptu",
+      "referenceFile": "chopin_fantaisie-impromptuchopin.mid",
+      "bpm": 168,
+      "referenceBpm": 168,
+      "duration": 255,
+      "referenceDuration": 253.523,
+      "durationRatio": 1.006,
+      "noteCounts": {
+        "reference": 3014,
+        "hard": 2774,
+        "medium": 405,
+        "easy": 361
+      },
+      "hardDensityRatio": 0.915,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.945,
+        "contourMatch": 0.945,
+        "compared": 1247,
+        "matched": 1247
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.966,
+        "contourMatch": 0.96,
+        "compared": 322,
+        "matched": 322
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.928,
+        "contourMatch": 0.897,
+        "compared": 361,
+        "matched": 361
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.859,
+        "contourMatch": 0.993,
+        "compared": 1247,
+        "matched": 1247
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "das-wohltemperierte-clavier-ii-praeludium-iijsbach",
+      "title": "O Cravo Bem Temperado II: Prelúdio II",
+      "referenceFile": "Das Wohltemperierte Clavier II, Praeludium IIJSBACH.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 57,
+      "referenceDuration": 56,
+      "durationRatio": 1.018,
+      "noteCounts": {
+        "reference": 692,
+        "hard": 691,
+        "medium": 120,
+        "easy": 89
+      },
+      "hardDensityRatio": 0.981,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 442,
+        "matched": 442
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 75,
+        "matched": 75
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.966,
+        "compared": 89,
+        "matched": 89
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 442,
+        "matched": 442
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "doumkatchaikosvky",
+      "title": "Dumka",
+      "referenceFile": "DoumkaTchaikosvky.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 575,
+      "referenceDuration": 573,
+      "durationRatio": 1.003,
+      "noteCounts": {
+        "reference": 4279,
+        "hard": 3639,
+        "medium": 910,
+        "easy": 501
+      },
+      "hardDensityRatio": 0.847,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.756,
+        "contourMatch": 0.931,
+        "compared": 1723,
+        "matched": 1723
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.862,
+        "contourMatch": 0.956,
+        "compared": 595,
+        "matched": 595
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.868,
+        "contourMatch": 0.91,
+        "compared": 501,
+        "matched": 501
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.807,
+        "contourMatch": 0.905,
+        "compared": 1723,
+        "matched": 1723
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "etude-a-mollchopin",
+      "title": "Estudo em Lá Menor",
+      "referenceFile": "Etüde a-mollChopin.mid",
+      "bpm": 144,
+      "referenceBpm": 144,
+      "duration": 83,
+      "referenceDuration": 81.667,
+      "durationRatio": 1.016,
+      "noteCounts": {
+        "reference": 1458,
+        "hard": 1014,
+        "medium": 117,
+        "easy": 118
+      },
+      "hardDensityRatio": 0.684,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.896,
+        "contourMatch": 0.903,
+        "compared": 384,
+        "matched": 384
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.888,
+        "contourMatch": 0.856,
+        "compared": 98,
+        "matched": 98
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.898,
+        "contourMatch": 0.855,
+        "compared": 118,
+        "matched": 118
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.906,
+        "contourMatch": 0.945,
+        "compared": 384,
+        "matched": 384
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "fantasy-in-d-minormozart",
+      "title": "Fantasia em Ré Menor",
+      "referenceFile": "Fantasy in D minormozart.mid",
+      "bpm": 80,
+      "referenceBpm": 80,
+      "duration": 285,
+      "referenceDuration": 283.252,
+      "durationRatio": 1.006,
+      "noteCounts": {
+        "reference": 1511,
+        "hard": 1445,
+        "medium": 445,
+        "easy": 307
+      },
+      "hardDensityRatio": 0.95,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.916,
+        "contourMatch": 0.959,
+        "compared": 921,
+        "matched": 921
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.919,
+        "contourMatch": 0.967,
+        "compared": 307,
+        "matched": 307
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.919,
+        "contourMatch": 0.951,
+        "compared": 307,
+        "matched": 307
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.916,
+        "contourMatch": 0.968,
+        "compared": 921,
+        "matched": 921
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "fugue-in-e-flat-major-kv-153375fmozart",
+      "title": "Fuga em Mi Bemol Maior, KV 153/375f",
+      "referenceFile": "Fugue in E-flat Major KV 153375fmozart.mid",
+      "bpm": 110,
+      "referenceBpm": 110,
+      "duration": 146,
+      "referenceDuration": 144.136,
+      "durationRatio": 1.013,
+      "noteCounts": {
+        "reference": 1021,
+        "hard": 1016,
+        "medium": 255,
+        "easy": 182
+      },
+      "hardDensityRatio": 0.982,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.989,
+        "contourMatch": 0.995,
+        "compared": 557,
+        "matched": 557
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.995,
+        "contourMatch": 1,
+        "compared": 182,
+        "matched": 182
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.995,
+        "contourMatch": 0.89,
+        "compared": 182,
+        "matched": 182
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.998,
+        "contourMatch": 1,
+        "compared": 557,
+        "matched": 557
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "fugue-sur-le-nom-de-bachrimsky-korsakov",
+      "title": "Fuga sobre o Nome de Bach",
+      "referenceFile": "Fugue sur le nom de BachRimsky-Korsakov.mid",
+      "bpm": 140,
+      "referenceBpm": 140,
+      "duration": 125,
+      "referenceDuration": 123.428,
+      "durationRatio": 1.013,
+      "noteCounts": {
+        "reference": 622,
+        "hard": 617,
+        "medium": 230,
+        "easy": 160
+      },
+      "hardDensityRatio": 0.979,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 375,
+        "matched": 375
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 141,
+        "matched": 141
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.887,
+        "compared": 160,
+        "matched": 160
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 375,
+        "matched": 375
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "fuguefragmentmozart",
+      "title": "Fragmento de Fuga",
+      "referenceFile": "fuguefragmentmozart.mid",
+      "bpm": 110,
+      "referenceBpm": 110,
+      "duration": 58,
+      "referenceDuration": 56.728,
+      "durationRatio": 1.022,
+      "noteCounts": {
+        "reference": 339,
+        "hard": 339,
+        "medium": 93,
+        "easy": 67
+      },
+      "hardDensityRatio": 0.978,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 197,
+        "matched": 197
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 67,
+        "matched": 67
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.97,
+        "compared": 67,
+        "matched": 67
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 197,
+        "matched": 197
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "gigue-in-g-majormozart",
+      "title": "Giga em Sol Maior",
+      "referenceFile": "Gigue in G Majormozart.mid",
+      "bpm": 140,
+      "referenceBpm": 140,
+      "duration": 50,
+      "referenceDuration": 48.857,
+      "durationRatio": 1.023,
+      "noteCounts": {
+        "reference": 457,
+        "hard": 442,
+        "medium": 79,
+        "easy": 76
+      },
+      "hardDensityRatio": 0.945,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.978,
+        "contourMatch": 0.947,
+        "compared": 226,
+        "matched": 226
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.965,
+        "contourMatch": 0.893,
+        "compared": 57,
+        "matched": 57
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.92,
+        "compared": 76,
+        "matched": 76
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.996,
+        "contourMatch": 0.978,
+        "compared": 226,
+        "matched": 226
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "march-of-the-wooden-soldierstchaikovsky",
+      "title": "Marcha dos Soldadinhos de Madeira",
+      "referenceFile": "March of the Wooden SoldiersTchaikovsky.mid",
+      "bpm": 140,
+      "referenceBpm": 140,
+      "duration": 42,
+      "referenceDuration": 40.5,
+      "durationRatio": 1.037,
+      "noteCounts": {
+        "reference": 318,
+        "hard": 259,
+        "medium": 91,
+        "easy": 49
+      },
+      "hardDensityRatio": 0.785,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 101,
+        "matched": 101
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 48,
+        "matched": 48
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 49,
+        "matched": 49
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.901,
+        "contourMatch": 1,
+        "compared": 101,
+        "matched": 101
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "marche-funebre-kv-453amozart",
+      "title": "Marcha Fúnebre, KV 453a",
+      "referenceFile": "Marche funebre KV 453amozart.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 64,
+      "referenceDuration": 63,
+      "durationRatio": 1.016,
+      "noteCounts": {
+        "reference": 266,
+        "hard": 256,
+        "medium": 97,
+        "easy": 62
+      },
+      "hardDensityRatio": 0.947,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.979,
+        "contourMatch": 0.968,
+        "compared": 95,
+        "matched": 95
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.968,
+        "contourMatch": 0.967,
+        "compared": 62,
+        "matched": 62
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.968,
+        "contourMatch": 0.967,
+        "compared": 62,
+        "matched": 62
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.968,
+        "contourMatch": 0.947,
+        "compared": 95,
+        "matched": 95
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "morning-prayertchaikovsky",
+      "title": "Oração da Manhã",
+      "referenceFile": "Morning PrayerTchaikovsky.mid",
+      "bpm": 62,
+      "referenceBpm": 62,
+      "duration": 71,
+      "referenceDuration": 69.677,
+      "durationRatio": 1.019,
+      "noteCounts": {
+        "reference": 246,
+        "hard": 238,
+        "medium": 93,
+        "easy": 64
+      },
+      "hardDensityRatio": 0.949,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.979,
+        "contourMatch": 0.979,
+        "compared": 95,
+        "matched": 95
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 64,
+        "matched": 64
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.969,
+        "contourMatch": 0.968,
+        "compared": 64,
+        "matched": 64
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 95,
+        "matched": 95
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "notteegiornomozart",
+      "title": "Noite e Dia",
+      "referenceFile": "NotteEGiornomozart.mid",
+      "bpm": 155,
+      "referenceBpm": 155,
+      "duration": 115,
+      "referenceDuration": 113.419,
+      "durationRatio": 1.014,
+      "noteCounts": {
+        "reference": 1052,
+        "hard": 892,
+        "medium": 218,
+        "easy": 152
+      },
+      "hardDensityRatio": 0.836,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.885,
+        "contourMatch": 0.921,
+        "compared": 407,
+        "matched": 407
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.944,
+        "contourMatch": 1,
+        "compared": 143,
+        "matched": 143
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.921,
+        "contourMatch": 0.98,
+        "compared": 152,
+        "matched": 152
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.926,
+        "contourMatch": 0.973,
+        "compared": 407,
+        "matched": 407
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "old-french-songtchaikosvky",
+      "title": "Canção Francesa Antiga",
+      "referenceFile": "Old French SongTchaikosvky.mid",
+      "bpm": 70,
+      "referenceBpm": 70,
+      "duration": 57,
+      "referenceDuration": 55.286,
+      "durationRatio": 1.031,
+      "noteCounts": {
+        "reference": 188,
+        "hard": 187,
+        "medium": 100,
+        "easy": 62
+      },
+      "hardDensityRatio": 0.965,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 115,
+        "matched": 115
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 62,
+        "matched": 62
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 62,
+        "matched": 62
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 115,
+        "matched": 115
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "piano-sonata-in-c-major-kv-309-1st-part-mozart",
+      "title": "Sonata para Piano em Dó Maior, KV 309 (1ª Parte)",
+      "referenceFile": "Piano Sonata in C Major - KV 309 (1st Part)mozart.mid",
+      "bpm": 146,
+      "referenceBpm": 146,
+      "duration": 257,
+      "referenceDuration": 255.77,
+      "durationRatio": 1.005,
+      "noteCounts": {
+        "reference": 2378,
+        "hard": 2257,
+        "medium": 430,
+        "easy": 379
+      },
+      "hardDensityRatio": 0.945,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.963,
+        "contourMatch": 0.97,
+        "compared": 1084,
+        "matched": 1084
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.961,
+        "contourMatch": 0.942,
+        "compared": 310,
+        "matched": 310
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.966,
+        "contourMatch": 0.947,
+        "compared": 379,
+        "matched": 379
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.992,
+        "contourMatch": 0.988,
+        "compared": 1084,
+        "matched": 1084
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "prelude-op-28-no-4-suffocation-chopin",
+      "title": "Prelúdio Op. 28 nº 4",
+      "referenceFile": "Prelude Op. 28, No. 4 ('Suffocation')Chopin.mid",
+      "bpm": 56,
+      "referenceBpm": 56,
+      "duration": 110,
+      "referenceDuration": 108.214,
+      "durationRatio": 1.017,
+      "noteCounts": {
+        "reference": 600,
+        "hard": 525,
+        "medium": 147,
+        "easy": 93
+      },
+      "hardDensityRatio": 0.861,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.775,
+        "contourMatch": 1,
+        "compared": 191,
+        "matched": 191
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.774,
+        "contourMatch": 0.989,
+        "compared": 93,
+        "matched": 93
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.828,
+        "contourMatch": 0.989,
+        "compared": 93,
+        "matched": 93
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.995,
+        "contourMatch": 0.995,
+        "compared": 191,
+        "matched": 191
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "preludio-chopin",
+      "title": "Prelúdio de Chopin",
+      "referenceFile": "preludio chopin.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 199,
+      "referenceDuration": 197.5,
+      "durationRatio": 1.008,
+      "noteCounts": {
+        "reference": 1322,
+        "hard": 1287,
+        "medium": 307,
+        "easy": 255
+      },
+      "hardDensityRatio": 0.966,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.976,
+        "contourMatch": 0.961,
+        "compared": 745,
+        "matched": 745
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.976,
+        "contourMatch": 0.98,
+        "compared": 254,
+        "matched": 254
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.976,
+        "contourMatch": 0.906,
+        "compared": 255,
+        "matched": 255
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.996,
+        "contourMatch": 0.984,
+        "compared": 745,
+        "matched": 745
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "preludio-n-15-chopin",
+      "title": "Prelúdio nº 15",
+      "referenceFile": "Preludio n 15 chopin.mid",
+      "bpm": 80,
+      "referenceBpm": 80,
+      "duration": 268,
+      "referenceDuration": 267,
+      "durationRatio": 1.004,
+      "noteCounts": {
+        "reference": 1518,
+        "hard": 1388,
+        "medium": 563,
+        "easy": 352
+      },
+      "hardDensityRatio": 0.911,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.94,
+        "contourMatch": 1,
+        "compared": 720,
+        "matched": 720
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.881,
+        "contourMatch": 1,
+        "compared": 352,
+        "matched": 352
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.881,
+        "contourMatch": 1,
+        "compared": 352,
+        "matched": 352
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.997,
+        "contourMatch": 0.999,
+        "compared": 720,
+        "matched": 720
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "preludio-n-20-chopin",
+      "title": "Prelúdio nº 20",
+      "referenceFile": "preludio n 20 chopin.mid",
+      "bpm": 45,
+      "referenceBpm": 42,
+      "duration": 76,
+      "referenceDuration": 74.286,
+      "durationRatio": 1.023,
+      "noteCounts": {
+        "reference": 286,
+        "hard": 229,
+        "medium": 79,
+        "easy": 49
+      },
+      "hardDensityRatio": 0.783,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 61,
+        "matched": 61
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 49,
+        "matched": 49
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 49,
+        "matched": 49
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.867,
+        "compared": 61,
+        "matched": 61
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "preludio-n-6-chopin",
+      "title": "Prelúdio nº 6",
+      "referenceFile": "preludio n 6 chopin.mid",
+      "bpm": 45,
+      "referenceBpm": 45,
+      "duration": 103,
+      "referenceDuration": 101.333,
+      "durationRatio": 1.016,
+      "noteCounts": {
+        "reference": 405,
+        "hard": 404,
+        "medium": 116,
+        "easy": 75
+      },
+      "hardDensityRatio": 0.981,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.995,
+        "contourMatch": 1,
+        "compared": 186,
+        "matched": 186
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 84,
+        "matched": 84
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 75,
+        "matched": 75
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.995,
+        "contourMatch": 1,
+        "compared": 186,
+        "matched": 186
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "preludio-numero7chopin",
+      "title": "Prelúdio nº 7",
+      "referenceFile": "preludio numero7chopin.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 25,
+      "referenceDuration": 24,
+      "durationRatio": 1.042,
+      "noteCounts": {
+        "reference": 168,
+        "hard": 163,
+        "medium": 36,
+        "easy": 24
+      },
+      "hardDensityRatio": 0.931,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.938,
+        "contourMatch": 1,
+        "compared": 48,
+        "matched": 48
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.958,
+        "contourMatch": 1,
+        "compared": 24,
+        "matched": 24
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.958,
+        "contourMatch": 1,
+        "compared": 24,
+        "matched": 24
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 48,
+        "matched": 48
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "premiere-arabesquedebussy",
+      "title": "Primeira Arabesca",
+      "referenceFile": "Première ArabesqueDebussy.mid",
+      "bpm": 144,
+      "referenceBpm": 144,
+      "duration": 178,
+      "referenceDuration": 176.25,
+      "durationRatio": 1.01,
+      "noteCounts": {
+        "reference": 1448,
+        "hard": 1394,
+        "medium": 316,
+        "easy": 242
+      },
+      "hardDensityRatio": 0.953,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.775,
+        "contourMatch": 0.943,
+        "compared": 955,
+        "matched": 955
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.981,
+        "contourMatch": 0.995,
+        "compared": 210,
+        "matched": 210
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.979,
+        "contourMatch": 0.963,
+        "compared": 242,
+        "matched": 242
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.772,
+        "contourMatch": 0.923,
+        "compared": 955,
+        "matched": 955
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "sonata-2bmoll-chopin",
+      "title": "Sonata nº 2 em Si Bemol Menor",
+      "referenceFile": "sonata 2bmoll chopin.mid",
+      "bpm": 180,
+      "referenceBpm": 224,
+      "duration": 84,
+      "referenceDuration": 82.5,
+      "durationRatio": 1.018,
+      "noteCounts": {
+        "reference": 1808,
+        "hard": 1464,
+        "medium": 179,
+        "easy": 121
+      },
+      "hardDensityRatio": 0.795,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.827,
+        "contourMatch": 0.918,
+        "compared": 452,
+        "matched": 452
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.873,
+        "contourMatch": 0.99,
+        "compared": 102,
+        "matched": 102
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.736,
+        "contourMatch": 0.858,
+        "compared": 121,
+        "matched": 121
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.896,
+        "contourMatch": 0.967,
+        "compared": 452,
+        "matched": 452
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "sonata-in-c-major-fragment-mozart",
+      "title": "Sonata em Dó Maior (Fragmento)",
+      "referenceFile": "Sonata in C major (fragment)mozart.mid",
+      "bpm": 120,
+      "referenceBpm": 120,
+      "duration": 39,
+      "referenceDuration": 37.5,
+      "durationRatio": 1.04,
+      "noteCounts": {
+        "reference": 382,
+        "hard": 380,
+        "medium": 60,
+        "easy": 56
+      },
+      "hardDensityRatio": 0.957,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.992,
+        "contourMatch": 0.992,
+        "compared": 245,
+        "matched": 245
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.979,
+        "compared": 49,
+        "matched": 49
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.873,
+        "compared": 56,
+        "matched": 56
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 245,
+        "matched": 245
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "suite-bergamasque-clair-de-lunedebussy",
+      "title": "Clair de Lune",
+      "referenceFile": "Suite Bergamasque Clair de Lunedebussy.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 323,
+      "referenceDuration": 322,
+      "durationRatio": 1.003,
+      "noteCounts": {
+        "reference": 1468,
+        "hard": 1347,
+        "medium": 441,
+        "easy": 263
+      },
+      "hardDensityRatio": 0.915,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.958,
+        "contourMatch": 0.944,
+        "compared": 763,
+        "matched": 763
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.955,
+        "contourMatch": 0.96,
+        "compared": 330,
+        "matched": 330
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.954,
+        "contourMatch": 0.901,
+        "compared": 263,
+        "matched": 263
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.958,
+        "contourMatch": 0.962,
+        "compared": 763,
+        "matched": 763
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "the-seasons-augusttchaikovsky",
+      "title": "As Estações: Agosto",
+      "referenceFile": "The Seasons AugustTchaikovsky.mid",
+      "bpm": 108,
+      "referenceBpm": 108,
+      "duration": 332,
+      "referenceDuration": 330.555,
+      "durationRatio": 1.004,
+      "noteCounts": {
+        "reference": 2442,
+        "hard": 2270,
+        "medium": 562,
+        "easy": 523
+      },
+      "hardDensityRatio": 0.926,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.965,
+        "contourMatch": 0.987,
+        "compared": 997,
+        "matched": 997
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.962,
+        "contourMatch": 0.97,
+        "compared": 397,
+        "matched": 397
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.956,
+        "contourMatch": 0.849,
+        "compared": 523,
+        "matched": 523
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.979,
+        "contourMatch": 0.996,
+        "compared": 997,
+        "matched": 997
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "the-seasons-februarytchaikovsky",
+      "title": "As Estações: Fevereiro",
+      "referenceFile": "The Seasons FebruaryTchaikovsky.mid",
+      "bpm": 72,
+      "referenceBpm": 72,
+      "duration": 283,
+      "referenceDuration": 281.25,
+      "durationRatio": 1.006,
+      "noteCounts": {
+        "reference": 1810,
+        "hard": 1743,
+        "medium": 509,
+        "easy": 336
+      },
+      "hardDensityRatio": 0.957,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.986,
+        "contourMatch": 0.973,
+        "compared": 839,
+        "matched": 839
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.991,
+        "contourMatch": 0.961,
+        "compared": 336,
+        "matched": 336
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.991,
+        "contourMatch": 0.91,
+        "compared": 336,
+        "matched": 336
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.993,
+        "contourMatch": 0.989,
+        "compared": 839,
+        "matched": 839
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "the-seasons-januarytchaikovsky",
+      "title": "As Estações: Janeiro",
+      "referenceFile": "The Seasons JanuaryTchaikovsky.mid",
+      "bpm": 72,
+      "referenceBpm": 72,
+      "duration": 259,
+      "referenceDuration": 257.5,
+      "durationRatio": 1.006,
+      "noteCounts": {
+        "reference": 1526,
+        "hard": 1495,
+        "medium": 416,
+        "easy": 296
+      },
+      "hardDensityRatio": 0.974,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.882,
+        "contourMatch": 0.987,
+        "compared": 823,
+        "matched": 823
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.943,
+        "contourMatch": 1,
+        "compared": 296,
+        "matched": 296
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.943,
+        "contourMatch": 0.986,
+        "compared": 296,
+        "matched": 296
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.883,
+        "contourMatch": 0.991,
+        "compared": 823,
+        "matched": 823
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "trois-nouvelles-etudes-no-1-f-minorchopin",
+      "title": "Três Novos Estudos nº 1 em Fá Menor",
+      "referenceFile": "Trois Nouvelles Etudes, No. 1 F MinorChopin.mid",
+      "bpm": 100,
+      "referenceBpm": 100,
+      "duration": 162,
+      "referenceDuration": 160.4,
+      "durationRatio": 1.01,
+      "noteCounts": {
+        "reference": 829,
+        "hard": 828,
+        "medium": 274,
+        "easy": 251
+      },
+      "hardDensityRatio": 0.989,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.876,
+        "contourMatch": 0.799,
+        "compared": 498,
+        "matched": 498
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 265,
+        "matched": 265
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.936,
+        "compared": 251,
+        "matched": 251
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.998,
+        "compared": 498,
+        "matched": 498
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "toccata-and-fugue-d-minor",
+      "title": "Tocata e Fuga em Ré Menor",
+      "referenceFile": "toccata_fugue_d_minor.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 573,
+      "referenceDuration": 572,
+      "durationRatio": 1.002,
+      "noteCounts": {
+        "reference": 3651,
+        "hard": 3558,
+        "medium": 985,
+        "easy": 546
+      },
+      "hardDensityRatio": 0.973,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.863,
+        "contourMatch": 0.968,
+        "compared": 2372,
+        "matched": 2372
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.951,
+        "contourMatch": 0.997,
+        "compared": 711,
+        "matched": 711
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.952,
+        "contourMatch": 0.961,
+        "compared": 546,
+        "matched": 546
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.867,
+        "contourMatch": 0.965,
+        "compared": 2372,
+        "matched": 2372
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "in-the-hall-of-the-mountain-king",
+      "title": "Na Gruta do Rei da Montanha",
+      "referenceFile": "in_the_hall_of_the_mountain_king.mid",
+      "bpm": 80,
+      "referenceBpm": 138,
+      "duration": 147,
+      "referenceDuration": 145.229,
+      "durationRatio": 1.012,
+      "noteCounts": {
+        "reference": 1453,
+        "hard": 1189,
+        "medium": 220,
+        "easy": 164
+      },
+      "hardDensityRatio": 0.808,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.79,
+        "contourMatch": 0.886,
+        "compared": 624,
+        "matched": 624
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.862,
+        "contourMatch": 0.93,
+        "compared": 159,
+        "matched": 159
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.829,
+        "contourMatch": 0.877,
+        "compared": 164,
+        "matched": 164
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.878,
+        "contourMatch": 0.806,
+        "compared": 624,
+        "matched": 624
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "gymnopedie-no-1",
+      "title": "Gymnopédie nº 1",
+      "referenceFile": "gymnopedie_no_1.mid",
+      "bpm": 60,
+      "referenceBpm": 60,
+      "duration": 142,
+      "referenceDuration": 141,
+      "durationRatio": 1.007,
+      "noteCounts": {
+        "reference": 282,
+        "hard": 274,
+        "medium": 157,
+        "easy": 112
+      },
+      "hardDensityRatio": 0.965,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 112,
+        "matched": 112
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 112,
+        "matched": 112
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 0.991,
+        "compared": 112,
+        "matched": 112
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 112,
+        "matched": 112
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "ave-maria-schubert",
+      "title": "Ave Maria",
+      "referenceFile": "ave_maria_schubert.mid",
+      "bpm": 45,
+      "referenceBpm": 24,
+      "duration": 431,
+      "referenceDuration": 430,
+      "durationRatio": 1.002,
+      "noteCounts": {
+        "reference": 2335,
+        "hard": 1739,
+        "medium": 566,
+        "easy": 337
+      },
+      "hardDensityRatio": 0.743,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.66,
+        "contourMatch": 0.975,
+        "compared": 1078,
+        "matched": 1078
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.964,
+        "contourMatch": 0.991,
+        "compared": 337,
+        "matched": 337
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.964,
+        "contourMatch": 0.991,
+        "compared": 337,
+        "matched": 337
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 0.626,
+        "contourMatch": 0.992,
+        "compared": 1078,
+        "matched": 1078
+      },
+      "issues": [],
+      "status": "ok"
+    },
+    {
+      "id": "swan-lake-napolitan-dance",
+      "title": "Lago dos Cisnes: Dança Napolitana",
+      "referenceFile": "swan_lake_napolitan_dance.mid",
+      "bpm": 72,
+      "referenceBpm": 72,
+      "duration": 91,
+      "referenceDuration": 89.167,
+      "durationRatio": 1.021,
+      "noteCounts": {
+        "reference": 885,
+        "hard": 877,
+        "medium": 149,
+        "easy": 106
+      },
+      "hardDensityRatio": 0.971,
+      "hardMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 320,
+        "matched": 320
+      },
+      "mediumMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 106,
+        "matched": 106
+      },
+      "easyMelodyMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 106,
+        "matched": 106
+      },
+      "bassMatch": {
+        "coverage": 1,
+        "pitchClassMatch": 1,
+        "contourMatch": 1,
+        "compared": 320,
+        "matched": 320
+      },
+      "issues": [],
+      "status": "ok"
+    }
+  ]
+}

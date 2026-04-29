@@ -19,10 +19,23 @@ import {
   CreditCard,
   Star,
   Music,
-  ExternalLink
+  ExternalLink,
+  Gauge,
+  TrendingUp,
+  Sparkles
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  buildPracticeAchievements,
+  buildPracticeGoals,
+  buildPracticeProgressInsight,
+  buildPracticeRecommendation,
+  type PracticeAchievement,
+  type PracticeRecommendation,
+} from "@/lib/practiceProgress";
+import { loadSongs } from "@/lib/songCatalog";
+import type { Song } from "@/lib/types";
 
 export default function ProfilePage() {
   const { profile, loading: profileLoading, error: profileError, updateProfile, uploadAvatar } = useProfile();
@@ -39,6 +52,7 @@ export default function ProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [recentSessions, setRecentSessions] = useState<PracticeSession[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const [songs, setSongs] = useState<Song[]>([]);
 
   // Sync initial state when profile or editing mode changes
   useEffect(() => {
@@ -66,6 +80,17 @@ export default function ProfilePage() {
     };
 
     loadHistory();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    loadSongs().then((catalog) => {
+      if (!active) return;
+      setSongs(catalog);
+    });
     return () => {
       active = false;
     };
@@ -145,6 +170,16 @@ export default function ProfilePage() {
   }
 
   const avatarUrl = profile?.avatar_url ? `${profile.avatar_url}?v=${new Date(profile.updated_at).getTime()}` : null;
+  const progressInsight = buildPracticeProgressInsight(profile, recentSessions);
+  const achievements = buildPracticeAchievements(profile, recentSessions);
+  const goals = buildPracticeGoals(profile, recentSessions);
+  const recommendation = buildPracticeRecommendation(profile, recentSessions, songs);
+  const insightToneClass = {
+    start: "border-cyan/20 bg-cyan/5 text-cyan",
+    review: "border-amber-300/20 bg-amber-300/5 text-amber-200",
+    steady: "border-emerald-300/20 bg-emerald-300/5 text-emerald-200",
+    advance: "border-magenta/20 bg-magenta/5 text-magenta",
+  }[progressInsight.tone];
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-12 px-6">
@@ -315,6 +350,40 @@ export default function ProfilePage() {
                 color="border-emerald-400/20"
               />
             </div>
+
+            <section className={`mb-8 rounded-[2rem] border p-6 md:p-8 ${insightToneClass}`}>
+              <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] opacity-70">Plano ativo</p>
+                  <h2 className="text-2xl font-black text-white">{progressInsight.title}</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">{progressInsight.message}</p>
+                  {progressInsight.focusSongTitle && (
+                    <p className="mt-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/55">
+                      Foco sugerido: <span className="font-bold text-white/80">{progressInsight.focusSongTitle}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10">
+                  {progressInsight.tone === "advance" ? <TrendingUp className="h-5 w-5" /> : <Gauge className="h-5 w-5" />}
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-3 gap-2">
+                <InsightMetric label="Semana" value={`${progressInsight.weeklySessions}`} />
+                <InsightMetric label="Media recente" value={`${progressInsight.averageRecentAccuracy}%`} />
+                <InsightMetric label="Melhor recente" value={`${progressInsight.bestRecentAccuracy}%`} />
+              </div>
+
+              <Link
+                href={progressInsight.actionHref}
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-black transition hover:bg-white/90"
+              >
+                {progressInsight.actionLabel}
+                <ExternalLink className="h-3.5 w-3.5" />
+              </Link>
+            </section>
+
+            {recommendation && <RecommendedLessonCard recommendation={recommendation} />}
           </>
         )}
 
@@ -329,6 +398,23 @@ export default function ProfilePage() {
               </h3>
               
               <div className="space-y-6">
+                <div className="grid gap-3 md:grid-cols-3">
+                  {goals.map((goal) => {
+                    const percent = Math.min(100, Math.round((goal.current / Math.max(goal.target, 1)) * 100));
+                    return (
+                      <div key={goal.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/40">{goal.title}</p>
+                          <p className="text-xs font-black text-white">{goal.current}/{goal.target}{goal.unit === "%" ? "%" : ""}</p>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                          <div className="h-full rounded-full bg-gradient-to-r from-cyan to-magenta transition-[width] duration-500" style={{ width: `${percent}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
                 <div>
                   <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-white/40 mb-2">
                     <span>Músicas Tocadas</span>
@@ -431,7 +517,12 @@ export default function ProfilePage() {
               <Trophy className="w-5 h-5 text-yellow-400" />
               Coleção de Troféus
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+              {achievements.map((achievement) => (
+                <AchievementCard key={achievement.id} achievement={achievement} />
+              ))}
+            </div>
+            <div className="hidden grid-cols-2 md:grid-cols-4 gap-4">
               <TrophyItem 
                 active={true}
                 icon={<Star className="w-6 h-6" />}
@@ -549,5 +640,87 @@ function HistoryMetric({ label, value }: { label: string; value: string }) {
       <p className="text-[10px] font-black uppercase tracking-widest text-white/30">{label}</p>
       <p className="mt-1 text-sm font-bold text-white">{value}</p>
     </div>
+  );
+}
+
+function InsightMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+      <p className="text-[9px] font-black uppercase tracking-[0.16em] text-white/35">{label}</p>
+      <p className="mt-1 text-sm font-black text-white">{value}</p>
+    </div>
+  );
+}
+
+function AchievementCard({ achievement }: { achievement: PracticeAchievement }) {
+  const toneClass = {
+    gold: "border-yellow-400/30 bg-yellow-400/[0.04] text-yellow-300",
+    cyan: "border-cyan/30 bg-cyan/[0.04] text-cyan",
+    emerald: "border-emerald-300/30 bg-emerald-300/[0.04] text-emerald-200",
+    magenta: "border-magenta/30 bg-magenta/[0.04] text-magenta",
+  }[achievement.tone];
+  const percent = Math.min(100, Math.round((achievement.progress / Math.max(achievement.target, 1)) * 100));
+
+  return (
+    <div className={`glass rounded-2xl border p-5 transition-all ${achievement.achieved ? toneClass : "border-white/5 opacity-45 grayscale"}`}>
+      <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-full ${achievement.achieved ? "bg-white/15" : "bg-white/5 text-white/25"}`}>
+        {achievement.id === "five-day-streak" ? (
+          <Calendar className="h-5 w-5" />
+        ) : achievement.id === "precision-90" ? (
+          <Target className="h-5 w-5" />
+        ) : achievement.id === "two-hands" ? (
+          <Music className="h-5 w-5" />
+        ) : (
+          <Star className="h-5 w-5" />
+        )}
+      </div>
+      <h4 className="text-sm font-black text-white">{achievement.title}</h4>
+      <p className="mt-1 min-h-[2.5rem] text-[10px] leading-tight text-white/40">{achievement.description}</p>
+      <div className="mt-4">
+        <div className="mb-1 flex justify-between text-[9px] font-bold text-white/35">
+          <span>{achievement.progress}</span>
+          <span>{achievement.target}</span>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div className="h-full rounded-full bg-current transition-[width] duration-500" style={{ width: `${percent}%` }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RecommendedLessonCard({ recommendation }: { recommendation: PracticeRecommendation }) {
+  const handLabel = recommendation.handMode === "both" ? "Duas maos" : recommendation.handMode === "left" ? "Mao esquerda" : "Mao direita";
+  const difficultyLabel = recommendation.difficulty === "pro" ? "Profissional" : recommendation.difficulty === "medium" ? "Intermediario" : "Iniciante";
+
+  return (
+    <section className="mb-8 rounded-[2rem] border border-magenta/20 bg-magenta/5 p-6 md:p-8">
+      <p className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-magenta">
+        <Sparkles className="h-3.5 w-3.5" />
+        Aula recomendada
+      </p>
+      <h2 className="text-2xl font-black text-white">{recommendation.songTitle}</h2>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">{recommendation.reason}</p>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">
+          {difficultyLabel}
+        </span>
+        <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">
+          {handLabel}
+        </span>
+        <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">
+          {recommendation.label}
+        </span>
+      </div>
+
+      <Link
+        href={recommendation.href}
+        className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan to-magenta px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white transition hover:opacity-90"
+      >
+        Comecar agora
+        <ExternalLink className="h-3.5 w-3.5" />
+      </Link>
+    </section>
   );
 }

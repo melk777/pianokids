@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasSpecialAccess, hasStudentExperienceAccess } from "@/lib/access-control";
+import { LOCAL_DEV_AUTH_COOKIE, isLocalDevAuthAllowed } from "@/lib/localDevAuth";
 
 function isStudentExperienceRoute(pathname: string) {
   return (
@@ -12,6 +13,9 @@ function isStudentExperienceRoute(pathname: string) {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const hasLocalDevAuth =
+    isLocalDevAuthAllowed(request.nextUrl.hostname) &&
+    request.cookies.get(LOCAL_DEV_AUTH_COOKIE)?.value === "1";
 
   let response = NextResponse.next({
     request: {
@@ -73,14 +77,21 @@ export async function middleware(request: NextRequest) {
     pathname === "/" ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/auth") ||
+    pathname.startsWith("/api/auth/local-test") ||
     pathname.startsWith("/professores") ||
     pathname.startsWith("/privacidade") ||
     pathname.startsWith("/api/auth/turnstile-key") ||
     pathname.startsWith("/api/stripe/checkout") ||
     pathname.startsWith("/api/stripe/webhook");
 
-  if (!user && !isPublicRoute) {
+  if (!user && !hasLocalDevAuth && !isPublicRoute) {
     return NextResponse.redirect(new URL("/login", request.url), {
+      headers: response.headers,
+    });
+  }
+
+  if (hasLocalDevAuth && pathname.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/dashboard/songs", request.url), {
       headers: response.headers,
     });
   }

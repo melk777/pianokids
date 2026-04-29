@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { isLocalDevAuthEnabled } from "@/lib/localDevAuth";
 
 export type PlanType = "free" | "monthly" | "yearly" | "special_access" | "admin_granted" | "trial" | "past_due";
 
@@ -44,6 +45,20 @@ export function useSubscription() {
 
   const checkSubscription = useCallback(async () => {
     try {
+      if (isLocalDevAuthEnabled()) {
+        setSubscription({
+          status: "admin_granted",
+          planType: "admin_granted",
+          hasAccess: true,
+          customerId: null,
+          interval: "local",
+          currentPeriodEnd: null,
+          isPro: true,
+          loading: false,
+        });
+        return;
+      }
+
       setSubscription(prev => ({ ...prev, loading: true }));
       const res = await fetch("/api/auth/stripe-check");
       if (!res.ok) throw new Error("Falha ao verificar assinatura");

@@ -21,7 +21,7 @@ const difficultyCards: Array<{ id: Difficulty; label: string; tone: string }> = 
   { id: "pro", label: "Difícil", tone: "rose" },
 ];
 
-type PracticeHandMode = "right" | "both";
+type PracticeHandMode = "right" | "left" | "both";
 
 const practiceModeCards: Array<{
   id: PracticeHandMode;
@@ -29,8 +29,9 @@ const practiceModeCards: Array<{
   description: string;
   iconClassName?: string;
 }> = [
-  { id: "right", label: "Mão direita", description: "Treino focado para iniciar com clareza." },
-  { id: "both", label: "Duas mãos", description: "Versão completa da música no teclado." },
+  { id: "right", label: "Mao direita", description: "Melodia guiada com acompanhamento da esquerda." },
+  { id: "left", label: "Mao esquerda", description: "Baixo e harmonia com a direita como apoio." },
+  { id: "both", label: "Duas mãos", description: "Versão completa, sem acompanhamento automático." },
 ];
 
 export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryModalProps) {
@@ -66,8 +67,8 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
     playClick();
     setIsStarting(true);
     const params = new URLSearchParams();
-    params.set("leftHand", String(practiceHandMode === "both"));
-    params.set("rightHand", "true");
+    params.set("leftHand", String(practiceHandMode === "left" || practiceHandMode === "both"));
+    params.set("rightHand", String(practiceHandMode === "right" || practiceHandMode === "both"));
     params.set("mic", micEnabled.toString());
     params.set("difficulty", selectedDifficulty);
     const targetHref = `/dashboard/play/${song.id}?${params.toString()}`;
@@ -192,7 +193,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                   })}
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-3">
                   {practiceModeCards.map((mode) => {
                     const isActive = practiceHandMode === mode.id;
 
@@ -217,7 +218,13 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                           >
                             <Hand
                               size={24}
-                              className={mode.id === "both" ? "scale-110" : "scale-110 -translate-x-0.5"}
+                              className={
+                                mode.id === "both"
+                                  ? "scale-110"
+                                  : mode.id === "left"
+                                    ? "scale-110 -translate-x-1"
+                                    : "scale-110 translate-x-1"
+                              }
                             />
                           </div>
                           <div className="space-y-1">

@@ -16,6 +16,9 @@ import {
   MicOff,
   CreditCard,
   Clock,
+  Gauge,
+  TrendingUp,
+  Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAudioInput } from "@/hooks/useAudioInput";
@@ -24,6 +27,15 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { createClientComponent } from "@/lib/supabase";
 import { loadSongs } from "@/lib/songCatalog";
+import type { PracticeSession } from "@/lib/types";
+import {
+  buildPracticeAchievements,
+  buildPracticeGoals,
+  buildPracticeProgressInsight,
+  buildPracticeRecommendation,
+  type PracticeAchievement,
+  type PracticeRecommendation,
+} from "@/lib/practiceProgress";
 const TeacherDashboard = dynamic(() => import("@/components/TeacherDashboard"), {
   loading: () => null,
 });
@@ -41,6 +53,8 @@ export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [songCount, setSongCount] = useState(0);
+  const [songs, setSongs] = useState<Awaited<ReturnType<typeof loadSongs>>>([]);
+  const [recentSessions, setRecentSessions] = useState<PracticeSession[]>([]);
   const { isSupported, isListening, start: startMic, error: audioError, activeAudioNote, activeAudioNotes } = useAudioInput();
   const detectedNoteNames = activeAudioNotes.length > 0
     ? activeAudioNotes.map((note) => note.name)
@@ -63,8 +77,29 @@ export default function Dashboard() {
     let mounted = true;
     loadSongs().then((catalog) => {
       if (!mounted) return;
+      setSongs(catalog);
       setSongCount(catalog.length);
     });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadPracticeHistory = async () => {
+      try {
+        const response = await fetch("/api/practice/session", { cache: "no-store" });
+        const data = await response.json();
+        if (!mounted || !response.ok || !data?.supported) return;
+        setRecentSessions((data.recentSessions || []) as PracticeSession[]);
+      } catch {
+        if (!mounted) return;
+      }
+    };
+
+    loadPracticeHistory();
     return () => {
       mounted = false;
     };
@@ -147,6 +182,16 @@ export default function Dashboard() {
   }
 
   const firstName = (isLoaded && user) ? (user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0] || "Aluno") : "...";
+  const progressInsight = buildPracticeProgressInsight(profile, recentSessions);
+  const achievements = buildPracticeAchievements(profile, recentSessions);
+  const goals = buildPracticeGoals(profile, recentSessions);
+  const recommendation = buildPracticeRecommendation(profile, recentSessions, songs);
+  const insightToneClass = {
+    start: "border-cyan/20 bg-cyan/5 text-cyan",
+    review: "border-amber-300/20 bg-amber-300/5 text-amber-200",
+    steady: "border-emerald-300/20 bg-emerald-300/5 text-emerald-200",
+    advance: "border-magenta/20 bg-magenta/5 text-magenta",
+  }[progressInsight.tone];
 
   return (
     <main className="min-h-screen bg-black text-white selection:bg-cyan/30">
@@ -322,20 +367,64 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Medals Grid (Mock) */}
-                <div className="grid grid-cols-4 gap-4">
-                  {[
-                    { name: "Primeira Nota", icon: <Star className="w-6 h-6" />, active: true, color: "text-amber-400 bg-amber-400/10 border-amber-400/30", shadow: "shadow-[0_0_15px_rgba(251,191,36,0.3)]" },
-                    { name: "Mestre do Ritmo", icon: <Crown className="w-6 h-6" />, active: false, color: "text-white/20 bg-black/40 border-white/5", shadow: "" },
-                    { name: "Combo x10", icon: <Music className="w-6 h-6" />, active: false, color: "text-white/20 bg-black/40 border-white/5", shadow: "" },
-                    { name: "Mozart", icon: <Crown className="w-6 h-6" />, active: false, color: "text-white/20 bg-black/40 border-white/5", shadow: "" },
-                  ].map((medal, i) => (
-                    <div key={i} className={`flex flex-col items-center gap-3 p-4 rounded-2xl border ${medal.color} ${medal.shadow} transition-all duration-300`}>
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${medal.active ? 'bg-amber-400/20' : 'bg-white/5'}`}>
-                         {medal.icon}
-                      </div>
-                      <span className="text-[10px] text-center font-medium opacity-70 uppercase tracking-wider">{medal.name}</span>
+                <div className={`mb-6 rounded-2xl border p-5 ${insightToneClass}`}>
+                  <div className="mb-4 flex items-start justify-between gap-4">
+                    <div>
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] opacity-70">Proximo passo</p>
+                      <h3 className="text-xl font-black text-white">{progressInsight.title}</h3>
+                      <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/60">{progressInsight.message}</p>
                     </div>
+                    <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 md:flex">
+                      {progressInsight.tone === "advance" ? <TrendingUp className="h-5 w-5" /> : <Gauge className="h-5 w-5" />}
+                    </div>
+                  </div>
+
+                  <div className="mb-4 grid grid-cols-3 gap-2">
+                    <ProgressInsightMetric label="Semana" value={`${progressInsight.weeklySessions} sessoes`} />
+                    <ProgressInsightMetric label="Media recente" value={`${progressInsight.averageRecentAccuracy}%`} />
+                    <ProgressInsightMetric label="Melhor" value={`${progressInsight.bestRecentAccuracy}%`} />
+                  </div>
+
+                  {progressInsight.focusSongTitle && (
+                    <p className="mb-4 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/50">
+                      Foco sugerido: <span className="font-bold text-white/75">{progressInsight.focusSongTitle}</span>
+                    </p>
+                  )}
+
+                  <Link
+                    href={progressInsight.actionHref}
+                    onClick={() => playClick()}
+                    className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-black transition hover:bg-white/90"
+                  >
+                    {progressInsight.actionLabel}
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+
+                {recommendation && (
+                  <RecommendedLessonCard recommendation={recommendation} onClick={playClick} />
+                )}
+
+                <div className="mb-6 grid gap-3 md:grid-cols-3">
+                  {goals.map((goal) => {
+                    const percent = Math.min(100, Math.round((goal.current / Math.max(goal.target, 1)) * 100));
+                    return (
+                      <div key={goal.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/40">{goal.title}</p>
+                          <p className="text-xs font-black text-white">{goal.current}/{goal.target}{goal.unit === "%" ? "%" : ""}</p>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                          <div className="h-full rounded-full bg-gradient-to-r from-cyan to-magenta transition-[width] duration-500" style={{ width: `${percent}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  {achievements.slice(0, 4).map((achievement) => (
+                    <AchievementTile key={achievement.id} achievement={achievement} />
                   ))}
                 </div>
                 
@@ -559,4 +648,85 @@ export default function Dashboard() {
         </div>
       </main>
     );
+}
+
+function ProgressInsightMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+      <p className="text-[9px] font-black uppercase tracking-[0.16em] text-white/35">{label}</p>
+      <p className="mt-1 text-sm font-black text-white">{value}</p>
+    </div>
+  );
+}
+
+function AchievementTile({ achievement }: { achievement: PracticeAchievement }) {
+  const toneClass = {
+    gold: "border-amber-400/30 bg-amber-400/10 text-amber-300",
+    cyan: "border-cyan/30 bg-cyan/10 text-cyan",
+    emerald: "border-emerald-300/30 bg-emerald-300/10 text-emerald-200",
+    magenta: "border-magenta/30 bg-magenta/10 text-magenta",
+  }[achievement.tone];
+  const percent = Math.min(100, Math.round((achievement.progress / Math.max(achievement.target, 1)) * 100));
+
+  return (
+    <div className={`flex flex-col gap-3 rounded-2xl border p-4 transition-all ${achievement.achieved ? toneClass : "border-white/5 bg-black/40 text-white/25"}`}>
+      <div className={`flex h-11 w-11 items-center justify-center rounded-full ${achievement.achieved ? "bg-white/15" : "bg-white/5"}`}>
+        {achievement.id === "five-day-streak" ? <Crown className="h-5 w-5" /> : achievement.id === "precision-90" ? <Gauge className="h-5 w-5" /> : <Star className="h-5 w-5" />}
+      </div>
+      <div>
+        <p className="text-xs font-black uppercase tracking-[0.12em] text-white">{achievement.title}</p>
+        <p className="mt-1 text-[10px] leading-snug text-white/45">{achievement.description}</p>
+      </div>
+      <div className="mt-auto">
+        <div className="mb-1 flex justify-between text-[9px] font-bold text-white/35">
+          <span>{achievement.progress}</span>
+          <span>{achievement.target}</span>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div className="h-full rounded-full bg-current transition-[width] duration-500" style={{ width: `${percent}%` }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RecommendedLessonCard({ recommendation, onClick }: { recommendation: PracticeRecommendation; onClick: () => void }) {
+  const handLabel = recommendation.handMode === "both" ? "Duas maos" : recommendation.handMode === "left" ? "Mao esquerda" : "Mao direita";
+  const difficultyLabel = recommendation.difficulty === "pro" ? "Profissional" : recommendation.difficulty === "medium" ? "Intermediario" : "Iniciante";
+
+  return (
+    <div className="mb-6 rounded-2xl border border-magenta/20 bg-magenta/5 p-5">
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <p className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-magenta">
+            <Sparkles className="h-3.5 w-3.5" />
+            Aula recomendada
+          </p>
+          <h3 className="text-xl font-black text-white">{recommendation.songTitle}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-white/60">{recommendation.reason}</p>
+        </div>
+      </div>
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">
+          {difficultyLabel}
+        </span>
+        <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">
+          {handLabel}
+        </span>
+        <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/60">
+          {recommendation.label}
+        </span>
+      </div>
+
+      <Link
+        href={recommendation.href}
+        onClick={onClick}
+        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan to-magenta px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white transition hover:opacity-90"
+      >
+        Comecar agora
+        <ChevronRight className="h-3.5 w-3.5" />
+      </Link>
+    </div>
+  );
 }

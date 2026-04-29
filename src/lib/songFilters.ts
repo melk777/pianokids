@@ -118,23 +118,59 @@ export function getSongNotesForDifficulty(
   const handSelection = options?.handSelection;
   const arrangementLevel = difficultyToArrangementLevel(difficulty);
   const arrangementNotes = song.arrangements?.[arrangementLevel];
+  const wantsRightOnly = Boolean(handSelection?.includeRightHand && !handSelection.includeLeftHand);
+  const wantsLeftOnly = Boolean(handSelection?.includeLeftHand && !handSelection.includeRightHand);
 
   const applyHandSelection = (resolvedNotes: SongNote[]): SongNote[] => {
     if (!handSelection) return resolvedNotes;
     return filterNotesByHandSelection(resolvedNotes, handSelection);
   };
 
-  if (arrangementNotes && arrangementNotes.length > 0) {
-    return applyHandSelection(arrangementNotes);
+  const candidates: SongNote[][] = [];
+
+  if (preferOneHand && wantsRightOnly && song.notes1Hand && song.notes1Hand.length > 0) {
+    candidates.push(song.notes1Hand);
   }
 
-  if (preferOneHand && song.notes1Hand && song.notes1Hand.length > 0) {
-    return applyHandSelection(song.notes1Hand);
+  if (arrangementNotes && arrangementNotes.length > 0) {
+    candidates.push(arrangementNotes);
   }
 
   if (!preferOneHand && song.notes2Hands && song.notes2Hands.length > 0) {
-    return applyHandSelection(song.notes2Hands);
+    candidates.push(song.notes2Hands);
   }
 
-  return applyHandSelection(filterNotesByDifficulty(song.notes, difficulty));
+  if (preferOneHand && !wantsLeftOnly && song.notes1Hand && song.notes1Hand.length > 0) {
+    candidates.push(song.notes1Hand);
+  }
+
+  if (song.notes2Hands && song.notes2Hands.length > 0) {
+    candidates.push(song.notes2Hands);
+  }
+
+  candidates.push(filterNotesByDifficulty(song.notes, difficulty), song.notes);
+
+  let sparseFallback: SongNote[] = [];
+
+  for (const candidate of candidates) {
+    const selected = applyHandSelection(candidate);
+    if (selected.length === 0) continue;
+
+    const lastEnd = Math.max(...selected.map((note) => note.time + note.duration));
+    const sparseOneHandMode =
+      handSelection &&
+      handSelection.includeLeftHand !== handSelection.includeRightHand &&
+      (song.duration ?? 0) > 12 &&
+      selected.length < 3 &&
+      (song.duration ?? 0) - lastEnd > Math.max(8, (song.duration ?? 0) * 0.22);
+
+    if (sparseOneHandMode) {
+      sparseFallback = sparseFallback.length > selected.length ? sparseFallback : selected;
+      continue;
+    }
+
+    return selected;
+  }
+
+  return sparseFallback;
 }

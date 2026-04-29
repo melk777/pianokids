@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCcw } from "lucide-react";
 
@@ -9,10 +9,23 @@ import { RotateCcw } from "lucide-react";
  * Força o usuário a girar o celular para o modo "landscape".
  */
 export default function OrientationOverlay() {
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const hasTouch =
+      typeof navigator !== "undefined" &&
+      (navigator.maxTouchPoints > 0 || "ontouchstart" in window);
+
+    setIsTouchDevice(hasTouch);
+  }, []);
+
+  if (!isTouchDevice) return null;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      data-testid="orientation-overlay"
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-zinc-950 text-white p-8 text-center sm:hidden portrait:flex hidden"
     >
       <div className="w-24 h-24 rounded-full bg-cyan/10 flex items-center justify-center mb-8 border border-cyan/20">

@@ -8,6 +8,11 @@ import Link from "next/link";
 import { getURL } from "@/lib/utils/url";
 import { useSearchParams } from "next/navigation";
 import TurnstileWidget from "./TurnstileWidget";
+import {
+  LOCAL_DEV_AUTH_COOKIE,
+  LOCAL_DEV_AUTH_STORAGE_KEY,
+  isLocalDevHost,
+} from "@/lib/localDevAuth";
 
 const TeacherTermsModal = dynamic(() => import("./TeacherTermsModal"), {
   loading: () => null,
@@ -48,6 +53,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   const [resolvedTurnstileSiteKey, setResolvedTurnstileSiteKey] = useState(
     (initialTurnstileSiteKey || process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim(),
   );
+  const [canUseLocalTestAuth, setCanUseLocalTestAuth] = useState(false);
   
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const turnstileSiteKey = resolvedTurnstileSiteKey;
@@ -110,6 +116,16 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
       active = false;
     };
   }, [resolvedTurnstileSiteKey]);
+
+  useEffect(() => {
+    setCanUseLocalTestAuth(isLocalDevHost(window.location.hostname));
+  }, []);
+
+  const enterLocalTestMode = () => {
+    localStorage.setItem(LOCAL_DEV_AUTH_STORAGE_KEY, "1");
+    document.cookie = `${LOCAL_DEV_AUTH_COOKIE}=1; path=/; max-age=86400; SameSite=Lax`;
+    window.location.assign("/api/auth/local-test");
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -457,6 +473,21 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                   )}
                 </button>
               </form>
+
+              {canUseLocalTestAuth && (
+                <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 p-4">
+                  <p className="mb-3 text-xs leading-relaxed text-cyan/80">
+                    Ambiente local detectado. Use o modo teste para validar o PianoEngine sem a verificacao anti-robo.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={enterLocalTestMode}
+                    className="w-full rounded-xl border border-cyan/30 bg-cyan/10 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan transition hover:bg-cyan/20"
+                  >
+                    Entrar em modo teste local
+                  </button>
+                </div>
+              )}
 
               <div className="mt-8 pt-6 border-t border-white/5 text-center">
                 <button

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { createClientComponent } from "@/lib/supabase";
 import { Profile } from "@/lib/types";
 import { mergeProfileWithPracticeAggregate } from "@/lib/practiceHistory";
+import { getLocalDevProfile, isLocalDevAuthEnabled } from "@/lib/localDevAuth";
 
 export type { Profile };
 
@@ -54,6 +55,13 @@ export function useProfile() {
   const fetchProfile = useCallback(async () => {
     try {
       setLoading(true);
+
+      if (isLocalDevAuthEnabled()) {
+        setProfile(getLocalDevProfile());
+        setLoading(false);
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
@@ -218,6 +226,10 @@ export function useProfile() {
     handMode?: string;
   }) => {
     try {
+      if (isLocalDevAuthEnabled()) {
+        return { success: true };
+      }
+
       const response = await fetch("/api/practice/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

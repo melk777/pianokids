@@ -51,6 +51,32 @@ export interface SongNote {
   velocity?: number;
 }
 
+export interface PracticeFeedbackSummary {
+  totalNotes: number;
+  hits: number;
+  misses: number;
+  wrongNotes: number;
+  perfectHits: number;
+  earlyHits: number;
+  lateHits: number;
+  maxCombo: number;
+  cleanLoopPasses: number;
+  averageTimingMs: number;
+  problemNotes: Array<{
+    midi: number;
+    name?: string;
+    hand?: "left" | "right";
+    time: number;
+    misses: number;
+  }>;
+  weakestRange?: {
+    start: number;
+    end: number;
+    misses: number;
+  } | null;
+  recommendation: string;
+}
+
 export type ArrangementLevel = "easy" | "medium" | "hard";
 
 export interface SongArrangements {

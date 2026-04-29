@@ -61,6 +61,9 @@ const WhiteKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, noteName
 
   return (
     <button
+      aria-label={noteName}
+      data-testid={`virtual-key-${noteName}`}
+      data-midi={note}
       onMouseDown={handleDown}
       onMouseUp={handleUp}
       onMouseLeave={handleUp}
@@ -94,6 +97,7 @@ WhiteKey.displayName = "WhiteKey";
 // Componente Memoizado para a Tecla Preta
 // ----------------------------------------------------------------------------
 const BlackKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, sharpLabel, leftPosition, whiteKeyWidthPercent }: KeyProps) => {
+  const noteName = midiNoteToName(note);
   const isRightHand = note >= 60;
   
   // Feedback visual instantâneo
@@ -122,6 +126,9 @@ const BlackKey = memo(({ note, isActiveProp, onPlayNote, onReleaseNote, sharpLab
 
   return (
     <button
+      aria-label={noteName}
+      data-testid={`virtual-key-${noteName}`}
+      data-midi={note}
       onMouseDown={handleDown}
       onMouseUp={handleUp}
       onMouseLeave={handleUp}
