@@ -553,24 +553,30 @@ export default function Home() {
               ))}
             </div>
             <div className="flex items-center gap-6 text-sm text-white/30">
-              <a
-                href="#"
+              <Link
+                href="/termos"
                 className="hover:text-white/60 transition-colors"
               >
                 Termos
-              </a>
+              </Link>
               <Link
                 href="/privacidade"
                 className="hover:text-white/60 transition-colors"
               >
                 Privacidade
               </Link>
-              <a
-                href="#"
+              <Link
+                href="/reembolso"
+                className="hover:text-white/60 transition-colors"
+              >
+                Reembolso
+              </Link>
+              <Link
+                href="/contato"
                 className="hover:text-white/60 transition-colors"
               >
                 Contato
-              </a>
+              </Link>
             </div>
           </div>
         </footer>
