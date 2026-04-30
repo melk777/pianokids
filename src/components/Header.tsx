@@ -13,6 +13,7 @@ import {
   VolumeX,
   Piano,
   GraduationCap,
+  LifeBuoy,
 } from "lucide-react";
 import { createClientComponent } from "@/lib/supabase";
 import { User as AuthUser, Session } from "@supabase/supabase-js";
@@ -113,6 +114,11 @@ export default function Header() {
               <GraduationCap className="w-3.5 h-3.5" />
               Professor Parceiro
             </Link>
+
+            <Link href="/contato" onClick={() => playClick()} className={navLinkClass}>
+              <LifeBuoy className="w-3.5 h-3.5" />
+              Suporte
+            </Link>
             
             {user ? (
               <>
@@ -190,6 +196,10 @@ export default function Header() {
                 >
                   <GraduationCap className="w-4 h-4" />
                   Professor Parceiro
+                </Link>
+                <Link href="/contato" onClick={() => setMobileOpen(false)} className={mobileLinkClass}>
+                  <LifeBuoy className="w-4 h-4 text-cyan" />
+                  Suporte
                 </Link>
                 {user ? (
                    <>

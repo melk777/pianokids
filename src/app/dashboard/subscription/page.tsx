@@ -14,6 +14,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { format } from "date-fns";
@@ -286,6 +287,14 @@ export default function SubscriptionPage() {
                   <p className="text-[10px] text-center text-white/30 px-4">
                     Altere seu cartão de crédito, plano ou cancele sua assinatura com segurança no portal oficial do Stripe.
                   </p>
+                  <div className="flex justify-center gap-4 text-[11px] font-bold text-white/35">
+                    <Link href="/reembolso" className="transition-colors hover:text-cyan">
+                      Reembolso
+                    </Link>
+                    <Link href="/termos" className="transition-colors hover:text-cyan">
+                      Termos
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
 
@@ -305,12 +314,12 @@ export default function SubscriptionPage() {
                 <p className="text-sm text-white/50 mb-4 leading-relaxed">
                   Problemas com sua fatura ou acesso? Nossa equipe de suporte está pronta para ajudar.
                 </p>
-                <a 
-                  href="mailto:suporte@pianify.app"
+                <Link 
+                  href="/contato"
                   className="text-sm font-bold text-cyan hover:underline"
                 >
                   Entrar em contato
-                </a>
+                </Link>
               </motion.div>
             </div>
           </div>
