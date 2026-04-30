@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet } from "lucide-react";
+import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet, BarChart3, TrendingUp, MousePointerClick, Music2 } from "lucide-react";
 import { createClientComponent } from "@/lib/supabase";
 import { useSFX } from "@/hooks/useSFX";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend } from "recharts";
@@ -74,10 +74,57 @@ interface AdminTeacher {
   formattedRevenue: number;
 }
 
+interface GrowthAnalytics {
+  windowDays: number;
+  totals: {
+    events: number;
+    events7Days: number;
+    uniqueVisitors: number;
+    uniqueVisitors7Days: number;
+    checkoutStarts: number;
+    signups: number;
+    songStarts: number;
+    songFinishes: number;
+    tutorialCompletions: number;
+  };
+  funnel: Array<{
+    event: string;
+    label: string;
+    count: number;
+    unique: number;
+    conversionFromPrevious: number;
+    conversionFromVisit: number;
+  }>;
+  topSongs: Array<{
+    songId: string;
+    title: string;
+    starts: number;
+    finishes: number;
+    completionRate: number;
+  }>;
+  daily: Array<{
+    date: string;
+    visits: number;
+    checkouts: number;
+    songStarts: number;
+    songFinishes: number;
+  }>;
+  recentEvents: Array<{
+    event: string;
+    createdAt: string;
+    path: string | null;
+    actor: string;
+    songId: string | null;
+    source: string | null;
+  }>;
+}
+
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'financial' | 'withdrawals' | 'teachers'>('overview');
+  type AdminTab = 'overview' | 'growth' | 'financial' | 'withdrawals' | 'teachers';
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [finances, setFinances] = useState<FinancialStats | null>(null);
+  const [analytics, setAnalytics] = useState<GrowthAnalytics | null>(null);
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
   const [teachers, setTeachers] = useState<AdminTeacher[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,17 +152,19 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [resStats, resWith, resTeach, resFin] = await Promise.all([
+      const [resStats, resWith, resTeach, resFin, resGrowth] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/withdrawals'),
         fetch('/api/admin/teachers'),
-        fetch('/api/admin/financial')
+        fetch('/api/admin/financial'),
+        fetch('/api/admin/analytics')
       ]);
 
       if (resStats.ok) setStats(await resStats.json());
       if (resWith.ok) setWithdrawals((await resWith.json()).withdrawals);
       if (resTeach.ok) setTeachers((await resTeach.json()).teachers);
       if (resFin.ok) setFinances(await resFin.json());
+      if (resGrowth.ok) setAnalytics(await resGrowth.json());
       
     } catch (e) {
       console.error(e);
@@ -360,13 +409,14 @@ export default function AdminDashboard() {
       <div className="flex flex-wrap items-center gap-2 border-b border-white/5 mb-8 p-1">
         {[
           { id: 'overview', label: 'Panorama Geral', icon: LayoutDashboard },
+          { id: 'growth', label: 'Crescimento', icon: BarChart3 },
           { id: 'financial', label: 'DRE Financeiro', icon: ChartIcon },
           { id: 'withdrawals', label: 'Caixa de Repasses', icon: Wallet },
           { id: 'teachers', label: 'Time de Professores', icon: Users },
         ].map(tab => (
           <button
             key={tab.id}
-            onClick={() => { playClick(); setActiveTab(tab.id as 'overview' | 'financial' | 'withdrawals' | 'teachers'); }}
+            onClick={() => { playClick(); setActiveTab(tab.id as AdminTab); }}
             className={`relative flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-colors ${activeTab === tab.id ? "text-cyan" : "text-white/40 hover:text-white/70"}`}
           >
             <tab.icon className="w-4 h-4" />
@@ -432,6 +482,127 @@ export default function AdminDashboard() {
                      </div>
                  );
              })()}
+          </motion.div>
+        )}
+
+        {/* GROWTH ANALYTICS */}
+        {activeTab === 'growth' && analytics && (
+          <motion.div key="growth" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <GrowthMetricCard icon={Users} label="Visitantes unicos" value={analytics.totals.uniqueVisitors} detail={`${analytics.totals.uniqueVisitors7Days} nos ultimos 7 dias`} tone="cyan" />
+              <GrowthMetricCard icon={MousePointerClick} label="Checkouts iniciados" value={analytics.totals.checkoutStarts} detail={`${analytics.totals.signups} cadastros concluidos`} tone="magenta" />
+              <GrowthMetricCard icon={Music2} label="Musicas iniciadas" value={analytics.totals.songStarts} detail={`${analytics.totals.songFinishes} concluidas`} tone="emerald" />
+              <GrowthMetricCard icon={TrendingUp} label="Eventos rastreados" value={analytics.totals.events} detail={`${analytics.totals.events7Days} nos ultimos 7 dias`} tone="white" />
+            </div>
+
+            <div className="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
+              <section className="glass rounded-3xl border border-white/10 p-6">
+                <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Funil de conversao</h3>
+                    <p className="text-xs text-white/40">Ultimos {analytics.windowDays} dias, com usuarios unicos por etapa.</p>
+                  </div>
+                  <span className="rounded-full border border-cyan/20 bg-cyan/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan">
+                    Dados reais Supabase
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {analytics.funnel.map((step, index) => {
+                    const max = Math.max(1, analytics.funnel[0]?.unique || 1);
+                    const width = Math.max(4, Math.round((step.unique / max) * 100));
+                    return (
+                      <div key={step.event} className="rounded-2xl border border-white/8 bg-black/25 p-4">
+                        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                          <div>
+                            <p className="text-sm font-black text-white">{index + 1}. {step.label}</p>
+                            <p className="text-[11px] text-white/35">{step.count} eventos totais</p>
+                          </div>
+                          <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.12em]">
+                            <span className="rounded-full bg-white/8 px-2 py-1 text-white/60">{step.unique} unicos</span>
+                            <span className="rounded-full bg-cyan/10 px-2 py-1 text-cyan">{step.conversionFromPrevious}% etapa</span>
+                            <span className="rounded-full bg-magenta/10 px-2 py-1 text-magenta">{step.conversionFromVisit}% visita</span>
+                          </div>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-white/8">
+                          <div className="h-full rounded-full bg-gradient-to-r from-cyan to-magenta" style={{ width: `${width}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+
+              <section className="glass rounded-3xl border border-white/10 p-6">
+                <h3 className="text-xl font-bold text-white">Ritmo diario</h3>
+                <p className="mb-6 text-xs text-white/40">Visitas, checkout e aulas nos ultimos 14 dias.</p>
+                <div className="space-y-3">
+                  {analytics.daily.map((day) => {
+                    const total = day.visits + day.songStarts + day.songFinishes + day.checkouts;
+                    const max = Math.max(...analytics.daily.map((item) => item.visits + item.songStarts + item.songFinishes + item.checkouts), 1);
+                    return (
+                      <div key={day.date} className="grid grid-cols-[46px_1fr_38px] items-center gap-3 text-xs">
+                        <span className="font-mono text-white/35">{day.date}</span>
+                        <div className="h-2 overflow-hidden rounded-full bg-white/8">
+                          <div className="h-full rounded-full bg-cyan" style={{ width: `${Math.max(3, (total / max) * 100)}%` }} />
+                        </div>
+                        <span className="text-right font-bold text-white/60">{total}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            </div>
+
+            <div className="grid gap-6 xl:grid-cols-2">
+              <section className="glass rounded-3xl border border-white/10 p-6">
+                <h3 className="text-xl font-bold text-white">Musicas com mais tracao</h3>
+                <p className="mb-5 text-xs text-white/40">Ajuda a decidir quais aulas destacar nos anuncios e na biblioteca.</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-white/8 text-[10px] uppercase tracking-[0.14em] text-white/35">
+                        <th className="pb-3 pr-4">Musica</th>
+                        <th className="pb-3 px-4 text-right">Inicios</th>
+                        <th className="pb-3 px-4 text-right">Conclusoes</th>
+                        <th className="pb-3 pl-4 text-right">Retencao</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {analytics.topSongs.length === 0 ? (
+                        <tr><td colSpan={4} className="py-10 text-center text-white/30">Ainda nao ha musicas iniciadas no periodo.</td></tr>
+                      ) : analytics.topSongs.map((song) => (
+                        <tr key={song.songId} className="border-b border-white/[0.03]">
+                          <td className="py-3 pr-4">
+                            <p className="font-bold text-white">{song.title}</p>
+                            <p className="font-mono text-[10px] text-white/30">{song.songId}</p>
+                          </td>
+                          <td className="py-3 px-4 text-right font-bold text-cyan">{song.starts}</td>
+                          <td className="py-3 px-4 text-right font-bold text-emerald-300">{song.finishes}</td>
+                          <td className="py-3 pl-4 text-right font-bold text-white">{song.completionRate}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section className="glass rounded-3xl border border-white/10 p-6">
+                <h3 className="text-xl font-bold text-white">Eventos recentes</h3>
+                <p className="mb-5 text-xs text-white/40">Ultimos sinais do produto em tempo quase real.</p>
+                <div className="max-h-[430px] space-y-2 overflow-y-auto pr-1">
+                  {analytics.recentEvents.map((event, index) => (
+                    <div key={`${event.createdAt}-${index}`} className="rounded-2xl border border-white/8 bg-black/25 p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-black text-white">{event.event}</p>
+                        <p className="font-mono text-[10px] text-white/35">{new Date(event.createdAt).toLocaleString("pt-BR")}</p>
+                      </div>
+                      <p className="mt-1 truncate text-[11px] text-white/35">{event.path || event.source || event.songId || event.actor}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
           </motion.div>
         )}
 
@@ -770,6 +941,40 @@ export default function AdminDashboard() {
              </motion.div>
           )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+function GrowthMetricCard({
+  icon: Icon,
+  label,
+  value,
+  detail,
+  tone,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: number;
+  detail: string;
+  tone: "cyan" | "magenta" | "emerald" | "white";
+}) {
+  const toneClass = {
+    cyan: "border-cyan/25 bg-cyan/10 text-cyan",
+    magenta: "border-magenta/25 bg-magenta/10 text-magenta",
+    emerald: "border-emerald-400/25 bg-emerald-400/10 text-emerald-300",
+    white: "border-white/10 bg-white/[0.03] text-white",
+  }[tone];
+
+  return (
+    <div className={`rounded-2xl border p-5 ${toneClass}`}>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/45">{label}</p>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/8">
+          <Icon className="h-4 w-4" />
+        </div>
+      </div>
+      <p className="text-3xl font-black text-white">{value.toLocaleString("pt-BR")}</p>
+      <p className="mt-2 text-xs font-bold text-white/40">{detail}</p>
     </div>
   );
 }
