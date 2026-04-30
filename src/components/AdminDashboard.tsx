@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet, BarChart3, TrendingUp, MousePointerClick, Music2 } from "lucide-react";
+import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet, BarChart3, TrendingUp, MousePointerClick, Music2, AlertTriangle, Target } from "lucide-react";
 import { createClientComponent } from "@/lib/supabase";
 import { useSFX } from "@/hooks/useSFX";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend } from "recharts";
@@ -87,6 +87,15 @@ interface GrowthAnalytics {
     songFinishes: number;
     tutorialCompletions: number;
   };
+  alerts: Array<{
+    id: string;
+    title: string;
+    severity: "critical" | "warning" | "opportunity" | "healthy";
+    metric: string;
+    diagnosis: string;
+    action: string;
+    owner: "landing" | "checkout" | "activation" | "retention" | "data";
+  }>;
   funnel: Array<{
     event: string;
     label: string;
@@ -494,6 +503,27 @@ export default function AdminDashboard() {
               <GrowthMetricCard icon={Music2} label="Musicas iniciadas" value={analytics.totals.songStarts} detail={`${analytics.totals.songFinishes} concluidas`} tone="emerald" />
               <GrowthMetricCard icon={TrendingUp} label="Eventos rastreados" value={analytics.totals.events} detail={`${analytics.totals.events7Days} nos ultimos 7 dias`} tone="white" />
             </div>
+
+            <section className="glass rounded-3xl border border-white/10 p-6">
+              <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h3 className="flex items-center gap-2 text-xl font-bold text-white">
+                    <AlertTriangle className="h-5 w-5 text-amber-300" />
+                    Diagnostico de gargalos
+                  </h3>
+                  <p className="text-xs text-white/40">Prioridades geradas automaticamente a partir do funil real.</p>
+                </div>
+                <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/45">
+                  Atualiza ao clicar em Atualizar Dados
+                </span>
+              </div>
+
+              <div className="grid gap-3 lg:grid-cols-2">
+                {analytics.alerts.map((alert) => (
+                  <GrowthAlertCard key={alert.id} alert={alert} />
+                ))}
+              </div>
+            </section>
 
             <div className="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
               <section className="glass rounded-3xl border border-white/10 p-6">
@@ -975,6 +1005,49 @@ function GrowthMetricCard({
       </div>
       <p className="text-3xl font-black text-white">{value.toLocaleString("pt-BR")}</p>
       <p className="mt-2 text-xs font-bold text-white/40">{detail}</p>
+    </div>
+  );
+}
+
+function GrowthAlertCard({
+  alert,
+}: {
+  alert: GrowthAnalytics["alerts"][number];
+}) {
+  const severityClass = {
+    critical: "border-red-400/25 bg-red-400/10 text-red-300",
+    warning: "border-amber-300/25 bg-amber-300/10 text-amber-200",
+    opportunity: "border-cyan/25 bg-cyan/10 text-cyan",
+    healthy: "border-emerald-300/25 bg-emerald-300/10 text-emerald-200",
+  }[alert.severity];
+
+  const ownerLabel = {
+    landing: "Landing",
+    checkout: "Checkout",
+    activation: "Ativacao",
+    retention: "Retencao",
+    data: "Dados",
+  }[alert.owner];
+
+  return (
+    <div className={`rounded-2xl border p-4 ${severityClass}`}>
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-black text-white">{alert.title}</p>
+          <p className="mt-1 text-xs font-bold opacity-80">{alert.metric}</p>
+        </div>
+        <span className="shrink-0 rounded-full bg-black/25 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-white/60">
+          {ownerLabel}
+        </span>
+      </div>
+      <p className="text-xs leading-relaxed text-white/55">{alert.diagnosis}</p>
+      <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3">
+        <p className="mb-1 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-white/35">
+          <Target className="h-3.5 w-3.5" />
+          Acao recomendada
+        </p>
+        <p className="text-xs leading-relaxed text-white/70">{alert.action}</p>
+      </div>
     </div>
   );
 }
