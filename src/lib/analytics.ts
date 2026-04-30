@@ -1,5 +1,6 @@
 export type AnalyticsEventName =
   | "landing_view"
+  | "landing_cta_clicked"
   | "pricing_view"
   | "checkout_started"
   | "checkout_redirected"

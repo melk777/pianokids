@@ -14,6 +14,18 @@ const faqs = [
   },
   {
     icon: <CreditCard className="w-4 h-4" />,
+    question: "Posso cancelar quando quiser?",
+    answer:
+      "Sim. A assinatura e gerenciada pelo portal seguro do Stripe. Voce pode cancelar sem precisar falar com suporte, e o acesso continua ate o fim do periodo ja pago.",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4" />,
+    question: "E se eu for totalmente iniciante?",
+    answer:
+      "O Pianify foi pensado para comecar simples: voce pode estudar uma mao por vez, usar musicas faceis e evoluir para duas maos quando estiver pronto.",
+  },
+  {
+    icon: <CreditCard className="w-4 h-4" />,
     question: "Como funciona a assinatura Pianify Pro?",
     answer:
       "Oferecemos planos Mensal e Anual. Com o Pianify Pro, você tem acesso ilimitado a todas as músicas, prática livre e suporte prioritário. O aprendizado é gamificado para todas as idades, garantindo evolução constante.",

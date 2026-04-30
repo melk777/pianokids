@@ -13,6 +13,8 @@ interface PricingCardProps {
   planKey: string;
   badge?: string;
   popular?: boolean;
+  ctaLabel?: string;
+  valueNote?: string;
   onSubscribe: (planKey: string) => void;
 }
 
@@ -24,6 +26,8 @@ export default function PricingCard({
   planKey,
   badge,
   popular,
+  ctaLabel,
+  valueNote,
   onSubscribe,
 }: PricingCardProps) {
   const [loading, setLoading] = useState(false);
@@ -74,6 +78,11 @@ export default function PricingCard({
             {price}
           </span>
           <span className="text-white/40 text-sm ml-1">{period}</span>
+          {valueNote && (
+            <p className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-cyan/70">
+              {valueNote}
+            </p>
+          )}
         </div>
 
         {/* Features */}
@@ -115,7 +124,7 @@ export default function PricingCard({
               Redirecionando...
             </>
           ) : (
-            "Assinar agora"
+            ctaLabel || "Assinar agora"
           )}
         </motion.button>
       </div>

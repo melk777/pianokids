@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 const ALLOWED_EVENTS = new Set([
   "landing_view",
+  "landing_cta_clicked",
   "pricing_view",
   "checkout_started",
   "checkout_redirected",

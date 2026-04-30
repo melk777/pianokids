@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Music, Star, BarChart3, ChevronDown, Piano, Library, AudioWaveform, Trophy } from "lucide-react";
+import { Music, Star, BarChart3, ChevronDown, Piano, Library, AudioWaveform, Trophy, ShieldCheck, Clock, Sparkles, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -34,6 +34,7 @@ const CLIENT_PLANS = {
       "Prática livre ilimitada",
       "Reconhecimento via Microfone",
       "Progresso salvo",
+      "Cancele quando quiser",
     ],
   },
   yearly: {
@@ -124,6 +125,16 @@ export default function Home() {
     }
   };
 
+  const goToPricing = (source: string) => {
+    trackEvent("landing_cta_clicked", { source, target: "pricing" });
+    document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const goToDashboard = (source: string) => {
+    trackEvent("landing_cta_clicked", { source, target: "dashboard" });
+    router.push("/dashboard");
+  };
+
   return (
     <>
       <main className="min-h-screen">
@@ -137,28 +148,40 @@ export default function Home() {
             
             <div className="text-center max-w-4xl mx-auto">
 
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan/20 bg-cyan/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan">
+              <Sparkles className="h-3.5 w-3.5" />
+              Aulas interativas no seu teclado real
+            </div>
+
             {/* Title */}
             <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
-              <span className="text-white">Sua Jornada Musical </span>
+              <span className="text-white">Aprenda teclado tocando </span>
               <br />
               <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
-                Começa Aqui.
+                musicas de verdade.
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-              Toque no seu piano real e nós ouviremos cada nota. 
+              O PianoEngine mostra as notas, ouve seu instrumento pelo microfone e guia sua evolucao como um jogo musical. 
             </p>
 
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
               <button
-                onClick={() => router.push("/dashboard")}
+                onClick={() => goToPricing("hero_primary")}
                 className="btn-primary rounded-full px-8 py-4 text-base flex items-center gap-3 shadow-2xl shadow-cyan/30 transition-transform duration-200 hover:-translate-y-0.5 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Music className="w-6 h-6" />
                 Iniciar teste de 7 dias gratuitos
+              </button>
+
+              <button
+                onClick={() => goToDashboard("hero_secondary")}
+                className="rounded-full border border-white/15 bg-white/[0.04] px-8 py-4 text-base font-bold text-white/75 transition hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
+              >
+                Ver biblioteca
               </button>
 
               <div className="flex items-center gap-4 px-2 py-2">
@@ -184,6 +207,18 @@ export default function Home() {
                   <p className="text-xs text-white/55">Aprendendo piano de forma interativa todos os dias</p>
                 </div>
               </div>
+            </div>
+            <div className="mx-auto mt-8 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
+              {[
+                { icon: <ShieldCheck className="h-4 w-4" />, text: "Sem cabos MIDI obrigatorios" },
+                { icon: <Clock className="h-4 w-4" />, text: "Primeira aula em minutos" },
+                { icon: <CheckCircle2 className="h-4 w-4" />, text: "Do iniciante ao avancado" },
+              ].map((item) => (
+                <div key={item.text} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-xs font-bold text-white/60 backdrop-blur-md">
+                  <span className="text-cyan">{item.icon}</span>
+                  {item.text}
+                </div>
+              ))}
             </div>
             </div>
           </div>
@@ -330,6 +365,21 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
+
+                <div className="rounded-[2rem] border border-cyan/20 bg-cyan/5 p-7 shadow-[0_24px_60px_rgba(0,0,0,0.3)]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan/70">Primeira vitoria</p>
+                  <h3 className="mt-3 text-2xl font-black text-white">A aula nao comeca com teoria. Comeca com uma musica tocavel.</h3>
+                  <p className="mt-4 text-sm leading-relaxed text-white/58">
+                    O onboarding escolhe dificuldade, maos e microfone para o aluno chegar na biblioteca com uma primeira aula sugerida.
+                  </p>
+                  <button
+                    onClick={() => goToPricing("how_it_works_conversion_card")}
+                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-black transition hover:bg-cyan-300"
+                  >
+                    Comecar com orientacao
+                    <ChevronDown className="h-3.5 w-3.5 -rotate-90" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -421,6 +471,8 @@ export default function Home() {
                 period={CLIENT_PLANS.monthly.period}
                 features={[...CLIENT_PLANS.monthly.features]}
                 planKey="monthly"
+                valueNote="Menos que uma aula avulsa"
+                ctaLabel="Comecar mensal"
                 onSubscribe={handleSubscribe}
               />
               <PricingCard
@@ -430,6 +482,8 @@ export default function Home() {
                 features={[...CLIENT_PLANS.yearly.features]}
                 badge={CLIENT_PLANS.yearly.badge}
                 planKey="yearly"
+                valueNote="Melhor custo por mes"
+                ctaLabel="Quero evoluir no anual"
                 popular
                 onSubscribe={handleSubscribe}
               />
@@ -445,6 +499,27 @@ export default function Home() {
                   {item}
                 </div>
               ))}
+            </div>
+            <div className="mt-12 grid gap-4 md:grid-cols-4">
+              {[
+                { value: "90", label: "musicas auditadas no catalogo" },
+                { value: "810", label: "modos de player validados" },
+                { value: "1 ou 2", label: "maos conforme o nivel" },
+                { value: "24h", label: "pratica no seu horario" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center">
+                  <p className="text-3xl font-black text-white">{item.value}</p>
+                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-white/40">{item.label}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 rounded-3xl border border-magenta/20 bg-magenta/5 p-6 text-center">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-magenta">Oferta simples</p>
+              <h3 className="mt-2 text-2xl font-black text-white">Entre, escolha uma musica e toque hoje.</h3>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/55">
+                Se voce e iniciante, comece com uma mao. Se ja toca, avance para duas maos e niveis mais completos.
+              </p>
             </div>
           </div>
         </section>
@@ -503,3 +578,4 @@ export default function Home() {
     </>
   );
 }
+
