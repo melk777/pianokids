@@ -4,12 +4,19 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import SongLibrary from "@/components/SongLibrary";
+import OnboardingWizard from "@/components/OnboardingWizard";
 import { ChevronRight, Loader2, Sparkles } from "lucide-react";
 import type { PracticeSession, Song } from "@/lib/types";
 import { loadSongs } from "@/lib/songCatalog";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useProfile } from "@/hooks/useProfile";
 import { buildPracticeRecommendation, type PracticeRecommendation } from "@/lib/practiceProgress";
+import { trackEvent } from "@/lib/analytics";
+import {
+  buildOnboardingSongRecommendation,
+  getStoredOnboardingPreferences,
+  type OnboardingPreferences,
+} from "@/lib/onboarding";
 
 export default function SongsPage() {
   const { isPro: hasPremium, hasAccess, loading: subscriptionLoading } = useSubscription();
@@ -17,6 +24,15 @@ export default function SongsPage() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [songsLoading, setSongsLoading] = useState(true);
   const [recentSessions, setRecentSessions] = useState<PracticeSession[]>([]);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [onboardingPreferences, setOnboardingPreferences] = useState<OnboardingPreferences | null>(null);
+
+  useEffect(() => {
+    trackEvent("library_view");
+    const preferences = getStoredOnboardingPreferences();
+    setOnboardingPreferences(preferences);
+    setOnboardingOpen(!preferences);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -53,9 +69,17 @@ export default function SongsPage() {
   }, []);
 
   const recommendation = buildPracticeRecommendation(profile, recentSessions, songs);
+  const onboardingRecommendation = buildOnboardingSongRecommendation(songs, onboardingPreferences);
 
   return (
     <main className="min-h-screen bg-[#0A0A0A]">
+      <OnboardingWizard
+        open={onboardingOpen}
+        onComplete={() => {
+          setOnboardingOpen(false);
+          setOnboardingPreferences(getStoredOnboardingPreferences());
+        }}
+      />
       <div className="mx-auto max-w-[1400px] overflow-hidden px-4 pb-32 pt-28 md:px-8">
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-10 px-2">
           <h1 className="mb-2 text-4xl font-bold tracking-tight text-white md:text-5xl">Biblioteca</h1>
@@ -70,11 +94,65 @@ export default function SongsPage() {
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
             {recommendation && <LibraryRecommendation recommendation={recommendation} />}
+            {!recommendation && onboardingRecommendation && (
+              <OnboardingRecommendation recommendation={onboardingRecommendation} preferences={onboardingPreferences} />
+            )}
             <SongLibrary songs={songs} hasPremium={hasPremium} hasAccess={hasAccess} />
           </motion.div>
         )}
       </div>
     </main>
+  );
+}
+
+function OnboardingRecommendation({
+  recommendation,
+  preferences,
+}: {
+  recommendation: NonNullable<ReturnType<typeof buildOnboardingSongRecommendation>>;
+  preferences: OnboardingPreferences | null;
+}) {
+  const goalLabel =
+    preferences?.goal === "worship"
+      ? "louvor"
+      : preferences?.goal === "classic"
+        ? "clássico"
+        : preferences?.goal === "popular"
+          ? "filmes"
+          : "infantil";
+
+  return (
+    <section className="mb-8 rounded-2xl border border-cyan/20 bg-cyan/5 p-5 md:p-6">
+      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan">
+            <Sparkles className="h-3.5 w-3.5" />
+            Primeira aula sugerida
+          </p>
+          <h2 className="text-2xl font-black text-white">{recommendation.song.title}</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/60">
+            Escolhi essa música porque combina com seu objetivo {goalLabel} e com seu nível inicial.
+          </p>
+        </div>
+
+        <Link
+          href={recommendation.href}
+          onClick={() =>
+            trackEvent("recommended_practice_clicked", {
+              source: "onboarding_recommendation",
+              songId: recommendation.song.id,
+              difficulty: recommendation.difficulty,
+              leftHand: recommendation.handSelection.includeLeftHand,
+              rightHand: recommendation.handSelection.includeRightHand,
+            })
+          }
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-cyan px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-black transition hover:bg-cyan-300"
+        >
+          Começar agora
+          <ChevronRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+    </section>
   );
 }
 
@@ -107,6 +185,14 @@ function LibraryRecommendation({ recommendation }: { recommendation: PracticeRec
 
         <Link
           href={recommendation.href}
+          onClick={() =>
+            trackEvent("recommended_practice_clicked", {
+              songId: recommendation.songId,
+              difficulty: recommendation.difficulty,
+              handMode: recommendation.handMode,
+              source: "library_recommendation",
+            })
+          }
           className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan to-magenta px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-white transition hover:opacity-90"
         >
           Comecar

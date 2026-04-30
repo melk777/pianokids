@@ -103,6 +103,19 @@ function run() {
 
   add(
     checks,
+    "analytics",
+    "tracking interno do funil",
+    exists("src/lib/analytics.ts") &&
+      exists("src/app/api/analytics/event/route.ts") &&
+      exists("docs/analytics-events.sql")
+      ? "pass"
+      : "fail",
+    "Cliente, API e SQL de analytics interno devem existir para medir conversao.",
+    "high",
+  );
+
+  add(
+    checks,
     "qa",
     "auditoria de modos do player",
     exists("scripts/audit-player-modes.js") && scripts["audit-player-modes"] ? "pass" : "fail",

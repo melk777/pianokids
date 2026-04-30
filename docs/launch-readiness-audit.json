@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-29T15:03:55.741Z",
+  "generatedAt": "2026-04-30T19:43:45.190Z",
   "summary": {
-    "total": 28,
-    "pass": 25,
+    "total": 29,
+    "pass": 26,
     "warn": 3,
     "fail": 0,
     "criticalOpen": 2
@@ -91,6 +91,13 @@
       "status": "pass",
       "severity": "high",
       "details": "Script de QA responsivo/interativo existe."
+    },
+    {
+      "category": "analytics",
+      "item": "tracking interno do funil",
+      "status": "pass",
+      "severity": "high",
+      "details": "Cliente, API e SQL de analytics interno devem existir para medir conversao."
     },
     {
       "category": "qa",

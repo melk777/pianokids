@@ -8,6 +8,7 @@ import type { Song } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSFX } from "@/hooks/useSFX";
 import { type Difficulty, DIFFICULTY_LABELS } from "@/lib/songFilters";
+import { trackEvent } from "@/lib/analytics";
 
 interface SongSummaryModalProps {
   song: Song | null;
@@ -66,6 +67,14 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
     playClick();
     setIsStarting(true);
+    trackEvent("song_started", {
+      songId: song.id,
+      songTitle: song.title,
+      difficulty: selectedDifficulty,
+      handMode: practiceHandMode,
+      micEnabled,
+      source: "song_summary_modal",
+    });
     const params = new URLSearchParams();
     params.set("leftHand", String(practiceHandMode === "left" || practiceHandMode === "both"));
     params.set("rightHand", String(practiceHandMode === "right" || practiceHandMode === "both"));

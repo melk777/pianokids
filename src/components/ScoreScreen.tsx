@@ -7,6 +7,7 @@ import { Clock3, Gauge, LogOut, Music2, RotateCcw, SkipForward, Star, Target, Tr
 import type { PracticeFeedbackSummary } from "@/lib/types";
 import type { Difficulty } from "@/lib/songFilters";
 import { buildPracticePlan } from "@/lib/practicePlan";
+import { trackEvent } from "@/lib/analytics";
 
 interface ScoreScreenProps {
   accuracy: number;
@@ -88,6 +89,17 @@ export default function ScoreScreen({
     if (safeAccuracy > 0) return "Vamos consolidar";
     return "Primeira leitura registrada";
   }, [safeAccuracy]);
+
+  useEffect(() => {
+    trackEvent("song_finished", {
+      accuracy: safeAccuracy,
+      score,
+      combo,
+      difficulty,
+      level: practicePlan.level,
+      hasPracticeRange: Boolean(feedback?.weakestRange),
+    });
+  }, [combo, difficulty, feedback?.weakestRange, practicePlan.level, safeAccuracy, score]);
 
   useEffect(() => {
     if (!isStrong) return;
@@ -240,10 +252,18 @@ export default function ScoreScreen({
                 <button
                   data-testid="score-practice-range"
                   onClick={() =>
-                    onPracticeRange({
-                      start: feedback.weakestRange?.start ?? 0,
-                      end: feedback.weakestRange?.end ?? 0,
-                    })
+                    {
+                      trackEvent("recommended_practice_clicked", {
+                        source: "score_screen",
+                        accuracy: safeAccuracy,
+                        start: feedback.weakestRange?.start ?? 0,
+                        end: feedback.weakestRange?.end ?? 0,
+                      });
+                      onPracticeRange({
+                        start: feedback.weakestRange?.start ?? 0,
+                        end: feedback.weakestRange?.end ?? 0,
+                      });
+                    }
                   }
                   className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-300 px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-black transition hover:bg-emerald-200 active:scale-[0.98] sm:col-span-2"
                 >
@@ -254,7 +274,10 @@ export default function ScoreScreen({
 
               <button
                 data-testid="score-restart"
-                onClick={onRestart}
+                onClick={() => {
+                  trackEvent("score_restart_clicked", { source: "score_screen", accuracy: safeAccuracy, difficulty });
+                  onRestart();
+                }}
                 className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-cyan px-4 py-3 text-sm font-black uppercase tracking-[0.08em] text-black transition hover:bg-cyan-300 active:scale-[0.98]"
               >
                 <RotateCcw size={18} />

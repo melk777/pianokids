@@ -8,6 +8,7 @@ import Link from "next/link";
 import { getURL } from "@/lib/utils/url";
 import { useSearchParams } from "next/navigation";
 import TurnstileWidget from "./TurnstileWidget";
+import { trackEvent } from "@/lib/analytics";
 import {
   LOCAL_DEV_AUTH_COOKIE,
   LOCAL_DEV_AUTH_STORAGE_KEY,
@@ -129,6 +130,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    trackEvent(isLogin ? "auth_login_started" : "auth_signup_started", { role });
 
     if (!turnstileSiteKey) {
       setMessage({
@@ -185,11 +187,12 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
             .eq("id", user.id)
             .maybeSingle();
 
-          if (profile?.role) {
+        if (profile?.role) {
             resolvedRole = profile.role;
           }
         }
 
+        trackEvent("auth_login_completed", { role: resolvedRole || role });
         window.location.assign(getPostLoginPath(resolvedRole));
       } else {
         const { error } = await supabase.auth.signUp({
@@ -210,6 +213,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
           },
         });
         if (error) throw error;
+        trackEvent("auth_signup_completed", { role });
         setMessage({
           type: "success",
           text: role === "teacher" 

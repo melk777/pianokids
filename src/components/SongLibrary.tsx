@@ -8,6 +8,7 @@ import Image from "next/image";
 import type { Song } from "@/lib/types";
 import { Lock, Play, Search, X } from "lucide-react";
 import { useSFX } from "@/hooks/useSFX";
+import { trackEvent } from "@/lib/analytics";
 
 const MusicRecommendation = dynamic(() => import("./MusicRecommendation"), {
   loading: () => null,
@@ -324,9 +325,23 @@ const SongCard = memo(function SongCard({
   const [coverFailed, setCoverFailed] = useState(false);
 
   const handleClick = (event: MouseEvent) => {
-    if (isLocked) return;
+    if (isLocked) {
+      trackEvent("song_locked_clicked", {
+        songId: song.id,
+        songTitle: song.title,
+        isPremium: song.isPremium,
+        source: "library_card",
+      });
+      return;
+    }
     event.preventDefault();
     playClick();
+    trackEvent("song_card_opened", {
+      songId: song.id,
+      songTitle: song.title,
+      isPremium: song.isPremium,
+      source: "library_card",
+    });
     onSelect();
   };
 

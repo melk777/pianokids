@@ -36,6 +36,7 @@ import {
   type PracticeAchievement,
   type PracticeRecommendation,
 } from "@/lib/practiceProgress";
+import { trackEvent } from "@/lib/analytics";
 const TeacherDashboard = dynamic(() => import("@/components/TeacherDashboard"), {
   loading: () => null,
 });
@@ -114,6 +115,7 @@ export default function Dashboard() {
 
   const handleSubscribe = async (planKey: string) => {
     try {
+      trackEvent("checkout_started", { source: "dashboard", planKey });
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -129,6 +131,7 @@ export default function Dashboard() {
       }
 
       if (data.url) {
+        trackEvent("checkout_redirected", { source: "dashboard", planKey });
         window.location.assign(data.url);
       } else if (data.error) {
         alert(`Erro: ${data.error}`);
@@ -393,7 +396,14 @@ export default function Dashboard() {
 
                   <Link
                     href={progressInsight.actionHref}
-                    onClick={() => playClick()}
+                    onClick={() => {
+                      playClick();
+                      trackEvent("recommended_practice_clicked", {
+                        source: "dashboard_progress_insight",
+                        action: progressInsight.actionLabel,
+                        href: progressInsight.actionHref,
+                      });
+                    }}
                     className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-black transition hover:bg-white/90"
                   >
                     {progressInsight.actionLabel}
@@ -402,7 +412,18 @@ export default function Dashboard() {
                 </div>
 
                 {recommendation && (
-                  <RecommendedLessonCard recommendation={recommendation} onClick={playClick} />
+                  <RecommendedLessonCard
+                    recommendation={recommendation}
+                    onClick={() => {
+                      playClick();
+                      trackEvent("recommended_practice_clicked", {
+                        source: "dashboard_recommended_lesson",
+                        songId: recommendation.songId,
+                        difficulty: recommendation.difficulty,
+                        handMode: recommendation.handMode,
+                      });
+                    }}
+                  />
                 )}
 
                 <div className="mb-6 grid gap-3 md:grid-cols-3">

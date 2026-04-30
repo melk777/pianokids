@@ -1,11 +1,11 @@
 # Auditoria de pre-lancamento comercial
 
-Gerado em: 2026-04-29T15:03:55.747Z
+Gerado em: 2026-04-30T19:43:45.199Z
 
 ## Resumo
 
-- Total: 28
-- OK: 25
+- Total: 29
+- OK: 26
 - Alertas: 3
 - Falhas: 0
 - Pendencias criticas abertas: 2
@@ -26,6 +26,7 @@ Gerado em: 2026-04-29T15:03:55.747Z
 | OK | env-local | .env.local presente | medium | Arquivo local encontrado com 11 chaves. Valores nao sao expostos no relatorio. |
 | OK | build | script build | high | Script de build configurado. |
 | OK | qa | QA responsivo automatizado | high | Script de QA responsivo/interativo existe. |
+| OK | analytics | tracking interno do funil | high | Cliente, API e SQL de analytics interno devem existir para medir conversao. |
 | OK | qa | auditoria de modos do player | high | Auditoria de modos do player esta configurada. |
 | OK | local-auth | bypass local bloqueado em producao | critical | A rota local-test e o middleware devem depender de isLocalDevAuthAllowed com bloqueio explicito em producao. |
 | OK | stripe | checkout autenticado | critical | Checkout exige usuario autenticado e valida IDs de preco. |

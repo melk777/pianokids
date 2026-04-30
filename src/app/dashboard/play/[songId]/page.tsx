@@ -24,6 +24,7 @@ import {
 import { Cable, Volume2, Mic, MicOff, Play, Pause, RotateCcw, CircleHelp } from "lucide-react";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useProfile } from "@/hooks/useProfile";
+import { trackEvent } from "@/lib/analytics";
 
 const FREE_PLAY_SONG: Song = {
   id: "freeplay",
@@ -790,6 +791,12 @@ function PlayPageContent() {
   }, [song?.duration]);
 
   const handleTutorialComplete = useCallback(() => {
+    trackEvent("tutorial_completed", {
+      songId: song?.id ?? songId,
+      difficulty,
+      leftHand: handSelection.includeLeftHand,
+      rightHand: handSelection.includeRightHand,
+    });
     setShowTutorial(false);
     setIsPlaying(false);
     setIsPaused(false);
@@ -804,7 +811,7 @@ function PlayPageContent() {
     setPlayerResetKey((current) => current + 1);
     setTutorialActions(createTutorialActionState());
     setCurrentTutorialAction(null);
-  }, [song?.duration]);
+  }, [difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, song?.duration, song?.id, songId]);
 
   const handleTutorialStepChange = useCallback(
     (step: { requiredAction?: GameTutorialActionId }) => {

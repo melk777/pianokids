@@ -1,12 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Music, Star, BarChart3, ChevronDown, Piano, Library, AudioWaveform, Trophy } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 import HeroVideo from "@/components/HeroVideo";
+import { trackEvent } from "@/lib/analytics";
 const PricingCard = dynamic(() => import("@/components/PricingCard"), {
   loading: () => <div className="h-[32rem] rounded-2xl border border-white/10 bg-white/[0.03]" />,
 });
@@ -69,9 +71,29 @@ const LIBRARY_PREVIEW = [
 export default function Home() {
   const router = useRouter();
 
+  useEffect(() => {
+    trackEvent("landing_view");
+
+    const pricing = document.getElementById("pricing");
+    if (!pricing) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        trackEvent("pricing_view");
+        observer.disconnect();
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(pricing);
+    return () => observer.disconnect();
+  }, []);
+
   /* ── Stripe checkout (com redirect p/ login se não autenticado) ── */
   const handleSubscribe = async (planKey: string) => {
     try {
+      trackEvent("checkout_started", { source: "landing", planKey });
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,6 +110,7 @@ export default function Home() {
       }
 
       if (data?.url) {
+        trackEvent("checkout_redirected", { source: "landing", planKey });
         window.location.assign(data.url);
       } else if (data?.error) {
         alert(`Erro: ${data.error}`);
@@ -375,15 +398,18 @@ export default function Home() {
         <section id="pricing" className="py-32 lg:py-48 px-6 scroll-mt-20">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-20">
+              <p className="mb-4 text-[11px] font-black uppercase tracking-[0.28em] text-cyan/70">
+                Comece hoje, evolua esta semana
+              </p>
               <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
-                Planos simples,{" "}
+                Um professor interativo{" "}
                 <br />
                 <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
-                  sem surpresas.
+                  por menos que uma aula avulsa.
                 </span>
               </h2>
-              <p className="text-white/40 text-lg md:text-xl">
-                Comece gratuitamente. Assine quando estiver pronto.
+              <p className="mx-auto max-w-2xl text-white/50 text-lg md:text-xl">
+                Acesso ao PianoEngine, biblioteca guiada, progresso salvo, treino focado e acompanhamento para estudar no seu teclado real.
               </p>
             </div>
 
@@ -407,6 +433,18 @@ export default function Home() {
                 popular
                 onSubscribe={handleSubscribe}
               />
+            </div>
+
+            <div className="mt-8 grid gap-3 text-sm text-white/55 md:grid-cols-3">
+              {[
+                "Cancele pelo portal seguro do Stripe",
+                "Use no teclado, piano digital ou modo sem microfone",
+                "Plano anual com melhor custo por mês",
+              ].map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
         </section>
