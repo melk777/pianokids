@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet, BarChart3, TrendingUp, MousePointerClick, Music2, AlertTriangle, Target } from "lucide-react";
+import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet, BarChart3, TrendingUp, MousePointerClick, Music2, AlertTriangle, Target, Rocket } from "lucide-react";
 import { createClientComponent } from "@/lib/supabase";
 import { useSFX } from "@/hooks/useSFX";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend } from "recharts";
@@ -128,12 +128,31 @@ interface GrowthAnalytics {
   }>;
 }
 
+interface LaunchReadiness {
+  generatedAt: string;
+  score: number;
+  summary: {
+    pass: number;
+    warn: number;
+    fail: number;
+  };
+  checks: Array<{
+    id: string;
+    label: string;
+    area: "env" | "supabase" | "stripe" | "legal" | "manual";
+    status: "pass" | "warn" | "fail";
+    detail: string;
+    action?: string;
+  }>;
+}
+
 export default function AdminDashboard() {
-  type AdminTab = 'overview' | 'growth' | 'financial' | 'withdrawals' | 'teachers';
+  type AdminTab = 'overview' | 'growth' | 'launch' | 'financial' | 'withdrawals' | 'teachers';
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [finances, setFinances] = useState<FinancialStats | null>(null);
   const [analytics, setAnalytics] = useState<GrowthAnalytics | null>(null);
+  const [readiness, setReadiness] = useState<LaunchReadiness | null>(null);
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
   const [teachers, setTeachers] = useState<AdminTeacher[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,12 +180,13 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [resStats, resWith, resTeach, resFin, resGrowth] = await Promise.all([
+      const [resStats, resWith, resTeach, resFin, resGrowth, resReadiness] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/withdrawals'),
         fetch('/api/admin/teachers'),
         fetch('/api/admin/financial'),
-        fetch('/api/admin/analytics')
+        fetch('/api/admin/analytics'),
+        fetch('/api/admin/readiness')
       ]);
 
       if (resStats.ok) setStats(await resStats.json());
@@ -174,6 +194,7 @@ export default function AdminDashboard() {
       if (resTeach.ok) setTeachers((await resTeach.json()).teachers);
       if (resFin.ok) setFinances(await resFin.json());
       if (resGrowth.ok) setAnalytics(await resGrowth.json());
+      if (resReadiness.ok) setReadiness(await resReadiness.json());
       
     } catch (e) {
       console.error(e);
@@ -419,6 +440,7 @@ export default function AdminDashboard() {
         {[
           { id: 'overview', label: 'Panorama Geral', icon: LayoutDashboard },
           { id: 'growth', label: 'Crescimento', icon: BarChart3 },
+          { id: 'launch', label: 'Lançamento', icon: Rocket },
           { id: 'financial', label: 'DRE Financeiro', icon: ChartIcon },
           { id: 'withdrawals', label: 'Caixa de Repasses', icon: Wallet },
           { id: 'teachers', label: 'Time de Professores', icon: Users },
@@ -633,6 +655,68 @@ export default function AdminDashboard() {
                 </div>
               </section>
             </div>
+          </motion.div>
+        )}
+
+        {/* LAUNCH READINESS */}
+        {activeTab === 'launch' && readiness && (
+          <motion.div key="launch" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+              <section className="glass rounded-3xl border border-white/10 p-6">
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan/10 text-cyan">
+                    <Rocket className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan">Prontidao de lancamento</p>
+                    <h3 className="text-3xl font-black text-white">{readiness.score}% pronto</h3>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <ReadinessSummary label="OK" value={readiness.summary.pass} tone="pass" />
+                  <ReadinessSummary label="Avisos" value={readiness.summary.warn} tone="warn" />
+                  <ReadinessSummary label="Falhas" value={readiness.summary.fail} tone="fail" />
+                </div>
+                <p className="mt-5 text-xs leading-relaxed text-white/45">
+                  Ultima leitura: {new Date(readiness.generatedAt).toLocaleString("pt-BR")}. Clique em Atualizar Dados para recalcular.
+                </p>
+              </section>
+
+              <section className="glass rounded-3xl border border-white/10 p-6">
+                <h3 className="text-xl font-bold text-white">Antes de anunciar</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/50">
+                  Esta aba nao substitui teste humano, mas captura configuracoes que costumam quebrar lancamentos: envs,
+                  Supabase, analytics, Stripe e paginas publicas.
+                </p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {[
+                    "Fazer compra real/teste completo no Stripe",
+                    "Testar microfone em aparelhos reais",
+                    "Confirmar e-mail contato@pianify.com.br",
+                    "Acompanhar os primeiros 100 visitantes",
+                  ].map((item) => (
+                    <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-white/58">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            <section className="glass rounded-3xl border border-white/10 p-6">
+              <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-white">Checklist tecnico e operacional</h3>
+                  <p className="text-xs text-white/40">Falhas aparecem primeiro; avisos indicam tarefas manuais pendentes.</p>
+                </div>
+              </div>
+
+              <div className="grid gap-3">
+                {readiness.checks.map((check) => (
+                  <ReadinessCheckCard key={check.id} check={check} />
+                ))}
+              </div>
+            </section>
           </motion.div>
         )}
 
@@ -1047,6 +1131,71 @@ function GrowthAlertCard({
           Acao recomendada
         </p>
         <p className="text-xs leading-relaxed text-white/70">{alert.action}</p>
+      </div>
+    </div>
+  );
+}
+
+function ReadinessSummary({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: "pass" | "warn" | "fail";
+}) {
+  const toneClass = {
+    pass: "border-emerald-300/25 bg-emerald-300/10 text-emerald-200",
+    warn: "border-amber-300/25 bg-amber-300/10 text-amber-200",
+    fail: "border-red-400/25 bg-red-400/10 text-red-300",
+  }[tone];
+
+  return (
+    <div className={`rounded-2xl border p-4 text-center ${toneClass}`}>
+      <p className="text-2xl font-black text-white">{value}</p>
+      <p className="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/45">{label}</p>
+    </div>
+  );
+}
+
+function ReadinessCheckCard({
+  check,
+}: {
+  check: LaunchReadiness["checks"][number];
+}) {
+  const statusClass = {
+    pass: "border-emerald-300/20 bg-emerald-300/10 text-emerald-200",
+    warn: "border-amber-300/20 bg-amber-300/10 text-amber-200",
+    fail: "border-red-400/20 bg-red-400/10 text-red-300",
+  }[check.status];
+
+  const statusLabel = {
+    pass: "OK",
+    warn: "Aviso",
+    fail: "Falha",
+  }[check.status];
+
+  return (
+    <div className={`rounded-2xl border p-4 ${statusClass}`}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-black/25 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-white/55">
+              {check.area}
+            </span>
+            <span className="rounded-full bg-white/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-white/65">
+              {statusLabel}
+            </span>
+          </div>
+          <p className="text-sm font-black text-white">{check.label}</p>
+          <p className="mt-1 text-xs leading-relaxed text-white/55">{check.detail}</p>
+        </div>
+        {check.action && (
+          <p className="max-w-sm rounded-xl border border-white/10 bg-black/20 p-3 text-xs leading-relaxed text-white/68">
+            {check.action}
+          </p>
+        )}
       </div>
     </div>
   );
