@@ -99,3 +99,45 @@ export function buildOnboardingSongRecommendation(
     href: `/dashboard/play/${song.id}?${params.toString()}`,
   };
 }
+
+function buildPracticeHref(song: Song, difficulty: Difficulty, handSelection: HandSelection, mic: boolean) {
+  const params = new URLSearchParams({
+    difficulty,
+    leftHand: String(handSelection.includeLeftHand),
+    rightHand: String(handSelection.includeRightHand),
+    mic: String(mic),
+  });
+
+  return `/dashboard/play/${song.id}?${params.toString()}`;
+}
+
+export function buildFirstLessonOptions(songs: Song[], preferences: OnboardingPreferences | null) {
+  if (songs.length === 0) return [];
+
+  const beginnerHands = { includeLeftHand: false, includeRightHand: true };
+  const easySongs = songs
+    .filter((song) => {
+      const categories = song.categories?.length ? song.categories : [song.category];
+      return song.difficulty === "FÃ¡cil" || categories.includes("Infantis");
+    })
+    .sort((a, b) => (a.noteCount ?? a.notes.length) - (b.noteCount ?? b.notes.length));
+
+  const curated = [
+    easySongs.find((song) => song.id.includes("brilha") || song.title.toLowerCase().includes("brilha")),
+    easySongs.find((song) => song.id.includes("borboletinha") || song.title.toLowerCase().includes("borboletinha")),
+    easySongs.find((song) => song.id.includes("sapo") || song.title.toLowerCase().includes("sapo")),
+    ...easySongs,
+  ].filter((song): song is Song => Boolean(song));
+
+  const unique = Array.from(new Map(curated.map((song) => [song.id, song])).values()).slice(0, 3);
+  const mic = preferences?.instrument === "phone" ? false : true;
+
+  return unique.map((song, index) => ({
+    song,
+    difficulty: "beginner" as Difficulty,
+    handSelection: beginnerHands,
+    href: buildPracticeHref(song, "beginner", beginnerHands, mic),
+    label: index === 0 ? "Mais facil para comecar" : index === 1 ? "Boa para primeira semana" : "Treino rapido",
+    reason: `${song.noteCount ?? song.notes.length} notas no modo iniciante, usando apenas a mao direita.`,
+  }));
+}

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import SongLibrary from "@/components/SongLibrary";
 import OnboardingWizard from "@/components/OnboardingWizard";
-import { ChevronRight, Loader2, Sparkles } from "lucide-react";
+import { ChevronRight, Loader2, Play, Sparkles } from "lucide-react";
 import type { PracticeSession, Song } from "@/lib/types";
 import { loadSongs } from "@/lib/songCatalog";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -14,6 +14,7 @@ import { buildPracticeRecommendation, type PracticeRecommendation } from "@/lib/
 import { trackEvent } from "@/lib/analytics";
 import {
   buildOnboardingSongRecommendation,
+  buildFirstLessonOptions,
   getStoredOnboardingPreferences,
   type OnboardingPreferences,
 } from "@/lib/onboarding";
@@ -70,6 +71,7 @@ export default function SongsPage() {
 
   const recommendation = buildPracticeRecommendation(profile, recentSessions, songs);
   const onboardingRecommendation = buildOnboardingSongRecommendation(songs, onboardingPreferences);
+  const firstLessonOptions = buildFirstLessonOptions(songs, onboardingPreferences);
 
   return (
     <main className="min-h-screen bg-[#0A0A0A]">
@@ -97,11 +99,68 @@ export default function SongsPage() {
             {!recommendation && onboardingRecommendation && (
               <OnboardingRecommendation recommendation={onboardingRecommendation} preferences={onboardingPreferences} />
             )}
+            {!recommendation && !onboardingRecommendation && firstLessonOptions.length > 0 && (
+              <FirstLessonStrip options={firstLessonOptions} />
+            )}
             <SongLibrary songs={songs} hasPremium={hasPremium} hasAccess={hasAccess} />
           </motion.div>
         )}
       </div>
     </main>
+  );
+}
+
+function FirstLessonStrip({
+  options,
+}: {
+  options: ReturnType<typeof buildFirstLessonOptions>;
+}) {
+  return (
+    <section className="mb-8 rounded-2xl border border-cyan/20 bg-gradient-to-br from-cyan/10 via-white/[0.02] to-magenta/10 p-5 md:p-6">
+      <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan">
+            <Sparkles className="h-3.5 w-3.5" />
+            Comece em 1 clique
+          </p>
+          <h2 className="text-2xl font-black text-white">Primeiras aulas seguras para tocar agora</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/58">
+            Escolhi musicas curtas e simples para reduzir decisao e aumentar sua chance de concluir a primeira pratica.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        {options.map((option) => (
+          <Link
+            key={option.song.id}
+            href={option.href}
+            onClick={() =>
+              trackEvent("first_lesson_started", {
+                source: "first_lesson_strip",
+                songId: option.song.id,
+                title: option.song.title,
+                difficulty: option.difficulty,
+                leftHand: option.handSelection.includeLeftHand,
+                rightHand: option.handSelection.includeRightHand,
+              })
+            }
+            className="group rounded-2xl border border-white/10 bg-black/25 p-4 transition hover:border-cyan/40 hover:bg-cyan/10"
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-black uppercase tracking-[0.13em] text-white/50">
+                {option.label}
+              </span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-black transition group-hover:scale-105">
+                <Play className="h-4 w-4 fill-current" />
+              </span>
+            </div>
+            <h3 className="text-lg font-black text-white">{option.song.title}</h3>
+            <p className="mt-2 text-xs leading-relaxed text-white/48">{option.reason}</p>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 

@@ -95,6 +95,23 @@ export default function SongLibrary({ songs, hasPremium, hasAccess }: SongLibrar
   }, [deferredSearchTerm, selectedCategory]);
 
   useEffect(() => {
+    if (selectedCategory === "all") return;
+    trackEvent("library_filter_changed", {
+      filterType: "category",
+      category: selectedCategory,
+    });
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const normalizedSearch = deferredSearchTerm.trim();
+    if (normalizedSearch.length < 2) return;
+    trackEvent("library_search_used", {
+      queryLength: normalizedSearch.length,
+      resultCount: filteredSongs.length,
+    });
+  }, [deferredSearchTerm, filteredSongs.length]);
+
+  useEffect(() => {
     setCategoryVisibleCounts((current) => {
       const nextCounts: Record<string, number> = {};
       for (const category of categoriesToRender) {
