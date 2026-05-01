@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Music, Star, BarChart3, ChevronDown, Piano, Library, AudioWaveform, Trophy, ShieldCheck, Clock, Sparkles, CheckCircle2 } from "lucide-react";
+import { Music, Star, BarChart3, ChevronDown, Piano, Library, AudioWaveform, Trophy } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -148,11 +148,6 @@ export default function Home() {
             
             <div className="text-center max-w-4xl mx-auto">
 
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan/20 bg-cyan/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan">
-              <Sparkles className="h-3.5 w-3.5" />
-              Aulas interativas no seu teclado real
-            </div>
-
             {/* Title */}
             <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
               <span className="text-white">Aprenda teclado tocando </span>
@@ -207,18 +202,6 @@ export default function Home() {
                   <p className="text-xs text-white/55">Aprendendo piano de forma interativa todos os dias</p>
                 </div>
               </div>
-            </div>
-            <div className="mx-auto mt-8 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
-              {[
-                { icon: <ShieldCheck className="h-4 w-4" />, text: "Sem cabos MIDI obrigatorios" },
-                { icon: <Clock className="h-4 w-4" />, text: "Primeira aula em minutos" },
-                { icon: <CheckCircle2 className="h-4 w-4" />, text: "Do iniciante ao avancado" },
-              ].map((item) => (
-                <div key={item.text} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-xs font-bold text-white/60 backdrop-blur-md">
-                  <span className="text-cyan">{item.icon}</span>
-                  {item.text}
-                </div>
-              ))}
             </div>
             </div>
           </div>
@@ -448,9 +431,6 @@ export default function Home() {
         <section id="pricing" className="py-32 lg:py-48 px-6 scroll-mt-20">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-20">
-              <p className="mb-4 text-[11px] font-black uppercase tracking-[0.28em] text-cyan/70">
-                Comece hoje, evolua esta semana
-              </p>
               <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
                 Um professor interativo{" "}
                 <br />
