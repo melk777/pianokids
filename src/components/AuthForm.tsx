@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, useEffect, useMemo } from "react";
-import { createClientComponent } from "@/lib/supabase";
+import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { Mail, Lock, Loader2, ArrowRight, Calendar, User, Phone, CreditCard, Hash } from "lucide-react";
 import Link from "next/link";
 import { getURL } from "@/lib/utils/url";
@@ -34,7 +34,7 @@ function getPostLoginPath(role: string | null | undefined) {
 }
 
 export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: AuthFormProps) {
-  const supabase = createClientComponent();
+  const supabase = isSupabaseConfigured ? createClientComponent() : null;
   const searchParams = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -131,6 +131,14 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     trackEvent(isLogin ? "auth_login_started" : "auth_signup_started", { role });
+
+    if (!supabase) {
+      setMessage({
+        type: "error",
+        text: "A autenticacao ainda nao foi configurada neste ambiente.",
+      });
+      return;
+    }
 
     if (!turnstileSiteKey) {
       setMessage({
@@ -311,6 +319,12 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                     : "Crie sua conta gratuita e comece a tocar hoje mesmo."}
               </p>
 
+              {!supabase && (
+                <div className="mb-6 rounded-xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm text-amber-200">
+                  Autenticacao indisponivel: configure as credenciais do Supabase para entrar ou cadastrar uma conta.
+                </div>
+              )}
+
               {message && (
                 <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
                   {message.text}
@@ -464,7 +478,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
 
                 <button
                   type="submit"
-                  disabled={loading || !captchaToken || !turnstileSiteKey}
+                  disabled={loading || !supabase || !captchaToken || !turnstileSiteKey}
                   className="w-full bg-white text-black font-bold py-4 rounded-2xl mt-4 flex items-center justify-center gap-2 hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed group shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
                 >
                   {loading ? (
@@ -481,7 +495,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
               {canUseLocalTestAuth && (
                 <div className="mt-4 rounded-2xl border border-cyan/20 bg-cyan/10 p-4">
                   <p className="mb-3 text-xs leading-relaxed text-cyan/80">
-                    Ambiente local detectado. Use o modo teste para validar o PianoEngine sem a verificacao anti-robo.
+                    Ambiente local detectado. Use o modo teste para validar a Pianify sem a verificação anti-robô.
                   </p>
                   <button
                     type="button"

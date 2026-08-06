@@ -1,12 +1,16 @@
 /**
- * Access control helpers shared across middleware and API routes.
+ * Access control helpers shared across proxy and API routes.
+ * Special access is deployment configuration, never a hardcoded entitlement.
  */
 
-export const SPECIAL_ACCESS_IDS: string[] = [
-  "alessia_samanta@hotmail.com",
-  "comerciomelk@gmail.com",
-  "melkhenrique1@icloud.com",
-];
+function getSpecialAccessIds(): Set<string> {
+  return new Set(
+    (process.env.SPECIAL_ACCESS_IDS ?? "")
+      .split(",")
+      .map((id) => id.toLowerCase().trim())
+      .filter(Boolean),
+  );
+}
 
 type AccessProfile = {
   subscription_status?: string | null;
@@ -14,10 +18,10 @@ type AccessProfile = {
 } | null | undefined;
 
 export function hasSpecialAccess(userId: string | null | undefined, email?: string | null): boolean {
-  const normalizedList = SPECIAL_ACCESS_IDS.map((id) => id.toLowerCase().trim());
+  const normalizedList = getSpecialAccessIds();
 
-  if (userId && normalizedList.includes(userId.toLowerCase().trim())) return true;
-  if (email && normalizedList.includes(email.toLowerCase().trim())) return true;
+  if (userId && normalizedList.has(userId.toLowerCase().trim())) return true;
+  if (email && normalizedList.has(email.toLowerCase().trim())) return true;
 
   return false;
 }

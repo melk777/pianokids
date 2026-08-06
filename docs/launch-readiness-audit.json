@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-04-30T23:48:38.619Z",
+  "generatedAt": "2026-08-06T06:40:18.171Z",
   "summary": {
-    "total": 29,
-    "pass": 26,
+    "total": 38,
+    "pass": 35,
     "warn": 3,
     "fail": 0,
     "criticalOpen": 2
@@ -73,10 +73,10 @@
     },
     {
       "category": "env-local",
-      "item": ".env.local presente",
+      "item": ".env.local completo",
       "status": "pass",
       "severity": "medium",
-      "details": "Arquivo local encontrado com 11 chaves. Valores nao sao expostos no relatorio."
+      "details": "Arquivo local encontrado com todas as 9 chaves obrigatorias. Valores nao sao expostos no relatorio."
     },
     {
       "category": "build",
@@ -84,6 +84,13 @@
       "status": "pass",
       "severity": "high",
       "details": "Script de build configurado."
+    },
+    {
+      "category": "dependencies",
+      "item": "baseline segura do Next.js",
+      "status": "pass",
+      "severity": "critical",
+      "details": "Next.js ^16.3.0 com baseline de seguranca atualizada; o CI tambem executa npm audit."
     },
     {
       "category": "qa",
@@ -97,7 +104,7 @@
       "item": "tracking interno do funil",
       "status": "pass",
       "severity": "high",
-      "details": "Cliente, API e SQL de analytics interno devem existir para medir conversao."
+      "details": "Cliente, API e tabela versionada de analytics interno devem existir para medir conversao."
     },
     {
       "category": "qa",
@@ -112,6 +119,13 @@
       "status": "pass",
       "severity": "critical",
       "details": "A rota local-test e o middleware devem depender de isLocalDevAuthAllowed com bloqueio explicito em producao."
+    },
+    {
+      "category": "access-control",
+      "item": "acessos especiais fora do codigo",
+      "status": "pass",
+      "severity": "critical",
+      "details": "A lista de acessos gratuitos deve vir de configuracao segura e nao conter e-mails versionados."
     },
     {
       "category": "stripe",
@@ -135,6 +149,20 @@
       "details": "Portal exige usuario autenticado."
     },
     {
+      "category": "stripe",
+      "item": "webhook solicita nova tentativa quando o banco falha",
+      "status": "pass",
+      "severity": "critical",
+      "details": "Falhas de persistencia precisam retornar 5xx para o Stripe reenviar o evento."
+    },
+    {
+      "category": "admin-api",
+      "item": "src/app/api/admin/analytics/route.ts",
+      "status": "pass",
+      "severity": "critical",
+      "details": "Rota admin deve bloquear usuarios sem role admin."
+    },
+    {
       "category": "admin-api",
       "item": "src/app/api/admin/expenses/route.ts",
       "status": "pass",
@@ -144,6 +172,13 @@
     {
       "category": "admin-api",
       "item": "src/app/api/admin/financial/route.ts",
+      "status": "pass",
+      "severity": "critical",
+      "details": "Rota admin deve bloquear usuarios sem role admin."
+    },
+    {
+      "category": "admin-api",
+      "item": "src/app/api/admin/readiness/route.ts",
       "status": "pass",
       "severity": "critical",
       "details": "Rota admin deve bloquear usuarios sem role admin."
@@ -174,7 +209,21 @@
       "item": "saques de professores",
       "status": "pass",
       "severity": "critical",
-      "details": "Saque valida role teacher e saldo disponivel."
+      "details": "Saque valida role, saldo disponivel, reservas pendentes e unicidade no banco."
+    },
+    {
+      "category": "admin-api",
+      "item": "atualizacao idempotente de saques",
+      "status": "pass",
+      "severity": "critical",
+      "details": "O total pago deve ser recalculado a partir dos saques, sem somar novamente a cada clique."
+    },
+    {
+      "category": "privacy",
+      "item": "analytics sem IP bruto",
+      "status": "pass",
+      "severity": "high",
+      "details": "O funil nao precisa persistir o endereco IP do visitante."
     },
     {
       "category": "security-headers",
@@ -196,6 +245,20 @@
       "status": "warn",
       "severity": "critical",
       "details": "Revisao juridica/manual ainda e necessaria antes de anunciar em escala. A auditoria tecnica nao comprova licenca comercial de melodias, arranjos, imagens ou marcas."
+    },
+    {
+      "category": "brand",
+      "item": "nome comercial consistente",
+      "status": "pass",
+      "severity": "high",
+      "details": "Pianify e o nome comercial usado na documentacao e no produto."
+    },
+    {
+      "category": "database",
+      "item": "schema e migracoes reproduziveis",
+      "status": "pass",
+      "severity": "critical",
+      "details": "Schema inicial e endurecimentos posteriores estao versionados em supabase/migrations."
     },
     {
       "category": "business",

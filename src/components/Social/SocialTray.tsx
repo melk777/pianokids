@@ -18,9 +18,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useSocial, FriendshipData } from "@/hooks/useSocial";
+import { useSocial, FriendshipData, SocialProfile } from "@/hooks/useSocial";
 import { useProfile } from "@/hooks/useProfile";
-import { Profile } from "@/lib/types";
 
 import { useSFX } from "@/hooks/useSFX";
 
@@ -46,7 +45,7 @@ export default function SocialTray({ onSelectFriend }: SocialTrayProps) {
   const isTeacher = profile?.role === "teacher";
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Profile[]>([]);
+  const [searchResults, setSearchResults] = useState<SocialProfile[]>([]);
   const [searching, setSearching] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
 

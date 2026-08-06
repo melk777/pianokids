@@ -16,7 +16,7 @@ export default function ContatoPage() {
             Fale com a <span className="text-cyan">Pianify</span>
           </h1>
           <p className="mx-auto max-w-2xl text-lg leading-relaxed text-white/60">
-            Use esta pagina para suporte de assinatura, acesso, pagamento, microfone, PianoEngine ou parcerias.
+            Use esta página para suporte de assinatura, acesso, pagamento, microfone, recursos da Pianify ou parcerias.
           </p>
         </div>
 

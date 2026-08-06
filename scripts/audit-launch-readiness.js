@@ -45,6 +45,11 @@ function run() {
   const checks = [];
   const packageJson = JSON.parse(read("package.json"));
   const scripts = packageJson.scripts || {};
+  const nextVersion = packageJson.dependencies?.next || "";
+  const nextVersionMatch = nextVersion.match(/(\d+)\.(\d+)\.(\d+)/);
+  const nextVersionTuple = nextVersionMatch
+    ? nextVersionMatch.slice(1).map(Number)
+    : [0, 0, 0];
   const exampleEnv = envKeys(".env.example");
   const localEnv = envKeys(".env.local");
   const requiredEnv = [
@@ -58,6 +63,7 @@ function run() {
     "STRIPE_YEARLY_PRICE_ID",
     "NEXT_PUBLIC_SITE_URL",
   ];
+  const missingLocalEnv = requiredEnv.filter((key) => !localEnv.has(key));
 
   for (const key of requiredEnv) {
     add(
@@ -73,11 +79,13 @@ function run() {
   add(
     checks,
     "env-local",
-    ".env.local presente",
-    exists(".env.local") ? "pass" : "warn",
-    exists(".env.local")
-      ? `Arquivo local encontrado com ${localEnv.size} chaves. Valores nao sao expostos no relatorio.`
-      : "Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor.",
+    ".env.local completo",
+    exists(".env.local") && missingLocalEnv.length === 0 ? "pass" : "warn",
+    !exists(".env.local")
+      ? "Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor."
+      : missingLocalEnv.length === 0
+        ? `Arquivo local encontrado com todas as ${requiredEnv.length} chaves obrigatorias. Valores nao sao expostos no relatorio.`
+        : `Arquivo local protegido, mas faltam ${missingLocalEnv.length} chaves obrigatorias: ${missingLocalEnv.join(", ")}.`,
     "medium",
   );
 
@@ -88,6 +96,20 @@ function run() {
     scripts.build ? "pass" : "fail",
     scripts.build ? "Script de build configurado." : "package.json nao tem script build.",
     "high",
+  );
+
+  const hasHardenedNextBaseline =
+    nextVersionTuple[0] > 16 ||
+    (nextVersionTuple[0] === 16 && nextVersionTuple[1] >= 3);
+  add(
+    checks,
+    "dependencies",
+    "baseline segura do Next.js",
+    hasHardenedNextBaseline ? "pass" : "fail",
+    hasHardenedNextBaseline
+      ? `Next.js ${nextVersion} com baseline de seguranca atualizada; o CI tambem executa npm audit.`
+      : `Next.js ${nextVersion || "nao identificado"} abaixo da baseline 16.3 usada por esta auditoria.`,
+    "critical",
   );
 
   add(
@@ -107,10 +129,11 @@ function run() {
     "tracking interno do funil",
     exists("src/lib/analytics.ts") &&
       exists("src/app/api/analytics/event/route.ts") &&
-      exists("docs/analytics-events.sql")
+      exists("supabase/migrations/20260805000000_initial_pianify_schema.sql") &&
+      has("supabase/migrations/20260805000000_initial_pianify_schema.sql", /analytics_events/)
       ? "pass"
       : "fail",
-    "Cliente, API e SQL de analytics interno devem existir para medir conversao.",
+    "Cliente, API e tabela versionada de analytics interno devem existir para medir conversao.",
     "high",
   );
 
@@ -130,11 +153,23 @@ function run() {
     "local-auth",
     "bypass local bloqueado em producao",
     has("src/lib/localDevAuth.ts", /NODE_ENV\s*!==\s*["']production["']/) &&
-      has("src/middleware.ts", /isLocalDevAuthAllowed/) &&
+      has("src/proxy.ts", /isLocalDevAuthAllowed/) &&
       has("src/app/api/auth/local-test/route.ts", /isLocalDevAuthAllowed/)
       ? "pass"
       : "fail",
     "A rota local-test e o middleware devem depender de isLocalDevAuthAllowed com bloqueio explicito em producao.",
+    "critical",
+  );
+
+  add(
+    checks,
+    "access-control",
+    "acessos especiais fora do codigo",
+    has("src/lib/access-control.ts", /process\.env\.SPECIAL_ACCESS_IDS/) &&
+      !has("src/lib/access-control.ts", /@[a-z0-9.-]+\.[a-z]{2,}/i)
+      ? "pass"
+      : "fail",
+    "A lista de acessos gratuitos deve vir de configuracao segura e nao conter e-mails versionados.",
     "critical",
   );
 
@@ -177,9 +212,23 @@ function run() {
     "high",
   );
 
+  add(
+    checks,
+    "stripe",
+    "webhook solicita nova tentativa quando o banco falha",
+    has("src/app/api/stripe/webhook/route.ts", /Webhook persistence failed/) &&
+      has("src/app/api/stripe/webhook/route.ts", /status:\s*500/)
+      ? "pass"
+      : "fail",
+    "Falhas de persistencia precisam retornar 5xx para o Stripe reenviar o evento.",
+    "critical",
+  );
+
   const adminRoutes = [
+    "src/app/api/admin/analytics/route.ts",
     "src/app/api/admin/expenses/route.ts",
     "src/app/api/admin/financial/route.ts",
+    "src/app/api/admin/readiness/route.ts",
     "src/app/api/admin/stats/route.ts",
     "src/app/api/admin/teachers/route.ts",
     "src/app/api/admin/withdrawals/route.ts",
@@ -200,11 +249,36 @@ function run() {
     "teacher-api",
     "saques de professores",
     has("src/app/api/teacher/withdraw/route.ts", /role\s*!==\s*["']teacher["']/) &&
-      has("src/app/api/teacher/withdraw/route.ts", /amount\s*>\s*availableBalance/)
+      has("src/app/api/teacher/withdraw/route.ts", /amount\s*>\s*availableBalance/) &&
+      has("src/app/api/teacher/withdraw/route.ts", /status["']?,?\s*["']pendente["']/) &&
+      exists("supabase/migrations/20260805231500_harden_teacher_withdrawals.sql")
       ? "pass"
       : "fail",
-    "Saque valida role teacher e saldo disponivel.",
+    "Saque valida role, saldo disponivel, reservas pendentes e unicidade no banco.",
     "critical",
+  );
+
+  add(
+    checks,
+    "admin-api",
+    "atualizacao idempotente de saques",
+    has("src/app/api/admin/withdrawals/route.ts", /paidWithdrawals/) &&
+      has("src/app/api/admin/withdrawals/route.ts", /balance_withdrawn_total:\s*paidTotal/)
+      ? "pass"
+      : "fail",
+    "O total pago deve ser recalculado a partir dos saques, sem somar novamente a cada clique.",
+    "critical",
+  );
+
+  add(
+    checks,
+    "privacy",
+    "analytics sem IP bruto",
+    !has("src/app/api/analytics/event/route.ts", /x-forwarded-for/i)
+      ? "pass"
+      : "fail",
+    "O funil nao precisa persistir o endereco IP do visitante.",
+    "high",
   );
 
   add(
@@ -238,6 +312,35 @@ function run() {
     "direitos autorais das musicas",
     "warn",
     "Revisao juridica/manual ainda e necessaria antes de anunciar em escala. A auditoria tecnica nao comprova licenca comercial de melodias, arranjos, imagens ou marcas.",
+    "critical",
+  );
+
+  const brandIsPianify =
+    has("README.md", /Pianify/i) &&
+    has("src/app/layout.tsx", /Pianify/i) &&
+    has("src/app/page.tsx", /Pianify/i);
+  add(
+    checks,
+    "brand",
+    "nome comercial consistente",
+    brandIsPianify ? "pass" : "warn",
+    brandIsPianify
+      ? "Pianify e o nome comercial usado na documentacao e no produto."
+      : "Padronize o nome Pianify na documentacao, nos metadados e na interface antes do lancamento.",
+    "high",
+  );
+
+  const hasInitialSchema =
+    exists("supabase/migrations") &&
+    fs.readdirSync(path.join(ROOT, "supabase", "migrations")).some((name) => /base|initial|schema/i.test(name));
+  add(
+    checks,
+    "database",
+    "schema e migracoes reproduziveis",
+    hasInitialSchema ? "pass" : "warn",
+    hasInitialSchema
+      ? "Schema inicial e endurecimentos posteriores estao versionados em supabase/migrations."
+      : "O repositorio ainda nao contem uma migracao inicial completa de profiles, withdrawals e politicas RLS. Exporte e versione o schema antes de operar em producao.",
     "critical",
   );
 

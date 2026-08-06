@@ -47,80 +47,112 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-      const userId = session.metadata?.userId || session.client_reference_id;
-      const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
+  try {
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const userId = session.metadata?.userId || session.client_reference_id;
+        const customerId =
+          typeof session.customer === "string" ? session.customer : session.customer?.id;
 
-      if (userId) {
+        if (!userId || !customerId) {
+          throw new Error("Checkout session is missing user or customer metadata.");
+        }
+
+        const subscriptionId =
+          typeof session.subscription === "string"
+            ? session.subscription
+            : session.subscription?.id;
+        const subscription = subscriptionId
+          ? await stripe.subscriptions.retrieve(subscriptionId)
+          : null;
+
         const { error } = await supabase
           .from("profiles")
           .update({
-            subscription_status: "active",
             stripe_customer_id: customerId,
-            stripe_subscription_id:
-              typeof session.subscription === "string"
-                ? session.subscription
-                : session.subscription?.id,
+            stripe_subscription_id: subscriptionId,
+            subscription_status: subscription?.status,
+            subscription_plan_interval:
+              subscription?.items.data[0]?.price.recurring?.interval ?? null,
           })
           .eq("id", userId);
 
-        if (error) {
-          console.error("Error updating profile on checkout.session.completed:", error);
+        if (error) throw error;
+        break;
+      }
+
+      case "customer.subscription.created":
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customerId =
+          typeof subscription.customer === "string"
+            ? subscription.customer
+            : subscription.customer.id;
+        const billingInterval = subscription.items.data[0]?.price.recurring?.interval ?? null;
+        const userId = subscription.metadata?.userId;
+
+        let updateQuery = supabase
+          .from("profiles")
+          .update({
+            subscription_status: subscription.status,
+            stripe_subscription_id: subscription.id,
+            stripe_customer_id: customerId,
+            subscription_plan_interval: billingInterval,
+          });
+
+        updateQuery = userId
+          ? updateQuery.eq("id", userId)
+          : updateQuery.eq("stripe_customer_id", customerId);
+
+        const { error } = await updateQuery;
+
+        if (error) throw error;
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customerId =
+          typeof subscription.customer === "string"
+            ? subscription.customer
+            : subscription.customer.id;
+
+        const { error } = await supabase
+          .from("profiles")
+          .update({ subscription_status: "canceled" })
+          .eq("stripe_customer_id", customerId);
+
+        if (error) throw error;
+        break;
+      }
+
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const customerId =
+          typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
+
+        if (customerId) {
+          const { error } = await supabase
+            .from("profiles")
+            .update({ subscription_status: "past_due" })
+            .eq("stripe_customer_id", customerId);
+
+          if (error) throw error;
         }
+        break;
       }
-      break;
+
+      default:
+        break;
     }
-
-    case "customer.subscription.updated": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId =
-        typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id;
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          subscription_status: subscription.status === "active" ? "active" : subscription.status,
-          stripe_subscription_id: subscription.id,
-        })
-        .eq("stripe_customer_id", customerId);
-
-      if (error) {
-        console.error("Error updating profile on customer.subscription.updated:", error);
-      }
-      break;
-    }
-
-    case "customer.subscription.deleted": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId =
-        typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id;
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          subscription_status: "canceled",
-        })
-        .eq("stripe_customer_id", customerId);
-
-      if (error) {
-        console.error("Error updating profile on customer.subscription.deleted:", error);
-      }
-      break;
-    }
-
-    case "invoice.payment_failed": {
-      const invoice = event.data.object as Stripe.Invoice;
-      console.warn("Stripe payment failed:", {
-        invoiceId: invoice.id,
-        customerId: invoice.customer,
-      });
-      break;
-    }
-
-    default:
-      console.log(`Unhandled event type: ${event.type}`);
+  } catch (error) {
+    console.error("Stripe webhook persistence failed:", {
+      eventId: event.id,
+      eventType: event.type,
+      error,
+    });
+    return NextResponse.json({ error: "Webhook persistence failed." }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

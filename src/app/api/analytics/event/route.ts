@@ -116,7 +116,8 @@ export async function POST(request: NextRequest) {
       referrer: typeof payload.referrer === "string" ? payload.referrer.slice(0, 500) : null,
       properties: sanitizeProperties(payload.properties),
       user_agent: headerStore.get("user-agent")?.slice(0, 500) ?? null,
-      ip_hash_source: headerStore.get("x-forwarded-for")?.split(",")[0]?.trim().slice(0, 80) ?? null,
+      // IP addresses are not needed by the product funnel. Do not persist them.
+      ip_hash_source: null,
     };
 
     if (!supabaseAdmin) {

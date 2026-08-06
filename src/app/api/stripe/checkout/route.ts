@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getStripe } from "@/lib/stripe";
+import { getURL } from "@/lib/utils/url";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     const stripe = getStripe();
+    const siteUrl = getURL();
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
@@ -74,8 +76,8 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${req.nextUrl.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.nextUrl.origin}/#pricing`,
+      success_url: `${siteUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/#pricing`,
       client_reference_id: userId,
       customer: profile?.stripe_customer_id || undefined,
       customer_email: profile?.stripe_customer_id ? undefined : user.email,
@@ -83,11 +85,20 @@ export async function POST(req: NextRequest) {
         planKey,
         userId,
       },
+      subscription_data: {
+        metadata: {
+          planKey,
+          userId,
+        },
+      },
     });
 
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Erro interno";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Stripe checkout error:", err);
+    return NextResponse.json(
+      { error: "Nao foi possivel iniciar o pagamento." },
+      { status: 500 },
+    );
   }
 }

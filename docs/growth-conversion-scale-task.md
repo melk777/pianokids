@@ -56,7 +56,7 @@ Objetivos:
 
 Critérios de pronto:
 
-- Landing com proposta direta e screenshots/video do PianoEngine.
+- Landing com proposta direta e screenshots/vídeo da Pianify.
 - Secao de prova social e beneficios orientados a resultado.
 - Pricing com ancoragem mensal/anual, reducao de risco e CTA rastreado.
 - Fluxo de checkout monitorado por `checkout_started` e `checkout_redirected`.

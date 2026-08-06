@@ -3,7 +3,7 @@ const path = require("path");
 const { Midi } = require("@tonejs/midi");
 
 /**
- * Script de Automação PianoKids: MIDI to Song JSON (Multi-Versão)
+ * Script de Automação Pianify: MIDI to Song JSON (Multi-Versão)
  * Agora suporta pares de arquivos (ex: nome-1.mid e nome-2.mid)
  * para gerar versões de 1 mão e 2 mãos no mesmo JSON.
  */

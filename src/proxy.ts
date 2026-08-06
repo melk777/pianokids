@@ -11,11 +11,40 @@ function isStudentExperienceRoute(pathname: string) {
   );
 }
 
-export async function middleware(request: NextRequest) {
+function isAlwaysPublicRoute(pathname: string) {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/api/auth/local-test") ||
+    pathname.startsWith("/api/auth/turnstile-key") ||
+    pathname.startsWith("/api/analytics/event") ||
+    pathname.startsWith("/api/stripe/checkout") ||
+    pathname.startsWith("/api/stripe/webhook") ||
+    pathname.startsWith("/professores") ||
+    pathname.startsWith("/privacidade") ||
+    pathname.startsWith("/termos") ||
+    pathname.startsWith("/reembolso") ||
+    pathname.startsWith("/contato")
+  );
+}
+
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const hasLocalDevAuth =
     isLocalDevAuthAllowed(request.nextUrl.hostname) &&
     request.cookies.get(LOCAL_DEV_AUTH_COOKIE)?.value === "1";
+
+  if (isAlwaysPublicRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (hasLocalDevAuth) {
+    if (pathname.startsWith("/login")) {
+      return NextResponse.redirect(new URL("/dashboard/songs", request.url));
+    }
+
+    return NextResponse.next();
+  }
 
   let response = NextResponse.next({
     request: {
@@ -23,9 +52,24 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (pathname.startsWith("/login")) {
+      return response;
+    }
+
+    if (process.env.NODE_ENV === "production") {
+      return new NextResponse("Service temporarily unavailable.", { status: 503 });
+    }
+
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {
@@ -73,26 +117,10 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isPublicRoute =
-    pathname === "/" ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/api/auth/local-test") ||
-    pathname.startsWith("/professores") ||
-    pathname.startsWith("/privacidade") ||
-    pathname.startsWith("/api/auth/turnstile-key") ||
-    pathname.startsWith("/api/analytics/event") ||
-    pathname.startsWith("/api/stripe/checkout") ||
-    pathname.startsWith("/api/stripe/webhook");
+  const isPublicRoute = pathname.startsWith("/login");
 
   if (!user && !hasLocalDevAuth && !isPublicRoute) {
     return NextResponse.redirect(new URL("/login", request.url), {
-      headers: response.headers,
-    });
-  }
-
-  if (hasLocalDevAuth && pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/dashboard/songs", request.url), {
       headers: response.headers,
     });
   }

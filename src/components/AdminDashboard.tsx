@@ -146,6 +146,33 @@ interface LaunchReadiness {
   }>;
 }
 
+function FinancialChartTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: unknown; color: string; name: string }>;
+  label?: string;
+}) {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="glass p-4 rounded-xl border border-white/10 text-xs shadow-2xl">
+      <p className="font-bold text-white mb-2 pb-2 border-b border-white/10">{label}</p>
+      {payload.map((entry, index) => {
+        const value = typeof entry.value === "number" ? entry.value : Number(entry.value || 0);
+        return (
+          <p key={index} className="flex gap-4 justify-between font-bold" style={{ color: entry.color }}>
+            <span>{entry.name}:</span>
+            <span>R$ {value.toFixed(2)}</span>
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   type AdminTab = 'overview' | 'growth' | 'launch' | 'financial' | 'withdrawals' | 'teachers';
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -329,7 +356,13 @@ export default function AdminDashboard() {
         throw new Error("O comprovante deve ter no maximo 5 MB.");
       }
 
-      const fileExt = uploadFile.name.split('.').pop();
+      const extensionByType: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp",
+        "application/pdf": "pdf",
+      };
+      const fileExt = extensionByType[uploadFile.type];
       const fileName = `${selectedWithdrawal.id}_${Date.now()}.${fileExt}`;
       const { error: uploadError } = await supabase.storage
         .from('receipts')
@@ -337,15 +370,13 @@ export default function AdminDashboard() {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage.from('receipts').getPublicUrl(fileName);
-
       const res = await fetch('/api/admin/withdrawals', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           withdrawal_id: selectedWithdrawal.id,
           status: 'aprovado',
-          receipt_url: publicUrl,
+          receipt_path: fileName,
           teacher_id: selectedWithdrawal.teacher_id,
           amount: selectedWithdrawal.amount
         })
@@ -377,7 +408,7 @@ export default function AdminDashboard() {
             body: JSON.stringify({
               withdrawal_id: selectedWithdrawal.id,
               status: 'rejeitado',
-              receipt_url: null,
+              receipt_path: null,
               teacher_id: selectedWithdrawal.teacher_id,
               amount: selectedWithdrawal.amount
             })
@@ -402,27 +433,6 @@ export default function AdminDashboard() {
   }
 
   const filteredTeachers = teachers.filter(t => t.full_name?.toLowerCase().includes(searchTeacher.toLowerCase()) || t.username?.toLowerCase().includes(searchTeacher.toLowerCase()));
-
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean, payload?: { value: unknown, color: string, name: string }[], label?: string }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="glass p-4 rounded-xl border border-white/10 text-xs shadow-2xl">
-          <p className="font-bold text-white mb-2 pb-2 border-b border-white/10">{label}</p>
-          {payload.map((entry, index: number) => {
-             const val = typeof entry.value === 'number' ? entry.value : Number(entry.value || 0);
-             return (
-               <p key={index} className="flex gap-4 justify-between font-bold" style={{ color: entry.color }}>
-                   <span>{entry.name}:</span>
-                   <span>R$ {val.toFixed(2)}</span>
-               </p>
-             );
-          })}
-
-        </div>
-      );
-    }
-    return null;
-  };
 
   // Filtragem local dos X meses para o Gráfico
   const visibleChartData = finances?.chartData.slice(-financialFilter) || [];
@@ -887,7 +897,7 @@ export default function AdminDashboard() {
                         <CartesianGrid strokeDasharray="3 3" stroke="#ffffff" opacity={0.05} vertical={false} />
                         <XAxis dataKey="name" stroke="#ffffff40" fontSize={12} tickLine={false} axisLine={false} dy={10} />
                         <YAxis stroke="#ffffff40" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `R$ ${val}`} />
-                        <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                        <RechartsTooltip content={<FinancialChartTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
                         <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px', fontWeight: 'bold', opacity: 0.7 }}/>
                         
                         <Area type="monotone" name="Faturamento Bruto" dataKey="faturamento" stroke="#00eaff" strokeWidth={3} fillOpacity={1} fill="url(#colorFaturamento)" />

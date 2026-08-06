@@ -30,7 +30,22 @@ export async function GET() {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return NextResponse.json({ withdrawals });
+
+    const withdrawalsWithSignedReceipts = await Promise.all(
+      (withdrawals ?? []).map(async (withdrawal) => {
+        if (!withdrawal.receipt_path) {
+          return { ...withdrawal, receipt_url: null };
+        }
+
+        const { data } = await supabase.storage
+          .from("receipts")
+          .createSignedUrl(withdrawal.receipt_path, 60 * 60);
+
+        return { ...withdrawal, receipt_url: data?.signedUrl ?? null };
+      }),
+    );
+
+    return NextResponse.json({ withdrawals: withdrawalsWithSignedReceipts });
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -41,18 +56,24 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { withdrawal_id, status, receipt_url, teacher_id, amount } = await request.json();
-    const normalizedAmount = Number(amount);
+    const { withdrawal_id, status, receipt_path } = await request.json();
     const allowedStatuses = new Set(["pendente", "aprovado", "concluido", "rejeitado"]);
 
-    if (
-      !withdrawal_id ||
-      !teacher_id ||
-      !allowedStatuses.has(status) ||
-      !Number.isFinite(normalizedAmount) ||
-      normalizedAmount < 0
-    ) {
+    if (typeof withdrawal_id !== "string" || !allowedStatuses.has(status)) {
       return NextResponse.json({ error: "Dados invalidos" }, { status: 400 });
+    }
+
+    let normalizedReceiptPath: string | null = null;
+    if (receipt_path) {
+      const candidate = String(receipt_path);
+      if (!/^[0-9a-f-]{36}_\d+\.(?:jpg|png|webp|pdf)$/i.test(candidate)) {
+        return NextResponse.json({ error: "Caminho do comprovante invalido" }, { status: 400 });
+      }
+      normalizedReceiptPath = candidate;
+    }
+
+    if (status === "aprovado" && !normalizedReceiptPath) {
+      return NextResponse.json({ error: "Comprovante obrigatorio para aprovar" }, { status: 400 });
     }
 
     const cookieStore = await cookies();
@@ -68,28 +89,51 @@ export async function POST(request: Request) {
     const { data: adminProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
     if (adminProfile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { error: updErr } = await supabase
+    const { data: withdrawal, error: withdrawalError } = await supabase
       .from("withdrawals")
-      .update({ status, receipt_url, updated_at: new Date().toISOString() })
-      .eq("id", withdrawal_id);
+      .select("id, teacher_id, amount, status")
+      .eq("id", withdrawal_id)
+      .maybeSingle();
+
+    if (withdrawalError) throw withdrawalError;
+    if (!withdrawal) {
+      return NextResponse.json({ error: "Saque nao encontrado" }, { status: 404 });
+    }
+
+    const { data: updatedWithdrawal, error: updErr } = await supabase
+      .from("withdrawals")
+      .update({
+        status,
+        receipt_path: normalizedReceiptPath,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", withdrawal.id)
+      .select("id, teacher_id, amount, status, receipt_path, updated_at")
+      .single();
 
     if (updErr) throw updErr;
 
-    if (status === "concluido" || status === "aprovado") {
-      const { data: profBase } = await supabase
-        .from("profiles")
-        .select("balance_withdrawn_total")
-        .eq("id", teacher_id)
-        .single();
-      const currentSum = Number(profBase?.balance_withdrawn_total || 0);
+    const { data: paidWithdrawals, error: paidWithdrawalsError } = await supabase
+      .from("withdrawals")
+      .select("amount")
+      .eq("teacher_id", withdrawal.teacher_id)
+      .in("status", ["aprovado", "concluido"]);
 
-      await supabase
-        .from("profiles")
-        .update({ balance_withdrawn_total: currentSum + normalizedAmount })
-        .eq("id", teacher_id);
-    }
+    if (paidWithdrawalsError) throw paidWithdrawalsError;
 
-    return NextResponse.json({ success: true });
+    const paidTotal = (paidWithdrawals ?? []).reduce(
+      (sum, paidWithdrawal) => sum + Number(paidWithdrawal.amount || 0),
+      0,
+    );
+
+    const { error: profileUpdateError } = await supabase
+      .from("profiles")
+      .update({ balance_withdrawn_total: paidTotal })
+      .eq("id", withdrawal.teacher_id);
+
+    if (profileUpdateError) throw profileUpdateError;
+
+    return NextResponse.json({ success: true, withdrawal: updatedWithdrawal });
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

@@ -5,12 +5,25 @@ import { createClientComponent } from "@/lib/supabase";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { Profile } from "./useProfile";
 
+export type SocialProfile = Pick<
+  Profile,
+  | "id"
+  | "username"
+  | "full_name"
+  | "avatar_url"
+  | "trophies"
+  | "streak_days"
+  | "songs_completed"
+  | "last_practice_date"
+  | "role"
+>;
+
 export interface FriendshipData {
   id: string;
   sender_id: string;
   receiver_id: string;
   status: 'pending' | 'accepted' | 'blocked';
-  friend_profile: Profile;
+  friend_profile: SocialProfile;
   isOnline?: boolean;
 }
 
@@ -30,28 +43,34 @@ export function useSocial() {
 
       const { data, error } = await supabase
         .from("friendships")
-        .select(`
-          *,
-          sender:sender_id(*),
-          receiver:receiver_id(*)
-        `)
+        .select("id, sender_id, receiver_id, status")
         .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
 
       if (error) throw error;
 
+      const profileIds = Array.from(
+        new Set((data ?? []).flatMap((item) => [item.sender_id, item.receiver_id])),
+      );
+      const { data: publicProfiles, error: profilesError } = profileIds.length
+        ? await supabase
+            .from("public_profiles")
+            .select("id, username, full_name, avatar_url, trophies, streak_days, songs_completed, last_practice_date, role")
+            .in("id", profileIds)
+        : { data: [], error: null };
+
+      if (profilesError) throw profilesError;
+
+      const profilesById = new Map(
+        (publicProfiles ?? []).map((profile) => [profile.id, profile as SocialProfile]),
+      );
+
       const formattedFriends: FriendshipData[] = [];
       const formattedPending: FriendshipData[] = [];
 
-      data?.forEach((item: {
-        id: string;
-        sender_id: string;
-        receiver_id: string;
-        status: 'pending' | 'accepted' | 'blocked';
-        sender: Profile;
-        receiver: Profile;
-      }) => {
+      data?.forEach((item) => {
         const isSender = item.sender_id === user.id;
-        const friendProfile = isSender ? item.receiver : item.sender;
+        const friendProfile = profilesById.get(isSender ? item.receiver_id : item.sender_id);
+        if (!friendProfile) return;
         
         const friendship: FriendshipData = {
           id: item.id,
@@ -88,13 +107,13 @@ export function useSocial() {
   const searchUsers = async (query: string) => {
     if (query.length < 3) return [];
     const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
+      .from("public_profiles")
+      .select("id, username, full_name, avatar_url, trophies, streak_days, songs_completed, last_practice_date, role")
       .ilike("username", `%${query}%`)
       .limit(5);
     
     if (error) return [];
-    return data as Profile[];
+    return data as SocialProfile[];
   };
 
   const sendFriendRequest = async (receiverId: string) => {

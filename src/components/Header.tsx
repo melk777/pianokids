@@ -15,7 +15,7 @@ import {
   GraduationCap,
   LifeBuoy,
 } from "lucide-react";
-import { createClientComponent } from "@/lib/supabase";
+import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { User as AuthUser, Session } from "@supabase/supabase-js";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useSFX } from "@/hooks/useSFX";
@@ -24,8 +24,10 @@ import { useProfile } from "@/hooks/useProfile";
 import Image from "next/image";
 
 export default function Header() {
-  const supabase = useMemo(() => createClientComponent(), []);
-  const auth = supabase.auth;
+  const supabase = useMemo(
+    () => (isSupabaseConfigured ? createClientComponent() : null),
+    [],
+  );
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
@@ -36,16 +38,18 @@ export default function Header() {
   const { profile } = useProfile();
 
   useEffect(() => {
-    auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
+    if (!supabase) return;
+
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setUser(session?.user ?? null);
     });
   
-    const { data: { subscription } } = auth.onAuthStateChange((_event: string, session: Session | null) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
       setUser(session?.user ?? null);
     });
   
     return () => subscription.unsubscribe();
-  }, [auth]);
+  }, [supabase]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -71,7 +75,9 @@ export default function Header() {
  
   const handleLogout = async () => {
     playClick();
-    await auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     window.location.href = "/";
   };
 

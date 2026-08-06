@@ -159,7 +159,7 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-              O PianoEngine mostra as notas, ouve seu instrumento pelo microfone e guia sua evolucao como um jogo musical. 
+              A Pianify mostra as notas, ouve seu instrumento pelo microfone e guia sua evolução como um jogo musical.
             </p>
 
 
@@ -320,7 +320,13 @@ export default function Home() {
                     {LIBRARY_PREVIEW.map((song) => (
                       <div key={song.title} className="overflow-hidden rounded-[1.3rem] border border-white/10 bg-white/[0.03]">
                         <div className="relative aspect-[4/5]">
-                          <Image src={song.image} alt={song.title} fill className="object-cover object-top" />
+                          <Image
+                            src={song.image}
+                            alt={song.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 320px"
+                            className="object-cover object-top"
+                          />
                         </div>
                         <div className="p-3">
                           <p className="text-sm font-black text-white">{song.title}</p>
@@ -439,7 +445,7 @@ export default function Home() {
                 </span>
               </h2>
               <p className="mx-auto max-w-2xl text-white/50 text-lg md:text-xl">
-                Acesso ao PianoEngine, biblioteca guiada, progresso salvo, treino focado e acompanhamento para estudar no seu teclado real.
+                Acesso completo à Pianify, biblioteca guiada, progresso salvo, treino focado e acompanhamento para estudar no seu teclado real.
               </p>
             </div>
 

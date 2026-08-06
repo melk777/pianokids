@@ -4,7 +4,12 @@ export const LOCAL_DEV_AUTH_COOKIE = "pianify_local_test";
 export const LOCAL_DEV_AUTH_STORAGE_KEY = "pianify.localTestAuth";
 
 export function isLocalDevHost(hostname: string | null | undefined) {
-  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname === "0.0.0.0"
+  );
 }
 
 export function isLocalDevAuthAllowed(hostname: string | null | undefined) {

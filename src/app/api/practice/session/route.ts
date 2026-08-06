@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import type { PracticeSession, Profile } from "@/lib/types";
 import { buildPracticeAggregate, getBrazilPracticeDate } from "@/lib/practiceHistory";
+
+function hasSupabaseEnv() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
 
 function isMissingPracticeSessionsTable(error: unknown) {
   return Boolean(
@@ -46,7 +54,15 @@ async function loadSessionData(userId: string) {
 }
 
 async function syncProfileAggregate(userId: string, aggregate: ReturnType<typeof buildPracticeAggregate>) {
-  const supabase = await getSupabase();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error("Configuracao segura do servidor ausente.");
+  }
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
   const updates: Partial<Profile> = {
     total_practice_time: aggregate.totalPracticeTime,
     songs_played: aggregate.songsPlayed,
@@ -72,6 +88,10 @@ async function syncProfileAggregate(userId: string, aggregate: ReturnType<typeof
 }
 
 export async function GET() {
+  if (!hasSupabaseEnv()) {
+    return NextResponse.json({ supported: false, aggregate: null, recentSessions: [] });
+  }
+
   try {
     const supabase = await getSupabase();
     const {
@@ -99,6 +119,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!hasSupabaseEnv()) {
+    return NextResponse.json(
+      { error: "Historico de pratica indisponivel neste ambiente." },
+      { status: 503 },
+    );
+  }
+
   try {
     const supabase = await getSupabase();
     const {

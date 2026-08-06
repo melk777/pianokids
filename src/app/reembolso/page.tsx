@@ -52,7 +52,7 @@ export default function ReembolsoPage() {
                 acesso ou solicitacao feita logo apos a compra sem uso relevante da plataforma.
               </p>
               <p>
-                A analise considera historico de acesso, inicio de aulas, uso do PianoEngine, periodo contratado e
+                A análise considera histórico de acesso, início de aulas, uso dos recursos da Pianify, período contratado e
                 regras do processador de pagamento.
               </p>
             </div>

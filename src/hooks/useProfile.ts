@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { createClientComponent } from "@/lib/supabase";
+import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { Profile } from "@/lib/types";
 import { mergeProfileWithPracticeAggregate } from "@/lib/practiceHistory";
 import { getLocalDevProfile, isLocalDevAuthEnabled } from "@/lib/localDevAuth";
@@ -31,7 +31,7 @@ function normalizeProfile(profile: Partial<Profile>): Profile {
 }
 
 export function useProfile() {
-  const supabase = createClientComponent();
+  const supabase = isSupabaseConfigured ? createClientComponent() : null;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +62,12 @@ export function useProfile() {
         return;
       }
 
+      if (!supabase) {
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
@@ -83,7 +89,7 @@ export function useProfile() {
             full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Aluno",
             username: user.email?.split("@")[0] || `user_${user.id.slice(0, 5)}`,
             username_changes_count: 0,
-            role: user.user_metadata?.role || "student",
+            role: user.user_metadata?.role === "teacher" ? "teacher" : "student",
             trophies: 1,
             streak_days: 0,
             total_practice_time: 0,
@@ -121,6 +127,8 @@ export function useProfile() {
 
   const updateProfile = async (updates: Partial<Profile>) => {
     try {
+      if (!supabase) throw new Error("Supabase nao configurado");
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuario nao autenticado");
 
@@ -131,9 +139,13 @@ export function useProfile() {
         updates.username_changes_count = 1;
       }
 
-      const cleanUpdates = { ...updates };
-      delete cleanUpdates.id;
-      delete cleanUpdates.updated_at;
+      const cleanUpdates: Partial<Pick<Profile, "full_name" | "username" | "avatar_url" | "username_changes_count">> = {};
+      if ("full_name" in updates) cleanUpdates.full_name = updates.full_name;
+      if ("username" in updates) cleanUpdates.username = updates.username;
+      if ("avatar_url" in updates) cleanUpdates.avatar_url = updates.avatar_url;
+      if ("username_changes_count" in updates) {
+        cleanUpdates.username_changes_count = updates.username_changes_count;
+      }
 
       const { data, error: updateError } = await supabase
         .from("profiles")
@@ -163,6 +175,8 @@ export function useProfile() {
 
   const uploadAvatar = async (file: File) => {
     try {
+      if (!supabase) throw new Error("Supabase nao configurado");
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuario nao autenticado");
 
@@ -269,8 +283,10 @@ export function useProfile() {
 
   const getPublicProfile = useCallback(async (username: string) => {
     try {
+      if (!supabase) throw new Error("Supabase nao configurado");
+
       const { data, error } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("*")
         .eq("username", username)
         .single();

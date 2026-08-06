@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { createClientComponent } from "@/lib/supabase";
+import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import SocialTray from "./SocialTray";
 import ChatWindow from "./ChatWindow";
 import { FriendshipData } from "@/hooks/useSocial";
@@ -11,11 +11,13 @@ import { User } from "@supabase/supabase-js";
 
 export default function GlobalSocialOverlay() {
   const pathname = usePathname();
-  const supabase = createClientComponent();
+  const supabase = isSupabaseConfigured ? createClientComponent() : null;
   const [user, setUser] = useState<User | null>(null);
   const [selectedFriendship, setSelectedFriendship] = useState<FriendshipData | null>(null);
 
   useEffect(() => {
+    if (!supabase) return;
+
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);

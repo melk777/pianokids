@@ -28,7 +28,7 @@ jobs:
           node-version: 24
           cache: 'npm'
       - name: Instalar Dependências
-        run: npm ci || npm install
+        run: npm ci
       - name: Validar Configuração de Segredos
         run: |
           echo "Verificando presença de variáveis críticas (sem mostrar valores)..."
@@ -42,5 +42,9 @@ jobs:
           fi
       - name: Checagem de Tipos (TypeScript)
         run: npx tsc --noEmit
+      - name: ESLint
+        run: npm run lint
+      - name: Auditoria de Dependencias de Producao
+        run: npm audit --omit=dev --audit-level=high
       - name: Build de Produção (Next.js)
         run: npm run build

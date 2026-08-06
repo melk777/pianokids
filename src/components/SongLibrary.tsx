@@ -383,6 +383,7 @@ const SongCard = memo(function SongCard({
             alt={song.title}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+            loading={categoryIndex === 0 && index < 3 ? "eager" : "lazy"}
             onError={() => setCoverFailed(true)}
             className={`object-cover transition-all duration-500 group-hover:blur-sm ${
               isLocked ? "grayscale opacity-50" : "opacity-80 group-hover:brightness-50"

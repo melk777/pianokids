@@ -27,6 +27,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+/.env.local
 .env*.local
 "`.env.local`"
 '`.env.local`'
@@ -37,9 +38,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# supabase local state
+/supabase/.temp/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+.env*

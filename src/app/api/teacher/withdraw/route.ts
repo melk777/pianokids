@@ -64,7 +64,31 @@ async function calculateAvailableBalance(userId: string) {
   }
 
   const withdrawn = Number(teacherProfile.balance_withdrawn_total || 0);
-  return Math.max(0, balanceAvailableTotal - withdrawn);
+  const { data: pendingWithdrawals, error: pendingWithdrawalsError } = await supabaseAdmin
+    .from("withdrawals")
+    .select("amount")
+    .eq("teacher_id", userId)
+    .eq("status", "pendente");
+
+  if (pendingWithdrawalsError) {
+    throw pendingWithdrawalsError;
+  }
+
+  const reserved = (pendingWithdrawals ?? []).reduce(
+    (sum, withdrawal) => sum + Number(withdrawal.amount || 0),
+    0,
+  );
+
+  return Math.max(0, balanceAvailableTotal - withdrawn - reserved);
+}
+
+function isUniqueViolation(error: unknown) {
+  return Boolean(
+    error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code?: string }).code === "23505",
+  );
 }
 
 export async function GET() {
@@ -83,7 +107,7 @@ export async function GET() {
 
     const { data: withdrawals, error } = await supabase
       .from("withdrawals")
-      .select("*")
+      .select("id, amount, status, created_at, updated_at")
       .eq("teacher_id", user.id)
       .order("created_at", { ascending: false });
 
@@ -136,6 +160,12 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
+      if (isUniqueViolation(error)) {
+        return NextResponse.json(
+          { error: "Ja existe uma solicitacao de saque pendente." },
+          { status: 409 },
+        );
+      }
       throw error;
     }
 

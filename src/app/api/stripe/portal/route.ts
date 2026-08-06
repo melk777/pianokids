@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { getStripe } from "@/lib/stripe";
+import { getURL } from "@/lib/utils/url";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     const cookieStore = await cookies();
     const supabase = createServerClient(
@@ -55,10 +57,24 @@ export async function POST(req: NextRequest) {
       }
 
       if (customerId) {
-        await supabase
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (!supabaseUrl || !serviceRoleKey) {
+          throw new Error("Configuracao segura do servidor ausente.");
+        }
+
+        const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+        });
+
+        const { error: profileUpdateError } = await supabaseAdmin
           .from("profiles")
           .update({ stripe_customer_id: customerId })
           .eq("id", userId);
+
+        if (profileUpdateError) {
+          throw profileUpdateError;
+        }
       }
     }
 
@@ -73,13 +89,15 @@ export async function POST(req: NextRequest) {
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${req.nextUrl.origin}/dashboard/subscription`,
+      return_url: `${getURL()}/dashboard/subscription`,
     });
 
     return NextResponse.json({ url: portalSession.url });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Erro interno";
-    console.error("Stripe portal error:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Stripe portal error:", err);
+    return NextResponse.json(
+      { error: "Nao foi possivel abrir o portal da assinatura." },
+      { status: 500 },
+    );
   }
 }

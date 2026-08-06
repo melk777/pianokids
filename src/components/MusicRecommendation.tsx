@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Music, Sparkles, Lock, CheckCircle2, Loader2 } from "lucide-react";
-import { createClientComponent } from "@/lib/supabase";
+import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { useSFX } from "@/hooks/useSFX";
 
 interface MusicRecommendationProps {
@@ -16,11 +16,11 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { playClick } = useSFX();
-  const supabase = createClientComponent();
+  const supabase = isSupabaseConfigured ? createClientComponent() : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!hasPremium || !recommendation.trim() || isSubmitting) return;
+    if (!supabase || !hasPremium || !recommendation.trim() || isSubmitting) return;
 
     playClick();
     setIsSubmitting(true);
@@ -42,6 +42,8 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
       setIsSubmitting(false);
     }
   };
+
+  if (!supabase) return null;
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-16 mb-12 px-2">

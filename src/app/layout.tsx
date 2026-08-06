@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+    <html lang="pt-BR" className="dark" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${pianoRegular.variable} ${pianoBold.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
         suppressHydrationWarning

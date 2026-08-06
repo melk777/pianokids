@@ -1,138 +1,97 @@
-# 🎹 PianoKids
+# 🎹 Pianify
 
-> Transforme o aprendizado de piano em um jogo. Conecte seu teclado MIDI e comece a tocar.
+> Aprenda piano e teclado de forma gamificada. Use o teclado do computador, o microfone ou conecte um instrumento MIDI.
 
-![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19-149eca?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38bdf8?logo=tailwindcss)
 
----
+## Estado do projeto
 
-## 🚀 Stack Técnica
+O Pianify está em preparação para lançamento. A aplicação já possui biblioteca musical, motor de prática gamificado, autenticação com Supabase e assinaturas via Stripe. Antes de publicar em produção, ainda é necessário aplicar e validar o schema completo do banco, configurar os serviços externos e concluir os testes manuais descritos em [`docs/launch-readiness-audit.md`](docs/launch-readiness-audit.md).
+
+## Stack
 
 | Tecnologia | Uso |
 |---|---|
-| **Next.js 14** (App Router) | Framework full-stack |
-| **TypeScript** | Tipagem estática |
-| **Tailwind CSS** | Estilização (dark mode, #000) |
-| **Framer Motion** | Animações e transições |
-| **WebMIDI API** | Conexão com teclados MIDI |
-| **Stripe** | Pagamentos e assinaturas |
+| Next.js 16 (App Router) | Aplicação web full-stack |
+| React 19 e TypeScript | Interface e tipagem |
+| Tailwind CSS e Framer Motion | Design e animações |
+| Supabase | Autenticação e banco de dados |
+| Stripe | Pagamentos e assinaturas |
+| WebMIDI e Web Audio | Entrada e reprodução musical |
+| Vercel | Hospedagem prevista |
 
----
+## Executar localmente
 
-## 📁 Estrutura do Projeto
-
-```
-src/
-├── app/
-│   ├── api/stripe/
-│   │   ├── checkout/route.ts    # Criar sessão de checkout
-│   │   ├── portal/route.ts      # Portal do cliente
-│   │   └── webhook/route.ts     # Webhooks do Stripe
-│   ├── dashboard/
-│   │   ├── page.tsx             # Dashboard principal
-│   │   ├── songs/page.tsx       # Seleção de músicas
-│   │   ├── practice/page.tsx    # Prática livre
-│   │   └── play/[songId]/page.tsx # Motor do jogo
-│   ├── layout.tsx               # Layout raiz
-│   ├── globals.css              # Estilos globais
-│   └── page.tsx                 # Landing page
-├── components/
-│   ├── HeroAnimation.tsx        # Animação do hero
-│   ├── Navbar.tsx               # Barra de navegação
-│   ├── Piano.tsx                # Piano visual SVG
-│   ├── PricingCard.tsx          # Card de preço
-│   └── WaterfallGame.tsx        # Motor do jogo waterfall
-├── hooks/
-│   └── useMIDI.ts               # Hook WebMIDI
-└── lib/
-    ├── songs.ts                 # Dados das músicas
-    └── stripe.ts                # Cliente Stripe
-```
-
----
-
-## ⚙️ Configuração
-
-### 1. Instalar dependências
+Requisitos: Node.js 20.9 ou superior e npm.
 
 ```bash
 npm install
-```
-
-### 2. Variáveis de ambiente
-
-Crie um arquivo `.env.local` na raiz do projeto:
-
-```env
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# Stripe Price IDs (crie os produtos no dashboard do Stripe)
-STRIPE_MONTHLY_PRICE_ID=price_...
-STRIPE_YEARLY_PRICE_ID=price_...
-```
-
-> **Como obter as chaves do Stripe:**
-> 1. Acesse [dashboard.stripe.com](https://dashboard.stripe.com)
-> 2. Vá em **Developers > API keys** para obter as chaves
-> 3. Crie produtos em **Products** e copie os Price IDs
-> 4. Para webhook secret, veja a seção Webhooks abaixo
-
-### 3. Rodar localmente
-
-```bash
+copy .env.example .env.local
 npm run dev
 ```
 
-Acesse [http://localhost:3000](http://localhost:3000)
+Acesse [http://localhost:3000](http://localhost:3000). Sem credenciais externas, as páginas públicas funcionam em modo degradado e o login real permanece indisponível.
 
----
+Para experimentar localmente sem Supabase, use o botão de acesso local exibido na tela de login. Esse recurso só funciona em desenvolvimento.
 
-## 🎹 Conectar Teclado MIDI
+## Variáveis de ambiente
 
-1. Conecte o teclado MIDI via **USB** ao computador
-2. Abra o PianoKids no **Chrome** ou **Edge** (necessário para WebMIDI)
-3. Clique em **"Conectar Teclado"** e permita o acesso
-4. As notas aparecerão em tempo real no piano visual
+Use [`.env.example`](.env.example) como referência. Nunca envie `.env.local` ou chaves secretas ao Git.
 
-> **Nota:** WebMIDI não é suportado no Firefox ou Safari. Use Chrome ou Edge.
+| Variável | Finalidade |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL pública do projeto Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave pública/anon do Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Operações protegidas no servidor |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Chave pública do Cloudflare Turnstile |
+| `SPECIAL_ACCESS_IDS` | IDs autorizados, separados por vírgula |
+| `STRIPE_SECRET_KEY` | Chave secreta do Stripe |
+| `STRIPE_WEBHOOK_SECRET` | Assinatura do webhook Stripe |
+| `STRIPE_MONTHLY_PRICE_ID` | Price ID do plano mensal |
+| `STRIPE_YEARLY_PRICE_ID` | Price ID do plano anual |
+| `NEXT_PUBLIC_BASE_URL` | URL canônica da aplicação |
+| `NEXT_PUBLIC_SITE_URL` | URL pública usada em redirecionamentos |
 
----
+## Teclado MIDI
 
-## 💳 Stripe Webhooks (Local)
+1. Conecte o instrumento MIDI via USB.
+2. Abra o Pianify no Chrome ou Edge.
+3. Entre em uma música ou prática livre.
+4. Autorize o acesso MIDI quando o navegador solicitar.
 
-Para testar webhooks localmente, use o [Stripe CLI](https://stripe.com/docs/stripe-cli):
+O suporte a WebMIDI varia por navegador e dispositivo. O microfone também exige HTTPS em produção e permissão explícita do usuário.
+
+## Qualidade e auditorias
 
 ```bash
-# Instalar Stripe CLI
-brew install stripe/stripe-cli/stripe
-
-# Login
-stripe login
-
-# Encaminhar webhooks para localhost
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-
-# Copie o webhook signing secret (whsec_...) para .env.local
+npm run lint
+npx tsc --noEmit
+npm run build
+npm run audit-song-library
+npm run audit-player-modes
+npm run audit-song-source-fidelity
+npm run audit-launch-readiness
 ```
 
----
+Os relatórios gerados ficam em [`docs/`](docs/).
 
-## 🎨 Design
+## Stripe em desenvolvimento
 
-- **Fundo:** Preto absoluto `#000`
-- **Fonte:** Geist (sans + mono)
-- **Acerto:** Cyan `#00EAFF`
-- **Erro:** Magenta `#FF00E5`
-- **Componentes:** Glassmorphism com blur + bordas translúcidas
-- **Animações:** Framer Motion em todas as transições
+Com o Stripe CLI autenticado, encaminhe eventos para a aplicação:
 
----
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
 
-## 📜 Licença
+Copie apenas o segredo `whsec_...` fornecido pela sessão para `STRIPE_WEBHOOK_SECRET` no seu `.env.local`. Use chaves e produtos de teste até que todo o fluxo de compra, renovação, cancelamento e falha de pagamento esteja validado.
+
+## Banco de dados
+
+As migrações versionadas ficam em [`supabase/migrations/`](supabase/migrations/). Não aplique migrações em produção antes de revisar o diff do schema, confirmar backup e testar em um projeto de desenvolvimento ou staging.
+
+## Licença
 
 Projeto privado. Todos os direitos reservados.

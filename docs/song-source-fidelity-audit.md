@@ -1,6 +1,6 @@
 # Auditoria de fidelidade musical contra MIDI fonte
 
-Gerado em 2026-04-28T21:22:35.519Z.
+Gerado em 2026-08-06T00:14:23.222Z.
 
 Este relatorio compara os JSONs finais com os MIDIs locais em public/midi. Ele mede preservacao de melodia, contorno, baixo/harmonia, duracao e densidade. Nao substitui conferencia com partitura oficial, mas aponta desvios musicais provaveis usando a fonte local disponivel.
 

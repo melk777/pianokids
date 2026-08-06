@@ -1,6 +1,6 @@
 # Auditoria da biblioteca de musicas
 
-Gerado em 2026-04-28T21:22:34.857Z.
+Gerado em 2026-08-06T00:15:50.799Z.
 
 Esta auditoria verifica consistencia interna, tocabilidade no player, marcacao de maos, dificuldade pedagogica, duracoes, lacunas, duplicidades e sinais harmonicos suspeitos. Fidelidade absoluta a cada obra original precisa de conferencia com partitura/audio de referencia por musica; aqui o relatorio aponta onde essa revisao humana deve entrar primeiro.
 

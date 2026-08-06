@@ -91,7 +91,7 @@ function buildGrowthAlerts(funnel: FunnelStep[], topSongs: Array<{ starts: numbe
       severity: pricingRate < 20 ? "critical" : "warning",
       metric: `${pricingRate}% das visitas viram a oferta`,
       diagnosis: "A primeira dobra pode nao estar levando o visitante rapido o bastante para a decisao comercial.",
-      action: "Teste um CTA mais direto no hero, reduza distracoes antes da oferta e mostre prova clara do pianoengine ainda no primeiro scroll.",
+      action: "Teste um CTA mais direto no hero, reduza distrações antes da oferta e mostre uma prova clara da experiência da Pianify ainda no primeiro scroll.",
       owner: "landing",
     });
   }
