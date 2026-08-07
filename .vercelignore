@@ -1,0 +1,6 @@
+# Source provenance and human-review artifacts are versioned in GitHub but are
+# not required by the Next.js runtime or the production build.
+music-sources/
+output/
+docs/
+tmp/
