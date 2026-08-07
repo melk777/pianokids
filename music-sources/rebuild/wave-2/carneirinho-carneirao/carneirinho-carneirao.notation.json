@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "id": "carneirinho-carneirao",
+  "title": "Carneirinho, Carneirao",
+  "composer": "Tradicional brasileiro",
+  "bpm": 100,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "F major",
+  "gate": 0.9,
+  "source": {
+    "work": "Carneirinho, Carneirao",
+    "transcription": "Independent Pianify notation of the public-domain Brazilian circle-song melody; checked against the UNESP public-domain staff and the CNFCP catalogue record.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midi": 69,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 0.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 1,
+          "duration": 1.5
+        },
+        {
+          "midi": 69,
+          "beat": 2.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 74,
+          "beat": 3,
+          "duration": 1.5
+        },
+        {
+          "midi": 72,
+          "beat": 4.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 5.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 6,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 6.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 7,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 7.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 8,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 8.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 9,
+          "duration": 1.5
+        },
+        {
+          "midi": 74,
+          "beat": 10.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 11,
+          "duration": 1.5
+        },
+        {
+          "midi": 70,
+          "beat": 12.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 13,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 13.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 14,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 14.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 15,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 16,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 16.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 17,
+          "duration": 1.5
+        },
+        {
+          "midi": 65,
+          "beat": 18.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 19,
+          "duration": 1.5
+        },
+        {
+          "midi": 69,
+          "beat": 20.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 21,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 21.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 22,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 22.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 23,
+          "duration": 1
+        },
+        {
+          "midi": 76,
+          "beat": 24,
+          "duration": 0.5
+        },
+        {
+          "midi": 74,
+          "beat": 24.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 25,
+          "duration": 1.5
+        },
+        {
+          "midi": 70,
+          "beat": 26.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 27,
+          "duration": 1.5
+        },
+        {
+          "midi": 67,
+          "beat": 28.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 29,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 30,
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            46,
+            53,
+            58,
+            62
+          ],
+          "beat": 12,
+          "duration": 4
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 16,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 20,
+          "duration": 4
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 24,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 28,
+          "duration": 4
+        }
+      ]
+    }
+  ]
+}

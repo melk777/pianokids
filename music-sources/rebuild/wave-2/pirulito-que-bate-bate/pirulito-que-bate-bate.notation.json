@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "id": "pirulito-que-bate-bate",
+  "title": "Pirulito que Bate Bate",
+  "composer": "Tradicional brasileiro",
+  "bpm": 108,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "C major",
+  "gate": 0.9,
+  "source": {
+    "work": "Pirulito que Bate Bate",
+    "transcription": "Independent Pianify notation of the traditional public-domain melody; public-domain status checked against the Sao Paulo state curriculum material.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 2,
+      "repeatLengthBeats": 16,
+      "events": [
+        {
+          "midi": 64,
+          "beat": 0,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 0.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 0.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 1,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 1.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 1.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 2,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 2.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 3,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 4,
+          "duration": 0.25
+        },
+        {
+          "midi": 64,
+          "beat": 4.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 4.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 5,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 5.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 64,
+          "beat": 5.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 6,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 6.5,
+          "duration": 1.25
+        },
+        {
+          "midi": 64,
+          "beat": 8,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 8.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 8.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 9,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 9.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 10,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 10.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 11,
+          "duration": 0.5
+        },
+        {
+          "midi": 71,
+          "beat": 11.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 12,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 12.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 13,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 13.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 14,
+          "duration": 0.5
+        },
+        {
+          "midi": 60,
+          "beat": 14.5,
+          "duration": 0.75
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 2,
+      "repeatLengthBeats": 16,
+      "events": [
+        {
+          "midis": [
+            36,
+            43,
+            48,
+            52
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            47,
+            50,
+            53
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            47,
+            50,
+            53
+          ],
+          "beat": 12,
+          "duration": 4
+        }
+      ]
+    }
+  ]
+}

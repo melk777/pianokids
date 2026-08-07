@@ -1,14 +1,14 @@
 # Auditoria de pre-lancamento comercial
 
-Gerado em: 2026-08-06T06:40:18.172Z
+Gerado em: 2026-08-07T20:07:21.867Z
 
 ## Resumo
 
-- Total: 38
-- OK: 35
-- Alertas: 3
+- Total: 44
+- OK: 40
+- Alertas: 4
 - Falhas: 0
-- Pendencias criticas abertas: 2
+- Pendencias criticas abertas: 3
 
 ## Checks
 
@@ -34,6 +34,11 @@ Gerado em: 2026-08-06T06:40:18.172Z
 | OK | stripe | checkout autenticado | critical | Checkout exige usuario autenticado e valida IDs de preco. |
 | OK | stripe | webhook assinado | critical | Webhook valida assinatura Stripe e usa service role apenas no servidor. |
 | OK | stripe | portal autenticado | high | Portal exige usuario autenticado. |
+| OK | qa | verificacao HTTP de release | high | O smoke test deve validar paginas publicas, protecao de rotas, checkout, webhook e respostas 404. |
+| OK | seo | metadados e descoberta | medium | Manifesto, robots, sitemap, Open Graph e Twitter Card devem estar configurados. |
+| OK | operations | endpoint de saude | high | O endpoint /api/health permite monitorar a disponibilidade sem autenticar. |
+| OK | resilience | estados globais de erro e carregamento | high | A aplicacao deve oferecer recuperacao para erro, carregamento e pagina inexistente. |
+| OK | privacy | cache e indexacao de areas privadas | high | APIs, login e dashboard nao devem ser armazenados por cache compartilhado nem indexados. |
 | OK | stripe | webhook solicita nova tentativa quando o banco falha | critical | Falhas de persistencia precisam retornar 5xx para o Stripe reenviar o evento. |
 | OK | admin-api | src/app/api/admin/analytics/route.ts | critical | Rota admin deve bloquear usuarios sem role admin. |
 | OK | admin-api | src/app/api/admin/expenses/route.ts | critical | Rota admin deve bloquear usuarios sem role admin. |
@@ -48,6 +53,7 @@ Gerado em: 2026-08-06T06:40:18.172Z
 | OK | security-headers | headers de seguranca | medium | Headers basicos de seguranca configurados no Next. |
 | OK | catalog | biblioteca carregavel | high | 90 arquivos de musica encontrados e indice publico existe. |
 | WARN | legal | direitos autorais das musicas | critical | Revisao juridica/manual ainda e necessaria antes de anunciar em escala. A auditoria tecnica nao comprova licenca comercial de melodias, arranjos, imagens ou marcas. |
+| WARN | catalog | revisao auditiva final da biblioteca | critical | As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao. |
 | OK | brand | nome comercial consistente | high | Pianify e o nome comercial usado na documentacao e no produto. |
 | OK | database | schema e migracoes reproduziveis | critical | Schema inicial e endurecimentos posteriores estao versionados em supabase/migrations. |
 | WARN | business | teste de compra real | critical | Exige teste manual em producao/sandbox Stripe: checkout, webhook, portal, cancelamento, past_due e reativacao. |

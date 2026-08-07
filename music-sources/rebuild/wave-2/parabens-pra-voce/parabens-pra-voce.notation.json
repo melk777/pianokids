@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "id": "parabens-pra-voce",
+  "title": "Happy Birthday / Parabens (instrumental)",
+  "composer": "Mildred J. Hill (melody)",
+  "bpm": 96,
+  "timeSignature": [
+    3,
+    4
+  ],
+  "key": "F major",
+  "gate": 0.9,
+  "source": {
+    "work": "Happy Birthday / Parabens (instrumental)",
+    "transcription": "Instrumental melody only, independently notated from Good Morning to All in Song Stories for the Kindergarten (1893); no Portuguese lyrics or modern arrangement are bundled.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 1,
+      "repeatLengthBeats": 24,
+      "events": [
+        {
+          "midi": 60,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 60,
+          "beat": 0.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 1,
+          "duration": 1
+        },
+        {
+          "midi": 60,
+          "beat": 2,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 3,
+          "duration": 1
+        },
+        {
+          "midi": 64,
+          "beat": 4,
+          "duration": 2
+        },
+        {
+          "midi": 60,
+          "beat": 6,
+          "duration": 0.5
+        },
+        {
+          "midi": 60,
+          "beat": 6.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 7,
+          "duration": 1
+        },
+        {
+          "midi": 60,
+          "beat": 8,
+          "duration": 1
+        },
+        {
+          "midi": 67,
+          "beat": 9,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 10,
+          "duration": 2
+        },
+        {
+          "midi": 60,
+          "beat": 12,
+          "duration": 0.5
+        },
+        {
+          "midi": 60,
+          "beat": 12.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 13,
+          "duration": 1
+        },
+        {
+          "midi": 69,
+          "beat": 14,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 15,
+          "duration": 1
+        },
+        {
+          "midi": 64,
+          "beat": 16,
+          "duration": 1
+        },
+        {
+          "midi": 62,
+          "beat": 17,
+          "duration": 1
+        },
+        {
+          "midi": 70,
+          "beat": 18,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 18.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 19,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 20,
+          "duration": 1
+        },
+        {
+          "midi": 67,
+          "beat": 21,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 22,
+          "duration": 2
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 1,
+      "repeatLengthBeats": 24,
+      "events": [
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 0,
+          "duration": 3
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 3,
+          "duration": 3
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 6,
+          "duration": 3
+        },
+        {
+          "midis": [
+            46,
+            53,
+            58,
+            62
+          ],
+          "beat": 9,
+          "duration": 3
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 12,
+          "duration": 3
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 15,
+          "duration": 3
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 18,
+          "duration": 3
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 21,
+          "duration": 3
+        }
+      ]
+    }
+  ]
+}

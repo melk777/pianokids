@@ -1,387 +1,133 @@
 const fs = require("fs");
 const path = require("path");
-const { Midi } = require("@tonejs/midi");
 const songManifest = require("./song-manifest");
-const { repairMojibake } = require("./text-normalization");
+const pilotCanonicalSongs = require("../music-sources/pilot/canonical-songs");
+const rebuildCanonicalSongs = require("../music-sources/rebuild/canonical-songs");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public/songs");
-const MIDI_DIR = path.join(ROOT_DIR, "public/midi");
-const REPORT_JSON = path.join(ROOT_DIR, "docs/song-source-fidelity-audit.json");
-const REPORT_MD = path.join(ROOT_DIR, "docs/song-source-fidelity-audit.md");
-const GROUP_WINDOW = 0.12;
+const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const PILOT_REPORT = path.join(ROOT_DIR, "docs", "music-pilot-audit.json");
+const REBUILD_REPORT = path.join(ROOT_DIR, "docs", "song-rebuild-audit.json");
+const REPORT_JSON = path.join(ROOT_DIR, "docs", "song-source-fidelity-audit.json");
+const REPORT_MD = path.join(ROOT_DIR, "docs", "song-source-fidelity-audit.md");
 
-function round(value, digits = 3) {
-  return Number(Number(value || 0).toFixed(digits));
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
-function noteEnd(note) {
-  return note.time + note.duration;
-}
-
-function sortNotes(notes) {
-  return [...notes].sort((a, b) => a.time - b.time || a.midi - b.midi);
-}
-
-function groupByTime(notes, window = GROUP_WINDOW) {
-  const groups = [];
-  for (const note of sortNotes(notes)) {
-    const previous = groups[groups.length - 1];
-    if (!previous || Math.abs(note.time - previous.time) > window) {
-      groups.push({ time: note.time, notes: [note] });
-    } else {
-      previous.notes.push(note);
-    }
+function buildCanonicalEntries() {
+  if (!fs.existsSync(PILOT_REPORT)) {
+    throw new Error("Relatorio do lote piloto ausente. Rode npm run audit-music-pilot primeiro.");
   }
-  return groups;
-}
+  const pilotReport = readJson(PILOT_REPORT);
+  const pilotById = new Map(pilotReport.songs.map((song) => [song.id, song]));
+  const entries = pilotCanonicalSongs.map((entry) => {
+    const audit = pilotById.get(entry.id);
+    if (!audit) throw new Error(`Auditoria canonica ausente para ${entry.id}.`);
+    return {
+      id: entry.id,
+      title: audit.title,
+      outputFile: entry.outputFile,
+      sourceClass: "canonical",
+      sourceKind: entry.source.kind,
+      sourceUrl: entry.source.sourceUrl,
+      license: entry.source.license,
+      verifiedAt: entry.source.verifiedAt,
+      exactFidelity: Boolean(audit.fidelity?.exact),
+      status: audit.status,
+      issues: audit.errors.map((message) => ({ severity: "high", code: "canonical_audit_failed", message })),
+      warnings: audit.warnings,
+    };
+  });
 
-function foldPitchClassDistance(a, b) {
-  const diff = Math.abs((a % 12) - (b % 12));
-  return Math.min(diff, 12 - diff);
-}
-
-function normalizeMidiFile(fileName) {
-  const midi = new Midi(fs.readFileSync(path.join(MIDI_DIR, fileName)));
-  const notes = [];
-  for (const track of midi.tracks) {
-    for (const note of track.notes) {
-      notes.push({
-        midi: note.midi,
-        time: round(note.time),
-        duration: round(Math.max(0.05, note.duration)),
-        velocity: round(note.velocity, 2),
-        hand: note.midi < 60 ? "left" : "right",
+  if (rebuildCanonicalSongs.length) {
+    if (!fs.existsSync(REBUILD_REPORT)) {
+      throw new Error("Relatorio das reconstrucoes ausente. Rode npm run audit-music-rebuild primeiro.");
+    }
+    const rebuildReport = readJson(REBUILD_REPORT);
+    const rebuildById = new Map(rebuildReport.songs.map((song) => [song.id, song]));
+    for (const entry of rebuildCanonicalSongs) {
+      const audit = rebuildById.get(entry.id);
+      if (!audit) throw new Error(`Auditoria de reconstrucao ausente para ${entry.id}.`);
+      entries.push({
+        id: entry.id,
+        title: audit.title,
+        outputFile: entry.outputFile,
+        sourceClass: "canonical",
+        sourceKind: entry.source.kind,
+        sourceUrl: entry.source.sourceUrl,
+        license: entry.source.license,
+        verifiedAt: entry.source.verifiedAt,
+        exactFidelity: Boolean(audit.fidelity?.exact),
+        status: audit.status,
+        issues: audit.errors.map((message) => ({ severity: "high", code: "canonical_audit_failed", message })),
+        warnings: audit.warnings,
       });
     }
   }
-  const firstTime = notes.length ? Math.min(...notes.map((note) => note.time)) : 0;
-  const shiftedNotes = notes.map((note) => ({
-    ...note,
-    time: round(Math.max(0, note.time - firstTime)),
-  }));
-  return {
-    fileName,
-    bpm: Math.round(midi.header.tempos[0]?.bpm || 120),
-    duration: round(Math.max(0, midi.duration - firstTime)),
-    notes: sortNotes(shiftedNotes),
-  };
+
+  return entries;
 }
 
-function pickReferenceSource(entry) {
-  const sources = entry.midiFiles.map(normalizeMidiFile);
-  return sources.sort((a, b) => b.notes.length - a.notes.length)[0];
-}
-
-function melodyFrom(notes) {
-  return groupByTime(notes)
-    .map((group) => [...group.notes].sort((a, b) => b.midi - a.midi || b.duration - a.duration)[0])
-    .filter(Boolean);
-}
-
-function bassFrom(notes) {
-  return groupByTime(notes)
-    .map((group) => [...group.notes].sort((a, b) => a.midi - b.midi || b.duration - a.duration)[0])
-    .filter(Boolean);
-}
-
-function nearestByTime(notes, time, tolerance) {
-  let best = null;
-  let bestDistance = Infinity;
-  for (const note of notes) {
-    const distance = Math.abs(note.time - time);
-    if (distance < bestDistance) {
-      best = note;
-      bestDistance = distance;
-    }
-    if (note.time > time + tolerance) break;
-  }
-  return bestDistance <= tolerance ? best : null;
-}
-
-function compareLine(referenceLine, candidateLine, tolerance) {
-  if (!referenceLine.length || !candidateLine.length) {
-    return {
-      coverage: 0,
-      pitchClassMatch: 0,
-      contourMatch: 0,
-      compared: 0,
-      matched: 0,
-    };
-  }
-
-  let matched = 0;
-  let pitchClassMatched = 0;
-  let contourMatched = 0;
-  let contourCompared = 0;
-  let previousReference = null;
-  let previousCandidate = null;
-
-  for (const referenceNote of referenceLine) {
-    const candidate = nearestByTime(candidateLine, referenceNote.time, tolerance);
-    if (!candidate) continue;
-    matched += 1;
-    if (foldPitchClassDistance(referenceNote.midi, candidate.midi) <= 1) {
-      pitchClassMatched += 1;
-    }
-    if (previousReference && previousCandidate) {
-      const referenceDirection = Math.sign(referenceNote.midi - previousReference.midi);
-      const candidateDirection = Math.sign(candidate.midi - previousCandidate.midi);
-      if (referenceDirection === candidateDirection || referenceDirection === 0 || candidateDirection === 0) {
-        contourMatched += 1;
-      }
-      contourCompared += 1;
-    }
-    previousReference = referenceNote;
-    previousCandidate = candidate;
-  }
-
-  return {
-    coverage: round(matched / referenceLine.length, 3),
-    pitchClassMatch: round(pitchClassMatched / Math.max(matched, 1), 3),
-    contourMatch: round(contourMatched / Math.max(contourCompared, 1), 3),
-    compared: referenceLine.length,
-    matched,
-  };
-}
-
-function compareReduction(referenceLine, candidateLine, tolerance) {
-  if (!referenceLine.length || !candidateLine.length) {
-    return {
-      coverage: 0,
-      pitchClassMatch: 0,
-      contourMatch: 0,
-      compared: candidateLine.length,
-      matched: 0,
-    };
-  }
-
-  let matched = 0;
-  let pitchClassMatched = 0;
-  let contourMatched = 0;
-  let contourCompared = 0;
-  let previousReference = null;
-  let previousCandidate = null;
-
-  for (const candidate of candidateLine) {
-    const referenceNote = nearestByTime(referenceLine, candidate.time, tolerance);
-    if (!referenceNote) continue;
-    matched += 1;
-    if (foldPitchClassDistance(referenceNote.midi, candidate.midi) <= 1) {
-      pitchClassMatched += 1;
-    }
-    if (previousReference && previousCandidate) {
-      const referenceDirection = Math.sign(referenceNote.midi - previousReference.midi);
-      const candidateDirection = Math.sign(candidate.midi - previousCandidate.midi);
-      if (referenceDirection === candidateDirection || referenceDirection === 0 || candidateDirection === 0) {
-        contourMatched += 1;
-      }
-      contourCompared += 1;
-    }
-    previousReference = referenceNote;
-    previousCandidate = candidate;
-  }
-
-  return {
-    coverage: round(matched / candidateLine.length, 3),
-    pitchClassMatch: round(pitchClassMatched / Math.max(matched, 1), 3),
-    contourMatch: round(contourMatched / Math.max(contourCompared, 1), 3),
-    compared: candidateLine.length,
-    matched,
-  };
-}
-
-function density(notes, duration) {
-  return round(notes.length / Math.max(duration / 60, 0.01), 2);
-}
-
-function auditSong(entry) {
-  const song = JSON.parse(fs.readFileSync(path.join(SONGS_DIR, entry.outputFile), "utf8"));
-  const reference = pickReferenceSource(entry);
-  const hard = song.arrangements?.hard || song.notes || [];
-  const medium = song.arrangements?.medium || [];
-  const easy = song.arrangements?.easy || song.notes1Hand || [];
-  const referenceMelody = melodyFrom(reference.notes);
-  const referenceBass = bassFrom(reference.notes);
-  const hardMelody = melodyFrom(hard);
-  const mediumMelody = melodyFrom(medium);
-  const easyMelody = melodyFrom(easy);
-  const hardBass = bassFrom(hard);
-  const timeTolerance = Math.max(0.28, 60 / Math.max(reference.bpm, 45) / 2);
-
-  const hardMelodyMatch = compareLine(referenceMelody, hardMelody, timeTolerance);
-  const easyMelodyMatch = compareReduction(referenceMelody, easyMelody, timeTolerance * 1.5);
-  const mediumMelodyMatch = compareReduction(referenceMelody, mediumMelody, timeTolerance * 1.25);
-  const bassMatch = compareLine(referenceBass, hardBass, timeTolerance);
-  const durationRatio = round((song.duration || 0) / Math.max(reference.duration, 1), 3);
-  const hardDensityRatio = round(density(hard, song.duration || reference.duration) / Math.max(density(reference.notes, reference.duration), 0.01), 3);
-  const issues = [];
-
-  if (hardMelodyMatch.pitchClassMatch < 0.65 || hardMelodyMatch.contourMatch < 0.75) {
-    issues.push({
-      severity: "high",
-      code: "hard_melody_drift",
-      message: "A versao hard parece distante da melodia do MIDI fonte.",
+function buildLegacyEntries(canonicalIds) {
+  return songManifest
+    .filter((entry) => !canonicalIds.has(entry.id))
+    .map((entry) => {
+      const songPath = path.join(SONGS_DIR, entry.outputFile);
+      const song = fs.existsSync(songPath) ? readJson(songPath) : null;
+      return {
+        id: entry.id,
+        title: song?.title || entry.id,
+        outputFile: entry.outputFile,
+        sourceClass: "legacy_unverified",
+        sourceKind: "legacy_midi",
+        sourceUrl: null,
+        license: null,
+        verifiedAt: null,
+        exactFidelity: false,
+        status: "unverified_legacy",
+        issues: [
+          {
+            severity: "high",
+            code: "missing_canonical_source",
+            message: "O MIDI local nao tem fonte, edicao e licenca independentes; fidelidade musical ainda nao comprovada.",
+          },
+        ],
+        warnings: [],
+      };
     });
-  }
-  if (easyMelodyMatch.coverage < 0.82 || easyMelodyMatch.pitchClassMatch < 0.62 || easyMelodyMatch.contourMatch < 0.55) {
-    issues.push({
-      severity: "medium",
-      code: "easy_melody_weak",
-      message: "A versao facil preserva pouco da melodia/contorno do MIDI fonte.",
-    });
-  }
-  if (mediumMelodyMatch.coverage < 0.82 || mediumMelodyMatch.pitchClassMatch < 0.68) {
-    issues.push({
-      severity: "medium",
-      code: "medium_melody_weak",
-      message: "A versao intermediaria precisa preservar melhor a melodia principal.",
-    });
-  }
-  if (bassMatch.pitchClassMatch < 0.55 && referenceBass.length > 20) {
-    issues.push({
-      severity: "low",
-      code: "bass_harmony_changed",
-      message: "O baixo/harmonia da versao hard mudou bastante em relacao ao MIDI fonte.",
-    });
-  }
-  if (durationRatio < 0.92 || durationRatio > 1.12) {
-    issues.push({
-      severity: "medium",
-      code: "duration_drift",
-      message: "Duracao final diverge muito do MIDI fonte.",
-    });
-  }
-  if (hardDensityRatio < 0.35 && hardMelodyMatch.pitchClassMatch < 0.8) {
-    issues.push({
-      severity: "low",
-      code: "hard_over_simplified",
-      message: "A versao hard foi simplificada demais em relacao ao MIDI fonte.",
-    });
-  }
-
-  return {
-    id: entry.id,
-    title: repairMojibake(song.title),
-    referenceFile: reference.fileName,
-    bpm: song.bpm,
-    referenceBpm: reference.bpm,
-    duration: song.duration,
-    referenceDuration: reference.duration,
-    durationRatio,
-    noteCounts: {
-      reference: reference.notes.length,
-      hard: hard.length,
-      medium: medium.length,
-      easy: easy.length,
-    },
-    hardDensityRatio,
-    hardMelodyMatch,
-    mediumMelodyMatch,
-    easyMelodyMatch,
-    bassMatch,
-    issues,
-    status: issues.some((issue) => issue.severity === "high")
-      ? "needs_fix"
-      : issues.length
-        ? "review"
-        : "ok",
-  };
-}
-
-function summarize(songs) {
-  const summary = {
-    songs: songs.length,
-    ok: songs.filter((song) => song.status === "ok").length,
-    review: songs.filter((song) => song.status === "review").length,
-    needsFix: songs.filter((song) => song.status === "needs_fix").length,
-    issuesBySeverity: { high: 0, medium: 0, low: 0 },
-    issuesByCode: {},
-  };
-
-  for (const song of songs) {
-    for (const issue of song.issues) {
-      summary.issuesBySeverity[issue.severity] += 1;
-      summary.issuesByCode[issue.code] = (summary.issuesByCode[issue.code] || 0) + 1;
-    }
-  }
-
-  return summary;
-}
-
-function mdEscape(value) {
-  return String(value ?? "").replace(/\|/g, "\\|");
 }
 
 function renderMarkdown(report) {
-  const top = [...report.songs]
-    .sort((a, b) => b.issues.length - a.issues.length)
-    .slice(0, 25)
-    .map((song) => `- ${song.id}: ${song.status}. ${song.issues.map((issue) => `[${issue.severity}] ${issue.code}`).join(", ") || "Sem alertas"}`)
+  const canonicalRows = report.songs
+    .filter((song) => song.sourceClass === "canonical")
+    .map((song) => `| ${song.title} | ${song.sourceKind} | ${song.license} | ${song.exactFidelity ? "sim" : "nao"} | ${song.status} | ${song.warnings.join(" ") || "-"} |`)
     .join("\n");
+  const legacy = report.songs.filter((song) => song.sourceClass === "legacy_unverified");
 
-  const rows = report.songs
-    .map((song) =>
-      [
-        song.id,
-        song.title,
-        song.referenceFile,
-        song.status,
-        song.hardMelodyMatch.pitchClassMatch,
-        song.easyMelodyMatch.pitchClassMatch,
-        song.easyMelodyMatch.contourMatch,
-        song.bassMatch.pitchClassMatch,
-        song.durationRatio,
-        song.hardDensityRatio,
-        song.issues.map((issue) => issue.code).join(", ") || "ok",
-      ]
-        .map(mdEscape)
-        .join(" | "),
-    )
-    .join("\n");
-
-  return `# Auditoria de fidelidade musical contra MIDI fonte
-
-Gerado em ${report.generatedAt}.
-
-Este relatorio compara os JSONs finais com os MIDIs locais em public/midi. Ele mede preservacao de melodia, contorno, baixo/harmonia, duracao e densidade. Nao substitui conferencia com partitura oficial, mas aponta desvios musicais provaveis usando a fonte local disponivel.
-
-## Resumo
-
-- Musicas analisadas: ${report.summary.songs}
-- OK: ${report.summary.ok}
-- Revisao: ${report.summary.review}
-- Precisa correcao: ${report.summary.needsFix}
-- Issues: high=${report.summary.issuesBySeverity.high}, medium=${report.summary.issuesBySeverity.medium}, low=${report.summary.issuesBySeverity.low}
-
-## Prioridade
-
-${top}
-
-## Tabela
-
-| ID | Titulo | MIDI fonte | Status | Hard melodia | Easy melodia | Easy contorno | Baixo | Duracao | Densidade hard | Alertas |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-${rows}
-`;
+  return `# Auditoria de fidelidade musical por procedencia\n\nGerado em ${report.generatedAt}.\n\nEste relatorio nao usa mais o proprio MIDI legado como prova de fidelidade. Uma musica so e classificada como canonica quando possui fonte independente, edicao, licenca, data de verificacao e comparacao exata com o resultado final.\n\n## Resumo\n\n- Catalogo total: ${report.summary.songs}\n- Fontes canonicas prontas para revisao: ${report.summary.canonicalReadyForReview}\n- Fontes canonicas bloqueadas: ${report.summary.canonicalBlocked}\n- Legado ainda sem verificacao independente: ${report.summary.legacyUnverified}\n- Fidelidade exata comprovada: ${report.summary.exactFidelity}\n\n## Lote canonico\n\n| Musica | Tipo de fonte | Licenca | Fidelidade exata | Estado | Avisos |\n| --- | --- | --- | --- | --- | --- |\n${canonicalRows}\n\n## Catalogo legado\n\nAs ${legacy.length} musicas restantes permanecem disponiveis no repositorio, mas devem ser ocultadas de um lancamento de qualidade ate receberem o mesmo tratamento do lote piloto. O antigo resultado 90/90 foi invalidado porque comparava os JSONs com os mesmos MIDIs que os geraram.\n\nIDs pendentes: ${legacy.map((song) => song.id).join(", ")}.\n`;
 }
 
 function main() {
-  const songs = songManifest.map(auditSong);
+  const canonical = buildCanonicalEntries();
+  const canonicalIds = new Set(canonical.map((song) => song.id));
+  const legacy = buildLegacyEntries(canonicalIds);
+  const songs = [...canonical, ...legacy];
   const report = {
     generatedAt: new Date().toISOString(),
-    summary: summarize(songs),
+    methodology: "canonical_provenance_v2",
+    summary: {
+      songs: songs.length,
+      canonicalReadyForReview: canonical.filter((song) => song.status === "ready_for_owner_review").length,
+      canonicalBlocked: canonical.filter((song) => song.status === "blocked").length,
+      legacyUnverified: legacy.length,
+      exactFidelity: canonical.filter((song) => song.exactFidelity).length,
+    },
     songs,
   };
-
   fs.writeFileSync(REPORT_JSON, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   fs.writeFileSync(REPORT_MD, renderMarkdown(report), "utf8");
-
-  console.log(`Fidelidade MIDI: OK=${report.summary.ok} | revisao=${report.summary.review} | precisa correcao=${report.summary.needsFix}`);
-  console.log(`Issues: high=${report.summary.issuesBySeverity.high}, medium=${report.summary.issuesBySeverity.medium}, low=${report.summary.issuesBySeverity.low}`);
-  console.log(`Relatorios gerados:`);
-  console.log(`- ${path.relative(ROOT_DIR, REPORT_MD)}`);
-  console.log(`- ${path.relative(ROOT_DIR, REPORT_JSON)}`);
+  console.log(`Procedencia musical: canonicas=${canonical.length}, legado_sem_verificacao=${legacy.length}, fidelidade_exata=${report.summary.exactFidelity}.`);
 }
 
 main();

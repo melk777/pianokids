@@ -1,0 +1,1314 @@
+[
+  {
+    "id": "gymnopedie-no-1",
+    "title": "Gymnopédie nº 1",
+    "outputFile": "gymnopedie-no-1.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 142,
+    "range": {
+      "minMidi": 33,
+      "maxMidi": 81
+    },
+    "counts": {
+      "easy": 92,
+      "medium": 139,
+      "hard": 282
+    }
+  },
+  {
+    "id": "turkish-march",
+    "title": "Marcha Turca",
+    "outputFile": "turkish-march.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 256,
+    "range": {
+      "minMidi": 38,
+      "maxMidi": 88
+    },
+    "counts": {
+      "easy": 646,
+      "medium": 774,
+      "hard": 1614
+    }
+  },
+  {
+    "id": "moonlight-sonata",
+    "title": "Sonata ao Luar (1º Movimento)",
+    "outputFile": "moonlight-sonata.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 277,
+    "range": {
+      "minMidi": 29,
+      "maxMidi": 87
+    },
+    "counts": {
+      "easy": 109,
+      "medium": 176,
+      "hard": 1142
+    }
+  },
+  {
+    "id": "gigue-in-g-majormozart",
+    "title": "Giga em Sol Maior",
+    "outputFile": "gigue-in-g-majormozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 50,
+    "range": {
+      "minMidi": 31,
+      "maxMidi": 86
+    },
+    "counts": {
+      "easy": 192,
+      "medium": 225,
+      "hard": 457
+    }
+  },
+  {
+    "id": "marche-funebre-kv-453amozart",
+    "title": "Marcha Fúnebre, KV 453a",
+    "outputFile": "marche-funebre-kv-453amozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 64,
+    "range": {
+      "minMidi": 31,
+      "maxMidi": 89
+    },
+    "counts": {
+      "easy": 77,
+      "medium": 93,
+      "hard": 266
+    }
+  },
+  {
+    "id": "fuguefragmentmozart",
+    "title": "Fragmento de Fuga",
+    "outputFile": "fuguefragmentmozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 58,
+    "range": {
+      "minMidi": 38,
+      "maxMidi": 83
+    },
+    "counts": {
+      "easy": 197,
+      "medium": 213,
+      "hard": 339
+    }
+  },
+  {
+    "id": "fugue-in-e-flat-major-kv-153375fmozart",
+    "title": "Fuga em Mi Bemol Maior, KV 153/375f",
+    "outputFile": "fugue-in-e-flat-major-kv-153375fmozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 146,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 87
+    },
+    "counts": {
+      "easy": 557,
+      "medium": 613,
+      "hard": 1021
+    }
+  },
+  {
+    "id": "piano-sonata-in-c-major-kv-309-1st-part-mozart",
+    "title": "Sonata para Piano em Dó Maior, KV 309 (1ª Parte)",
+    "outputFile": "piano-sonata-in-c-major-kv-309-1st-part-mozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 257,
+    "range": {
+      "minMidi": 31,
+      "maxMidi": 89
+    },
+    "counts": {
+      "easy": 991,
+      "medium": 1145,
+      "hard": 2378
+    }
+  },
+  {
+    "id": "fantasy-in-d-minormozart",
+    "title": "Fantasia em Ré Menor",
+    "outputFile": "fantasy-in-d-minormozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 285,
+    "range": {
+      "minMidi": 33,
+      "maxMidi": 89
+    },
+    "counts": {
+      "easy": 754,
+      "medium": 835,
+      "hard": 1511
+    }
+  },
+  {
+    "id": "notteegiornomozart",
+    "title": "Noite e Dia",
+    "outputFile": "notteegiornomozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 115,
+    "range": {
+      "minMidi": 31,
+      "maxMidi": 86
+    },
+    "counts": {
+      "easy": 413,
+      "medium": 480,
+      "hard": 865
+    }
+  },
+  {
+    "id": "trois-nouvelles-etudes-no-1-f-minorchopin",
+    "title": "Três Novos Estudos nº 1 em Fá Menor",
+    "outputFile": "trois-nouvelles-etudes-no-1-f-minorchopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 162,
+    "range": {
+      "minMidi": 29,
+      "maxMidi": 83
+    },
+    "counts": {
+      "easy": 344,
+      "medium": 406,
+      "hard": 821
+    }
+  },
+  {
+    "id": "nocturne-op9",
+    "title": "Noturno Op. 9 nº 2",
+    "outputFile": "nocturne-op9.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 204,
+    "range": {
+      "minMidi": 32,
+      "maxMidi": 99
+    },
+    "counts": {
+      "easy": 421,
+      "medium": 455,
+      "hard": 1242
+    }
+  },
+  {
+    "id": "etude-a-mollchopin",
+    "title": "Estudo em Lá Menor",
+    "outputFile": "etude-a-mollchopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 83,
+    "range": {
+      "minMidi": 28,
+      "maxMidi": 96
+    },
+    "counts": {
+      "easy": 766,
+      "medium": 811,
+      "hard": 1458
+    }
+  },
+  {
+    "id": "prelude-op-28-no-4-suffocation-chopin",
+    "title": "Prelúdio Op. 28 nº 4",
+    "outputFile": "prelude-op-28-no-4-suffocation-chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 110,
+    "range": {
+      "minMidi": 28,
+      "maxMidi": 84
+    },
+    "counts": {
+      "easy": 79,
+      "medium": 104,
+      "hard": 600
+    }
+  },
+  {
+    "id": "preludio-n-6-chopin",
+    "title": "Prelúdio nº 6",
+    "outputFile": "preludio-n-6-chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 103,
+    "range": {
+      "minMidi": 35,
+      "maxMidi": 78
+    },
+    "counts": {
+      "easy": 124,
+      "medium": 306,
+      "hard": 405
+    }
+  },
+  {
+    "id": "preludio-numero7chopin",
+    "title": "Prelúdio nº 7",
+    "outputFile": "preludio-numero7chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 25,
+    "range": {
+      "minMidi": 33,
+      "maxMidi": 85
+    },
+    "counts": {
+      "easy": 49,
+      "medium": 65,
+      "hard": 168
+    }
+  },
+  {
+    "id": "preludio-n-15-chopin",
+    "title": "Prelúdio nº 15",
+    "outputFile": "preludio-n-15-chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 268,
+    "range": {
+      "minMidi": 28,
+      "maxMidi": 82
+    },
+    "counts": {
+      "easy": 570,
+      "medium": 657,
+      "hard": 1517
+    }
+  },
+  {
+    "id": "preludio-n-20-chopin",
+    "title": "Prelúdio nº 20",
+    "outputFile": "preludio-n-20-chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 76,
+    "range": {
+      "minMidi": 24,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 61,
+      "medium": 74,
+      "hard": 286
+    }
+  },
+  {
+    "id": "sonata-2bmoll-chopin",
+    "title": "Sonata nº 2 em Si Bemol Menor: Finale",
+    "outputFile": "sonata-2bmoll-chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 84,
+    "range": {
+      "minMidi": 29,
+      "maxMidi": 94
+    },
+    "counts": {
+      "easy": 902,
+      "medium": 979,
+      "hard": 1808
+    }
+  },
+  {
+    "id": "ballade-4chopin",
+    "title": "Balada nº 4 em Fá Menor",
+    "outputFile": "ballade-4chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 718,
+    "range": {
+      "minMidi": 24,
+      "maxMidi": 101
+    },
+    "counts": {
+      "easy": 2104,
+      "medium": 2338,
+      "hard": 6046
+    }
+  },
+  {
+    "id": "minute-waltz",
+    "title": "Valsa do Minuto (Op. 64 nº 1)",
+    "outputFile": "minute-waltz.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 91,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 101
+    },
+    "counts": {
+      "easy": 688,
+      "medium": 813,
+      "hard": 1370
+    }
+  },
+  {
+    "id": "chopin-fantaisie-impromptuchopin",
+    "title": "Fantasia-Impromptu",
+    "outputFile": "chopin-fantaisie-impromptuchopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 255,
+    "range": {
+      "minMidi": 31,
+      "maxMidi": 100
+    },
+    "counts": {
+      "easy": 1602,
+      "medium": 1736,
+      "hard": 3014
+    }
+  },
+  {
+    "id": "premiere-arabesquedebussy",
+    "title": "Primeira Arabesca",
+    "outputFile": "premiere-arabesquedebussy.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 178,
+    "range": {
+      "minMidi": 28,
+      "maxMidi": 92
+    },
+    "counts": {
+      "easy": 646,
+      "medium": 782,
+      "hard": 1444
+    }
+  },
+  {
+    "id": "suite-bergamasque-clair-de-lunedebussy",
+    "title": "Clair de Lune",
+    "outputFile": "suite-bergamasque-clair-de-lunedebussy.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 323,
+    "range": {
+      "minMidi": 27,
+      "maxMidi": 97
+    },
+    "counts": {
+      "easy": 304,
+      "medium": 384,
+      "hard": 1468
+    }
+  },
+  {
+    "id": "the-seasons-januarytchaikovsky",
+    "title": "As Estações: Janeiro",
+    "outputFile": "the-seasons-januarytchaikovsky.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 259,
+    "range": {
+      "minMidi": 33,
+      "maxMidi": 100
+    },
+    "counts": {
+      "easy": 639,
+      "medium": 714,
+      "hard": 1526
+    }
+  },
+  {
+    "id": "the-seasons-februarytchaikovsky",
+    "title": "As Estações: Fevereiro",
+    "outputFile": "the-seasons-februarytchaikovsky.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 283,
+    "range": {
+      "minMidi": 29,
+      "maxMidi": 93
+    },
+    "counts": {
+      "easy": 637,
+      "medium": 748,
+      "hard": 1810
+    }
+  },
+  {
+    "id": "the-seasons-augusttchaikovsky",
+    "title": "As Estações: Agosto",
+    "outputFile": "the-seasons-augusttchaikovsky.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 332,
+    "range": {
+      "minMidi": 35,
+      "maxMidi": 95
+    },
+    "counts": {
+      "easy": 654,
+      "medium": 846,
+      "hard": 2442
+    }
+  },
+  {
+    "id": "morning-prayertchaikovsky",
+    "title": "Oração da Manhã",
+    "outputFile": "morning-prayertchaikovsky.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 71,
+    "range": {
+      "minMidi": 42,
+      "maxMidi": 79
+    },
+    "counts": {
+      "easy": 72,
+      "medium": 90,
+      "hard": 246
+    }
+  },
+  {
+    "id": "march-of-the-wooden-soldierstchaikovsky",
+    "title": "Marcha dos Soldadinhos de Madeira",
+    "outputFile": "march-of-the-wooden-soldierstchaikovsky.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 42,
+    "range": {
+      "minMidi": 57,
+      "maxMidi": 79
+    },
+    "counts": {
+      "easy": 126,
+      "medium": 174,
+      "hard": 318
+    }
+  },
+  {
+    "id": "old-french-songtchaikosvky",
+    "title": "Canção Francesa Antiga",
+    "outputFile": "old-french-songtchaikosvky.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 57,
+    "range": {
+      "minMidi": 43,
+      "maxMidi": 77
+    },
+    "counts": {
+      "easy": 96,
+      "medium": 117,
+      "hard": 188
+    }
+  },
+  {
+    "id": "doumkatchaikosvky",
+    "title": "Dumka",
+    "outputFile": "doumkatchaikosvky.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 574,
+    "range": {
+      "minMidi": 22,
+      "maxMidi": 103
+    },
+    "counts": {
+      "easy": 1613,
+      "medium": 1745,
+      "hard": 4279
+    }
+  },
+  {
+    "id": "swan-lake-napolitan-dance",
+    "title": "Lago dos Cisnes: Dança Napolitana",
+    "outputFile": "swan-lake-napolitan-dance.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 90,
+    "range": {
+      "minMidi": 46,
+      "maxMidi": 79
+    },
+    "counts": {
+      "easy": 248,
+      "medium": 301,
+      "hard": 775
+    }
+  },
+  {
+    "id": "minueto-em-sol-maior",
+    "title": "Minueto em Sol Maior",
+    "outputFile": "minueto.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 43,
+    "range": {
+      "minMidi": 43,
+      "maxMidi": 83
+    },
+    "counts": {
+      "easy": 127,
+      "medium": 159,
+      "hard": 204
+    }
+  },
+  {
+    "id": "in-the-hall-of-the-mountain-king",
+    "title": "Na Gruta do Rei da Montanha",
+    "outputFile": "in-the-hall-of-the-mountain-king.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 153,
+    "range": {
+      "minMidi": 23,
+      "maxMidi": 99
+    },
+    "counts": {
+      "easy": 544,
+      "medium": 710,
+      "hard": 1453
+    }
+  },
+  {
+    "id": "ave-maria-schubert",
+    "title": "Ave Maria",
+    "outputFile": "ave-maria-schubert.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 431,
+    "range": {
+      "minMidi": 27,
+      "maxMidi": 77
+    },
+    "counts": {
+      "easy": 312,
+      "medium": 369,
+      "hard": 651
+    }
+  },
+  {
+    "id": "toccata-and-fugue-d-minor",
+    "title": "Tocata e Fuga em Ré Menor",
+    "outputFile": "toccata-and-fugue-d-minor.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 573,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 84
+    },
+    "counts": {
+      "easy": 2377,
+      "medium": 2504,
+      "hard": 3650
+    }
+  },
+  {
+    "id": "fugue-sur-le-nom-de-bachrimsky-korsakov",
+    "title": "Fuga sobre o Nome de Bach",
+    "outputFile": "fugue-sur-le-nom-de-bachrimsky-korsakov.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 125,
+    "range": {
+      "minMidi": 38,
+      "maxMidi": 76
+    },
+    "counts": {
+      "easy": 375,
+      "medium": 446,
+      "hard": 619
+    }
+  },
+  {
+    "id": "das-wohltemperierte-clavier-ii-praeludium-iijsbach",
+    "title": "O Cravo Bem Temperado II: Prelúdio II",
+    "outputFile": "das-wohltemperierte-clavier-ii-praeludium-iijsbach.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 57,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 80
+    },
+    "counts": {
+      "easy": 442,
+      "medium": 469,
+      "hard": 692
+    }
+  },
+  {
+    "id": "preludio-chopin",
+    "title": "Prelúdio Op. 45",
+    "outputFile": "preludio-chopin.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 199,
+    "range": {
+      "minMidi": 25,
+      "maxMidi": 100
+    },
+    "counts": {
+      "easy": 739,
+      "medium": 808,
+      "hard": 1322
+    }
+  },
+  {
+    "id": "sonata-in-c-major-fragment-mozart",
+    "title": "Sonata em Dó Maior (Fragmento)",
+    "outputFile": "sonata-in-c-major-fragment-mozart.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 39,
+    "range": {
+      "minMidi": 43,
+      "maxMidi": 86
+    },
+    "counts": {
+      "easy": 174,
+      "medium": 208,
+      "hard": 382
+    }
+  },
+  {
+    "id": "rocha-eterna",
+    "title": "Rocha Eterna",
+    "outputFile": "rocha-eterna.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 23,
+    "range": {
+      "minMidi": 46,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 42,
+      "medium": 60,
+      "hard": 158
+    }
+  },
+  {
+    "id": "castelo-forte",
+    "title": "Castelo Forte",
+    "outputFile": "castelo-forte.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 73,
+    "range": {
+      "minMidi": 41,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 74,
+      "medium": 106,
+      "hard": 258
+    }
+  },
+  {
+    "id": "vinde-fieis",
+    "title": "Vinde Fieis",
+    "outputFile": "vinde-fieis.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 81,
+    "range": {
+      "minMidi": 42,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 67,
+      "medium": 101,
+      "hard": 213
+    }
+  },
+  {
+    "id": "coroai",
+    "title": "Coroai",
+    "outputFile": "coroai.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 40,
+    "range": {
+      "minMidi": 43,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 54,
+      "medium": 105,
+      "hard": 202
+    }
+  },
+  {
+    "id": "santo-santo-santo",
+    "title": "Santo, Santo, Santo",
+    "outputFile": "santo-santo-santo.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 65,
+    "range": {
+      "minMidi": 42,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 54,
+      "medium": 85,
+      "hard": 200
+    }
+  },
+  {
+    "id": "o-vem-o-vem-emanuel",
+    "title": "O Vem, O Vem, Emanuel",
+    "outputFile": "o-vem-o-vem-emanuel.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 37,
+    "range": {
+      "minMidi": 43,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 61,
+      "medium": 79,
+      "hard": 222
+    }
+  },
+  {
+    "id": "alvo-mais-que-a-neve",
+    "title": "Alvo Mais que a Neve",
+    "outputFile": "alvo-mais-que-a-neve.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 45,
+    "range": {
+      "minMidi": 45,
+      "maxMidi": 76
+    },
+    "counts": {
+      "easy": 65,
+      "medium": 101,
+      "hard": 250
+    }
+  },
+  {
+    "id": "chuvas-de-graca",
+    "title": "Chuvas de Graca",
+    "outputFile": "chuvas-de-graca.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 36,
+    "range": {
+      "minMidi": 46,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 61,
+      "medium": 81,
+      "hard": 241
+    }
+  },
+  {
+    "id": "conta-as-bencaos",
+    "title": "Conta as Bencaos",
+    "outputFile": "conta-as-bencaos.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 48,
+    "range": {
+      "minMidi": 46,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 84,
+      "medium": 116,
+      "hard": 338
+    }
+  },
+  {
+    "id": "deus-velara-por-ti",
+    "title": "Deus Velara por Ti",
+    "outputFile": "deus-velara-por-ti.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 40,
+    "range": {
+      "minMidi": 46,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 62,
+      "medium": 85,
+      "hard": 225
+    }
+  },
+  {
+    "id": "firme-nas-promessas",
+    "title": "Firme nas Promessas",
+    "outputFile": "firme-nas-promessas.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 39,
+    "range": {
+      "minMidi": 46,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 92,
+      "medium": 122,
+      "hard": 344
+    }
+  },
+  {
+    "id": "gloria-gloria-aleluia",
+    "title": "Gloria, Gloria, Aleluia",
+    "outputFile": "gloria-gloria-aleluia.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 40,
+    "range": {
+      "minMidi": 46,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 81,
+      "medium": 111,
+      "hard": 318
+    }
+  },
+  {
+    "id": "jubiloso-te-adoramos",
+    "title": "Jubiloso, Te Adoramos",
+    "outputFile": "jubiloso-te-adoramos.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 40,
+    "range": {
+      "minMidi": 43,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 67,
+      "medium": 99,
+      "hard": 238
+    }
+  },
+  {
+    "id": "mais-perto-quero-estar",
+    "title": "Mais Perto Quero Estar",
+    "outputFile": "mais-perto-quero-estar.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 40,
+    "range": {
+      "minMidi": 41,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 44,
+      "medium": 73,
+      "hard": 169
+    }
+  },
+  {
+    "id": "manso-e-suave",
+    "title": "Manso e Suave",
+    "outputFile": "manso-e-suave.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 72,
+    "range": {
+      "minMidi": 44,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 71,
+      "medium": 92,
+      "hard": 269
+    }
+  },
+  {
+    "id": "aos-pes-da-cruz",
+    "title": "Aos Pes da Cruz",
+    "outputFile": "aos-pes-da-cruz.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 44,
+    "range": {
+      "minMidi": 44,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 71,
+      "medium": 100,
+      "hard": 274
+    }
+  },
+  {
+    "id": "sou-feliz-com-jesus",
+    "title": "Sou Feliz com Jesus",
+    "outputFile": "sou-feliz-com-jesus.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 59,
+    "range": {
+      "minMidi": 44,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 61,
+      "medium": 96,
+      "hard": 213
+    }
+  },
+  {
+    "id": "tao-sublime-sacramento",
+    "title": "Tao Sublime Sacramento",
+    "outputFile": "tao-sublime-sacramento.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 79,
+    "range": {
+      "minMidi": 43,
+      "maxMidi": 81
+    },
+    "counts": {
+      "easy": 56,
+      "medium": 91,
+      "hard": 214
+    }
+  },
+  {
+    "id": "teresinha-de-jesus",
+    "title": "Teresinha de Jesus",
+    "outputFile": "teresinha-de-jesus.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 16,
+    "range": {
+      "minMidi": 41,
+      "maxMidi": 70
+    },
+    "counts": {
+      "easy": 29,
+      "medium": 37,
+      "hard": 55
+    }
+  },
+  {
+    "id": "o-cravo-e-a-rosa",
+    "title": "O Cravo e a Rosa",
+    "outputFile": "o-cravo-e-a-rosa.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 15,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 29,
+      "medium": 37,
+      "hard": 53
+    }
+  },
+  {
+    "id": "sapo-cururu",
+    "title": "Sapo Cururu",
+    "outputFile": "sapo-cururu.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 49,
+    "range": {
+      "minMidi": 39,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 75,
+      "medium": 99,
+      "hard": 147
+    }
+  },
+  {
+    "id": "escravos-de-jo",
+    "title": "Escravos de Jó",
+    "outputFile": "escravos-de-jo.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 24,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 74
+    },
+    "counts": {
+      "easy": 64,
+      "medium": 85,
+      "hard": 127
+    }
+  },
+  {
+    "id": "atirei-o-pau-no-gato",
+    "title": "Atirei o Pau no Gato",
+    "outputFile": "atirei-o-pau-no-gato.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 19,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 71
+    },
+    "counts": {
+      "easy": 42,
+      "medium": 58,
+      "hard": 102
+    }
+  },
+  {
+    "id": "a-canoa-virou",
+    "title": "A Canoa Virou",
+    "outputFile": "a-canoa-virou.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 21,
+    "range": {
+      "minMidi": 35,
+      "maxMidi": 71
+    },
+    "counts": {
+      "easy": 50,
+      "medium": 66,
+      "hard": 114
+    }
+  },
+  {
+    "id": "minha-machadinha",
+    "title": "Minha Machadinha",
+    "outputFile": "minha-machadinha.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 37,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 136,
+      "medium": 160,
+      "hard": 215
+    }
+  },
+  {
+    "id": "a-dona-aranha",
+    "title": "A Dona Aranha",
+    "outputFile": "a-dona-aranha.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 28,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 79
+    },
+    "counts": {
+      "easy": 47,
+      "medium": 63,
+      "hard": 113
+    }
+  },
+  {
+    "id": "borboletinha",
+    "title": "Borboletinha",
+    "outputFile": "borboletinha.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 23,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 44,
+      "medium": 60,
+      "hard": 102
+    }
+  },
+  {
+    "id": "o-sapo-nao-lava-o-pe",
+    "title": "O Sapo não Lava o Pé",
+    "outputFile": "o-sapo.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 20,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 35,
+      "medium": 50,
+      "hard": 89
+    }
+  },
+  {
+    "id": "fui-no-itororo",
+    "title": "Fui no Itororó",
+    "outputFile": "fui-no-itororo.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 44,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 67
+    },
+    "counts": {
+      "easy": 120,
+      "medium": 152,
+      "hard": 216
+    }
+  },
+  {
+    "id": "carneirinho-carneirao",
+    "title": "Carneirinho, Carneirão",
+    "outputFile": "carneirinho-carneirao.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 40,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 76
+    },
+    "counts": {
+      "easy": 84,
+      "medium": 100,
+      "hard": 148
+    }
+  },
+  {
+    "id": "oh-que-belas-laranjas",
+    "title": "Oh! Que Belas Laranjas",
+    "outputFile": "oh-que-belas-laranjas.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 36,
+    "range": {
+      "minMidi": 39,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 136,
+      "medium": 152,
+      "hard": 200
+    }
+  },
+  {
+    "id": "onde-esta-a-margarida",
+    "title": "Onde Está a Margarida?",
+    "outputFile": "onde-esta-a-margarida.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 43,
+    "range": {
+      "minMidi": 38,
+      "maxMidi": 71
+    },
+    "counts": {
+      "easy": 108,
+      "medium": 128,
+      "hard": 188
+    }
+  },
+  {
+    "id": "pai-francisco",
+    "title": "Pai Francisco",
+    "outputFile": "pai-francisco.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 37,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 106,
+      "medium": 122,
+      "hard": 170
+    }
+  },
+  {
+    "id": "passarinho-da-lagoa",
+    "title": "Passarinho da Lagoa",
+    "outputFile": "passarinho-da-lagoa.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 21,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 90,
+      "medium": 99,
+      "hard": 130
+    }
+  },
+  {
+    "id": "pezinho",
+    "title": "Pezinho",
+    "outputFile": "pezinho.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 34,
+    "range": {
+      "minMidi": 38,
+      "maxMidi": 76
+    },
+    "counts": {
+      "easy": 100,
+      "medium": 116,
+      "hard": 164
+    }
+  },
+  {
+    "id": "pirulito-que-bate-bate",
+    "title": "Pirulito que Bate Bate",
+    "outputFile": "pirulito-que-bate-bate.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 19,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 64,
+      "medium": 72,
+      "hard": 96
+    }
+  },
+  {
+    "id": "samba-lele",
+    "title": "Samba Lelê",
+    "outputFile": "samba-lele.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 35,
+    "range": {
+      "minMidi": 38,
+      "maxMidi": 69
+    },
+    "counts": {
+      "easy": 96,
+      "medium": 112,
+      "hard": 160
+    }
+  },
+  {
+    "id": "se-essa-rua-fosse-minha",
+    "title": "Se Essa Rua Fosse Minha",
+    "outputFile": "se-essa-rua-fosse-minha.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 64,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 75
+    },
+    "counts": {
+      "easy": 135,
+      "medium": 159,
+      "hard": 231
+    }
+  },
+  {
+    "id": "tutu-maramba",
+    "title": "Tutu Marambá",
+    "outputFile": "tutu-maramba.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 46,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 86
+    },
+    "counts": {
+      "easy": 90,
+      "medium": 108,
+      "hard": 162
+    }
+  },
+  {
+    "id": "pintinho-amarelinho",
+    "title": "Meu Pintinho Amarelinho",
+    "outputFile": "meu-pintinho-amarelinho.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 36,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 69
+    },
+    "counts": {
+      "easy": 82,
+      "medium": 98,
+      "hard": 146
+    }
+  },
+  {
+    "id": "parabens-pra-voce",
+    "title": "Parabéns pra Você",
+    "outputFile": "parabens.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 16,
+    "range": {
+      "minMidi": 36,
+      "maxMidi": 72
+    },
+    "counts": {
+      "easy": 25,
+      "medium": 33,
+      "hard": 57
+    }
+  },
+  {
+    "id": "bella-ciao-lacasadepapel",
+    "title": "Bella Ciao",
+    "outputFile": "bella-ciao-lacasadepapel.json",
+    "reviewStatus": "pending_owner_review",
+    "duration": 43,
+    "range": {
+      "minMidi": 38,
+      "maxMidi": 70
+    },
+    "counts": {
+      "easy": 80,
+      "medium": 96,
+      "hard": 144
+    }
+  }
+]

@@ -172,7 +172,11 @@ function collapseRapidRepeats(notes, minGap) {
 }
 
 function stripTrackIndex(notes) {
-  return notes.map(({ trackIndex, ...note }) => note);
+  return notes.map((note) => {
+    const cleanNote = { ...note };
+    delete cleanNote.trackIndex;
+    return cleanNote;
+  });
 }
 
 function simplifyMedium(notes, bpm) {

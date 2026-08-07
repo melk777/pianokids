@@ -1,0 +1,358 @@
+{
+  "schemaVersion": 1,
+  "id": "samba-lele",
+  "title": "Samba Lele",
+  "composer": "Tradicional brasileiro",
+  "bpm": 116,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "D major",
+  "gate": 0.9,
+  "source": {
+    "work": "Samba Lele",
+    "transcription": "Independent Pianify notation of the public-domain Brazilian folk melody; form and harmony cross-checked against reviewed educational references.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midi": 62,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 0.5,
+          "duration": 1
+        },
+        {
+          "midi": 66,
+          "beat": 1.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 2,
+          "duration": 0.5
+        },
+        {
+          "midi": 66,
+          "beat": 2.5,
+          "duration": 1
+        },
+        {
+          "midi": 62,
+          "beat": 3.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 57,
+          "beat": 4.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 5.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 6,
+          "duration": 0.5
+        },
+        {
+          "midi": 57,
+          "beat": 6.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 7,
+          "duration": 1
+        },
+        {
+          "midi": 61,
+          "beat": 8,
+          "duration": 0.5
+        },
+        {
+          "midi": 61,
+          "beat": 8.5,
+          "duration": 1
+        },
+        {
+          "midi": 64,
+          "beat": 9.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 10,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 10.5,
+          "duration": 1
+        },
+        {
+          "midi": 61,
+          "beat": 11.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 57,
+          "beat": 12.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 13,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 13.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 14,
+          "duration": 0.5
+        },
+        {
+          "midi": 57,
+          "beat": 14.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 15,
+          "duration": 1
+        },
+        {
+          "midi": 62,
+          "beat": 16,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 16.5,
+          "duration": 1
+        },
+        {
+          "midi": 66,
+          "beat": 17.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 18,
+          "duration": 0.5
+        },
+        {
+          "midi": 66,
+          "beat": 18.5,
+          "duration": 1
+        },
+        {
+          "midi": 62,
+          "beat": 19.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 57,
+          "beat": 20.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 21,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 21.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 22,
+          "duration": 0.5
+        },
+        {
+          "midi": 57,
+          "beat": 22.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 23,
+          "duration": 1
+        },
+        {
+          "midi": 61,
+          "beat": 24,
+          "duration": 0.5
+        },
+        {
+          "midi": 61,
+          "beat": 24.5,
+          "duration": 1
+        },
+        {
+          "midi": 64,
+          "beat": 25.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 26,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 26.5,
+          "duration": 1
+        },
+        {
+          "midi": 61,
+          "beat": 27.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 57,
+          "beat": 28.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 29,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 29.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 30,
+          "duration": 0.5
+        },
+        {
+          "midi": 59,
+          "beat": 30.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 31,
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            54
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            45,
+            52,
+            55,
+            61
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            54
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            45,
+            52,
+            55,
+            61
+          ],
+          "beat": 12,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            54
+          ],
+          "beat": 16,
+          "duration": 4
+        },
+        {
+          "midis": [
+            45,
+            52,
+            55,
+            61
+          ],
+          "beat": 20,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            54
+          ],
+          "beat": 24,
+          "duration": 4
+        },
+        {
+          "midis": [
+            45,
+            52,
+            55,
+            61
+          ],
+          "beat": 28,
+          "duration": 4
+        }
+      ]
+    }
+  ]
+}

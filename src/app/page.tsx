@@ -179,27 +179,11 @@ export default function Home() {
                 Ver biblioteca
               </button>
 
-              <div className="flex items-center gap-4 px-2 py-2">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4, 5].map((index) => (
-                    <div
-                      key={index}
-                      className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-black shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_14px_28px_rgba(0,0,0,0.38)]"
-                    >
-                      <Image
-                        src={`/images/avatars/avatar-${index}.png`}
-                        alt={`Aluno ativo ${index}`}
-                        fill
-                        className="object-cover"
-                        sizes="44px"
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="text-left">
-                  <p className="text-sm font-black uppercase tracking-[0.24em] text-white">+1000 alunos ativos</p>
-                  <p className="text-xs text-white/55">Aprendendo piano de forma interativa todos os dias</p>
+              <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-5 py-3 text-left backdrop-blur-md">
+                <Star className="h-5 w-5 shrink-0 fill-cyan/20 text-cyan" aria-hidden="true" />
+                <div>
+                  <p className="text-sm font-black text-white">7 dias para experimentar</p>
+                  <p className="text-xs text-white/55">Cancele quando quiser pelo portal seguro</p>
                 </div>
               </div>
             </div>

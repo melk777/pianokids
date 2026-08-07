@@ -1,28 +1,37 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+
+function seededValue(index: number, salt: number) {
+  const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+const STARS = Array.from({ length: 300 }, (_, index) => {
+  const directionX = seededValue(index, 1) > 0.5 ? 30 : -30;
+  const directionY = seededValue(index, 2) > 0.5 ? 30 : -30;
+
+  return {
+    id: index,
+    startX: seededValue(index, 3) * 100,
+    startY: seededValue(index, 4) * 100,
+    endX: directionX,
+    endY: directionY,
+    size: seededValue(index, 5) * 1.5 + 0.5,
+    duration: seededValue(index, 6) * 20 + 15,
+    delay: seededValue(index, 7) * -30,
+  };
+});
+
+const DUST = Array.from({ length: 30 }, (_, index) => ({
+  id: index,
+  left: seededValue(index, 8) * 100,
+  top: seededValue(index, 9) * 100,
+  size: seededValue(index, 10) * 3 + 1,
+  duration: seededValue(index, 11) * 10 + 10,
+}));
 
 export default function GalaxyBackground() {
-  // Gerar estrelas com trajetórias diagonais (mais estrelas para densidade épica)
-  const stars = useMemo(() => {
-    return Array.from({ length: 300 }).map((_, i) => {
-      const directionX = Math.random() > 0.5 ? 30 : -30;
-      const directionY = Math.random() > 0.5 ? 30 : -30;
-      
-      return {
-        id: i,
-        startX: Math.random() * 100,
-        startY: Math.random() * 100,
-        endX: directionX,
-        endY: directionY,
-        size: Math.random() * 1.5 + 0.5,
-        duration: Math.random() * 20 + 15,
-        delay: Math.random() * -30,
-      };
-    });
-  }, []);
-
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Planeta Saturno-Kids (Mediano e sempre visível) */}
@@ -75,7 +84,7 @@ export default function GalaxyBackground() {
 
 
       {/* 300+ Estrelas com Movimento Diagonal Suave */}
-      {stars.map((star) => (
+      {STARS.map((star) => (
         <motion.div
           key={star.id}
           className="absolute bg-white rounded-full"
@@ -134,15 +143,15 @@ export default function GalaxyBackground() {
 
       {/* Partículas flutuantes (Poeira Espacial) */}
       <div className="absolute inset-0 z-0">
-        {Array.from({ length: 30 }).map((_, i) => (
+        {DUST.map((particle) => (
           <motion.div
-            key={`dust-${i}`}
+            key={`dust-${particle.id}`}
             className="absolute bg-cyan/20 rounded-full blur-[1px]"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
             }}
             animate={{
               y: [0, -40, 0],
@@ -150,7 +159,7 @@ export default function GalaxyBackground() {
               opacity: [0.1, 0.4, 0.1],
             }}
             transition={{
-              duration: Math.random() * 10 + 10,
+              duration: particle.duration,
               repeat: Infinity,
               ease: "linear",
             }}

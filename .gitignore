@@ -10,6 +10,11 @@
 /coverage
 /tmp/
 
+# Large historical reference books are kept locally. The exact cited facsimile
+# pages and their SHA-256 hashes remain versioned with the musical sources.
+/music-sources/rebuild/wave-1/reference/cantigas-criancas-povo-1911-usp.pdf
+/music-sources/rebuild/wave-1/reference/ensaio-musica-brasileira-1928-usp.pdf
+
 # next.js
 /.next/
 /out/

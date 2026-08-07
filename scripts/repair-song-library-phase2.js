@@ -1,12 +1,13 @@
 const fs = require("fs");
 const path = require("path");
+const pianoRange = require("../config/piano-range.json");
 const songManifest = require("./song-manifest");
 const { repairMojibake } = require("./text-normalization");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const SONGS_DIR = path.join(ROOT_DIR, "public/songs");
-const PLAYER_MIN_MIDI = 36;
-const PLAYER_MAX_MIDI = 84;
+const PLAYER_MIN_MIDI = pianoRange.startMidi;
+const PLAYER_MAX_MIDI = pianoRange.endMidi;
 const GROUP_WINDOW_SECONDS = 0.12;
 
 function round(value, digits = 3) {

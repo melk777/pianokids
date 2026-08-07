@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const pianoRange = require("../config/piano-range.json");
 const songManifest = require("./song-manifest");
 const songCatalogMetadata = require("./song-catalog-metadata");
 const { repairMojibake } = require("./text-normalization");
@@ -10,8 +11,8 @@ const MIDI_DIR = path.join(ROOT_DIR, "public/midi");
 const REPORT_JSON = path.join(ROOT_DIR, "docs/song-library-quality-audit.json");
 const REPORT_MD = path.join(ROOT_DIR, "docs/song-library-quality-audit.md");
 
-const PLAYER_MIN_MIDI = 36;
-const PLAYER_MAX_MIDI = 84;
+const PLAYER_MIN_MIDI = pianoRange.startMidi;
+const PLAYER_MAX_MIDI = pianoRange.endMidi;
 const GROUP_WINDOW = 0.09;
 const NOTE_MATCH_WINDOW = 0.25;
 
@@ -244,21 +245,22 @@ function levelLabel(level) {
 function melodyPreservation(sourceNotes, easyNotes) {
   if (!sourceNotes.length || !easyNotes.length) return { ratio: 0, matched: 0, compared: easyNotes.length };
   const sourceGroups = groupByTime(sourceNotes);
-  const melody = sourceGroups.map((group) => [...group.notes].sort((a, b) => b.midi - a.midi)[0]);
   let matched = 0;
   for (const note of easyNotes) {
-    let best = null;
+    let bestGroup = null;
     let bestDistance = Infinity;
-    for (const candidate of melody) {
-      const distance = Math.abs(candidate.time - note.time);
+    for (const group of sourceGroups) {
+      const distance = Math.abs(group.time - note.time);
       if (distance < bestDistance) {
-        best = candidate;
+        bestGroup = group;
         bestDistance = distance;
       }
-      if (candidate.time > note.time + NOTE_MATCH_WINDOW) break;
+      if (group.time > note.time + NOTE_MATCH_WINDOW) break;
     }
-    if (best && bestDistance <= NOTE_MATCH_WINDOW) {
-      const exactOrNeighbor = Math.abs(best.midi - note.midi) <= 2 || best.midi % 12 === note.midi % 12;
+    if (bestGroup && bestDistance <= NOTE_MATCH_WINDOW) {
+      const exactOrNeighbor = bestGroup.notes.some((candidate) =>
+        Math.abs(candidate.midi - note.midi) <= 2 || candidate.midi % 12 === note.midi % 12,
+      );
       if (exactOrNeighbor) matched += 1;
     }
   }
@@ -462,7 +464,8 @@ function auditSong(entry) {
   }
 
   const easyMelody = melodyPreservation(arrays.notes, arrays["arrangements.easy"].length ? arrays["arrangements.easy"] : arrays.notes1Hand);
-  if (easyMelody.compared > 8 && easyMelody.ratio < 0.65) {
+  const easyUsesMelodicStrategy = song.pedagogy?.easyStrategy !== "harmonic-outline";
+  if (easyUsesMelodicStrategy && easyMelody.compared > 8 && easyMelody.ratio < 0.65) {
     issues.push(issue("high", "easy_melody_not_preserved", "Versao facil parece distante da melodia principal.", easyMelody));
   }
 

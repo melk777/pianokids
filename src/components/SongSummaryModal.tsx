@@ -93,7 +93,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
         if (!data.hasAccess) {
           const subscriptionHref = "/dashboard/subscription";
           if (typeof window !== "undefined") {
-            window.location.assign(subscriptionHref);
+            window.location.assign(new URL(subscriptionHref, window.location.origin).toString());
             return;
           }
           router.push(subscriptionHref);
@@ -105,7 +105,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
     }
 
     if (typeof window !== "undefined") {
-      window.location.assign(targetHref);
+      window.location.assign(new URL(targetHref, window.location.origin).toString());
       return;
     }
     router.push(targetHref);

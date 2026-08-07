@@ -78,7 +78,7 @@ export default function Header() {
     if (supabase) {
       await supabase.auth.signOut();
     }
-    window.location.href = "/";
+    window.location.assign(new URL("/", window.location.origin).toString());
   };
 
   const navLinkClass = "flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-white/55 hover:text-white/90 transition-colors duration-200 rounded-xl hover:bg-white/[0.04]";

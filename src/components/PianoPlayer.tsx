@@ -5,6 +5,7 @@ import type { PracticeFeedbackSummary, SongNote } from "@/lib/types";
 import { midiNoteToName, type MIDINote } from "@/hooks/useMIDI";
 import type { Difficulty } from "@/lib/songFilters";
 import { TIMING_WINDOWS } from "@/lib/songFilters";
+import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
 import VirtualKeyboard from "./VirtualKeyboard";
 
 interface PianoPlayerProps {
@@ -47,14 +48,11 @@ interface PianoPlayerProps {
   };
   onProgressChange?: (time: number) => void;
   tutorialTargets?: {
-    scoreRef?: MutableRefObject<HTMLDivElement | null>;
-    comboRef?: MutableRefObject<HTMLDivElement | null>;
-    accuracyRef?: MutableRefObject<HTMLDivElement | null>;
-    progressRef?: MutableRefObject<HTMLDivElement | null>;
     fallingNotesRef?: MutableRefObject<HTMLDivElement | null>;
     hitLineRef?: MutableRefObject<HTMLDivElement | null>;
     keyboardRef?: MutableRefObject<HTMLDivElement | null>;
   };
+  tutorialHighlightNote?: number;
 }
 
 interface VisualEffect {
@@ -154,8 +152,8 @@ export default function PianoPlayer({
   onPlayNote,
   onReleaseNote,
   resumeAudio,
-  startNote = 36,
-  endNote = 84,
+  startNote = PIANO_START_MIDI,
+  endNote = PIANO_END_MIDI,
   isFreePlay = false,
   songDuration = 0,
   isWaitingMode = false,
@@ -169,6 +167,7 @@ export default function PianoPlayer({
   onProgressChange,
   onPracticeSuggestion,
   tutorialTargets,
+  tutorialHighlightNote,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
@@ -613,6 +612,7 @@ export default function PianoPlayer({
       ctx.shadowBlur = 0;
 
       activeNotes.forEach((_value, midi) => {
+        if (midi < startNote || midi > endNote) return;
         const rect = getNoteRect(midi, laneWidth);
         const isRightHand = midi >= 60;
         const hand = isRightHand ? HAND_COLORS.right : HAND_COLORS.left;
@@ -631,11 +631,13 @@ export default function PianoPlayer({
         ctx.shadowBlur = 0;
       });
 
-      ctx.font = "11px var(--font-geist-mono), monospace";
+      ctx.font = "900 9px var(--font-geist-mono), monospace";
       ctx.textAlign = "center";
-      ctx.fillStyle = COLORS.textFaded;
+      ctx.textBaseline = "bottom";
       whiteNotes.forEach((midi, index) => {
-        ctx.fillText(midiNoteToName(midi).replace(/\d/, ""), index * laneWidth + laneWidth / 2, height - 8);
+        if (midi % 12 !== 0) return;
+        ctx.fillStyle = midi === 60 ? "rgba(103,232,249,0.72)" : COLORS.textFaded;
+        ctx.fillText(midiNoteToName(midi), index * laneWidth + laneWidth / 2, hitY - 10);
       });
 
       const missedSet = state.missedNotes;
@@ -1079,7 +1081,7 @@ export default function PianoPlayer({
   }, [activeNotes, getAudioTime, isFreePlay, isPlaying, noteGroups, notes, onNoteHit, showLiveFeedback, timingWindow, updateHUD]);
 
   return (
-    <div className="relative w-full flex-1 overflow-hidden rounded-3xl border border-cyan/15 bg-zinc-950 shadow-[0_28px_90px_rgba(0,0,0,0.6),0_0_42px_rgba(34,211,238,0.08)]">
+    <div className="relative w-full flex-1 overflow-hidden rounded-[1.75rem] border border-cyan/20 bg-zinc-950 shadow-[0_30px_100px_rgba(0,0,0,0.72),0_0_54px_rgba(34,211,238,0.10),inset_0_1px_0_rgba(255,255,255,0.07)] md:rounded-[2.25rem]">
       <div
         className="absolute inset-0 opacity-20"
         style={{
@@ -1089,11 +1091,13 @@ export default function PianoPlayer({
         }}
       />
 
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_68%,rgba(34,211,238,0.10),transparent_34%),linear-gradient(to_bottom,rgba(0,0,0,0.76),transparent_24%,rgba(0,0,0,0.64))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,rgba(34,211,238,0.14),transparent_31%),radial-gradient(circle_at_18%_66%,rgba(16,185,129,0.07),transparent_28%),radial-gradient(circle_at_82%_66%,rgba(250,204,21,0.07),transparent_28%),linear-gradient(to_bottom,rgba(0,0,0,0.80),transparent_24%,rgba(0,0,0,0.68))]" />
+      <div className="pointer-events-none absolute -left-[18%] top-[8%] h-[66%] w-[52%] rotate-[12deg] bg-gradient-to-r from-transparent via-emerald-300/[0.035] to-transparent blur-2xl" />
+      <div className="pointer-events-none absolute -right-[18%] top-[8%] h-[66%] w-[52%] -rotate-[12deg] bg-gradient-to-l from-transparent via-amber-200/[0.04] to-transparent blur-2xl" />
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/[0.035]" />
 
       {!isFreePlay && songDuration > 0 && (
         <div
-          ref={tutorialTargets?.progressRef}
           data-testid="piano-progress"
           className="absolute left-1/2 top-4 z-40 flex h-6 w-[80%] max-w-2xl -translate-x-1/2 items-center overflow-hidden rounded-full border border-cyan/15 bg-black/55 px-1 shadow-[0_12px_34px_rgba(0,0,0,0.35),0_0_24px_rgba(34,211,238,0.08)] backdrop-blur-md"
         >
@@ -1131,10 +1135,14 @@ export default function PianoPlayer({
             style={{ top: "70%" }}
           />
           <canvas ref={canvasRef} data-testid="piano-canvas" className="pointer-events-none absolute inset-0 block h-full w-full" />
+          <div className="pointer-events-none absolute bottom-[calc(30%+0.6rem)] left-3 z-30 flex items-center gap-2 rounded-full border border-white/10 bg-black/45 px-2.5 py-1 font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-white/45 shadow-lg backdrop-blur-md md:left-5 md:px-3 md:text-[9px]">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
+            {endNote - startNote + 1} teclas · {midiNoteToName(startNote)}–{midiNoteToName(endNote)}
+          </div>
           <div
             ref={tutorialTargets?.keyboardRef}
             data-testid="piano-keyboard"
-            className="pointer-events-auto absolute bottom-0 left-0 right-0"
+            className="pointer-events-auto absolute bottom-0 left-0 right-0 border-t border-cyan/20 shadow-[0_-16px_42px_rgba(0,0,0,0.55),0_-1px_18px_rgba(34,211,238,0.12)]"
             style={{ height: "30%" }}
           >
             <VirtualKeyboard
@@ -1146,13 +1154,14 @@ export default function PianoPlayer({
               activeNotes={activeNotes as unknown as Map<number, boolean>}
               startNote={startNote}
               endNote={endNote}
+              highlightedNote={tutorialHighlightNote}
             />
           </div>
         </div>
       </div>
 
       <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex items-center justify-between md:left-6 md:right-6 md:top-6">
-        <div ref={tutorialTargets?.scoreRef} data-testid="piano-hud-score" className="rounded-xl border border-white/10 bg-black/35 px-3 py-2 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md md:rounded-2xl md:px-5 md:py-3">
+        <div data-testid="piano-hud-score" className="rounded-xl border border-white/10 bg-black/35 px-3 py-2 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md md:rounded-2xl md:px-5 md:py-3">
           <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px]">Pontos</p>
           <p ref={scoreUIRef} className="text-gradient text-lg font-black tabular-nums md:text-2xl">
             0
@@ -1160,7 +1169,6 @@ export default function PianoPlayer({
         </div>
 
         <div
-          ref={tutorialTargets?.comboRef}
           data-testid="piano-hud-combo"
           className="min-w-[100px] rounded-xl border border-cyan/15 bg-black/40 px-5 py-2 text-center shadow-[0_18px_48px_rgba(0,0,0,0.42),0_0_24px_rgba(34,211,238,0.08)] backdrop-blur-md md:min-w-[130px] md:rounded-2xl md:px-8 md:py-4"
         >
@@ -1171,7 +1179,6 @@ export default function PianoPlayer({
         </div>
 
         <div
-          ref={tutorialTargets?.accuracyRef}
           data-testid="piano-hud-accuracy"
           className="rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-right shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md md:rounded-2xl md:px-5 md:py-3"
         >

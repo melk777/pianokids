@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "id": "onde-esta-a-margarida",
+  "title": "Onde Esta a Margarida?",
+  "composer": "Tradicional brasileiro",
+  "bpm": 104,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "G major",
+  "gate": 0.9,
+  "source": {
+    "work": "Onde Esta a Margarida?",
+    "transcription": "Independent Pianify notation of one complete traditional call-and-response stanza; the repeating stanza form and public-domain status were checked against CNFCP and educational notation.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 4,
+      "repeatLengthBeats": 18,
+      "events": [
+        {
+          "midi": 62,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 0.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 1,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 1.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 2,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 2.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 3,
+          "duration": 1
+        },
+        {
+          "midi": 69,
+          "beat": 4,
+          "duration": 0.5
+        },
+        {
+          "midi": 71,
+          "beat": 4.5,
+          "duration": 1
+        },
+        {
+          "midi": 69,
+          "beat": 5.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 6,
+          "duration": 0.5
+        },
+        {
+          "midi": 66,
+          "beat": 6.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 7,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 7.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 8,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 8.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 9,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 9.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 10,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 10.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 11,
+          "duration": 1
+        },
+        {
+          "midi": 69,
+          "beat": 12,
+          "duration": 0.5
+        },
+        {
+          "midi": 71,
+          "beat": 12.5,
+          "duration": 2.5
+        },
+        {
+          "midi": 69,
+          "beat": 15.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 16,
+          "duration": 0.5
+        },
+        {
+          "midi": 66,
+          "beat": 16.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 17,
+          "duration": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 4,
+      "repeatLengthBeats": 18,
+      "events": [
+        {
+          "midis": [
+            43,
+            50,
+            55,
+            59
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            48,
+            54
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            50,
+            55,
+            59
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            48,
+            54
+          ],
+          "beat": 12,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            50,
+            55,
+            59
+          ],
+          "beat": 16,
+          "duration": 2
+        }
+      ]
+    }
+  ]
+}

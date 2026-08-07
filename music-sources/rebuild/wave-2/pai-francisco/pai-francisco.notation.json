@@ -1,0 +1,383 @@
+{
+  "schemaVersion": 1,
+  "id": "pai-francisco",
+  "title": "Pai Francisco",
+  "composer": "Tradicional brasileiro",
+  "bpm": 108,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "C major",
+  "gate": 0.9,
+  "source": {
+    "work": "Pai Francisco",
+    "transcription": "Independent Pianify notation of the public-domain circle song, following the widely taught Brazilian melodic sequence and complete dance refrain.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midi": 60,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 0.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 1,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 1.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 2,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 2.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 3,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 3.5,
+          "duration": 1
+        },
+        {
+          "midi": 60,
+          "beat": 4.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 5.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 6,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 6.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 7,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 7.5,
+          "duration": 1
+        },
+        {
+          "midi": 67,
+          "beat": 8.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 71,
+          "beat": 9,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 9.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 10,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 10.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 11,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 11.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 12,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 12.5,
+          "duration": 1
+        },
+        {
+          "midi": 67,
+          "beat": 13.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 60,
+          "beat": 14,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 14.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 15,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 15.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 16,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 16.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 17,
+          "duration": 0.5
+        },
+        {
+          "midi": 60,
+          "beat": 17.5,
+          "duration": 1
+        },
+        {
+          "midi": 67,
+          "beat": 18.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 19,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 19.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 20,
+          "duration": 1
+        },
+        {
+          "midi": 62,
+          "beat": 21,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 21.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 22,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 22.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 23,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 23.5,
+          "duration": 1
+        },
+        {
+          "midi": 60,
+          "beat": 24.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 25,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 25.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 26,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 26.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 27,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 27.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 28,
+          "duration": 0.5
+        },
+        {
+          "midi": 60,
+          "beat": 28.5,
+          "duration": 1.5
+        },
+        {
+          "midi": 67,
+          "beat": 30,
+          "duration": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midis": [
+            36,
+            43,
+            48,
+            52
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            47,
+            50,
+            53
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            48,
+            52
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            47,
+            50,
+            53
+          ],
+          "beat": 12,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            48,
+            52
+          ],
+          "beat": 16,
+          "duration": 4
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 20,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            47,
+            50,
+            53
+          ],
+          "beat": 24,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            48,
+            52
+          ],
+          "beat": 28,
+          "duration": 4
+        }
+      ]
+    }
+  ]
+}

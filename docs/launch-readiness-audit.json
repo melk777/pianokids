@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-06T06:40:18.171Z",
+  "generatedAt": "2026-08-07T20:07:21.866Z",
   "summary": {
-    "total": 38,
-    "pass": 35,
-    "warn": 3,
+    "total": 44,
+    "pass": 40,
+    "warn": 4,
     "fail": 0,
-    "criticalOpen": 2
+    "criticalOpen": 3
   },
   "checks": [
     {
@@ -149,6 +149,41 @@
       "details": "Portal exige usuario autenticado."
     },
     {
+      "category": "qa",
+      "item": "verificacao HTTP de release",
+      "status": "pass",
+      "severity": "high",
+      "details": "O smoke test deve validar paginas publicas, protecao de rotas, checkout, webhook e respostas 404."
+    },
+    {
+      "category": "seo",
+      "item": "metadados e descoberta",
+      "status": "pass",
+      "severity": "medium",
+      "details": "Manifesto, robots, sitemap, Open Graph e Twitter Card devem estar configurados."
+    },
+    {
+      "category": "operations",
+      "item": "endpoint de saude",
+      "status": "pass",
+      "severity": "high",
+      "details": "O endpoint /api/health permite monitorar a disponibilidade sem autenticar."
+    },
+    {
+      "category": "resilience",
+      "item": "estados globais de erro e carregamento",
+      "status": "pass",
+      "severity": "high",
+      "details": "A aplicacao deve oferecer recuperacao para erro, carregamento e pagina inexistente."
+    },
+    {
+      "category": "privacy",
+      "item": "cache e indexacao de areas privadas",
+      "status": "pass",
+      "severity": "high",
+      "details": "APIs, login e dashboard nao devem ser armazenados por cache compartilhado nem indexados."
+    },
+    {
       "category": "stripe",
       "item": "webhook solicita nova tentativa quando o banco falha",
       "status": "pass",
@@ -245,6 +280,13 @@
       "status": "warn",
       "severity": "critical",
       "details": "Revisao juridica/manual ainda e necessaria antes de anunciar em escala. A auditoria tecnica nao comprova licenca comercial de melodias, arranjos, imagens ou marcas."
+    },
+    {
+      "category": "catalog",
+      "item": "revisao auditiva final da biblioteca",
+      "status": "warn",
+      "severity": "critical",
+      "details": "As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao."
     },
     {
       "category": "brand",

@@ -1,0 +1,1898 @@
+{
+  "generatedAt": "2026-08-07T20:03:45.690Z",
+  "summary": {
+    "songs": 82,
+    "readyForOwnerReview": 82,
+    "blocked": 0,
+    "exactFidelity": 82,
+    "frozenPilot": 8
+  },
+  "songs": [
+    {
+      "id": "gymnopedie-no-1",
+      "title": "Gymnopédie nº 1",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 92,
+        "medium": 139,
+        "hard": 282
+      },
+      "range": {
+        "minMidi": 33,
+        "maxMidi": 81
+      },
+      "fidelity": {
+        "expected": 282,
+        "actual": 282,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "turkish-march",
+      "title": "Marcha Turca",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 646,
+        "medium": 774,
+        "hard": 1614
+      },
+      "range": {
+        "minMidi": 38,
+        "maxMidi": 88
+      },
+      "fidelity": {
+        "expected": 1614,
+        "actual": 1614,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "moonlight-sonata",
+      "title": "Sonata ao Luar (1º Movimento)",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 109,
+        "medium": 176,
+        "hard": 1142
+      },
+      "range": {
+        "minMidi": 29,
+        "maxMidi": 87
+      },
+      "fidelity": {
+        "expected": 1142,
+        "actual": 1142,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "gigue-in-g-majormozart",
+      "title": "Giga em Sol Maior",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 192,
+        "medium": 225,
+        "hard": 457
+      },
+      "range": {
+        "minMidi": 31,
+        "maxMidi": 86
+      },
+      "fidelity": {
+        "expected": 457,
+        "actual": 457,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "marche-funebre-kv-453amozart",
+      "title": "Marcha Fúnebre, KV 453a",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 77,
+        "medium": 93,
+        "hard": 266
+      },
+      "range": {
+        "minMidi": 31,
+        "maxMidi": 89
+      },
+      "fidelity": {
+        "expected": 266,
+        "actual": 266,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "fuguefragmentmozart",
+      "title": "Fragmento de Fuga",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 197,
+        "medium": 213,
+        "hard": 339
+      },
+      "range": {
+        "minMidi": 38,
+        "maxMidi": 83
+      },
+      "fidelity": {
+        "expected": 339,
+        "actual": 339,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "fugue-in-e-flat-major-kv-153375fmozart",
+      "title": "Fuga em Mi Bemol Maior, KV 153/375f",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 557,
+        "medium": 613,
+        "hard": 1021
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 87
+      },
+      "fidelity": {
+        "expected": 1021,
+        "actual": 1021,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "piano-sonata-in-c-major-kv-309-1st-part-mozart",
+      "title": "Sonata para Piano em Dó Maior, KV 309 (1ª Parte)",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 991,
+        "medium": 1145,
+        "hard": 2378
+      },
+      "range": {
+        "minMidi": 31,
+        "maxMidi": 89
+      },
+      "fidelity": {
+        "expected": 2378,
+        "actual": 2378,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "fantasy-in-d-minormozart",
+      "title": "Fantasia em Ré Menor",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 754,
+        "medium": 835,
+        "hard": 1511
+      },
+      "range": {
+        "minMidi": 33,
+        "maxMidi": 89
+      },
+      "fidelity": {
+        "expected": 1511,
+        "actual": 1511,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "notteegiornomozart",
+      "title": "Noite e Dia",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 413,
+        "medium": 480,
+        "hard": 865
+      },
+      "range": {
+        "minMidi": 31,
+        "maxMidi": 86
+      },
+      "fidelity": {
+        "expected": 865,
+        "actual": 865,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "trois-nouvelles-etudes-no-1-f-minorchopin",
+      "title": "Três Novos Estudos nº 1 em Fá Menor",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 344,
+        "medium": 406,
+        "hard": 821
+      },
+      "range": {
+        "minMidi": 29,
+        "maxMidi": 83
+      },
+      "fidelity": {
+        "expected": 821,
+        "actual": 821,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "nocturne-op9",
+      "title": "Noturno Op. 9 nº 2",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 421,
+        "medium": 455,
+        "hard": 1242
+      },
+      "range": {
+        "minMidi": 32,
+        "maxMidi": 99
+      },
+      "fidelity": {
+        "expected": 1242,
+        "actual": 1242,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "etude-a-mollchopin",
+      "title": "Estudo em Lá Menor",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 766,
+        "medium": 811,
+        "hard": 1458
+      },
+      "range": {
+        "minMidi": 28,
+        "maxMidi": 96
+      },
+      "fidelity": {
+        "expected": 1458,
+        "actual": 1458,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "prelude-op-28-no-4-suffocation-chopin",
+      "title": "Prelúdio Op. 28 nº 4",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 79,
+        "medium": 104,
+        "hard": 600
+      },
+      "range": {
+        "minMidi": 28,
+        "maxMidi": 84
+      },
+      "fidelity": {
+        "expected": 600,
+        "actual": 600,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "preludio-n-6-chopin",
+      "title": "Prelúdio nº 6",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 124,
+        "medium": 306,
+        "hard": 405
+      },
+      "range": {
+        "minMidi": 35,
+        "maxMidi": 78
+      },
+      "fidelity": {
+        "expected": 405,
+        "actual": 405,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "preludio-numero7chopin",
+      "title": "Prelúdio nº 7",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 49,
+        "medium": 65,
+        "hard": 168
+      },
+      "range": {
+        "minMidi": 33,
+        "maxMidi": 85
+      },
+      "fidelity": {
+        "expected": 168,
+        "actual": 168,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "preludio-n-15-chopin",
+      "title": "Prelúdio nº 15",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 570,
+        "medium": 657,
+        "hard": 1517
+      },
+      "range": {
+        "minMidi": 28,
+        "maxMidi": 82
+      },
+      "fidelity": {
+        "expected": 1517,
+        "actual": 1517,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "preludio-n-20-chopin",
+      "title": "Prelúdio nº 20",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 61,
+        "medium": 74,
+        "hard": 286
+      },
+      "range": {
+        "minMidi": 24,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 286,
+        "actual": 286,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "sonata-2bmoll-chopin",
+      "title": "Sonata nº 2 em Si Bemol Menor: Finale",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 902,
+        "medium": 979,
+        "hard": 1808
+      },
+      "range": {
+        "minMidi": 29,
+        "maxMidi": 94
+      },
+      "fidelity": {
+        "expected": 1808,
+        "actual": 1808,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "ballade-4chopin",
+      "title": "Balada nº 4 em Fá Menor",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 2104,
+        "medium": 2338,
+        "hard": 6046
+      },
+      "range": {
+        "minMidi": 24,
+        "maxMidi": 101
+      },
+      "fidelity": {
+        "expected": 6046,
+        "actual": 6046,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "minute-waltz",
+      "title": "Valsa do Minuto (Op. 64 nº 1)",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 688,
+        "medium": 813,
+        "hard": 1370
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 101
+      },
+      "fidelity": {
+        "expected": 1370,
+        "actual": 1370,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "chopin-fantaisie-impromptuchopin",
+      "title": "Fantasia-Impromptu",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 1602,
+        "medium": 1736,
+        "hard": 3014
+      },
+      "range": {
+        "minMidi": 31,
+        "maxMidi": 100
+      },
+      "fidelity": {
+        "expected": 3014,
+        "actual": 3014,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "premiere-arabesquedebussy",
+      "title": "Primeira Arabesca",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 646,
+        "medium": 782,
+        "hard": 1444
+      },
+      "range": {
+        "minMidi": 28,
+        "maxMidi": 92
+      },
+      "fidelity": {
+        "expected": 1444,
+        "actual": 1444,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "suite-bergamasque-clair-de-lunedebussy",
+      "title": "Clair de Lune",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 304,
+        "medium": 384,
+        "hard": 1468
+      },
+      "range": {
+        "minMidi": 27,
+        "maxMidi": 97
+      },
+      "fidelity": {
+        "expected": 1468,
+        "actual": 1468,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "the-seasons-januarytchaikovsky",
+      "title": "As Estações: Janeiro",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 639,
+        "medium": 714,
+        "hard": 1526
+      },
+      "range": {
+        "minMidi": 33,
+        "maxMidi": 100
+      },
+      "fidelity": {
+        "expected": 1526,
+        "actual": 1526,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "the-seasons-februarytchaikovsky",
+      "title": "As Estações: Fevereiro",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 637,
+        "medium": 748,
+        "hard": 1810
+      },
+      "range": {
+        "minMidi": 29,
+        "maxMidi": 93
+      },
+      "fidelity": {
+        "expected": 1810,
+        "actual": 1810,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "the-seasons-augusttchaikovsky",
+      "title": "As Estações: Agosto",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 654,
+        "medium": 846,
+        "hard": 2442
+      },
+      "range": {
+        "minMidi": 35,
+        "maxMidi": 95
+      },
+      "fidelity": {
+        "expected": 2442,
+        "actual": 2442,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "morning-prayertchaikovsky",
+      "title": "Oração da Manhã",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 72,
+        "medium": 90,
+        "hard": 246
+      },
+      "range": {
+        "minMidi": 42,
+        "maxMidi": 79
+      },
+      "fidelity": {
+        "expected": 246,
+        "actual": 246,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "march-of-the-wooden-soldierstchaikovsky",
+      "title": "Marcha dos Soldadinhos de Madeira",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 126,
+        "medium": 174,
+        "hard": 318
+      },
+      "range": {
+        "minMidi": 57,
+        "maxMidi": 79
+      },
+      "fidelity": {
+        "expected": 318,
+        "actual": 318,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "old-french-songtchaikosvky",
+      "title": "Canção Francesa Antiga",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 96,
+        "medium": 117,
+        "hard": 188
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 77
+      },
+      "fidelity": {
+        "expected": 188,
+        "actual": 188,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "doumkatchaikosvky",
+      "title": "Dumka",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 1613,
+        "medium": 1745,
+        "hard": 4279
+      },
+      "range": {
+        "minMidi": 22,
+        "maxMidi": 103
+      },
+      "fidelity": {
+        "expected": 4279,
+        "actual": 4279,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "swan-lake-napolitan-dance",
+      "title": "Lago dos Cisnes: Dança Napolitana",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 248,
+        "medium": 301,
+        "hard": 775
+      },
+      "range": {
+        "minMidi": 46,
+        "maxMidi": 79
+      },
+      "fidelity": {
+        "expected": 775,
+        "actual": 775,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "minueto-em-sol-maior",
+      "title": "Minueto em Sol Maior",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 127,
+        "medium": 159,
+        "hard": 204
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 83
+      },
+      "fidelity": {
+        "expected": 204,
+        "actual": 204,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "in-the-hall-of-the-mountain-king",
+      "title": "Na Gruta do Rei da Montanha",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 544,
+        "medium": 710,
+        "hard": 1453
+      },
+      "range": {
+        "minMidi": 23,
+        "maxMidi": 99
+      },
+      "fidelity": {
+        "expected": 1453,
+        "actual": 1453,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "ave-maria-schubert",
+      "title": "Ave Maria",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 312,
+        "medium": 369,
+        "hard": 651
+      },
+      "range": {
+        "minMidi": 27,
+        "maxMidi": 77
+      },
+      "fidelity": {
+        "expected": 651,
+        "actual": 651,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "toccata-and-fugue-d-minor",
+      "title": "Tocata e Fuga em Ré Menor",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 2377,
+        "medium": 2504,
+        "hard": 3650
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 84
+      },
+      "fidelity": {
+        "expected": 3650,
+        "actual": 3650,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "fugue-sur-le-nom-de-bachrimsky-korsakov",
+      "title": "Fuga sobre o Nome de Bach",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 375,
+        "medium": 446,
+        "hard": 619
+      },
+      "range": {
+        "minMidi": 38,
+        "maxMidi": 76
+      },
+      "fidelity": {
+        "expected": 619,
+        "actual": 619,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "das-wohltemperierte-clavier-ii-praeludium-iijsbach",
+      "title": "O Cravo Bem Temperado II: Prelúdio II",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 442,
+        "medium": 469,
+        "hard": 692
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 80
+      },
+      "fidelity": {
+        "expected": 692,
+        "actual": 692,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "preludio-chopin",
+      "title": "Prelúdio Op. 45",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 739,
+        "medium": 808,
+        "hard": 1322
+      },
+      "range": {
+        "minMidi": 25,
+        "maxMidi": 100
+      },
+      "fidelity": {
+        "expected": 1322,
+        "actual": 1322,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "sonata-in-c-major-fragment-mozart",
+      "title": "Sonata em Dó Maior (Fragmento)",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 174,
+        "medium": 208,
+        "hard": 382
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 86
+      },
+      "fidelity": {
+        "expected": 382,
+        "actual": 382,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "rocha-eterna",
+      "title": "Rocha Eterna",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 42,
+        "medium": 60,
+        "hard": 158
+      },
+      "range": {
+        "minMidi": 46,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 158,
+        "actual": 158,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "castelo-forte",
+      "title": "Castelo Forte",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 74,
+        "medium": 106,
+        "hard": 258
+      },
+      "range": {
+        "minMidi": 41,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 258,
+        "actual": 258,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "vinde-fieis",
+      "title": "Vinde Fieis",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 67,
+        "medium": 101,
+        "hard": 213
+      },
+      "range": {
+        "minMidi": 42,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 213,
+        "actual": 213,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "coroai",
+      "title": "Coroai",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 54,
+        "medium": 105,
+        "hard": 202
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 202,
+        "actual": 202,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "santo-santo-santo",
+      "title": "Santo, Santo, Santo",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 54,
+        "medium": 85,
+        "hard": 200
+      },
+      "range": {
+        "minMidi": 42,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 200,
+        "actual": 200,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "o-vem-o-vem-emanuel",
+      "title": "O Vem, O Vem, Emanuel",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 61,
+        "medium": 79,
+        "hard": 222
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 222,
+        "actual": 222,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "alvo-mais-que-a-neve",
+      "title": "Alvo Mais que a Neve",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 65,
+        "medium": 101,
+        "hard": 250
+      },
+      "range": {
+        "minMidi": 45,
+        "maxMidi": 76
+      },
+      "fidelity": {
+        "expected": 250,
+        "actual": 250,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "chuvas-de-graca",
+      "title": "Chuvas de Graca",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 61,
+        "medium": 81,
+        "hard": 241
+      },
+      "range": {
+        "minMidi": 46,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 241,
+        "actual": 241,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "conta-as-bencaos",
+      "title": "Conta as Bencaos",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 84,
+        "medium": 116,
+        "hard": 338
+      },
+      "range": {
+        "minMidi": 46,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 338,
+        "actual": 338,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "deus-velara-por-ti",
+      "title": "Deus Velara por Ti",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 62,
+        "medium": 85,
+        "hard": 225
+      },
+      "range": {
+        "minMidi": 46,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 225,
+        "actual": 225,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "firme-nas-promessas",
+      "title": "Firme nas Promessas",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 92,
+        "medium": 122,
+        "hard": 344
+      },
+      "range": {
+        "minMidi": 46,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 344,
+        "actual": 344,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "gloria-gloria-aleluia",
+      "title": "Gloria, Gloria, Aleluia",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 81,
+        "medium": 111,
+        "hard": 318
+      },
+      "range": {
+        "minMidi": 46,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 318,
+        "actual": 318,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "jubiloso-te-adoramos",
+      "title": "Jubiloso, Te Adoramos",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 67,
+        "medium": 99,
+        "hard": 238
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 238,
+        "actual": 238,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "mais-perto-quero-estar",
+      "title": "Mais Perto Quero Estar",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 44,
+        "medium": 73,
+        "hard": 169
+      },
+      "range": {
+        "minMidi": 41,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 169,
+        "actual": 169,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "manso-e-suave",
+      "title": "Manso e Suave",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 71,
+        "medium": 92,
+        "hard": 269
+      },
+      "range": {
+        "minMidi": 44,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 269,
+        "actual": 269,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "aos-pes-da-cruz",
+      "title": "Aos Pes da Cruz",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 71,
+        "medium": 100,
+        "hard": 274
+      },
+      "range": {
+        "minMidi": 44,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 274,
+        "actual": 274,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "sou-feliz-com-jesus",
+      "title": "Sou Feliz com Jesus",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 61,
+        "medium": 96,
+        "hard": 213
+      },
+      "range": {
+        "minMidi": 44,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 213,
+        "actual": 213,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "tao-sublime-sacramento",
+      "title": "Tao Sublime Sacramento",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 56,
+        "medium": 91,
+        "hard": 214
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 81
+      },
+      "fidelity": {
+        "expected": 214,
+        "actual": 214,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "teresinha-de-jesus",
+      "title": "Teresinha de Jesus",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 29,
+        "medium": 37,
+        "hard": 55
+      },
+      "range": {
+        "minMidi": 41,
+        "maxMidi": 70
+      },
+      "fidelity": {
+        "expected": 55,
+        "actual": 55,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "o-cravo-e-a-rosa",
+      "title": "O Cravo e a Rosa",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 29,
+        "medium": 37,
+        "hard": 53
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 53,
+        "actual": 53,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "sapo-cururu",
+      "title": "Sapo Cururu",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 75,
+        "medium": 99,
+        "hard": 147
+      },
+      "range": {
+        "minMidi": 39,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 147,
+        "actual": 147,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "escravos-de-jo",
+      "title": "Escravos de Jó",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 64,
+        "medium": 85,
+        "hard": 127
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 127,
+        "actual": 127,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "atirei-o-pau-no-gato",
+      "title": "Atirei o Pau no Gato",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 42,
+        "medium": 58,
+        "hard": 102
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 71
+      },
+      "fidelity": {
+        "expected": 102,
+        "actual": 102,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "a-canoa-virou",
+      "title": "A Canoa Virou",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 50,
+        "medium": 66,
+        "hard": 114
+      },
+      "range": {
+        "minMidi": 35,
+        "maxMidi": 71
+      },
+      "fidelity": {
+        "expected": 114,
+        "actual": 114,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "minha-machadinha",
+      "title": "Minha Machadinha",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 136,
+        "medium": 160,
+        "hard": 215
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 215,
+        "actual": 215,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "a-dona-aranha",
+      "title": "A Dona Aranha",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 47,
+        "medium": 63,
+        "hard": 113
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 79
+      },
+      "fidelity": {
+        "expected": 113,
+        "actual": 113,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "borboletinha",
+      "title": "Borboletinha",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 44,
+        "medium": 60,
+        "hard": 102
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 102,
+        "actual": 102,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "o-sapo-nao-lava-o-pe",
+      "title": "O Sapo não Lava o Pé",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 35,
+        "medium": 50,
+        "hard": 89
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 89,
+        "actual": 89,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "fui-no-itororo",
+      "title": "Fui no Itororó",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 120,
+        "medium": 152,
+        "hard": 216
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 67
+      },
+      "fidelity": {
+        "expected": 216,
+        "actual": 216,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "carneirinho-carneirao",
+      "title": "Carneirinho, Carneirão",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 84,
+        "medium": 100,
+        "hard": 148
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 76
+      },
+      "fidelity": {
+        "expected": 148,
+        "actual": 148,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "oh-que-belas-laranjas",
+      "title": "Oh! Que Belas Laranjas",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 136,
+        "medium": 152,
+        "hard": 200
+      },
+      "range": {
+        "minMidi": 39,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 200,
+        "actual": 200,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "onde-esta-a-margarida",
+      "title": "Onde Está a Margarida?",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 108,
+        "medium": 128,
+        "hard": 188
+      },
+      "range": {
+        "minMidi": 38,
+        "maxMidi": 71
+      },
+      "fidelity": {
+        "expected": 188,
+        "actual": 188,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "pai-francisco",
+      "title": "Pai Francisco",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 106,
+        "medium": 122,
+        "hard": 170
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 170,
+        "actual": 170,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "passarinho-da-lagoa",
+      "title": "Passarinho da Lagoa",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 90,
+        "medium": 99,
+        "hard": 130
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 130,
+        "actual": 130,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "pezinho",
+      "title": "Pezinho",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 100,
+        "medium": 116,
+        "hard": 164
+      },
+      "range": {
+        "minMidi": 38,
+        "maxMidi": 76
+      },
+      "fidelity": {
+        "expected": 164,
+        "actual": 164,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "pirulito-que-bate-bate",
+      "title": "Pirulito que Bate Bate",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 64,
+        "medium": 72,
+        "hard": 96
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 96,
+        "actual": 96,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "samba-lele",
+      "title": "Samba Lelê",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 96,
+        "medium": 112,
+        "hard": 160
+      },
+      "range": {
+        "minMidi": 38,
+        "maxMidi": 69
+      },
+      "fidelity": {
+        "expected": 160,
+        "actual": 160,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "se-essa-rua-fosse-minha",
+      "title": "Se Essa Rua Fosse Minha",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 135,
+        "medium": 159,
+        "hard": 231
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 231,
+        "actual": 231,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "tutu-maramba",
+      "title": "Tutu Marambá",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 90,
+        "medium": 108,
+        "hard": 162
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 86
+      },
+      "fidelity": {
+        "expected": 162,
+        "actual": 162,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "pintinho-amarelinho",
+      "title": "Meu Pintinho Amarelinho",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 82,
+        "medium": 98,
+        "hard": 146
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 69
+      },
+      "fidelity": {
+        "expected": 146,
+        "actual": 146,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "parabens-pra-voce",
+      "title": "Parabéns pra Você",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 25,
+        "medium": 33,
+        "hard": 57
+      },
+      "range": {
+        "minMidi": 36,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 57,
+        "actual": 57,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "bella-ciao-lacasadepapel",
+      "title": "Bella Ciao",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 80,
+        "medium": 96,
+        "hard": 144
+      },
+      "range": {
+        "minMidi": 38,
+        "maxMidi": 70
+      },
+      "fidelity": {
+        "expected": 144,
+        "actual": 144,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    }
+  ]
+}

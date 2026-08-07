@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "id": "borboletinha",
+  "title": "Borboletinha",
+  "composer": "Tradicional brasileiro",
+  "bpm": 88,
+  "timeSignature": [2, 4],
+  "key": "C major",
+  "gate": 0.84,
+  "source": {
+    "work": "Borboletinha (Brazilian traditional children's song)",
+    "historicalRecord": "Brazilian educational and academic sources identify Borboletinha as folklore or public domain.",
+    "transcription": "Independent Pianify notation of the familiar Brazilian melody in C major. Pitch order and rhythmic contour were cross-checked against the UFG academic appendix and SABRA educational score. No third-party score or recording is bundled. The left hand is an original Pianify editorial harmonization v1."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - traditional Brazilian melody",
+      "role": "source-melody",
+      "velocity": 0.76,
+      "events": [
+        { "midi": 67, "beat": 0, "duration": 0.5 },
+        { "midi": 69, "beat": 0.5, "duration": 0.5 },
+        { "midi": 67, "beat": 1, "duration": 1 },
+        { "midi": 72, "beat": 2, "duration": 0.5 },
+        { "midi": 72, "beat": 2.5, "duration": 0.5 },
+        { "midi": 67, "beat": 3, "duration": 0.5 },
+        { "midi": 69, "beat": 3.5, "duration": 0.5 },
+        { "midi": 67, "beat": 4, "duration": 1 },
+        { "midi": 71, "beat": 5, "duration": 0.5 },
+        { "midi": 71, "beat": 5.5, "duration": 1.5 },
+
+        { "midi": 67, "beat": 8, "duration": 0.5 },
+        { "midi": 69, "beat": 8.5, "duration": 0.5 },
+        { "midi": 69, "beat": 9, "duration": 0.5 },
+        { "midi": 67, "beat": 9.5, "duration": 0.5 },
+        { "midi": 67, "beat": 10, "duration": 0.5 },
+        { "midi": 71, "beat": 10.5, "duration": 0.5 },
+        { "midi": 71, "beat": 11, "duration": 0.5 },
+        { "midi": 67, "beat": 11.5, "duration": 0.5 },
+        { "midi": 69, "beat": 12, "duration": 0.5 },
+        { "midi": 71, "beat": 12.5, "duration": 0.5 },
+        { "midi": 72, "beat": 13, "duration": 0.5 },
+        { "midi": 72, "beat": 13.5, "duration": 1.5 },
+
+        { "midi": 67, "beat": 16, "duration": 0.5 },
+        { "midi": 69, "beat": 16.5, "duration": 0.5 },
+        { "midi": 67, "beat": 17, "duration": 0.5 },
+        { "midi": 72, "beat": 17.5, "duration": 1 },
+        { "midi": 67, "beat": 18.5, "duration": 0.5 },
+        { "midi": 69, "beat": 19, "duration": 0.5 },
+        { "midi": 67, "beat": 19.5, "duration": 0.5 },
+        { "midi": 71, "beat": 20, "duration": 1.5 },
+
+        { "midi": 67, "beat": 22, "duration": 0.5 },
+        { "midi": 69, "beat": 22.5, "duration": 0.5 },
+        { "midi": 67, "beat": 23, "duration": 0.5 },
+        { "midi": 71, "beat": 23.5, "duration": 0.5 },
+        { "midi": 71, "beat": 24, "duration": 0.5 },
+        { "midi": 67, "beat": 24.5, "duration": 0.5 },
+        { "midi": 67, "beat": 25, "duration": 0.5 },
+        { "midi": 69, "beat": 25.5, "duration": 0.5 },
+        { "midi": 69, "beat": 26, "duration": 0.5 },
+        { "midi": 71, "beat": 26.5, "duration": 0.5 },
+        { "midi": 71, "beat": 27, "duration": 0.5 },
+        { "midi": 72, "beat": 27.5, "duration": 0.5 },
+        { "midi": 67, "beat": 28, "duration": 1 },
+        { "midi": 72, "beat": 29, "duration": 2 }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.52,
+      "events": [
+        { "midis": [43, 50, 55], "beat": 0, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 2, "duration": 2 },
+        { "midis": [38, 45, 50, 53], "beat": 4, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 6, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 8, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 10, "duration": 2 },
+        { "midis": [38, 45, 50, 53], "beat": 12, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 14, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 16, "duration": 2 },
+        { "midis": [38, 45, 50, 53], "beat": 18, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 20, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 22, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 24, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 26, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 28, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 30, "duration": 1 }
+      ]
+    }
+  ]
+}

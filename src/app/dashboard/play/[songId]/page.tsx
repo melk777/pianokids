@@ -7,7 +7,11 @@ import Link from "next/link";
 import ScoreScreen from "@/components/ScoreScreen";
 import OrientationOverlay from "@/components/OrientationOverlay";
 import PianoPlayer from "@/components/PianoPlayer";
-import GameTutorialOverlay, { type GameTutorialActionId, shouldAutoOpenGameTutorial } from "@/components/GameTutorialOverlay";
+import GameTutorialOverlay, {
+  type GameTutorialActionId,
+  type GameTutorialStep,
+  shouldAutoOpenGameTutorial,
+} from "@/components/GameTutorialOverlay";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
 import { useKeyboardInput } from "@/hooks/useKeyboardInput";
 import { useAudioInput } from "@/hooks/useAudioInput";
@@ -25,6 +29,7 @@ import { Cable, Volume2, Mic, MicOff, Play, Pause, RotateCcw, CircleHelp } from 
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useProfile } from "@/hooks/useProfile";
 import { trackEvent } from "@/lib/analytics";
+import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
 
 const FREE_PLAY_SONG: Song = {
   id: "freeplay",
@@ -56,32 +61,33 @@ const DEFAULT_FEEDBACK: PracticeFeedbackSummary = {
 };
 
 const TUTORIAL_SIMULATION_NOTES: SongNote[] = [
-  { midi: 60, time: 0.8, duration: 0.55, velocity: 0.8, hand: "right" },
-  { midi: 64, time: 1.55, duration: 1.7, velocity: 0.86, hand: "right" },
-  { midi: 48, time: 2.2, duration: 2.2, velocity: 0.76, hand: "left" },
-  { midi: 67, time: 4.1, duration: 0.65, velocity: 0.88, hand: "right" },
-  { midi: 52, time: 4.85, duration: 1.8, velocity: 0.78, hand: "left" },
-  { midi: 72, time: 6.1, duration: 2.4, velocity: 0.9, hand: "right" },
-  { midi: 55, time: 7.1, duration: 2.1, velocity: 0.82, hand: "left" },
-  { midi: 76, time: 9.2, duration: 0.85, velocity: 0.88, hand: "right" },
-  { midi: 60, time: 10.2, duration: 2.6, velocity: 0.84, hand: "left" },
-  { midi: 79, time: 11.0, duration: 2.6, velocity: 0.92, hand: "right" },
+  { midi: 60, time: 0.8, duration: 0.65, velocity: 0.82, hand: "right" },
+  { midi: 48, time: 1.55, duration: 2.15, velocity: 0.72, hand: "left" },
+  { midi: 64, time: 1.65, duration: 0.65, velocity: 0.84, hand: "right" },
+  { midi: 67, time: 2.5, duration: 0.7, velocity: 0.86, hand: "right" },
+  { midi: 72, time: 3.4, duration: 1.35, velocity: 0.9, hand: "right" },
+  { midi: 55, time: 4.85, duration: 2.2, velocity: 0.74, hand: "left" },
+  { midi: 64, time: 5.0, duration: 0.65, velocity: 0.82, hand: "right" },
+  { midi: 67, time: 5.85, duration: 0.65, velocity: 0.84, hand: "right" },
+  { midi: 69, time: 6.7, duration: 0.7, velocity: 0.86, hand: "right" },
+  { midi: 67, time: 7.6, duration: 1.35, velocity: 0.88, hand: "right" },
+  { midi: 48, time: 9.1, duration: 2.15, velocity: 0.74, hand: "left" },
+  { midi: 60, time: 9.25, duration: 1.9, velocity: 0.86, hand: "right" },
 ];
 
 const TUTORIAL_KEYBOARD_NOTE = 60;
 
-function buildTutorialSimulationNotes(runId: number) {
+function buildTutorialSimulationNotes(_runId: number) {
   const phraseLength = 12;
   const repetitions = 10;
-  const runOffset = runId * 0;
+  const runOffset = _runId * 0;
   const notes: SongNote[] = [];
 
   for (let repetition = 0; repetition < repetitions; repetition += 1) {
     const timeOffset = repetition * phraseLength + runOffset;
-    TUTORIAL_SIMULATION_NOTES.forEach((note, index) => {
+    TUTORIAL_SIMULATION_NOTES.forEach((note) => {
       notes.push({
         ...note,
-        midi: index % 4 === 0 ? note.midi + (repetition % 2) * 12 : note.midi,
         time: note.time + timeOffset,
       });
     });
@@ -91,15 +97,10 @@ function buildTutorialSimulationNotes(runId: number) {
 }
 
 const createTutorialActionState = (): Partial<Record<GameTutorialActionId, boolean>> => ({
-  volume: false,
-  mic: false,
-  pause: false,
-  loop: false,
-  speed: false,
-  waiting: false,
-  metronome: false,
-  restart: false,
   keyboard: false,
+  speed: false,
+  loop: false,
+  waiting: false,
 });
 
 export default function PlayPage() {
@@ -119,19 +120,9 @@ export default function PlayPage() {
 
 function PlayPageContent() {
   const pageRef = useRef<HTMLDivElement>(null);
-  const volumeControlRef = useRef<HTMLButtonElement>(null);
-  const tutorialControlRef = useRef<HTMLButtonElement>(null);
-  const micControlRef = useRef<HTMLButtonElement>(null);
-  const pauseShortcutRef = useRef<HTMLButtonElement>(null);
   const loopControlRef = useRef<HTMLDivElement>(null);
   const speedControlRef = useRef<HTMLDivElement>(null);
   const waitingControlRef = useRef<HTMLButtonElement>(null);
-  const metronomeControlRef = useRef<HTMLDivElement>(null);
-  const restartControlRef = useRef<HTMLButtonElement>(null);
-  const scoreTargetRef = useRef<HTMLDivElement>(null);
-  const comboTargetRef = useRef<HTMLDivElement>(null);
-  const accuracyTargetRef = useRef<HTMLDivElement>(null);
-  const progressTargetRef = useRef<HTMLDivElement>(null);
   const fallingNotesTargetRef = useRef<HTMLDivElement>(null);
   const hitLineTargetRef = useRef<HTMLDivElement>(null);
   const keyboardTargetRef = useRef<HTMLDivElement>(null);
@@ -144,6 +135,8 @@ function PlayPageContent() {
   const isFreePlay = songId === "freeplay";
   const [song, setSong] = useState<Song | undefined>(isFreePlay ? FREE_PLAY_SONG : undefined);
   const [songLoading, setSongLoading] = useState(!isFreePlay);
+  const [songLoadError, setSongLoadError] = useState<string | null>(null);
+  const [songLoadAttempt, setSongLoadAttempt] = useState(0);
 
   const { profile, recordPracticeSession } = useProfile();
 
@@ -177,17 +170,27 @@ function PlayPageContent() {
 
     let mounted = true;
     setSongLoading(true);
+    setSongLoadError(null);
 
-    loadSongById(songId).then((loadedSong) => {
-      if (!mounted) return;
-      setSong(loadedSong);
-      setSongLoading(false);
-    });
+    loadSongById(songId)
+      .then((loadedSong) => {
+        if (!mounted) return;
+        setSong(loadedSong);
+      })
+      .catch((error: unknown) => {
+        if (!mounted) return;
+        console.error("Falha ao carregar música", error);
+        setSong(undefined);
+        setSongLoadError("Não foi possível carregar esta música agora.");
+      })
+      .finally(() => {
+        if (mounted) setSongLoading(false);
+      });
 
     return () => {
       mounted = false;
     };
-  }, [isFreePlay, songId]);
+  }, [isFreePlay, songId, songLoadAttempt]);
 
   type PianoNoteRecord = {
     note: number;
@@ -406,7 +409,7 @@ function PlayPageContent() {
         note: detectedNote.note,
         velocity: 80,
         channel: 1,
-        timestamp: detectedNote.timestamp || performance.now(),
+        timestamp: detectedNote.timestamp,
       });
     }
 
@@ -485,9 +488,6 @@ function PlayPageContent() {
     if (gameState !== "ended") {
       setIsPaused((current) => {
         const nextPaused = !current;
-        if (isTutorialSimulation && currentTutorialAction === "pause") {
-          completeTutorialAction("pause");
-        }
         if (nextPaused) {
           void audio.suspend();
         } else {
@@ -497,7 +497,7 @@ function PlayPageContent() {
         return nextPaused;
       });
     }
-  }, [audio, completeTutorialAction, currentTutorialAction, gameState, isTutorialSimulation, startGame]);
+  }, [audio, gameState, startGame]);
 
   useEffect(() => {
     const handleSpaceBar = (event: KeyboardEvent) => {
@@ -768,13 +768,7 @@ function PlayPageContent() {
     const studentNoteKeys = new Set(playerNotes.map((note) => `${Math.round(note.time * 100)}:${note.midi}`));
     return accompanimentNotes.filter((note) => !studentNoteKeys.has(`${Math.round(note.time * 100)}:${note.midi}`));
   }, [accompanimentNotes, isTutorialSimulation, playerNotes]);
-  const completedTutorialActions = useMemo(
-    () => ({
-      ...tutorialActions,
-      mic: Boolean(tutorialActions.mic || isMicActive),
-    }),
-    [isMicActive, tutorialActions],
-  );
+  const completedTutorialActions = tutorialActions;
 
   const handleTutorialClose = useCallback(() => {
     setShowTutorial(false);
@@ -814,27 +808,20 @@ function PlayPageContent() {
   }, [difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, song?.duration, song?.id, songId]);
 
   const handleTutorialStepChange = useCallback(
-    (step: { requiredAction?: GameTutorialActionId }) => {
+    (step: GameTutorialStep) => {
       if (!isTutorialSimulation) return;
       setCurrentTutorialAction(step.requiredAction ?? null);
 
-      if (step.requiredAction === "speed") {
+      if (step.requiredAction === "keyboard") {
+        resetTutorialSimulation({ speed: 0.65, waiting: true, playing: true });
+      } else if (step.targetId === "fallingNotes" || step.targetId === "hitLine") {
+        resetTutorialSimulation({ speed: 0.7, waiting: false, playing: true });
+      } else if (step.requiredAction === "speed") {
         resetTutorialSimulation({ speed: 0.45, playing: true });
       } else if (step.requiredAction === "waiting") {
         resetTutorialSimulation({ speed: 0.7, waiting: false, playing: true });
       } else if (step.requiredAction === "loop") {
         resetTutorialSimulation({ speed: 0.8, loop: false, playing: true });
-      } else if (step.requiredAction === "keyboard") {
-        resetTutorialSimulation({ speed: 0.7, waiting: true, playing: true });
-      } else if (step.requiredAction === "pause") {
-        resetTutorialSimulation({ speed: 0.75, playing: true });
-      } else if (step.requiredAction === "restart") {
-        setPlaybackSpeed(0.8);
-        setIsWaitingMode(false);
-        setIsLoopEnabled(false);
-        resetTutorialSimulation({ speed: 0.8, playing: true });
-      } else if (step.requiredAction === "mic" && isMicActive) {
-        completeTutorialAction("mic");
       } else {
         setPlaybackSpeed((current) => (current < 0.5 ? 0.75 : current));
         setIsWaitingMode(false);
@@ -842,7 +829,7 @@ function PlayPageContent() {
         resetTutorialSimulation({ playing: false });
       }
     },
-    [completeTutorialAction, isMicActive, isTutorialSimulation, resetTutorialSimulation],
+    [isTutorialSimulation, resetTutorialSimulation],
   );
 
   if (songLoading) {
@@ -856,8 +843,17 @@ function PlayPageContent() {
 
   if (!song) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h1 className="mb-4 text-2xl font-bold">Música não encontrada</h1>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+        <h1 className="text-2xl font-bold">{songLoadError ?? "Música não encontrada"}</h1>
+        {songLoadError ? (
+          <button
+            type="button"
+            onClick={() => setSongLoadAttempt((attempt) => attempt + 1)}
+            className="btn-primary rounded-full px-6 py-3"
+          >
+            Tentar novamente
+          </button>
+        ) : null}
         <Link href="/dashboard/songs" className="text-cyan hover:underline">
           Voltar para a biblioteca
         </Link>
@@ -869,32 +865,23 @@ function PlayPageContent() {
     <div ref={pageRef} className="relative flex min-h-screen flex-col overflow-hidden bg-black font-sans text-white">
       <OrientationOverlay />
 
-      <GameTutorialOverlay
-        open={showTutorial}
-        onClose={handleTutorialClose}
-        onComplete={handleTutorialComplete}
-        onStepChange={handleTutorialStepChange}
-        completedActions={completedTutorialActions}
-        containerRef={pageRef}
-        targets={{
-          volume: volumeControlRef,
-          tutorial: tutorialControlRef,
-          mic: micControlRef,
-          pauseShortcut: pauseShortcutRef,
-          loop: loopControlRef,
-          speed: speedControlRef,
-          waiting: waitingControlRef,
-          metronome: metronomeControlRef,
-          restart: restartControlRef,
-          score: scoreTargetRef,
-          combo: comboTargetRef,
-          accuracy: accuracyTargetRef,
-          progress: progressTargetRef,
-          fallingNotes: fallingNotesTargetRef,
-          hitLine: hitLineTargetRef,
-          keyboard: keyboardTargetRef,
-        }}
-      />
+      {showTutorial ? (
+        <GameTutorialOverlay
+          onClose={handleTutorialClose}
+          onComplete={handleTutorialComplete}
+          onStepChange={handleTutorialStepChange}
+          completedActions={completedTutorialActions}
+          containerRef={pageRef}
+          targets={{
+            loop: loopControlRef,
+            speed: speedControlRef,
+            waiting: waitingControlRef,
+            fallingNotes: fallingNotesTargetRef,
+            hitLine: hitLineTargetRef,
+            keyboard: keyboardTargetRef,
+          }}
+        />
+      ) : null}
 
       <div
         className="z-20 flex h-12 shrink-0 items-center gap-2 overflow-hidden border-b border-white/[0.06] px-2 md:px-5"
@@ -911,7 +898,6 @@ function PlayPageContent() {
             <p className="mt-0.5 truncate text-[8px] uppercase tracking-widest text-white/35">{song.artist}</p>
           </div>
           <button
-            ref={pauseShortcutRef}
             data-testid="control-pause"
             data-active={isPaused ? "true" : "false"}
             data-game-state={gameState}
@@ -940,9 +926,7 @@ function PlayPageContent() {
           className="flex min-w-0 flex-1 items-center justify-start gap-1.5 overflow-x-auto overscroll-x-contain pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0 md:justify-end md:gap-2 md:pr-0"
         >
           <button
-            ref={volumeControlRef}
             onClick={() => {
-              if (isTutorialSimulation) completeTutorialAction("volume");
               setAudioEnabled(!audioEnabled);
             }}
             className={`rounded-lg p-1.5 transition-colors ${audioEnabled ? "text-cyan" : "text-white/25"}`}
@@ -952,7 +936,6 @@ function PlayPageContent() {
           </button>
 
           <button
-            ref={tutorialControlRef}
             onClick={() => setShowTutorial(true)}
             className="rounded-lg p-1.5 text-white/35 transition-colors hover:text-white"
             title="Tutorial da tela"
@@ -961,9 +944,7 @@ function PlayPageContent() {
           </button>
 
           <button
-            ref={micControlRef}
             onClick={() => {
-              if (isTutorialSimulation) completeTutorialAction("mic");
               if (isTutorialSimulation && isMicActive) return;
               return isMicActive ? stopMic() : startMic();
             }}
@@ -1022,7 +1003,7 @@ function PlayPageContent() {
             </div>
           )}
 
-          {!isFreePlay && song.duration > 0 && (
+          {((!isFreePlay && song.duration > 0) || isTutorialSimulation) && (
             <>
               <div className="h-5 w-px bg-white/10" />
 
@@ -1157,12 +1138,11 @@ function PlayPageContent() {
 
           <div className="h-5 w-px bg-white/10" />
 
-          <div ref={metronomeControlRef} className="flex items-center gap-1">
+          <div className="flex items-center gap-1">
             <span className="hidden text-[8px] font-bold uppercase tracking-wider text-white/25 md:inline">Met</span>
             <button
             data-testid="control-metronome-down"
             onClick={() => {
-              if (isTutorialSimulation) completeTutorialAction("metronome");
               setMetronomeVolume(Math.max(0, metronomeVolume - 0.02));
               if (isTutorialSimulation) {
                 audio.playTick(Math.max(0.02, metronomeVolume - 0.02));
@@ -1178,7 +1158,6 @@ function PlayPageContent() {
             <button
             data-testid="control-metronome-up"
             onClick={() => {
-              if (isTutorialSimulation) completeTutorialAction("metronome");
               setMetronomeVolume(Math.min(0.5, metronomeVolume + 0.02));
               if (isTutorialSimulation) {
                 audio.playTick(Math.min(0.5, metronomeVolume + 0.02));
@@ -1193,11 +1172,9 @@ function PlayPageContent() {
           <div className="h-5 w-px bg-white/10" />
 
           <button
-            ref={restartControlRef}
             data-testid="control-restart"
             onClick={() => {
               if (isTutorialSimulation) {
-                completeTutorialAction("restart");
                 resetTutorialSimulation();
                 return;
               }
@@ -1371,8 +1348,8 @@ function PlayPageContent() {
                 playbackSpeed={playbackSpeed}
                 initialPlaybackTime={isLoopEnabled && loopDuration >= 1 ? loopStart : 0}
                 resetKey={`${song.id}:${difficulty}:${handSelection.includeLeftHand}:${handSelection.includeRightHand}:${playerResetKey}`}
-                startNote={36}
-                endNote={84}
+                startNote={PIANO_START_MIDI}
+                endNote={PIANO_END_MIDI}
                 loopRegion={{
                   enabled: isLoopEnabled && loopDuration >= 1,
                   start: loopStart,
@@ -1380,14 +1357,15 @@ function PlayPageContent() {
                 }}
                 onProgressChange={setCurrentPlaybackTime}
                 tutorialTargets={{
-                  scoreRef: scoreTargetRef,
-                  comboRef: comboTargetRef,
-                  accuracyRef: accuracyTargetRef,
-                  progressRef: progressTargetRef,
                   fallingNotesRef: fallingNotesTargetRef,
                   hitLineRef: hitLineTargetRef,
                   keyboardRef: keyboardTargetRef,
                 }}
+                tutorialHighlightNote={
+                  isTutorialSimulation && currentTutorialAction === "keyboard"
+                    ? TUTORIAL_KEYBOARD_NOTE
+                    : undefined
+                }
               />
             </motion.div>
           )}

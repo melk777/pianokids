@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "id": "atirei-o-pau-no-gato",
+  "title": "Atirei o Pau no Gato",
+  "composer": "Tradicional brasileiro",
+  "bpm": 110,
+  "timeSignature": [2, 4],
+  "key": "C major",
+  "gate": 0.82,
+  "source": {
+    "work": "Atirei o Pau no Gato (Brazilian traditional form)",
+    "historicalRecord": "The work is identified in academic and educational references as a traditional Brazilian melody and public-domain song.",
+    "transcription": "Independent Pianify notation of the public-domain traditional melody. Pitch order was cross-checked against the reviewed Cifra Club tablature, the UFSCar score marked Melodia tradicional do Brasil, and the Beatriz Kauffmann folklore reference. No third-party score or MIDI is bundled. The left hand is an original Pianify editorial harmonization v1."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - traditional Brazilian melody",
+      "role": "source-melody",
+      "velocity": 0.76,
+      "events": [
+        { "midi": 67, "beat": 0, "duration": 1.5 },
+        { "midi": 65, "beat": 1.5, "duration": 0.5 },
+        { "midi": 64, "beat": 2, "duration": 0.5 },
+        { "midi": 62, "beat": 2.5, "duration": 0.5 },
+        { "midi": 64, "beat": 3, "duration": 0.5 },
+        { "midi": 65, "beat": 3.5, "duration": 0.5 },
+        { "midi": 67, "beat": 4, "duration": 1 },
+        { "midi": 67, "beat": 5, "duration": 1 },
+        { "midi": 67, "beat": 6, "duration": 1 },
+        { "midi": 69, "beat": 7, "duration": 0.5 },
+        { "midi": 67, "beat": 7.5, "duration": 0.5 },
+        { "midi": 65, "beat": 8, "duration": 1 },
+        { "midi": 65, "beat": 9, "duration": 1 },
+        { "midi": 65, "beat": 10, "duration": 1 },
+        { "midi": 67, "beat": 11, "duration": 0.5 },
+        { "midi": 65, "beat": 11.5, "duration": 0.5 },
+        { "midi": 64, "beat": 12, "duration": 1 },
+        { "midi": 64, "beat": 13, "duration": 1 },
+        { "midi": 64, "beat": 14, "duration": 1 },
+
+        { "midi": 62, "beat": 15, "duration": 0.5 },
+        { "midi": 64, "beat": 15.5, "duration": 0.5 },
+        { "midi": 69, "beat": 16, "duration": 1 },
+        { "midi": 69, "beat": 17, "duration": 1 },
+        { "midi": 69, "beat": 18, "duration": 1 },
+        { "midi": 71, "beat": 19, "duration": 0.5 },
+        { "midi": 69, "beat": 19.5, "duration": 0.5 },
+        { "midi": 67, "beat": 20, "duration": 1 },
+        { "midi": 67, "beat": 21, "duration": 1 },
+        { "midi": 67, "beat": 22, "duration": 1 },
+
+        { "midi": 64, "beat": 23, "duration": 0.5 },
+        { "midi": 65, "beat": 23.5, "duration": 0.5 },
+        { "midi": 67, "beat": 24, "duration": 1 },
+        { "midi": 64, "beat": 25, "duration": 0.5 },
+        { "midi": 65, "beat": 25.5, "duration": 0.5 },
+        { "midi": 67, "beat": 26, "duration": 1 },
+        { "midi": 64, "beat": 27, "duration": 0.5 },
+        { "midi": 65, "beat": 27.5, "duration": 0.5 },
+        { "midi": 67, "beat": 28, "duration": 0.5 },
+        { "midi": 65, "beat": 28.5, "duration": 0.5 },
+        { "midi": 64, "beat": 29, "duration": 0.5 },
+        { "midi": 62, "beat": 29.5, "duration": 0.5 },
+        { "midi": 60, "beat": 30, "duration": 2 }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.54,
+      "events": [
+        { "midis": [43, 50, 55], "beat": 0, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 2, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 4, "duration": 2 },
+        { "midis": [38, 45, 50, 53], "beat": 6, "duration": 2 },
+        { "midis": [38, 45, 50, 53], "beat": 8, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 10, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 12, "duration": 2 },
+        { "midis": [41, 48, 53, 57], "beat": 14, "duration": 2 },
+        { "midis": [41, 48, 53, 57], "beat": 16, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 18, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 20, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 22, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 24, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 26, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 28, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 30, "duration": 2 }
+      ]
+    }
+  ]
+}

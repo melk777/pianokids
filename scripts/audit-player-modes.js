@@ -1,13 +1,14 @@
 const fs = require("fs");
 const path = require("path");
+const pianoRange = require("../config/piano-range.json");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
 const REPORT_JSON = path.join(ROOT_DIR, "docs", "player-mode-audit.json");
 const REPORT_MD = path.join(ROOT_DIR, "docs", "player-mode-audit.md");
 
-const PLAYER_MIN_MIDI = 36;
-const PLAYER_MAX_MIDI = 84;
+const PLAYER_MIN_MIDI = pianoRange.startMidi;
+const PLAYER_MAX_MIDI = pianoRange.endMidi;
 const DIFFICULTIES = ["beginner", "medium", "pro"];
 const HAND_MODES = [
   { id: "right", includeLeftHand: false, includeRightHand: true },

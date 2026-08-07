@@ -1,0 +1,212 @@
+{
+  "generatedAt": "2026-08-07T18:48:05.921Z",
+  "summary": {
+    "songs": 8,
+    "readyForOwnerReview": 8,
+    "blocked": 0,
+    "warnings": 0,
+    "exactFidelity": 8
+  },
+  "songs": [
+    {
+      "id": "twinkle-twinkle",
+      "title": "Brilha Brilha Estrelinha",
+      "sourceKind": "transcription",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 42,
+        "medium": 66,
+        "hard": 118
+      },
+      "range": {
+        "min": 41,
+        "max": 69
+      },
+      "fidelity": {
+        "expected": 42,
+        "actual": 42,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": 1,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "ode-to-joy",
+      "title": "Ode à Alegria",
+      "sourceKind": "midi",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 67,
+        "medium": 83,
+        "hard": 238
+      },
+      "range": {
+        "min": 43,
+        "max": 74
+      },
+      "fidelity": {
+        "expected": 238,
+        "actual": 238,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "amazing-grace",
+      "title": "Amazing Grace",
+      "sourceKind": "transcription",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 35,
+        "medium": 50,
+        "hard": 82
+      },
+      "range": {
+        "min": 38,
+        "max": 74
+      },
+      "fidelity": {
+        "expected": 35,
+        "actual": 35,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": 0.857,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "noite-feliz",
+      "title": "Noite Feliz",
+      "sourceKind": "midi",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 46,
+        "medium": 58,
+        "hard": 173
+      },
+      "range": {
+        "min": 41,
+        "max": 75
+      },
+      "fidelity": {
+        "expected": 173,
+        "actual": 173,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "ciranda-cirandinha",
+      "title": "Ciranda, Cirandinha",
+      "sourceKind": "transcription",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 56,
+        "medium": 73,
+        "hard": 112
+      },
+      "range": {
+        "min": 41,
+        "max": 71
+      },
+      "fidelity": {
+        "expected": 56,
+        "actual": 56,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": 0.812,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "peixe-vivo",
+      "title": "Peixe Vivo",
+      "sourceKind": "transcription",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 80,
+        "medium": 110,
+        "hard": 178
+      },
+      "range": {
+        "min": 41,
+        "max": 69
+      },
+      "fidelity": {
+        "expected": 80,
+        "actual": 80,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": 0.865,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "bach-prelude",
+      "title": "Prelúdio em Dó Maior (BWV 846)",
+      "sourceKind": "midi",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 137,
+        "medium": 482,
+        "hard": 549
+      },
+      "range": {
+        "min": 36,
+        "max": 81
+      },
+      "fidelity": {
+        "expected": 549,
+        "actual": 549,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "fur-elise",
+      "title": "Para Elisa",
+      "sourceKind": "midi",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 110,
+        "medium": 132,
+        "hard": 193
+      },
+      "range": {
+        "min": 40,
+        "max": 88
+      },
+      "fidelity": {
+        "expected": 193,
+        "actual": 193,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "harmonyCompatibility": null,
+      "errors": [],
+      "warnings": []
+    }
+  ]
+}

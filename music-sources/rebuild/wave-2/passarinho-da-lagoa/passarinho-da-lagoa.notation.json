@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "id": "passarinho-da-lagoa",
+  "title": "Passarinho da Lagoa",
+  "composer": "Tradicional do Rio Grande do Norte",
+  "bpm": 104,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "F major",
+  "gate": 0.9,
+  "source": {
+    "work": "Passarinho da Lagoa",
+    "transcription": "Independent Pianify notation of the traditional Rio Grande do Norte children's round documented by Dulce Caldas in 1947 and Verissimo de Melo in 1953.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 2,
+      "repeatLengthBeats": 17,
+      "events": [
+        {
+          "midi": 70,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 0.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 0.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 1,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 1.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 1.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 1.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 2,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 2.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 2.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 2.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 3,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 3.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 3.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 3.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 4.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 4.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 5.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 5.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 6.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 6.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 7.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 7.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 8,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 8.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 8.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 9,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 9.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 9.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 9.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 10,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 10.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 10.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 11,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 11.25,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 11.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 11.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 12.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 12.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 13.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 13.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 14.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 14.75,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 15.5,
+          "duration": 0.25
+        },
+        {
+          "midi": 67,
+          "beat": 15.75,
+          "duration": 0.75
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 2,
+      "repeatLengthBeats": 17,
+      "events": [
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            46,
+            53,
+            58,
+            62
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            41,
+            48,
+            53,
+            57
+          ],
+          "beat": 12,
+          "duration": 4
+        },
+        {
+          "midis": [
+            36,
+            43,
+            46,
+            52
+          ],
+          "beat": 16,
+          "duration": 1
+        }
+      ]
+    }
+  ]
+}

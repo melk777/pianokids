@@ -12,16 +12,30 @@ const CHROME_PATHS = [
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
 ].filter(Boolean);
 
-const TARGET_URL =
-  "http://localhost:3014/api/auth/local-test?redirect=/dashboard/play/borboletinha%3Fdifficulty%3Dpro%26leftHand%3Dtrue%26rightHand%3Dtrue%26mic%3Dfalse";
-const PLAYER_URL = "http://localhost:3014/dashboard/play/borboletinha?difficulty=pro&leftHand=true&rightHand=true&mic=false";
+const QA_BASE_URL = (process.env.PIANIFY_QA_URL || "http://localhost:3014").replace(/\/$/, "");
+const PLAYER_PATH = "/dashboard/play/borboletinha?difficulty=pro&leftHand=true&rightHand=true&mic=false";
+const TARGET_URL = `${QA_BASE_URL}/api/auth/local-test?redirect=${encodeURIComponent(PLAYER_PATH)}`;
+const PLAYER_URL = `${QA_BASE_URL}${PLAYER_PATH}`;
 
-const VIEWPORTS = [
+const ALL_VIEWPORTS = [
   { name: "mobile-portrait", width: 390, height: 844, touch: true },
   { name: "mobile-landscape", width: 844, height: 390, touch: true },
   { name: "tablet", width: 834, height: 1112, touch: true },
   { name: "desktop", width: 1440, height: 900, touch: false },
 ];
+const requestedViewports = new Set(
+  (process.env.PIANIFY_QA_VIEWPORTS ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean),
+);
+const VIEWPORTS = requestedViewports.size
+  ? ALL_VIEWPORTS.filter((viewport) => requestedViewports.has(viewport.name))
+  : ALL_VIEWPORTS;
+
+if (VIEWPORTS.length === 0) {
+  throw new Error(`Nenhum viewport encontrado para PIANIFY_QA_VIEWPORTS=${process.env.PIANIFY_QA_VIEWPORTS}`);
+}
 
 function findChrome() {
   return CHROME_PATHS.find((candidate) => candidate && fs.existsSync(candidate));
@@ -164,7 +178,7 @@ async function holdTestId(page, testId, holdMs = 180) {
     `(() => {
       const el = document.querySelector('[data-testid="${testId}"]');
       if (!el) return false;
-      return el.className.includes("translate-y-1");
+      return el.getAttribute("aria-pressed") === "true";
     })()`,
   );
   await page.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
@@ -175,6 +189,50 @@ async function holdTestId(page, testId, holdMs = 180) {
 async function navigateAndWait(page, url) {
   await page.send("Page.navigate", { url });
   await wait(2500);
+}
+
+async function waitForTestId(page, testId, timeoutMs = 30000) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    const found = await evaluate(
+      page,
+      `Boolean(document.querySelector('[data-testid="${testId}"]'))`,
+    );
+    if (found) return;
+    await wait(250);
+  }
+  const diagnostics = await evaluate(
+    page,
+    `(async () => ({
+      href: window.location.href,
+      title: document.title,
+      body: document.body?.innerText?.slice(0, 800) ?? "",
+      catalogResources: performance.getEntriesByType("resource")
+        .filter((entry) => entry.name.includes("song"))
+        .map((entry) => ({ name: entry.name, duration: Math.round(entry.duration) })),
+      catalogProbe: await fetch("/song-catalog-index.json", { cache: "no-store" })
+        .then(async (response) => ({ status: response.status, length: (await response.text()).length }))
+        .catch((error) => ({ error: String(error) })),
+      resources: performance.getEntriesByType("resource").slice(-12).map((entry) => ({
+        name: entry.name,
+        duration: Math.round(entry.duration),
+      })),
+    }))()`,
+  );
+  const runtimeEvents = page.events
+    .filter((event) => event.method === "Runtime.exceptionThrown" || event.method === "Runtime.consoleAPICalled")
+    .slice(-12)
+    .map((event) => ({
+      method: event.method,
+      text:
+        event.params?.exceptionDetails?.exception?.description ||
+        event.params?.exceptionDetails?.text ||
+        event.params?.args?.map((arg) => arg.value || arg.description).filter(Boolean).join(" ") ||
+        "",
+    }));
+  throw new Error(
+    `Tempo esgotado esperando o elemento: ${testId}\n${JSON.stringify({ diagnostics, runtimeEvents }, null, 2)}`,
+  );
 }
 
 async function collectInteractionState(page) {
@@ -365,17 +423,18 @@ async function run() {
       });
       await page.send("Emulation.setTouchEmulationEnabled", { enabled: viewport.touch });
       await navigateAndWait(page, TARGET_URL);
+      await evaluate(page, `localStorage.removeItem("pianokids_game_tutorial_seen_v4")`);
       await navigateAndWait(page, PLAYER_URL);
-      await evaluate(page, `localStorage.removeItem("pianokids_game_tutorial_seen_v3")`);
-      await navigateAndWait(page, PLAYER_URL);
+      await waitForTestId(page, "piano-canvas");
       const tutorialLayout = await collectLayout(page);
       const tutorialShot = await capture(page, viewport, "tutorial");
 
       await evaluate(page, `(() => {
-        localStorage.setItem("pianokids_game_tutorial_seen_v3", "true");
+        localStorage.setItem("pianokids_game_tutorial_seen_v4", "true");
       })()`);
       await navigateAndWait(page, PLAYER_URL);
       await evaluate(page, `window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyA", key: "a", bubbles: true }))`);
+      await waitForTestId(page, "piano-canvas");
       await wait(5600);
       const playingLayout = await collectLayout(page);
       const playingShot = await capture(page, viewport, "playing");
@@ -422,9 +481,10 @@ async function run() {
           interactionIssues.push(`Botao do metronomo nao alterou o valor (${initialInteraction.metronome} -> ${metronomeState.metronome}).`);
         }
 
-        await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v3", "true")`);
+        await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v4", "true")`);
         await navigateAndWait(page, PLAYER_URL);
         await evaluate(page, `window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyA", key: "a", bubbles: true }))`);
+        await waitForTestId(page, "piano-canvas");
         await wait(5600);
         await tapTestId(page, "control-pause");
         await wait(350);
@@ -440,9 +500,10 @@ async function run() {
         }
       }
 
-      await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v3", "true")`);
+      await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v4", "true")`);
       await navigateAndWait(page, PLAYER_URL);
       await evaluate(page, `window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyA", key: "a", bubbles: true }))`);
+      await waitForTestId(page, "piano-canvas");
       await wait(28000);
       const endedLayout = await collectLayout(page);
       const scoreInteraction = await evaluate(
@@ -496,6 +557,15 @@ async function run() {
     console.log(JSON.stringify({ outputPath, summary }, null, 2));
   } finally {
     browser.kill();
+    await new Promise((resolve) => {
+      if (browser.exitCode !== null) {
+        resolve();
+        return;
+      }
+      browser.once("exit", resolve);
+      setTimeout(resolve, 2000);
+    });
+    fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 });
   }
 }
 

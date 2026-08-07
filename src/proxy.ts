@@ -14,9 +14,13 @@ function isStudentExperienceRoute(pathname: string) {
 function isAlwaysPublicRoute(pathname: string) {
   return (
     pathname === "/" ||
+    pathname === "/manifest.webmanifest" ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
     pathname.startsWith("/auth") ||
     pathname.startsWith("/api/auth/local-test") ||
     pathname.startsWith("/api/auth/turnstile-key") ||
+    pathname.startsWith("/api/health") ||
     pathname.startsWith("/api/analytics/event") ||
     pathname.startsWith("/api/stripe/checkout") ||
     pathname.startsWith("/api/stripe/webhook") ||
@@ -28,11 +32,31 @@ function isAlwaysPublicRoute(pathname: string) {
   );
 }
 
+function isProtectedRoute(pathname: string) {
+  return (
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/api/admin") ||
+    pathname.startsWith("/api/teacher") ||
+    pathname.startsWith("/api/practice") ||
+    pathname.startsWith("/api/auth/stripe-check") ||
+    pathname.startsWith("/api/stripe/portal")
+  );
+}
+
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const localDevAuthAllowed = isLocalDevAuthAllowed(request.nextUrl.hostname);
   const hasLocalDevAuth =
-    isLocalDevAuthAllowed(request.nextUrl.hostname) &&
+    localDevAuthAllowed &&
     request.cookies.get(LOCAL_DEV_AUTH_COOKIE)?.value === "1";
+
+  if (
+    localDevAuthAllowed &&
+    pathname.startsWith("/login") &&
+    request.nextUrl.searchParams.get("realAuth") !== "1"
+  ) {
+    return NextResponse.redirect(new URL("/api/auth/local-test", request.url));
+  }
 
   if (isAlwaysPublicRoute(pathname)) {
     return NextResponse.next();
@@ -43,6 +67,10 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/dashboard/songs", request.url));
     }
 
+    return NextResponse.next();
+  }
+
+  if (!isProtectedRoute(pathname) && !pathname.startsWith("/login")) {
     return NextResponse.next();
   }
 

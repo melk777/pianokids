@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "frozenAt": "2026-08-07",
+  "reason": "The owner requested that the eight canonical pilot songs remain unchanged while the other 82 catalog entries are rebuilt.",
+  "songs": [
+    {
+      "id": "twinkle-twinkle",
+      "file": "brilha-brilha-estrelinha.json",
+      "sha256": "6F110649D584E11911D02DFBA8951A24127441C8C0525C4CAB9669E2B872AB43"
+    },
+    {
+      "id": "ode-to-joy",
+      "file": "ode-to-joy.json",
+      "sha256": "C283C58BAC53D016943500390FD535AFC214E51E9FED07A52F3AE738D0918FCA"
+    },
+    {
+      "id": "amazing-grace",
+      "file": "amazing-grace.json",
+      "sha256": "5DC7FE8FDCF0B5FF4EFDE929BE41EBD8F0D01BCFD6E026502775E57F0C3D88E2"
+    },
+    {
+      "id": "noite-feliz",
+      "file": "noite-feliz.json",
+      "sha256": "95D1BED04FC066968874D9BA335E9A93E764C951F56C83A84734AD1E2B385E68"
+    },
+    {
+      "id": "ciranda-cirandinha",
+      "file": "ciranda-cirandinha.json",
+      "sha256": "66C0FD01A2AD27D226978C26847656BBB52603974E018F77A6CCDF63ABA10B01"
+    },
+    {
+      "id": "peixe-vivo",
+      "file": "peixe-vivo.json",
+      "sha256": "E8E9AC4766EC86FF01A9B4334396103C5142AB68E2B35A13B837BC8B2F6A7151"
+    },
+    {
+      "id": "bach-prelude",
+      "file": "bach-prelude.json",
+      "sha256": "BF0BC00B1C8AD3B7A4E2F0E2C9587D45AD82DB48EDAAB9907FF8B5E6703101D3"
+    },
+    {
+      "id": "fur-elise",
+      "file": "fur-elise.json",
+      "sha256": "1367E1A21AD08F26FD4F7486BD0D07539B6C14FC699C8D3EDB90B83EEDE1910A"
+    }
+  ]
+}

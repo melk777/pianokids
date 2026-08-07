@@ -13,7 +13,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Not available outside local development." }, { status: 404 });
   }
 
-  const redirectUrl = new URL("/dashboard/songs", request.url);
+  const requestedRedirect = request.nextUrl.searchParams.get("redirect");
+  const safeRedirect =
+    requestedRedirect &&
+    requestedRedirect.startsWith("/") &&
+    !requestedRedirect.startsWith("//")
+      ? requestedRedirect
+      : "/dashboard/songs";
+  const redirectUrl = new URL(safeRedirect, request.url);
   const requestHost = request.headers.get("host");
   if (requestHost && isLocalDevAuthAllowed(hostHeader)) {
     redirectUrl.host = requestHost;

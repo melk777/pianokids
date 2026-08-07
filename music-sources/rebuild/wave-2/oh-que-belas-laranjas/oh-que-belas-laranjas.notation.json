@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "id": "oh-que-belas-laranjas",
+  "title": "Oh! Que Belas Laranjas",
+  "composer": "Tradicional brasileiro",
+  "bpm": 112,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "A-flat major",
+  "gate": 0.9,
+  "source": {
+    "work": "Oh! Que Belas Laranjas",
+    "transcription": "Independent Pianify notation of the traditional melody known as Oh! que bela laranja madura; official CNFCP catalogue status checked as public domain.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midi": 68,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 0.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 1,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 1.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 1.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 2,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 2.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 2.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 63,
+          "beat": 3,
+          "duration": 0.5
+        },
+        {
+          "midi": 63,
+          "beat": 3.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 4,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 4.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 75,
+          "beat": 5,
+          "duration": 0.5
+        },
+        {
+          "midi": 75,
+          "beat": 5.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 6,
+          "duration": 0.75
+        },
+        {
+          "midi": 68,
+          "beat": 7,
+          "duration": 0.75
+        },
+        {
+          "midi": 68,
+          "beat": 8,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 8.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 9,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 9.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 9.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 10,
+          "duration": 0.25
+        },
+        {
+          "midi": 70,
+          "beat": 10.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 10.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 63,
+          "beat": 11,
+          "duration": 0.5
+        },
+        {
+          "midi": 63,
+          "beat": 11.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 12,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 12.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 75,
+          "beat": 13,
+          "duration": 0.5
+        },
+        {
+          "midi": 75,
+          "beat": 13.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 14,
+          "duration": 0.75
+        },
+        {
+          "midi": 68,
+          "beat": 15,
+          "duration": 0.75
+        },
+        {
+          "midi": 75,
+          "beat": 16,
+          "duration": 0.5
+        },
+        {
+          "midi": 75,
+          "beat": 16.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 17,
+          "duration": 0.5
+        },
+        {
+          "midi": 73,
+          "beat": 18,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 18.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 18.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 19,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 19.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 20,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 20.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 20.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 63,
+          "beat": 21,
+          "duration": 0.5
+        },
+        {
+          "midi": 63,
+          "beat": 21.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 63,
+          "beat": 22,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 22.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 22.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 23,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 23.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 75,
+          "beat": 24,
+          "duration": 0.5
+        },
+        {
+          "midi": 75,
+          "beat": 24.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 25,
+          "duration": 0.5
+        },
+        {
+          "midi": 73,
+          "beat": 26,
+          "duration": 0.25
+        },
+        {
+          "midi": 72,
+          "beat": 26.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 26.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 27,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 27.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 72,
+          "beat": 28,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 28.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 28.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 63,
+          "beat": 29,
+          "duration": 0.5
+        },
+        {
+          "midi": 63,
+          "beat": 29.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 63,
+          "beat": 30,
+          "duration": 0.25
+        },
+        {
+          "midi": 65,
+          "beat": 30.25,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 30.75,
+          "duration": 0.25
+        },
+        {
+          "midi": 68,
+          "beat": 31,
+          "duration": 0.5
+        },
+        {
+          "midi": 68,
+          "beat": 31.5,
+          "duration": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midis": [
+            44,
+            51,
+            56,
+            60
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            39,
+            46,
+            51,
+            55
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            44,
+            51,
+            56,
+            60
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            39,
+            46,
+            51,
+            55
+          ],
+          "beat": 12,
+          "duration": 4
+        },
+        {
+          "midis": [
+            44,
+            51,
+            56,
+            60
+          ],
+          "beat": 16,
+          "duration": 4
+        },
+        {
+          "midis": [
+            39,
+            46,
+            51,
+            55
+          ],
+          "beat": 20,
+          "duration": 4
+        },
+        {
+          "midis": [
+            44,
+            51,
+            56,
+            60
+          ],
+          "beat": 24,
+          "duration": 4
+        },
+        {
+          "midis": [
+            39,
+            46,
+            51,
+            55
+          ],
+          "beat": 28,
+          "duration": 4
+        }
+      ]
+    }
+  ]
+}

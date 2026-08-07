@@ -4,6 +4,7 @@ import "./globals.css";
 import { AudioProvider } from "@/contexts/AudioContext";
 import Header from "@/components/Header";
 import GlobalEnhancements from "@/components/GlobalEnhancements";
+import { getURL } from "@/lib/utils/url";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,9 +27,53 @@ const pianoBold = localFont({
   variable: "--font-piano-bold",
 });
 
+const siteDescription =
+  "Aprenda piano e teclado tocando músicas de verdade, com notas na tela, reconhecimento do instrumento e progresso guiado.";
+
 export const metadata: Metadata = {
-  title: "Pianify — Sua Jornada Musical Começa Aqui",
-  description: "Aprenda piano e teclado de forma gamificada, divertida e inteligente. Método exclusivo para todas as idades.",
+  metadataBase: new URL(getURL()),
+  applicationName: "Pianify",
+  title: {
+    default: "Pianify — Aprenda teclado tocando músicas de verdade",
+    template: "%s | Pianify",
+  },
+  description: siteDescription,
+  keywords: [
+    "aprender piano",
+    "aprender teclado",
+    "aulas de piano online",
+    "piano interativo",
+    "teclado musical",
+  ],
+  creator: "Pianify",
+  publisher: "Pianify",
+  category: "education",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "/",
+    siteName: "Pianify",
+    title: "Pianify — Aprenda teclado tocando músicas de verdade",
+    description: siteDescription,
+    images: [{ url: "/logo.png", alt: "Pianify" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "Pianify — Aprenda teclado tocando músicas de verdade",
+    description: siteDescription,
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/pianify-icon.svg",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

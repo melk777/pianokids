@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "id": "o-sapo-nao-lava-o-pe",
+  "title": "O Sapo Não Lava o Pé",
+  "composer": "Tradicional brasileiro",
+  "bpm": 96,
+  "timeSignature": [2, 4],
+  "key": "G major",
+  "gate": 0.84,
+  "source": {
+    "work": "O Sapo Não Lava o Pé (Brazilian traditional children's song)",
+    "historicalRecord": "Official Brazilian educational material and academic sources identify the song as folklore or public domain.",
+    "transcription": "Independent Pianify notation of the familiar Brazilian melody in G major. Pitch order and rhythmic contour were cross-checked against the UFG score, reviewed Cifra Club tablature, and educational solfege references. The short traditional chulé cadence is included. No third-party score, tablature, MIDI, or recording is bundled. The left hand is an original Pianify editorial harmonization v1."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - traditional Brazilian melody",
+      "role": "source-melody",
+      "velocity": 0.76,
+      "events": [
+        { "midi": 67, "beat": 0, "duration": 0.5 },
+        { "midi": 72, "beat": 0.5, "duration": 0.5 },
+        { "midi": 72, "beat": 1, "duration": 1 },
+        { "midi": 67, "beat": 2, "duration": 0.5 },
+        { "midi": 69, "beat": 2.5, "duration": 0.5 },
+        { "midi": 67, "beat": 3, "duration": 1 },
+        { "midi": 64, "beat": 4, "duration": 2 },
+
+        { "midi": 67, "beat": 6, "duration": 0.5 },
+        { "midi": 72, "beat": 6.5, "duration": 0.5 },
+        { "midi": 72, "beat": 7, "duration": 1 },
+        { "midi": 67, "beat": 8, "duration": 0.5 },
+        { "midi": 69, "beat": 8.5, "duration": 0.5 },
+        { "midi": 67, "beat": 9, "duration": 1 },
+        { "midi": 65, "beat": 10, "duration": 2 },
+
+        { "midi": 67, "beat": 12, "duration": 0.5 },
+        { "midi": 67, "beat": 12.5, "duration": 0.5 },
+        { "midi": 71, "beat": 13, "duration": 0.5 },
+        { "midi": 71, "beat": 13.5, "duration": 0.5 },
+        { "midi": 67, "beat": 14, "duration": 0.5 },
+        { "midi": 69, "beat": 14.5, "duration": 0.5 },
+        { "midi": 67, "beat": 15, "duration": 1 },
+        { "midi": 71, "beat": 16, "duration": 0.5 },
+        { "midi": 71, "beat": 16.5, "duration": 1.5 },
+
+        { "midi": 67, "beat": 18, "duration": 0.5 },
+        { "midi": 69, "beat": 18.5, "duration": 0.5 },
+        { "midi": 67, "beat": 19, "duration": 1 },
+        { "midi": 71, "beat": 20, "duration": 0.5 },
+        { "midi": 67, "beat": 20.5, "duration": 0.5 },
+        { "midi": 69, "beat": 21, "duration": 0.5 },
+        { "midi": 71, "beat": 21.5, "duration": 0.5 },
+        { "midi": 72, "beat": 22, "duration": 2 },
+
+        { "midi": 67, "beat": 25, "duration": 0.5 },
+        { "midi": 64, "beat": 25.5, "duration": 0.5 },
+        { "midi": 67, "beat": 26, "duration": 1 },
+        { "midi": 72, "beat": 27, "duration": 2 }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.52,
+      "events": [
+        { "midis": [43, 50, 55], "beat": 0, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 2, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 4, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 6, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 8, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 10, "duration": 2 },
+        { "midis": [38, 45, 50, 54], "beat": 12, "duration": 2 },
+        { "midis": [38, 45, 50, 54], "beat": 14, "duration": 2 },
+        { "midis": [38, 45, 50, 54], "beat": 16, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 18, "duration": 2 },
+        { "midis": [38, 45, 50, 54], "beat": 20, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 22, "duration": 2 },
+        { "midis": [36, 43, 48, 52], "beat": 24, "duration": 2 },
+        { "midis": [38, 45, 50, 54], "beat": 26, "duration": 2 },
+        { "midis": [43, 50, 55], "beat": 28, "duration": 1 }
+      ]
+    }
+  ]
+}

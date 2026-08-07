@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "id": "bella-ciao-lacasadepapel",
+  "title": "Bella Ciao",
+  "composer": "Traditional Italian folk song",
+  "bpm": 92,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "key": "D minor",
+  "gate": 0.9,
+  "source": {
+    "work": "Bella Ciao",
+    "transcription": "Independent Pianify notation of the traditional Italian folk melody from Manuela Goessnitzer's CC0 LilyPond edition; no television-series arrangement or branding is used.",
+    "harmony": "Original Pianify editorial piano harmonization v1, separated from the source melody."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - source melody",
+      "role": "source-melody",
+      "velocity": 0.78,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midi": 57,
+          "beat": 0,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 0.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 1,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 1.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 2,
+          "duration": 2
+        },
+        {
+          "midi": 57,
+          "beat": 4,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 4.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 5.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 6,
+          "duration": 2
+        },
+        {
+          "midi": 57,
+          "beat": 8,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 8.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 9,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 9.5,
+          "duration": 1
+        },
+        {
+          "midi": 64,
+          "beat": 10.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 11,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 11.5,
+          "duration": 1
+        },
+        {
+          "midi": 64,
+          "beat": 12.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 62,
+          "beat": 13,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 13.5,
+          "duration": 1
+        },
+        {
+          "midi": 69,
+          "beat": 14.5,
+          "duration": 1
+        },
+        {
+          "midi": 69,
+          "beat": 15.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 16,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 16.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 17,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 17.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 18,
+          "duration": 2
+        },
+        {
+          "midi": 70,
+          "beat": 20,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 20.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 21,
+          "duration": 0.5
+        },
+        {
+          "midi": 70,
+          "beat": 21.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 69,
+          "beat": 22,
+          "duration": 2
+        },
+        {
+          "midi": 69,
+          "beat": 24,
+          "duration": 0.5
+        },
+        {
+          "midi": 67,
+          "beat": 24.5,
+          "duration": 0.5
+        },
+        {
+          "midi": 65,
+          "beat": 25,
+          "duration": 0.5
+        },
+        {
+          "midi": 64,
+          "beat": 25.5,
+          "duration": 1
+        },
+        {
+          "midi": 69,
+          "beat": 26.5,
+          "duration": 1
+        },
+        {
+          "midi": 65,
+          "beat": 27.5,
+          "duration": 1
+        },
+        {
+          "midi": 64,
+          "beat": 28.5,
+          "duration": 1
+        },
+        {
+          "midi": 62,
+          "beat": 29.5,
+          "duration": 2.5
+        }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.5,
+      "repeatCount": 2,
+      "repeatLengthBeats": 32,
+      "events": [
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            53
+          ],
+          "beat": 0,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            53
+          ],
+          "beat": 4,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            53
+          ],
+          "beat": 8,
+          "duration": 4
+        },
+        {
+          "midis": [
+            45,
+            52,
+            55,
+            61
+          ],
+          "beat": 12,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            53
+          ],
+          "beat": 16,
+          "duration": 4
+        },
+        {
+          "midis": [
+            43,
+            50,
+            55,
+            58
+          ],
+          "beat": 20,
+          "duration": 4
+        },
+        {
+          "midis": [
+            45,
+            52,
+            55,
+            61
+          ],
+          "beat": 24,
+          "duration": 4
+        },
+        {
+          "midis": [
+            38,
+            45,
+            50,
+            53
+          ],
+          "beat": 28,
+          "duration": 4
+        }
+      ]
+    }
+  ]
+}

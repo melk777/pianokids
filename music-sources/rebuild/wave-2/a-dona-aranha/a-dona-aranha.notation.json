@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "id": "a-dona-aranha",
+  "title": "A Dona Aranha",
+  "composer": "Tradicional",
+  "bpm": 108,
+  "timeSignature": [6, 8],
+  "key": "C major",
+  "gate": 0.88,
+  "source": {
+    "work": "A Dona Aranha / Itsy Bitsy Spider (traditional nursery-rhyme melody)",
+    "historicalRecord": "The core nursery-rhyme melody is independently documented as traditional; the UFG academic appendix identifies A Dona Aranha as folklore.",
+    "transcription": "Independent Pianify notation of the traditional core melody in C major, following the interval sequence and 6/8 rhythm of the independent ABC reference. Portuguese lyrics and modern arrangements are not bundled. The left hand is an original Pianify editorial harmonization v1."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - traditional nursery-rhyme melody",
+      "role": "source-melody",
+      "velocity": 0.76,
+      "events": [
+        { "midi": 67, "beat": 0, "duration": 0.5 },
+        { "midi": 72, "beat": 0.5, "duration": 1 },
+        { "midi": 72, "beat": 1.5, "duration": 0.5 },
+        { "midi": 72, "beat": 2, "duration": 1 },
+        { "midi": 74, "beat": 3, "duration": 0.5 },
+        { "midi": 76, "beat": 3.5, "duration": 1.5 },
+        { "midi": 76, "beat": 5, "duration": 1 },
+        { "midi": 76, "beat": 6, "duration": 0.5 },
+        { "midi": 74, "beat": 6.5, "duration": 1 },
+        { "midi": 72, "beat": 7.5, "duration": 0.5 },
+        { "midi": 74, "beat": 8, "duration": 1 },
+        { "midi": 76, "beat": 9, "duration": 0.5 },
+        { "midi": 72, "beat": 9.5, "duration": 1.5 },
+
+        { "midi": 76, "beat": 12.5, "duration": 1.5 },
+        { "midi": 76, "beat": 14, "duration": 1 },
+        { "midi": 77, "beat": 15, "duration": 0.5 },
+        { "midi": 79, "beat": 15.5, "duration": 1.5 },
+        { "midi": 79, "beat": 17, "duration": 1.5 },
+        { "midi": 77, "beat": 18.5, "duration": 1 },
+        { "midi": 76, "beat": 19.5, "duration": 0.5 },
+        { "midi": 77, "beat": 20, "duration": 1 },
+        { "midi": 79, "beat": 21, "duration": 0.5 },
+        { "midi": 76, "beat": 21.5, "duration": 1.5 },
+
+        { "midi": 72, "beat": 24.5, "duration": 1.5 },
+        { "midi": 72, "beat": 26, "duration": 1 },
+        { "midi": 74, "beat": 27, "duration": 0.5 },
+        { "midi": 76, "beat": 27.5, "duration": 1.5 },
+        { "midi": 76, "beat": 29, "duration": 1.5 },
+        { "midi": 74, "beat": 30.5, "duration": 1 },
+        { "midi": 72, "beat": 31.5, "duration": 0.5 },
+        { "midi": 74, "beat": 32, "duration": 1 },
+        { "midi": 76, "beat": 33, "duration": 0.5 },
+        { "midi": 72, "beat": 33.5, "duration": 1.5 },
+        { "midi": 67, "beat": 35, "duration": 1 },
+        { "midi": 67, "beat": 36, "duration": 0.5 },
+
+        { "midi": 72, "beat": 36.5, "duration": 1 },
+        { "midi": 72, "beat": 37.5, "duration": 0.5 },
+        { "midi": 72, "beat": 38, "duration": 1 },
+        { "midi": 74, "beat": 39, "duration": 0.5 },
+        { "midi": 76, "beat": 39.5, "duration": 1.5 },
+        { "midi": 76, "beat": 41, "duration": 1 },
+        { "midi": 76, "beat": 42, "duration": 0.5 },
+        { "midi": 74, "beat": 42.5, "duration": 1 },
+        { "midi": 72, "beat": 43.5, "duration": 0.5 },
+        { "midi": 74, "beat": 44, "duration": 1 },
+        { "midi": 76, "beat": 45, "duration": 0.5 },
+        { "midi": 72, "beat": 45.5, "duration": 1.5 }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.52,
+      "events": [
+        { "midis": [43, 50, 55], "beat": 0, "duration": 0.5 },
+        { "midis": [36, 43, 48, 52], "beat": 0.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 3.5, "duration": 3 },
+        { "midis": [43, 47, 50, 53], "beat": 6.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 9.5, "duration": 3 },
+        { "midis": [45, 48, 52], "beat": 12.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 15.5, "duration": 3 },
+        { "midis": [43, 47, 50, 53], "beat": 18.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 21.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 24.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 27.5, "duration": 3 },
+        { "midis": [43, 47, 50, 53], "beat": 30.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 33.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 36.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 39.5, "duration": 3 },
+        { "midis": [43, 47, 50, 53], "beat": 42.5, "duration": 3 },
+        { "midis": [36, 43, 48, 52], "beat": 45.5, "duration": 2.5 }
+      ]
+    }
+  ]
+}

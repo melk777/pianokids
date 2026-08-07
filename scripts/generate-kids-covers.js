@@ -71,8 +71,7 @@ function child(x, y, shirt = "#f97316", skin = "#fcd7b6", hair = "#7c2d12") {
   </g>`;
 }
 
-function sceneMarkup(scene, palette) {
-  const [light, mid, deep] = palette;
+function sceneMarkup(scene) {
   const white = "#fff7ed";
   const stroke = 'stroke="#1f2937" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"';
 
@@ -154,7 +153,7 @@ function buildSvg(cover) {
   <path d="M0 430C76 378 154 390 236 430c92 46 174 38 276-26v236H0z" fill="url(#floor)"/>
   <path d="M52 96c96-60 176-20 204 46 28-66 108-106 204-46v372c-86-54-162-42-204 22-42-64-118-76-204-22z" fill="#fff" opacity="0.22" stroke="#fff" stroke-opacity="0.44" stroke-width="3"/>
   <g filter="url(#shadow)">
-    ${sceneMarkup(cover.scene, cover.colors)}
+    ${sceneMarkup(cover.scene)}
   </g>
   <g>
     <rect x="56" y="492" width="400" height="100" rx="30" fill="#020617" opacity="0.38"/>

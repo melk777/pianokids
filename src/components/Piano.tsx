@@ -4,18 +4,19 @@ import { motion } from "framer-motion";
 import { midiNoteToName, isBlackKey } from "@/hooks/useMIDI";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useEffect } from "react";
+import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
 
 interface PianoProps {
-  startNote?: number; // Default: 48 (C3)
-  endNote?: number;   // Default: 72 (C5)
+  startNote?: number;
+  endNote?: number;
   activeNotes: Map<number, { note: number; velocity: number }>;
   correctNotes?: Set<number>;
   wrongNotes?: Set<number>;
 }
 
 export default function Piano({
-  startNote = 48,
-  endNote = 72,
+  startNote = PIANO_START_MIDI,
+  endNote = PIANO_END_MIDI,
   activeNotes,
   correctNotes = new Set(),
   wrongNotes = new Set(),
@@ -70,7 +71,7 @@ export default function Piano({
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="mx-auto w-full max-w-6xl">
       <svg viewBox={`0 0 100 28`} className="w-full" style={{ filter: "drop-shadow(0 4px 20px rgba(0,0,0,0.5))" }}>
         {/* White keys */}
         {whiteNotes.map((note, i) => (
@@ -116,6 +117,7 @@ export default function Piano({
         {whiteNotes.map((note, i) => {
           const name = midiNoteToName(note);
           const isActive = activeNotes.has(note);
+          if (note % 12 !== 0) return null;
           return (
             <text
               key={`label-${note}`}
@@ -126,7 +128,7 @@ export default function Piano({
               fill={isActive ? "#00EAFF" : "rgba(255,255,255,0.15)"}
               fontFamily="var(--font-geist-mono)"
             >
-              {name.replace(/\d/, "")}
+              {name}
             </text>
           );
         })}

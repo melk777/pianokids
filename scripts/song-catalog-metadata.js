@@ -55,7 +55,7 @@ module.exports = {
   },
   "minueto-em-sol-maior": {
     title: "Minueto em Sol Maior",
-    artist: "Johann Sebastian Bach",
+    artist: "Christian Petzold",
     category: "Clássicos",
     difficulty: "Médio",
     isPremium: true,
@@ -112,8 +112,8 @@ module.exports = {
   },
   "bella-ciao-lacasadepapel": {
     title: "Bella Ciao",
-    artist: "La Casa de Papel (Intro)",
-    category: "Intro de Filmes",
+    artist: "Tradicional italiana",
+    category: "Tradicionais",
     difficulty: "Médio",
     isPremium: false,
   },
@@ -513,7 +513,7 @@ module.exports = {
     isPremium: true,
   },
   "preludio-chopin": {
-    title: "Prelúdio de Chopin",
+    title: "Prelúdio Op. 45",
     artist: "Frédéric Chopin",
     category: "Clássicos",
     difficulty: "Difícil",
@@ -555,7 +555,7 @@ module.exports = {
     isPremium: true,
   },
   "sonata-2bmoll-chopin": {
-    title: "Sonata nº 2 em Si Bemol Menor",
+    title: "Sonata nº 2 em Si Bemol Menor: Finale",
     artist: "Frédéric Chopin",
     category: "Clássicos",
     difficulty: "Difícil",

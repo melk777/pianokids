@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Pianify</title>
+  <desc id="desc">Tecla de piano com uma nota musical em azul e rosa.</desc>
+  <defs>
+    <linearGradient id="background" x1="48" y1="32" x2="464" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10131d"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="136" y1="118" x2="390" y2="402" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00eaff"/>
+      <stop offset="1" stop-color="#ff00e5"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+  <rect x="84" y="80" width="344" height="352" rx="54" fill="#fff" fill-opacity=".05" stroke="#fff" stroke-opacity=".12" stroke-width="4"/>
+  <path d="M126 112v288M192 112v288M258 112v288M324 112v288M390 112v288" stroke="#fff" stroke-opacity=".22" stroke-width="8"/>
+  <path d="M167 112v176h42V112M299 112v176h42V112" fill="#050505" stroke="#fff" stroke-opacity=".12" stroke-width="5"/>
+  <path d="M326 151v154.5a55 55 0 1 1-26-46.8V185l-101 24v120.5a55 55 0 1 1-26-46.8V190l153-39Z" fill="url(#accent)" filter="url(#glow)"/>
+  <rect x="84" y="80" width="344" height="352" rx="54" fill="none" stroke="url(#accent)" stroke-opacity=".65" stroke-width="5"/>
+</svg>

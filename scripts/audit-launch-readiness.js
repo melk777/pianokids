@@ -214,6 +214,59 @@ function run() {
 
   add(
     checks,
+    "qa",
+    "verificacao HTTP de release",
+    exists("scripts/verify-release-http.js") && Boolean(scripts["verify-release-http"]) ? "pass" : "fail",
+    "O smoke test deve validar paginas publicas, protecao de rotas, checkout, webhook e respostas 404.",
+    "high",
+  );
+
+  add(
+    checks,
+    "seo",
+    "metadados e descoberta",
+    exists("src/app/manifest.ts") &&
+      exists("src/app/robots.ts") &&
+      exists("src/app/sitemap.ts") &&
+      has("src/app/layout.tsx", /openGraph/) &&
+      has("src/app/layout.tsx", /twitter/)
+      ? "pass"
+      : "fail",
+    "Manifesto, robots, sitemap, Open Graph e Twitter Card devem estar configurados.",
+    "medium",
+  );
+
+  add(
+    checks,
+    "operations",
+    "endpoint de saude",
+    exists("src/app/api/health/route.ts") ? "pass" : "fail",
+    "O endpoint /api/health permite monitorar a disponibilidade sem autenticar.",
+    "high",
+  );
+
+  add(
+    checks,
+    "resilience",
+    "estados globais de erro e carregamento",
+    exists("src/app/error.tsx") && exists("src/app/loading.tsx") && exists("src/app/not-found.tsx")
+      ? "pass"
+      : "fail",
+    "A aplicacao deve oferecer recuperacao para erro, carregamento e pagina inexistente.",
+    "high",
+  );
+
+  add(
+    checks,
+    "privacy",
+    "cache e indexacao de areas privadas",
+    has("next.config.mjs", /private, no-store/) && has("next.config.mjs", /X-Robots-Tag/) ? "pass" : "fail",
+    "APIs, login e dashboard nao devem ser armazenados por cache compartilhado nem indexados.",
+    "high",
+  );
+
+  add(
+    checks,
     "stripe",
     "webhook solicita nova tentativa quando o banco falha",
     has("src/app/api/stripe/webhook/route.ts", /Webhook persistence failed/) &&
@@ -312,6 +365,15 @@ function run() {
     "direitos autorais das musicas",
     "warn",
     "Revisao juridica/manual ainda e necessaria antes de anunciar em escala. A auditoria tecnica nao comprova licenca comercial de melodias, arranjos, imagens ou marcas.",
+    "critical",
+  );
+
+  add(
+    checks,
+    "catalog",
+    "revisao auditiva final da biblioteca",
+    "warn",
+    "As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao.",
     "critical",
   );
 

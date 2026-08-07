@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "sapo-cururu",
+  "title": "Sapo Cururu",
+  "composer": "Tradicional brasileiro",
+  "bpm": 60,
+  "timeSignature": [2, 4],
+  "key": "B-flat major",
+  "gate": 0.92,
+  "source": {
+    "work": "Ensaio sobre musica brasileira",
+    "collector": "Mario de Andrade",
+    "edition": "I Chiarato & Cia, 1928",
+    "printedPage": 69,
+    "location": "Araraquara",
+    "transcription": "Melodia transcrita da partitura historica na tonalidade impressa; repetida tres vezes para a forma didatica. A mao esquerda e uma harmonizacao editorial Pianify v1."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - historical melody",
+      "role": "source-melody",
+      "velocity": 0.76,
+      "repeatCount": 3,
+      "repeatLengthBeats": 16,
+      "events": [
+        { "midi": 65, "beat": 0, "duration": 0.5 },
+        { "midi": 67, "beat": 0.5, "duration": 0.5 },
+        { "midi": 65, "beat": 1, "duration": 0.5 },
+        { "midi": 62, "beat": 1.5, "duration": 0.5 },
+        { "midi": 70, "beat": 2, "duration": 2 },
+        { "midi": 65, "beat": 4, "duration": 0.5 },
+        { "midi": 67, "beat": 4.5, "duration": 0.5 },
+        { "midi": 65, "beat": 5, "duration": 0.5 },
+        { "midi": 62, "beat": 5.5, "duration": 0.5 },
+        { "midi": 70, "beat": 6, "duration": 1 },
+        { "midi": 70, "beat": 7, "duration": 1 },
+        { "midi": 74, "beat": 8, "duration": 0.5 },
+        { "midi": 74, "beat": 8.5, "duration": 0.5 },
+        { "midi": 72, "beat": 9, "duration": 0.5 },
+        { "midi": 74, "beat": 9.5, "duration": 0.5 },
+        { "midi": 75, "beat": 10, "duration": 0.25 },
+        { "midi": 72, "beat": 10.25, "duration": 0.5 },
+        { "midi": 69, "beat": 10.75, "duration": 0.25 },
+        { "midi": 65, "beat": 11, "duration": 0.5 },
+        { "midi": 65, "beat": 11.5, "duration": 0.5 },
+        { "midi": 67, "beat": 12, "duration": 0.5 },
+        { "midi": 67, "beat": 12.5, "duration": 0.5 },
+        { "midi": 65, "beat": 13, "duration": 0.5 },
+        { "midi": 63, "beat": 13.5, "duration": 0.5 },
+        { "midi": 62, "beat": 14, "duration": 2 }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.58,
+      "repeatCount": 3,
+      "repeatLengthBeats": 16,
+      "events": [
+        { "midis": [46, 53, 58], "beat": 0, "duration": 2 },
+        { "midis": [46, 53, 58], "beat": 2, "duration": 2 },
+        { "midis": [46, 53, 58], "beat": 4, "duration": 2 },
+        { "midis": [46, 53, 58], "beat": 6, "duration": 2 },
+        { "midis": [39, 46, 51], "beat": 8, "duration": 2 },
+        { "midis": [46, 53, 58], "beat": 10, "duration": 2 },
+        { "midis": [41, 48, 51], "beat": 12, "duration": 2 },
+        { "midis": [46, 53, 58], "beat": 14, "duration": 2 }
+      ]
+    }
+  ]
+}

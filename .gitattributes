@@ -1,0 +1,9 @@
+# Preserve upstream LilyPond sources byte-for-byte. Their SHA-256 hashes are
+# part of the music provenance audit, so whitespace normalization is disabled.
+music-sources/**/*.ly -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+music-sources/**/*.xml -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+music-sources/**/*.pdf binary
+music-sources/**/*.mid binary
+music-sources/**/*.zip binary
+music-sources/**/*.jpg binary
+music-sources/**/*.png binary

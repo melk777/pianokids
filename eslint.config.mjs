@@ -25,6 +25,7 @@ export default defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "tmp/**",
     "next-env.d.ts",
     "public/songs/**",
   ]),

@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "id": "a-canoa-virou",
+  "title": "A Canoa Virou",
+  "composer": "Tradicional brasileiro",
+  "bpm": 100,
+  "timeSignature": [2, 4],
+  "key": "A major",
+  "gate": 0.82,
+  "source": {
+    "work": "A Canoa Virou (Brazilian two-stanza traditional form)",
+    "historicalRecord": "The traditional song is documented in Pedro Fernandes Tomas, Cancoes Portuguesas, 1934, p. 85; the familiar Brazilian two-stanza form is identified as public domain by Brazilian educational and discographic references.",
+    "transcription": "Independent Pianify notation of the public-domain Brazilian form, limited to the two traditional stanzas (A canoa virou / Se eu fosse um peixinho). Pitch order was cross-checked against a reviewed Cifra Club tablature and regional reference scores; third-party files and the later Siri pra ca refrain are not bundled. The left hand is an original Pianify editorial harmonization v1."
+  },
+  "tracks": [
+    {
+      "name": "Right hand - traditional Brazilian melody",
+      "role": "source-melody",
+      "velocity": 0.76,
+      "events": [
+        { "midi": 64, "beat": 0, "duration": 0.5 },
+        { "midi": 64, "beat": 0.5, "duration": 0.5 },
+        { "midi": 64, "beat": 1, "duration": 1 },
+        { "midi": 64, "beat": 2, "duration": 0.5 },
+        { "midi": 62, "beat": 2.5, "duration": 0.5 },
+        { "midi": 61, "beat": 3, "duration": 1 },
+
+        { "midi": 64, "beat": 4, "duration": 0.5 },
+        { "midi": 64, "beat": 4.5, "duration": 0.5 },
+        { "midi": 69, "beat": 5, "duration": 0.5 },
+        { "midi": 69, "beat": 5.5, "duration": 0.5 },
+        { "midi": 69, "beat": 6, "duration": 0.5 },
+        { "midi": 68, "beat": 6.5, "duration": 0.5 },
+        { "midi": 66, "beat": 7, "duration": 1 },
+
+        { "midi": 66, "beat": 8, "duration": 0.5 },
+        { "midi": 66, "beat": 8.5, "duration": 0.5 },
+        { "midi": 71, "beat": 9, "duration": 0.5 },
+        { "midi": 71, "beat": 9.5, "duration": 0.5 },
+        { "midi": 71, "beat": 10, "duration": 0.5 },
+        { "midi": 69, "beat": 10.5, "duration": 0.5 },
+        { "midi": 68, "beat": 11, "duration": 0.5 },
+        { "midi": 68, "beat": 11.5, "duration": 0.5 },
+        { "midi": 68, "beat": 12, "duration": 0.5 },
+        { "midi": 66, "beat": 12.5, "duration": 0.5 },
+        { "midi": 64, "beat": 13, "duration": 1 },
+
+        { "midi": 64, "beat": 16, "duration": 0.5 },
+        { "midi": 62, "beat": 16.5, "duration": 0.5 },
+        { "midi": 61, "beat": 17, "duration": 0.5 },
+        { "midi": 64, "beat": 17.5, "duration": 0.5 },
+        { "midi": 64, "beat": 18, "duration": 0.5 },
+        { "midi": 64, "beat": 18.5, "duration": 0.5 },
+        { "midi": 62, "beat": 19, "duration": 0.5 },
+        { "midi": 61, "beat": 19.5, "duration": 0.5 },
+
+        { "midi": 64, "beat": 20, "duration": 0.5 },
+        { "midi": 64, "beat": 20.5, "duration": 0.5 },
+        { "midi": 69, "beat": 21, "duration": 0.5 },
+        { "midi": 69, "beat": 21.5, "duration": 0.5 },
+        { "midi": 68, "beat": 22, "duration": 0.5 },
+        { "midi": 66, "beat": 22.5, "duration": 1.5 },
+
+        { "midi": 66, "beat": 24, "duration": 0.5 },
+        { "midi": 66, "beat": 24.5, "duration": 0.5 },
+        { "midi": 71, "beat": 25, "duration": 0.5 },
+        { "midi": 71, "beat": 25.5, "duration": 0.5 },
+        { "midi": 69, "beat": 26, "duration": 0.5 },
+        { "midi": 68, "beat": 26.5, "duration": 1.5 },
+
+        { "midi": 68, "beat": 28, "duration": 0.5 },
+        { "midi": 66, "beat": 28.5, "duration": 0.5 },
+        { "midi": 64, "beat": 29, "duration": 0.5 },
+        { "midi": 64, "beat": 29.5, "duration": 0.5 },
+        { "midi": 62, "beat": 30, "duration": 0.5 },
+        { "midi": 61, "beat": 30.5, "duration": 1.5 }
+      ]
+    },
+    {
+      "name": "Left hand - Pianify editorial harmony v1",
+      "role": "editorial-harmonization",
+      "velocity": 0.54,
+      "events": [
+        { "midis": [40, 47, 52, 56], "beat": 0, "duration": 2 },
+        { "midis": [45, 52, 57, 61], "beat": 2, "duration": 2 },
+        { "midis": [45, 52, 55, 61], "beat": 4, "duration": 2 },
+        { "midis": [38, 45, 50, 54], "beat": 6, "duration": 2 },
+        { "midis": [35, 42, 47, 50], "beat": 8, "duration": 2 },
+        { "midis": [40, 47, 52, 56], "beat": 10, "duration": 2 },
+        { "midis": [40, 47, 50, 56], "beat": 12, "duration": 2 },
+        { "midis": [45, 52, 57, 61], "beat": 14, "duration": 2 },
+
+        { "midis": [40, 47, 52, 56], "beat": 16, "duration": 2 },
+        { "midis": [45, 52, 57, 61], "beat": 18, "duration": 2 },
+        { "midis": [45, 52, 55, 61], "beat": 20, "duration": 2 },
+        { "midis": [38, 45, 50, 54], "beat": 22, "duration": 2 },
+        { "midis": [35, 42, 47, 50], "beat": 24, "duration": 2 },
+        { "midis": [40, 47, 52, 56], "beat": 26, "duration": 2 },
+        { "midis": [40, 47, 50, 56], "beat": 28, "duration": 2 },
+        { "midis": [45, 52, 57, 61], "beat": 30, "duration": 2 }
+      ]
+    }
+  ]
+}

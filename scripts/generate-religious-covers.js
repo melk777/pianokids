@@ -155,7 +155,7 @@ function escapeXml(value) {
     .replaceAll('"', "&quot;");
 }
 
-function symbolMarkup(symbol, accent, deep) {
+function symbolMarkup(symbol, accent) {
   const common = `stroke="${accent}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
   const fill = `fill="${accent}"`;
   const softFill = `fill="${accent}" opacity="0.24"`;
@@ -254,7 +254,7 @@ function buildSvg(cover) {
   <g transform="translate(0, -18)" filter="url(#glow)">
     <circle cx="256" cy="258" r="136" fill="url(#stage)" opacity="0.36"/>
     <circle cx="256" cy="258" r="114" fill="#020617" opacity="0.18"/>
-    ${symbolMarkup(cover.symbol, paper, deep)}
+    ${symbolMarkup(cover.symbol, paper)}
   </g>
   <g transform="translate(0, 16)">
     <rect x="86" y="484" width="340" height="92" rx="28" fill="#020617" opacity="0.32"/>

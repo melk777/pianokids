@@ -1,0 +1,2119 @@
+{
+  "generatedAt": "2026-08-07T18:48:10.567Z",
+  "methodology": "canonical_rebuild_plan_v1",
+  "legalNotice": "Triagem editorial baseada em informacoes publicas; nao substitui parecer juridico.",
+  "legalReferences": [
+    "https://www.gov.br/cultura/pt-br/assuntos/direitos-autorais/perguntas-frequentes/perguntas-frequentes",
+    "https://www.gov.br/bn/pt-br/atuacao/direitos-autorais-1/direitos-autorais"
+  ],
+  "summary": {
+    "catalog": 90,
+    "frozen": 8,
+    "toRebuild": 82,
+    "canonicalSourcesReady": 82,
+    "pendingCanonicalSources": 0,
+    "rightsRisk": {
+      "high": 3,
+      "medium": 39,
+      "low": 40
+    },
+    "byWave": {
+      "rights-clearance": {
+        "number": 0,
+        "id": "rights-clearance",
+        "label": "Liberacao de direitos",
+        "count": 3
+      },
+      "launch-children": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento",
+        "count": 21
+      },
+      "hymns": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas",
+        "count": 18
+      },
+      "familiar-classics": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis",
+        "count": 10
+      },
+      "advanced-classics": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados",
+        "count": 30
+      }
+    }
+  },
+  "frozenIds": [
+    "twinkle-twinkle",
+    "ode-to-joy",
+    "amazing-grace",
+    "noite-feliz",
+    "ciranda-cirandinha",
+    "peixe-vivo",
+    "bach-prelude",
+    "fur-elise"
+  ],
+  "songs": [
+    {
+      "id": "pintinho-amarelinho",
+      "title": "Meu Pintinho Amarelinho",
+      "artist": "Folclore Brasileiro",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "meu-pintinho-amarelinho.json",
+      "legacyMidiFiles": [
+        "Meu_pintinho_amarelinho.mid"
+      ],
+      "legacyDuration": 36,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "high",
+        "status": "clearance_required",
+        "reason": "A atribuicao como folclore nao esta comprovada e existem arranjos comerciais registrados. Exigir autoria ou fonte licenciada antes de transcrever."
+      },
+      "wave": {
+        "number": 0,
+        "id": "rights-clearance",
+        "label": "Liberacao de direitos"
+      },
+      "priorityScore": 79
+    },
+    {
+      "id": "parabens-pra-voce",
+      "title": "Parabéns pra Você",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "parabens.json",
+      "legacyMidiFiles": [
+        "parabens-1.mid",
+        "parabens-2.mid"
+      ],
+      "legacyDuration": 16,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "high",
+        "status": "clearance_required",
+        "reason": "A melodia, a versao em portugues e os arranjos possuem historicos de direitos diferentes. Usar somente fonte instrumental cuja situacao no Brasil esteja documentada."
+      },
+      "wave": {
+        "number": 0,
+        "id": "rights-clearance",
+        "label": "Liberacao de direitos"
+      },
+      "priorityScore": 79
+    },
+    {
+      "id": "bella-ciao-lacasadepapel",
+      "title": "Bella Ciao",
+      "artist": "Tradicional italiana",
+      "category": "Tradicionais",
+      "difficulty": "Médio",
+      "outputFile": "bella-ciao-lacasadepapel.json",
+      "legacyMidiFiles": [
+        "bella-ciao-lacasadepapel.mid"
+      ],
+      "legacyDuration": 43,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "high",
+        "status": "clearance_required",
+        "reason": "Remover a referencia a La Casa de Papel. Somente a cancao tradicional, obtida de edicao independente e licenciada, pode ser considerada."
+      },
+      "wave": {
+        "number": 0,
+        "id": "rights-clearance",
+        "label": "Liberacao de direitos"
+      },
+      "priorityScore": 73
+    },
+    {
+      "id": "a-canoa-virou",
+      "title": "A Canoa Virou",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "a-canoa-virou.json",
+      "legacyMidiFiles": [
+        "a_canoa_virou.mid"
+      ],
+      "legacyDuration": 21,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "a-dona-aranha",
+      "title": "A Dona Aranha",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "a-dona-aranha.json",
+      "legacyMidiFiles": [
+        "A_DONA_ARANHA.mid"
+      ],
+      "legacyDuration": 28,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "A melodia circula como tradicional, mas a versao em portugues precisa de identidade e fonte independentes."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "atirei-o-pau-no-gato",
+      "title": "Atirei o Pau no Gato",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "atirei-o-pau-no-gato.json",
+      "legacyMidiFiles": [
+        "atirei_o_pau_no_gato.mid"
+      ],
+      "legacyDuration": 19,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "borboletinha",
+      "title": "Borboletinha",
+      "artist": "Folclore Brasileiro",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "borboletinha.json",
+      "legacyMidiFiles": [
+        "borboletinha-1.mid"
+      ],
+      "legacyDuration": 23,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "carneirinho-carneirao",
+      "title": "Carneirinho, Carneirão",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "carneirinho-carneirao.json",
+      "legacyMidiFiles": [
+        "carneirinho_carneirao.mid"
+      ],
+      "legacyDuration": 40,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "escravos-de-jo",
+      "title": "Escravos de Jó",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "escravos-de-jo.json",
+      "legacyMidiFiles": [
+        "escravos_de_jo.mid"
+      ],
+      "legacyDuration": 24,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "fui-no-itororo",
+      "title": "Fui no Itororó",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "fui-no-itororo.json",
+      "legacyMidiFiles": [
+        "fui_no_tororo.mid"
+      ],
+      "legacyDuration": 44,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "minha-machadinha",
+      "title": "Minha Machadinha",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "minha-machadinha.json",
+      "legacyMidiFiles": [
+        "minha_machadinha.mid"
+      ],
+      "legacyDuration": 37,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "o-cravo-e-a-rosa",
+      "title": "O Cravo e a Rosa",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "o-cravo-e-a-rosa.json",
+      "legacyMidiFiles": [
+        "o_cravo_e_a_rosa.mid"
+      ],
+      "legacyDuration": 15,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "o-sapo-nao-lava-o-pe",
+      "title": "O Sapo não Lava o Pé",
+      "artist": "Folclore Brasileiro",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "o-sapo.json",
+      "legacyMidiFiles": [
+        "o-sapo-1.mid",
+        "o-sapo-2.mid"
+      ],
+      "legacyDuration": 20,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "oh-que-belas-laranjas",
+      "title": "Oh! Que Belas Laranjas",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "oh-que-belas-laranjas.json",
+      "legacyMidiFiles": [
+        "oh_que_belas_laranjas.mid"
+      ],
+      "legacyDuration": 36,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "onde-esta-a-margarida",
+      "title": "Onde Está a Margarida?",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "onde-esta-a-margarida.json",
+      "legacyMidiFiles": [
+        "onde_esta_a_margarida.mid"
+      ],
+      "legacyDuration": 43,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "pai-francisco",
+      "title": "Pai Francisco",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "pai-francisco.json",
+      "legacyMidiFiles": [
+        "pai_francisco.mid"
+      ],
+      "legacyDuration": 37,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "passarinho-da-lagoa",
+      "title": "Passarinho da Lagoa",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "passarinho-da-lagoa.json",
+      "legacyMidiFiles": [
+        "passarinho_da_lagoa.mid"
+      ],
+      "legacyDuration": 21,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "pezinho",
+      "title": "Pezinho",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "pezinho.json",
+      "legacyMidiFiles": [
+        "pezinho.mid"
+      ],
+      "legacyDuration": 34,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "pirulito-que-bate-bate",
+      "title": "Pirulito que Bate Bate",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "pirulito-que-bate-bate.json",
+      "legacyMidiFiles": [
+        "pirulito_que_bate_bate.mid"
+      ],
+      "legacyDuration": 19,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "samba-lele",
+      "title": "Samba Lelê",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "samba-lele.json",
+      "legacyMidiFiles": [
+        "samba_lele.mid"
+      ],
+      "legacyDuration": 35,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "sapo-cururu",
+      "title": "Sapo Cururu",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "sapo-cururu.json",
+      "legacyMidiFiles": [
+        "sapo_cururu.mid"
+      ],
+      "legacyDuration": 49,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "se-essa-rua-fosse-minha",
+      "title": "Se Essa Rua Fosse Minha",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "se-essa-rua-fosse-minha.json",
+      "legacyMidiFiles": [
+        "se_essa_rua_fosse_minha.mid"
+      ],
+      "legacyDuration": 64,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "teresinha-de-jesus",
+      "title": "Teresinha de Jesus",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "teresinha-de-jesus.json",
+      "legacyMidiFiles": [
+        "teresinha_de_jesus.mid"
+      ],
+      "legacyDuration": 16,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "tutu-maramba",
+      "title": "Tutu Marambá",
+      "artist": "Tradicional",
+      "category": "Infantis",
+      "difficulty": "Fácil",
+      "outputFile": "tutu-maramba.json",
+      "legacyMidiFiles": [
+        "tutu_maramba.mid"
+      ],
+      "legacyDuration": 46,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 1,
+        "id": "launch-children",
+        "label": "Infantis para lancamento"
+      },
+      "priorityScore": 99
+    },
+    {
+      "id": "alvo-mais-que-a-neve",
+      "title": "Alvo Mais que a Neve",
+      "artist": "James Nicholson",
+      "category": "Religiosos",
+      "difficulty": "Fácil",
+      "outputFile": "alvo-mais-que-a-neve.json",
+      "legacyMidiFiles": [
+        "alvo_mais_que_a_neve.mid"
+      ],
+      "legacyDuration": 45,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 84
+    },
+    {
+      "id": "chuvas-de-graca",
+      "title": "Chuvas de Graca",
+      "artist": "Daniel W. Whittle",
+      "category": "Religiosos",
+      "difficulty": "Fácil",
+      "outputFile": "chuvas-de-graca.json",
+      "legacyMidiFiles": [
+        "chuvas_de_graca.mid"
+      ],
+      "legacyDuration": 36,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 84
+    },
+    {
+      "id": "deus-velara-por-ti",
+      "title": "Deus Velara por Ti",
+      "artist": "Civilla D. Martin",
+      "category": "Religiosos",
+      "difficulty": "Fácil",
+      "outputFile": "deus-velara-por-ti.json",
+      "legacyMidiFiles": [
+        "deus_velara_por_ti.mid"
+      ],
+      "legacyDuration": 40,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 84
+    },
+    {
+      "id": "mais-perto-quero-estar",
+      "title": "Mais Perto Quero Estar",
+      "artist": "Sarah Flower Adams",
+      "category": "Religiosos",
+      "difficulty": "Fácil",
+      "outputFile": "mais-perto-quero-estar.json",
+      "legacyMidiFiles": [
+        "mais_perto_quero_estar.mid"
+      ],
+      "legacyDuration": 40,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 84
+    },
+    {
+      "id": "manso-e-suave",
+      "title": "Manso e Suave",
+      "artist": "Will L. Thompson",
+      "category": "Religiosos",
+      "difficulty": "Fácil",
+      "outputFile": "manso-e-suave.json",
+      "legacyMidiFiles": [
+        "manso_e_suave.mid"
+      ],
+      "legacyDuration": 72,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 84
+    },
+    {
+      "id": "rocha-eterna",
+      "title": "Rocha Eterna",
+      "artist": "Augustus Toplady",
+      "category": "Religiosos",
+      "difficulty": "Fácil",
+      "outputFile": "rocha-eterna.json",
+      "legacyMidiFiles": [
+        "rocha_eterna.mid"
+      ],
+      "legacyDuration": 23,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 84
+    },
+    {
+      "id": "vinde-fieis",
+      "title": "Vinde Fieis",
+      "artist": "John Francis Wade",
+      "category": "Religiosos",
+      "difficulty": "Fácil",
+      "outputFile": "vinde-fieis.json",
+      "legacyMidiFiles": [
+        "vinde_fieis.mid"
+      ],
+      "legacyDuration": 81,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 84
+    },
+    {
+      "id": "aos-pes-da-cruz",
+      "title": "Aos Pes da Cruz",
+      "artist": "Isaac Watts / Ralph E. Hudson",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "aos-pes-da-cruz.json",
+      "legacyMidiFiles": [
+        "aos_pes_da_cruz.mid"
+      ],
+      "legacyDuration": 44,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "castelo-forte",
+      "title": "Castelo Forte",
+      "artist": "Martinho Lutero",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "castelo-forte.json",
+      "legacyMidiFiles": [
+        "castelo_forte.mid"
+      ],
+      "legacyDuration": 73,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "conta-as-bencaos",
+      "title": "Conta as Bencaos",
+      "artist": "Johnson Oatman Jr.",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "conta-as-bencaos.json",
+      "legacyMidiFiles": [
+        "conta_as_bencaos.mid"
+      ],
+      "legacyDuration": 48,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "coroai",
+      "title": "Coroai",
+      "artist": "Matthew Bridges",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "coroai.json",
+      "legacyMidiFiles": [
+        "coroai.mid"
+      ],
+      "legacyDuration": 40,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "firme-nas-promessas",
+      "title": "Firme nas Promessas",
+      "artist": "Russell Kelso Carter",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "firme-nas-promessas.json",
+      "legacyMidiFiles": [
+        "firme_nas_promessas.mid"
+      ],
+      "legacyDuration": 39,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "gloria-gloria-aleluia",
+      "title": "Gloria, Gloria, Aleluia",
+      "artist": "Julia Ward Howe",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "gloria-gloria-aleluia.json",
+      "legacyMidiFiles": [
+        "gloria_gloria_aleluia.mid"
+      ],
+      "legacyDuration": 40,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "jubiloso-te-adoramos",
+      "title": "Jubiloso, Te Adoramos",
+      "artist": "Henry van Dyke / Beethoven",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "jubiloso-te-adoramos.json",
+      "legacyMidiFiles": [
+        "jubiloso_te_adoramos.mid"
+      ],
+      "legacyDuration": 40,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "o-vem-o-vem-emanuel",
+      "title": "O Vem, O Vem, Emanuel",
+      "artist": "Tradicional",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "o-vem-o-vem-emanuel.json",
+      "legacyMidiFiles": [
+        "o_vem_o_vem_emanuel.mid"
+      ],
+      "legacyDuration": 37,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "research_required",
+        "reason": "Confirmar autoria desconhecida ou prazo patrimonial e obter uma edicao independente com licenca verificavel."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "santo-santo-santo",
+      "title": "Santo, Santo, Santo",
+      "artist": "Reginald Heber",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "santo-santo-santo.json",
+      "legacyMidiFiles": [
+        "santo_santo_santo.mid"
+      ],
+      "legacyDuration": 65,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "sou-feliz-com-jesus",
+      "title": "Sou Feliz com Jesus",
+      "artist": "Horatio Spafford",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "sou-feliz-com-jesus.json",
+      "legacyMidiFiles": [
+        "sou_feliz_com_jesus.mid"
+      ],
+      "legacyDuration": 59,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "tao-sublime-sacramento",
+      "title": "Tao Sublime Sacramento",
+      "artist": "Tradicional Liturgico",
+      "category": "Religiosos",
+      "difficulty": "Médio",
+      "outputFile": "tao-sublime-sacramento.json",
+      "legacyMidiFiles": [
+        "tao_sublime_sacramento.mid"
+      ],
+      "legacyDuration": 79,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "medium",
+        "status": "tune_identity_required",
+        "reason": "Identificar separadamente autor da melodia, autor da letra/traducao e licenca da edicao instrumental."
+      },
+      "wave": {
+        "number": 2,
+        "id": "hymns",
+        "label": "Hinos e melodias religiosas"
+      },
+      "priorityScore": 78
+    },
+    {
+      "id": "gymnopedie-no-1",
+      "title": "Gymnopédie nº 1",
+      "artist": "Erik Satie",
+      "category": "Intro de Filmes",
+      "difficulty": "Médio",
+      "outputFile": "gymnopedie-no-1.json",
+      "legacyMidiFiles": [
+        "gymnopedie_no_1.mid"
+      ],
+      "legacyDuration": 142,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "swan-lake-napolitan-dance",
+      "title": "Lago dos Cisnes: Dança Napolitana",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Intro de Filmes",
+      "difficulty": "Médio",
+      "outputFile": "swan-lake-napolitan-dance.json",
+      "legacyMidiFiles": [
+        "swan_lake_napolitan_dance.mid"
+      ],
+      "legacyDuration": 90,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "turkish-march",
+      "title": "Marcha Turca",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "turkish-march.json",
+      "legacyMidiFiles": [
+        "turkish_march_full.mid"
+      ],
+      "legacyDuration": 256,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "minueto-em-sol-maior",
+      "title": "Minueto em Sol Maior",
+      "artist": "Christian Petzold",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "minueto.json",
+      "legacyMidiFiles": [
+        "minueto-1.mid",
+        "minueto-2.mid"
+      ],
+      "legacyDuration": 43,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "in-the-hall-of-the-mountain-king",
+      "title": "Na Gruta do Rei da Montanha",
+      "artist": "Edvard Grieg",
+      "category": "Intro de Filmes",
+      "difficulty": "Médio",
+      "outputFile": "in-the-hall-of-the-mountain-king.json",
+      "legacyMidiFiles": [
+        "in_the_hall_of_the_mountain_king.mid"
+      ],
+      "legacyDuration": 153,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "nocturne-op9",
+      "title": "Noturno Op. 9 nº 2",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "nocturne-op9.json",
+      "legacyMidiFiles": [
+        "nocturne_op9_full.mid"
+      ],
+      "legacyDuration": 204,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "moonlight-sonata",
+      "title": "Sonata ao Luar (1º Movimento)",
+      "artist": "Ludwig van Beethoven",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "moonlight-sonata.json",
+      "legacyMidiFiles": [
+        "moonlight_sonata_facil.mid",
+        "moonlight_sonata_dificil.mid"
+      ],
+      "legacyDuration": 277,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "minute-waltz",
+      "title": "Valsa do Minuto (Op. 64 nº 1)",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "minute-waltz.json",
+      "legacyMidiFiles": [
+        "minute_waltz_full.mid"
+      ],
+      "legacyDuration": 91,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 55
+    },
+    {
+      "id": "ave-maria-schubert",
+      "title": "Ave Maria",
+      "artist": "Franz Schubert",
+      "category": "Intro de Filmes",
+      "difficulty": "Médio",
+      "outputFile": "ave-maria-schubert.json",
+      "legacyMidiFiles": [
+        "ave_maria_schubert.mid"
+      ],
+      "legacyDuration": 431,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 47
+    },
+    {
+      "id": "toccata-and-fugue-d-minor",
+      "title": "Tocata e Fuga em Ré Menor",
+      "artist": "Johann Sebastian Bach",
+      "category": "Intro de Filmes",
+      "difficulty": "Difícil",
+      "outputFile": "toccata-and-fugue-d-minor.json",
+      "legacyMidiFiles": [
+        "toccata_fugue_d_minor.mid"
+      ],
+      "legacyDuration": 573,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 3,
+        "id": "familiar-classics",
+        "label": "Classicos reconheciveis"
+      },
+      "priorityScore": 47
+    },
+    {
+      "id": "old-french-songtchaikosvky",
+      "title": "Canção Francesa Antiga",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Clássicos",
+      "difficulty": "Fácil",
+      "outputFile": "old-french-songtchaikosvky.json",
+      "legacyMidiFiles": [
+        "Old French SongTchaikosvky.mid"
+      ],
+      "legacyDuration": 57,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 46
+    },
+    {
+      "id": "morning-prayertchaikovsky",
+      "title": "Oração da Manhã",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Clássicos",
+      "difficulty": "Fácil",
+      "outputFile": "morning-prayertchaikovsky.json",
+      "legacyMidiFiles": [
+        "Morning PrayerTchaikovsky.mid"
+      ],
+      "legacyDuration": 71,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 46
+    },
+    {
+      "id": "preludio-numero7chopin",
+      "title": "Prelúdio nº 7",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Fácil",
+      "outputFile": "preludio-numero7chopin.json",
+      "legacyMidiFiles": [
+        "preludio numero7chopin.mid"
+      ],
+      "legacyDuration": 25,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 46
+    },
+    {
+      "id": "the-seasons-februarytchaikovsky",
+      "title": "As Estações: Fevereiro",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "the-seasons-februarytchaikovsky.json",
+      "legacyMidiFiles": [
+        "The Seasons FebruaryTchaikovsky.mid"
+      ],
+      "legacyDuration": 283,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "the-seasons-januarytchaikovsky",
+      "title": "As Estações: Janeiro",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "the-seasons-januarytchaikovsky.json",
+      "legacyMidiFiles": [
+        "The Seasons JanuaryTchaikovsky.mid"
+      ],
+      "legacyDuration": 259,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "etude-a-mollchopin",
+      "title": "Estudo em Lá Menor",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "etude-a-mollchopin.json",
+      "legacyMidiFiles": [
+        "Etüde a-mollChopin.mid"
+      ],
+      "legacyDuration": 83,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "fantasy-in-d-minormozart",
+      "title": "Fantasia em Ré Menor",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "fantasy-in-d-minormozart.json",
+      "legacyMidiFiles": [
+        "Fantasy in D minormozart.mid"
+      ],
+      "legacyDuration": 285,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "chopin-fantaisie-impromptuchopin",
+      "title": "Fantasia-Impromptu",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "chopin-fantaisie-impromptuchopin.json",
+      "legacyMidiFiles": [
+        "chopin_fantaisie-impromptuchopin.mid"
+      ],
+      "legacyDuration": 255,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "fuguefragmentmozart",
+      "title": "Fragmento de Fuga",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "fuguefragmentmozart.json",
+      "legacyMidiFiles": [
+        "fuguefragmentmozart.mid"
+      ],
+      "legacyDuration": 58,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "fugue-in-e-flat-major-kv-153375fmozart",
+      "title": "Fuga em Mi Bemol Maior, KV 153/375f",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "fugue-in-e-flat-major-kv-153375fmozart.json",
+      "legacyMidiFiles": [
+        "Fugue in E-flat Major KV 153375fmozart.mid"
+      ],
+      "legacyDuration": 146,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "fugue-sur-le-nom-de-bachrimsky-korsakov",
+      "title": "Fuga sobre o Nome de Bach",
+      "artist": "Nikolai Rimsky-Korsakov",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "fugue-sur-le-nom-de-bachrimsky-korsakov.json",
+      "legacyMidiFiles": [
+        "Fugue sur le nom de BachRimsky-Korsakov.mid"
+      ],
+      "legacyDuration": 125,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "gigue-in-g-majormozart",
+      "title": "Giga em Sol Maior",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "gigue-in-g-majormozart.json",
+      "legacyMidiFiles": [
+        "Gigue in G Majormozart.mid"
+      ],
+      "legacyDuration": 50,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "march-of-the-wooden-soldierstchaikovsky",
+      "title": "Marcha dos Soldadinhos de Madeira",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "march-of-the-wooden-soldierstchaikovsky.json",
+      "legacyMidiFiles": [
+        "March of the Wooden SoldiersTchaikovsky.mid"
+      ],
+      "legacyDuration": 42,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "marche-funebre-kv-453amozart",
+      "title": "Marcha Fúnebre, KV 453a",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "marche-funebre-kv-453amozart.json",
+      "legacyMidiFiles": [
+        "Marche funebre KV 453amozart.mid"
+      ],
+      "legacyDuration": 64,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "notteegiornomozart",
+      "title": "Noite e Dia",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "notteegiornomozart.json",
+      "legacyMidiFiles": [
+        "NotteEGiornomozart.mid"
+      ],
+      "legacyDuration": 115,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "das-wohltemperierte-clavier-ii-praeludium-iijsbach",
+      "title": "O Cravo Bem Temperado II: Prelúdio II",
+      "artist": "Johann Sebastian Bach",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "das-wohltemperierte-clavier-ii-praeludium-iijsbach.json",
+      "legacyMidiFiles": [
+        "Das Wohltemperierte Clavier II, Praeludium IIJSBACH.mid"
+      ],
+      "legacyDuration": 57,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "preludio-n-15-chopin",
+      "title": "Prelúdio nº 15",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "preludio-n-15-chopin.json",
+      "legacyMidiFiles": [
+        "Preludio n 15 chopin.mid"
+      ],
+      "legacyDuration": 268,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "preludio-n-20-chopin",
+      "title": "Prelúdio nº 20",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "preludio-n-20-chopin.json",
+      "legacyMidiFiles": [
+        "preludio n 20 chopin.mid"
+      ],
+      "legacyDuration": 76,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "preludio-n-6-chopin",
+      "title": "Prelúdio nº 6",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "preludio-n-6-chopin.json",
+      "legacyMidiFiles": [
+        "preludio n 6 chopin.mid"
+      ],
+      "legacyDuration": 103,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "prelude-op-28-no-4-suffocation-chopin",
+      "title": "Prelúdio Op. 28 nº 4",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "prelude-op-28-no-4-suffocation-chopin.json",
+      "legacyMidiFiles": [
+        "Prelude Op. 28, No. 4 ('Suffocation')Chopin.mid"
+      ],
+      "legacyDuration": 110,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "preludio-chopin",
+      "title": "Prelúdio Op. 45",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "preludio-chopin.json",
+      "legacyMidiFiles": [
+        "preludio chopin.mid"
+      ],
+      "legacyDuration": 199,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "premiere-arabesquedebussy",
+      "title": "Primeira Arabesca",
+      "artist": "Claude Debussy",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "premiere-arabesquedebussy.json",
+      "legacyMidiFiles": [
+        "Première ArabesqueDebussy.mid"
+      ],
+      "legacyDuration": 178,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "sonata-in-c-major-fragment-mozart",
+      "title": "Sonata em Dó Maior (Fragmento)",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Médio",
+      "outputFile": "sonata-in-c-major-fragment-mozart.json",
+      "legacyMidiFiles": [
+        "Sonata in C major (fragment)mozart.mid"
+      ],
+      "legacyDuration": 39,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "sonata-2bmoll-chopin",
+      "title": "Sonata nº 2 em Si Bemol Menor: Finale",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "sonata-2bmoll-chopin.json",
+      "legacyMidiFiles": [
+        "sonata 2bmoll chopin.mid"
+      ],
+      "legacyDuration": 84,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "piano-sonata-in-c-major-kv-309-1st-part-mozart",
+      "title": "Sonata para Piano em Dó Maior, KV 309 (1ª Parte)",
+      "artist": "Wolfgang Amadeus Mozart",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "piano-sonata-in-c-major-kv-309-1st-part-mozart.json",
+      "legacyMidiFiles": [
+        "Piano Sonata in C Major - KV 309 (1st Part)mozart.mid"
+      ],
+      "legacyDuration": 257,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "trois-nouvelles-etudes-no-1-f-minorchopin",
+      "title": "Três Novos Estudos nº 1 em Fá Menor",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "trois-nouvelles-etudes-no-1-f-minorchopin.json",
+      "legacyMidiFiles": [
+        "Trois Nouvelles Etudes, No. 1 F MinorChopin.mid"
+      ],
+      "legacyDuration": 162,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 40
+    },
+    {
+      "id": "the-seasons-augusttchaikovsky",
+      "title": "As Estações: Agosto",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "the-seasons-augusttchaikovsky.json",
+      "legacyMidiFiles": [
+        "The Seasons AugustTchaikovsky.mid"
+      ],
+      "legacyDuration": 332,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 32
+    },
+    {
+      "id": "ballade-4chopin",
+      "title": "Balada nº 4 em Fá Menor",
+      "artist": "Frédéric Chopin",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "ballade-4chopin.json",
+      "legacyMidiFiles": [
+        "ballade-4chopin.mid"
+      ],
+      "legacyDuration": 718,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 32
+    },
+    {
+      "id": "suite-bergamasque-clair-de-lunedebussy",
+      "title": "Clair de Lune",
+      "artist": "Claude Debussy",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "suite-bergamasque-clair-de-lunedebussy.json",
+      "legacyMidiFiles": [
+        "Suite Bergamasque Clair de Lunedebussy.mid"
+      ],
+      "legacyDuration": 323,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 32
+    },
+    {
+      "id": "doumkatchaikosvky",
+      "title": "Dumka",
+      "artist": "Piotr Ilitch Tchaikovsky",
+      "category": "Clássicos",
+      "difficulty": "Difícil",
+      "outputFile": "doumkatchaikosvky.json",
+      "legacyMidiFiles": [
+        "DoumkaTchaikosvky.mid"
+      ],
+      "legacyDuration": 574,
+      "sourceStatus": "canonical_source_verified",
+      "publicationStatus": "pending_owner_review",
+      "rights": {
+        "risk": "low",
+        "status": "edition_required",
+        "reason": "A composicao aparenta ser de dominio publico, mas a edicao/MIDI ainda precisa de licenca e proveniencia independentes."
+      },
+      "wave": {
+        "number": 4,
+        "id": "advanced-classics",
+        "label": "Classicos avancados"
+      },
+      "priorityScore": 32
+    }
+  ]
+}

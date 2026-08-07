@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const pianoRange = require("../config/piano-range.json");
 const { Midi } = require("@tonejs/midi");
 const songManifest = require("./song-manifest");
 
@@ -8,8 +9,8 @@ const SONGS_DIR = path.join(ROOT_DIR, "public/songs");
 const MIDI_DIR = path.join(ROOT_DIR, "public/midi");
 const TARGET_IDS = new Set(["trois-nouvelles-etudes-no-1-f-minorchopin"]);
 const GROUP_WINDOW = 0.12;
-const PLAYER_MIN_MIDI = 36;
-const PLAYER_MAX_MIDI = 84;
+const PLAYER_MIN_MIDI = pianoRange.startMidi;
+const PLAYER_MAX_MIDI = pianoRange.endMidi;
 
 function round(value, digits = 3) {
   return Number(value.toFixed(digits));

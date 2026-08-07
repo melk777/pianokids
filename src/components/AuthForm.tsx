@@ -125,7 +125,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   const enterLocalTestMode = () => {
     localStorage.setItem(LOCAL_DEV_AUTH_STORAGE_KEY, "1");
     document.cookie = `${LOCAL_DEV_AUTH_COOKIE}=1; path=/; max-age=86400; SameSite=Lax`;
-    window.location.assign("/api/auth/local-test");
+    window.location.assign(new URL("/api/auth/local-test", window.location.origin).toString());
   };
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -201,7 +201,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
         }
 
         trackEvent("auth_login_completed", { role: resolvedRole || role });
-        window.location.assign(getPostLoginPath(resolvedRole));
+        window.location.assign(new URL(getPostLoginPath(resolvedRole), window.location.origin).toString());
       } else {
         const { error } = await supabase.auth.signUp({
           email,

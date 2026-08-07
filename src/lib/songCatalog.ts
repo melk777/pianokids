@@ -1,23 +1,35 @@
 import type { Song } from "@/lib/types";
 
-let catalogPromise: Promise<Song[]> | null = null;
+let catalogCache: Song[] | null = null;
 
 async function fetchJson<T>(input: RequestInfo | URL): Promise<T> {
-  const response = await fetch(input, { cache: "no-store" });
+  let lastError: unknown;
 
-  if (!response.ok) {
-    throw new Error(`Failed to load ${String(input)} (${response.status})`);
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch(input, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`Failed to load ${String(input)} (${response.status})`);
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+    }
   }
 
-  return (await response.json()) as T;
+  throw lastError instanceof Error ? lastError : new Error(`Failed to load ${String(input)}`);
 }
 
 async function loadCatalogIndex(): Promise<Song[]> {
-  if (!catalogPromise) {
-    catalogPromise = fetchJson<Song[]>("/song-catalog-index.json");
-  }
+  if (catalogCache) return catalogCache;
 
-  return catalogPromise;
+  const catalog = await fetchJson<Song[]>("/song-catalog-index.json");
+  catalogCache = catalog;
+  return catalog;
 }
 
 export async function loadSongs(): Promise<Song[]> {
