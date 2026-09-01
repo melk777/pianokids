@@ -343,6 +343,7 @@ export default function AdminDashboard() {
     if (!selectedWithdrawal || !uploadFile) return;
     playClick();
     setIsUploading(true);
+    let uploadedReceiptPath: string | null = null;
 
     try {
       const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
@@ -369,6 +370,7 @@ export default function AdminDashboard() {
         .upload(fileName, uploadFile, { cacheControl: '3600', upsert: false });
 
       if (uploadError) throw uploadError;
+      uploadedReceiptPath = fileName;
 
       const res = await fetch('/api/admin/withdrawals', {
         method: 'POST',
@@ -383,13 +385,18 @@ export default function AdminDashboard() {
       });
 
       if (res.ok) {
+        uploadedReceiptPath = null;
         playSuccess();
         setSelectedWithdrawal(null);
         fetchAll(); 
       } else {
-        throw new Error("Falha na API");
+        const payload = await res.json().catch(() => null);
+        throw new Error(payload?.error || "Falha ao aprovar o saque.");
       }
     } catch (error) {
+      if (uploadedReceiptPath) {
+        await supabase.storage.from("receipts").remove([uploadedReceiptPath]);
+      }
       playError();
       alert(error instanceof Error ? error.message : "Erro ao processar o comprovante. Tente novamente.");
     } finally {
@@ -417,10 +424,13 @@ export default function AdminDashboard() {
             playSuccess();
             setSelectedWithdrawal(null);
             fetchAll();
+          } else {
+            const payload = await res.json().catch(() => null);
+            throw new Error(payload?.error || "Falha ao rejeitar o saque.");
           }
-      } catch {
+      } catch (error) {
           playError();
-          alert("Erro ao rejeitar");
+          alert(error instanceof Error ? error.message : "Erro ao rejeitar");
       } finally {
           setIsUploading(false);
       }

@@ -2,6 +2,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasSpecialAccess, hasStudentExperienceAccess } from "@/lib/access-control";
 import { LOCAL_DEV_AUTH_COOKIE, isLocalDevAuthAllowed } from "@/lib/localDevAuth";
+import { getSafeInternalRedirect } from "@/lib/safe-redirect";
 
 function isStudentExperienceRoute(pathname: string) {
   return (
@@ -35,6 +36,7 @@ function isAlwaysPublicRoute(pathname: string) {
 function isProtectedRoute(pathname: string) {
   return (
     pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/api/account") ||
     pathname.startsWith("/api/admin") ||
     pathname.startsWith("/api/teacher") ||
     pathname.startsWith("/api/practice") ||
@@ -45,17 +47,31 @@ function isProtectedRoute(pathname: string) {
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const socialFeaturesEnabled = process.env.NEXT_PUBLIC_SOCIAL_FEATURES_ENABLED === "true";
   const localDevAuthAllowed = isLocalDevAuthAllowed(request.nextUrl.hostname);
   const hasLocalDevAuth =
     localDevAuthAllowed &&
     request.cookies.get(LOCAL_DEV_AUTH_COOKIE)?.value === "1";
+
+  if (pathname === "/dashboard/membership") {
+    return NextResponse.redirect(new URL("/dashboard/subscription", request.url));
+  }
+
+  if (!socialFeaturesEnabled && /^\/dashboard\/profile\/[^/]+/.test(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard/profile", request.url));
+  }
 
   if (
     localDevAuthAllowed &&
     pathname.startsWith("/login") &&
     request.nextUrl.searchParams.get("realAuth") !== "1"
   ) {
-    return NextResponse.redirect(new URL("/api/auth/local-test", request.url));
+    const localTestUrl = new URL("/api/auth/local-test", request.url);
+    localTestUrl.searchParams.set(
+      "redirect",
+      getSafeInternalRedirect(request.nextUrl.searchParams.get("next"), "/dashboard/songs"),
+    );
+    return NextResponse.redirect(localTestUrl);
   }
 
   if (isAlwaysPublicRoute(pathname)) {
@@ -154,7 +170,11 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url), {
+    const destination = getSafeInternalRedirect(
+      request.nextUrl.searchParams.get("next"),
+      "/dashboard",
+    );
+    return NextResponse.redirect(new URL(destination, request.url), {
       headers: response.headers,
     });
   }

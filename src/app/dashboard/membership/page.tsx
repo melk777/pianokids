@@ -22,6 +22,7 @@ interface SubData {
   status: string;
   planType: string;
   hasAccess: boolean;
+  isPro: boolean;
   customerId: string | null;
   interval: string | null;
   currentPeriodEnd: string | null;
@@ -41,7 +42,7 @@ export default function MembershipPage() {
         setSubData(data);
 
         // Se não tem assinatura ativa, redireciona para pricing
-        if (!data.hasAccess) {
+        if (!data.isPro) {
           router.replace("/#pricing");
           return;
         }
@@ -82,7 +83,7 @@ export default function MembershipPage() {
   }
 
   // This should not render if redirect happened, but as safety:
-  if (!subData?.hasAccess) return null;
+  if (!subData?.isPro) return null;
 
   const isYearly = subData.planType === "yearly";
   const renewDate = subData.currentPeriodEnd

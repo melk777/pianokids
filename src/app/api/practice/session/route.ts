@@ -4,6 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import type { PracticeSession, Profile } from "@/lib/types";
 import { buildPracticeAggregate, getBrazilPracticeDate } from "@/lib/practiceHistory";
+import { canAccessSong, hasSpecialAccess } from "@/lib/access-control";
+import { createSupabaseAdminClient } from "@/lib/server/supabase";
+import { getServerSongMetadata } from "@/lib/server/song-catalog";
 
 function hasSupabaseEnv() {
   return Boolean(
@@ -136,22 +139,83 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = (await request.json()) as Record<string, unknown>;
+    } catch {
+      return NextResponse.json({ error: "Corpo da requisição inválido." }, { status: 400 });
+    }
+
+    const songId = typeof body.songId === "string" ? body.songId.trim() : "";
+    if (!songId || songId.length > 120 || songId === "freeplay") {
+      return NextResponse.json({ error: "Música inválida para o histórico." }, { status: 400 });
+    }
+
+    const [song, profileResult] = await Promise.all([
+      getServerSongMetadata(songId),
+      supabase
+        .from("profiles")
+        .select("role, subscription_status, trial_ends_at")
+        .eq("id", user.id)
+        .maybeSingle(),
+    ]);
+
+    if (!song) {
+      return NextResponse.json({ error: "Música não encontrada." }, { status: 404 });
+    }
+    if (profileResult.error) throw profileResult.error;
+    if (!profileResult.data || profileResult.data.role !== "student") {
+      return NextResponse.json({ error: "Apenas alunos podem registrar prática." }, { status: 403 });
+    }
+    if (
+      !canAccessSong(song, profileResult.data, {
+        hasSpecialAccess: hasSpecialAccess(user.id, user.email),
+      })
+    ) {
+      return NextResponse.json({ error: "Seu plano não dá acesso a esta música." }, { status: 403 });
+    }
+
+    const allowedDifficulties = new Set(["beginner", "medium", "pro"]);
+    const allowedHandModes = new Set(["left", "right", "both", "unknown"]);
+    const difficulty = typeof body.difficulty === "string" && allowedDifficulties.has(body.difficulty)
+      ? body.difficulty
+      : "beginner";
+    const handMode = typeof body.handMode === "string" && allowedHandModes.has(body.handMode)
+      ? body.handMode
+      : "unknown";
+    const maximumDuration = Math.max(60, Math.ceil((Number(song.duration) || 0) * 2 + 60));
+    const supabaseAdmin = createSupabaseAdminClient();
+
+    const fiveSecondsAgo = new Date(Date.now() - 5_000).toISOString();
+    const { data: recentDuplicate, error: duplicateCheckError } = await supabaseAdmin
+      .from("practice_sessions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("song_id", song.id)
+      .gte("created_at", fiveSecondsAgo)
+      .limit(1)
+      .maybeSingle();
+
+    if (duplicateCheckError) throw duplicateCheckError;
+    if (recentDuplicate) {
+      return NextResponse.json({ error: "Esta sessão já foi registrada." }, { status: 409 });
+    }
+
     const payload = {
       user_id: user.id,
-      song_id: typeof body.songId === "string" ? body.songId : null,
-      song_title: typeof body.songTitle === "string" ? body.songTitle : null,
-      difficulty: typeof body.difficulty === "string" ? body.difficulty : null,
-      hand_mode: typeof body.handMode === "string" ? body.handMode : null,
+      song_id: song.id,
+      song_title: song.title,
+      difficulty,
+      hand_mode: handMode,
       accuracy: Math.max(0, Math.min(100, Math.round(Number(body.accuracy) || 0))),
-      score: Math.max(0, Math.round(Number(body.score) || 0)),
-      combo: Math.max(0, Math.round(Number(body.combo) || 0)),
-      duration_seconds: Math.max(0, Math.round(Number(body.durationSeconds) || 0)),
+      score: Math.max(0, Math.min(10_000_000, Math.round(Number(body.score) || 0))),
+      combo: Math.max(0, Math.min(100_000, Math.round(Number(body.combo) || 0))),
+      duration_seconds: Math.max(0, Math.min(maximumDuration, Math.round(Number(body.durationSeconds) || 0))),
       completed: Boolean(body.completed),
       practiced_on: getBrazilPracticeDate(),
     };
 
-    const { error: insertError } = await supabase.from("practice_sessions").insert(payload);
+    const { error: insertError } = await supabaseAdmin.from("practice_sessions").insert(payload);
 
     if (insertError) {
       throw insertError;

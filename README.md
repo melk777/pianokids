@@ -9,7 +9,9 @@
 
 ## Estado do projeto
 
-O Pianify está em preparação para lançamento. A aplicação já possui biblioteca musical, motor de prática gamificado, autenticação com Supabase e assinaturas via Stripe. Antes de publicar em produção, ainda é necessário aplicar e validar o schema completo do banco, configurar os serviços externos e concluir os testes manuais descritos em [`docs/launch-readiness-audit.md`](docs/launch-readiness-audit.md).
+O Pianify está em preparação para lançamento. A aplicação já possui biblioteca musical, motor de prática gamificado, autenticação com Supabase, assinaturas via Stripe, controle de acesso no servidor, comissões transacionais e exportação de dados da conta. Antes de publicar em produção, ainda é necessário aplicar e validar as migrações em staging, configurar os serviços externos e concluir os testes manuais descritos no [`docs/production-launch-runbook.md`](docs/production-launch-runbook.md).
+
+Nesta primeira versão, o cadastro é exclusivo para maiores de 18 anos e os recursos sociais permanecem desativados. Isso evita lançar mensagens e perfis públicos antes de existir consentimento verificável de responsável, denúncia e moderação adequados.
 
 ## Stack
 
@@ -54,6 +56,11 @@ Use [`.env.example`](.env.example) como referência. Nunca envie `.env.local` ou
 | `STRIPE_YEARLY_PRICE_ID` | Price ID do plano anual |
 | `NEXT_PUBLIC_BASE_URL` | URL canônica da aplicação |
 | `NEXT_PUBLIC_SITE_URL` | URL pública usada em redirecionamentos |
+| `NEXT_PUBLIC_SOCIAL_FEATURES_ENABLED` | Deve permanecer `false` no primeiro lançamento |
+| `NEXT_PUBLIC_SHOW_VERIFIED_TESTIMONIALS` | Só use `true` com depoimentos reais e autorizados |
+| `COMPANY_LEGAL_NAME` | Razão social exibida nos documentos legais |
+| `COMPANY_TAX_ID` | CNPJ exibido nos documentos legais |
+| `COMPANY_ADDRESS` | Endereço empresarial exibido nos documentos legais |
 
 ## Teclado MIDI
 
@@ -67,9 +74,11 @@ O suporte a WebMIDI varia por navegador e dispositivo. O microfone também exige
 ## Qualidade e auditorias
 
 ```bash
+npm test
 npm run lint
 npx tsc --noEmit
 npm run build
+npm audit --omit=dev
 npm run audit-song-library
 npm run audit-player-modes
 npm run audit-song-source-fidelity
@@ -90,7 +99,9 @@ Copie apenas o segredo `whsec_...` fornecido pela sessão para `STRIPE_WEBHOOK_S
 
 ## Banco de dados
 
-As migrações versionadas ficam em [`supabase/migrations/`](supabase/migrations/). Não aplique migrações em produção antes de revisar o diff do schema, confirmar backup e testar em um projeto de desenvolvimento ou staging.
+As migrações versionadas ficam em [`supabase/migrations/`](supabase/migrations/). Elas incluem o schema inicial, endurecimento de assinaturas e saques, ledger financeiro, proteção das sessões de prática, desativação dos recursos sociais e consentimento adulto. Não aplique migrações diretamente em produção: revise o diff, confirme o backup e valide primeiro em um projeto de staging.
+
+O passo a passo de banco, Stripe, Vercel, testes manuais, monitoramento e decisão de lançamento está no [`docs/production-launch-runbook.md`](docs/production-launch-runbook.md).
 
 ## Licença
 

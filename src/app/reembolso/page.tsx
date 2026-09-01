@@ -15,7 +15,7 @@ export default function ReembolsoPage() {
           <h1 className="mb-6 text-4xl font-black text-white md:text-6xl">
             Reembolso e <span className="text-magenta">Cancelamento</span>
           </h1>
-          <p className="text-lg text-white/60">Atualizado em 30 de Abril de 2026</p>
+          <p className="text-lg text-white/60">Atualizado em 1º de setembro de 2026</p>
         </div>
 
         <div className="glass space-y-10 rounded-[2.5rem] border border-white/10 p-8 md:p-12">
@@ -26,7 +26,7 @@ export default function ReembolsoPage() {
             </div>
             <p className="text-lg leading-relaxed text-white/80">
               Voce pode cancelar a assinatura pelo portal seguro do Stripe. O acesso permanece ativo ate o fim do
-              periodo ja pago.
+              periodo ja pago. O cancelamento evita a renovacao seguinte.
             </p>
           </section>
 
@@ -48,12 +48,14 @@ export default function ReembolsoPage() {
             </h2>
             <div className="space-y-4 leading-relaxed text-white/60">
               <p>
-                Pedidos de reembolso podem ser analisados quando houver cobranca duplicada, erro tecnico comprovado de
-                acesso ou solicitacao feita logo apos a compra sem uso relevante da plataforma.
+                Nas contratações realizadas pela internet, você pode exercer o direito de arrependimento em até 7 dias
+                contados da contratação inicial. Nesse prazo, o valor pago será devolvido pelo mesmo meio de pagamento,
+                observados os prazos operacionais do banco e do Stripe.
               </p>
               <p>
-                A análise considera histórico de acesso, início de aulas, uso dos recursos da Pianify, período contratado e
-                regras do processador de pagamento.
+                Depois desse prazo, pedidos relacionados a cobrança duplicada, indisponibilidade comprovada ou outros
+                direitos previstos na legislação serão analisados individualmente. Esta política não limita direitos
+                assegurados pelo Código de Defesa do Consumidor.
               </p>
             </div>
           </section>
@@ -65,7 +67,7 @@ export default function ReembolsoPage() {
             </h2>
             <p className="leading-relaxed text-white/60">
               Envie uma mensagem para contato@pianify.com.br com o e-mail da conta, data aproximada da compra e motivo
-              da solicitacao. Responderemos com os proximos passos.
+              da solicitacao. Não envie senha nem dados completos do cartão. Responderemos com os próximos passos.
             </p>
           </section>
         </div>

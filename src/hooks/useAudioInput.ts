@@ -180,6 +180,7 @@ export function useAudioInput() {
   const streamRef = useRef<MediaStream | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const heldNotesRef = useRef<Map<number, AudioNote>>(new Map());
+  const startingRef = useRef(false);
 
   const reloadCalibration = useCallback(() => {
     setCalibrationProfile(readAudioCalibrationProfile());
@@ -216,15 +217,23 @@ export function useAudioInput() {
     heldNotesRef.current.clear();
 
     if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    animationFrameRef.current = null;
     if (streamRef.current) streamRef.current.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+    analyserRef.current = null;
     if (audioContextRef.current && audioContextRef.current.state !== "closed") {
       audioContextRef.current.close().catch((closeError) => {
         console.warn("Erro ao fechar AudioContext:", closeError);
       });
     }
+    audioContextRef.current = null;
+    startingRef.current = false;
   }, []);
 
   const start = useCallback(async () => {
+    if (startingRef.current || streamRef.current?.active) return;
+    startingRef.current = true;
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -313,6 +322,16 @@ export function useAudioInput() {
       updatePitch();
     } catch (err) {
       console.error("[USE_AUDIO_INPUT_ERROR]:", err);
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+      analyserRef.current = null;
+      if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+        await audioContextRef.current.close().catch(() => {});
+      }
+      audioContextRef.current = null;
+      heldNotesRef.current.clear();
       if (err instanceof DOMException && (err.name === "NotAllowedError" || err.name === "PermissionDeniedError")) {
         setPermissionStatus("denied");
         setError("Acesso ao microfone negado. Permita o acesso nas configuracoes do navegador.");
@@ -320,6 +339,8 @@ export function useAudioInput() {
         setError(err instanceof Error ? err.message : "Erro ao acessar microfone");
       }
       setIsListening(false);
+    } finally {
+      startingRef.current = false;
     }
   }, [calibrationProfile, reloadCalibration]);
 

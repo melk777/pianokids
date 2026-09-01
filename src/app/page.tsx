@@ -51,6 +51,9 @@ const CLIENT_PLANS = {
   },
 } as const;
 
+const SHOW_VERIFIED_TESTIMONIALS =
+  process.env.NEXT_PUBLIC_SHOW_VERIFIED_TESTIMONIALS === "true";
+
 const LIBRARY_PREVIEW = [
   {
     title: "Para Elisa",
@@ -369,7 +372,7 @@ export default function Home() {
                 Por que <span className="text-gradient font-black">Pianify</span>?
               </h2>
               <p className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                Uma experiência projetada para manter alunos de todas as idades engajados e
+                Uma experiência projetada para manter alunos adultos engajados e
                 aprendendo com diversão imediata.
               </p>
             </div>
@@ -380,7 +383,7 @@ export default function Home() {
                 {
                   icon: <Music className="w-6 h-6" />,
                   title: "Reconhecimento de Áudio",
-                  desc: "Toque as notas no seu piano real e nossa IA reconhecerá instantaneamente via microfone.",
+                  desc: "Toque no seu piano real e o reconhecimento de áudio identifica as notas captadas pelo microfone.",
                 },
                 {
                   icon: <Star className="w-6 h-6" />,
@@ -414,9 +417,11 @@ export default function Home() {
         </section>
 
         {/* ── Testimonials Carousel ──────────────────── */}
-        <div className="py-16">
-          <TestimonialsCarousel />
-        </div>
+        {SHOW_VERIFIED_TESTIMONIALS && (
+          <div className="py-16">
+            <TestimonialsCarousel />
+          </div>
+        )}
 
         <section id="pricing" className="py-32 lg:py-48 px-6 scroll-mt-20">
           <div className="max-w-4xl mx-auto">
@@ -503,25 +508,9 @@ export default function Home() {
             <div className="flex items-center gap-2 text-white/40 text-[13px] font-medium tracking-tight">
               <span className="opacity-70">Pianify © {new Date().getFullYear()}</span>
             </div>
-            <div className="flex items-center gap-4">
-              {[
-                { label: "Instagram", icon: "IG" },
-                { label: "X", icon: "X" },
-                { label: "Facebook", icon: "f" },
-                { label: "WhatsApp", icon: "WA" },
-              ].map((item) => (
-                <a
-                  key={item.label}
-                  href="#"
-                  aria-label={item.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/40 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:text-white"
-                >
-                  <span className="text-[11px] font-black uppercase tracking-[0.16em]">
-                    {item.icon}
-                  </span>
-                </a>
-              ))}
-            </div>
+            <Link href="/contato" className="text-sm font-bold text-white/40 transition hover:text-white">
+              Central de contato
+            </Link>
             <div className="flex items-center gap-6 text-sm text-white/30">
               <Link
                 href="/termos"

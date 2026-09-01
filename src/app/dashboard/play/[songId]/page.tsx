@@ -1333,6 +1333,7 @@ function PlayPageContent() {
                 songDuration={playerDuration}
                 getAudioTime={() => audio.getCurrentTime() - audioStartTime}
                 metronomeVolume={metronomeVolume}
+                bpm={song.bpm}
                 onScoreUpdate={handleScoreUpdate}
                 onSongEnd={handleSongEnd}
                 onPracticeSuggestion={setPracticeSuggestion}

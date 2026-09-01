@@ -2,23 +2,12 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getURL } from "@/lib/utils/url";
-
-function getSafeRedirectPath(nextParam: string | null): string {
-  if (!nextParam || !nextParam.startsWith("/")) {
-    return "/dashboard";
-  }
-
-  if (nextParam.startsWith("//") || /[\r\n]/.test(nextParam)) {
-    return "/dashboard";
-  }
-
-  return nextParam;
-}
+import { getSafeInternalRedirect } from "@/lib/safe-redirect";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = getSafeRedirectPath(searchParams.get("next"));
+  const next = getSafeInternalRedirect(searchParams.get("next"));
 
   if (code) {
     const cookieStore = await cookies();

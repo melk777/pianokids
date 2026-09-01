@@ -7,6 +7,7 @@ import type { Difficulty } from "@/lib/songFilters";
 import { TIMING_WINDOWS } from "@/lib/songFilters";
 import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
 import VirtualKeyboard from "./VirtualKeyboard";
+import { calculatePracticeAccuracy } from "@/lib/practice-score";
 
 interface PianoPlayerProps {
   notes: SongNote[];
@@ -41,6 +42,7 @@ interface PianoPlayerProps {
   initialPlaybackTime?: number;
   resetKey?: string | number;
   metronomeVolume?: number;
+  bpm?: number;
   loopRegion?: {
     enabled: boolean;
     start: number;
@@ -163,6 +165,7 @@ export default function PianoPlayer({
   initialPlaybackTime = 0,
   resetKey,
   metronomeVolume = 0.08,
+  bpm = 120,
   loopRegion,
   onProgressChange,
   onPracticeSuggestion,
@@ -320,8 +323,7 @@ export default function PianoPlayer({
     }
 
     if (accuracyUIRef.current) {
-      const total = state.hits + state.misses;
-      const accuracy = total > 0 ? Math.round((state.hits / total) * 100) : 100;
+      const accuracy = Math.round(calculatePracticeAccuracy(state.hits, state.misses, state.wrongNotes));
       accuracyUIRef.current.innerText = `${accuracy}%`;
     }
 
@@ -516,15 +518,16 @@ export default function PianoPlayer({
 
         state.internalGameTime = loopRegion.start;
         state.gameTime = loopRegion.start;
-        state.lastBeat = Math.floor(loopRegion.start / (60 / 120)) - 1;
+        const metronomeBpm = Math.max(20, Math.min(300, bpm));
+        state.lastBeat = Math.floor(loopRegion.start / (60 / metronomeBpm)) - 1;
         resetLoopWindowState(state, loopRegion.start, loopRegion.end);
         updateHUD();
         animFrameRef.current = requestAnimationFrame(tick);
         return;
       }
 
-      const bpm = 120;
-      const secondsPerBeat = 60 / bpm;
+      const metronomeBpm = Math.max(20, Math.min(300, bpm));
+      const secondsPerBeat = 60 / metronomeBpm;
       const currentBeat = Math.floor(elapsed / secondsPerBeat);
 
       if (currentBeat > state.lastBeat && elapsed >= 0) {
@@ -908,8 +911,7 @@ export default function PianoPlayer({
       if (!isFreePlay) {
         const lastNote = notes[notes.length - 1];
         if (lastNote && elapsed > lastNote.time + lastNote.duration + 2) {
-          const total = state.hits + state.misses;
-          const accuracy = total > 0 ? (state.hits / total) * 100 : 100;
+          const accuracy = calculatePracticeAccuracy(state.hits, state.misses, state.wrongNotes);
           onScoreUpdate?.(state.score, state.combo, accuracy);
           onSongEnd?.({
             score: state.score,
@@ -955,6 +957,7 @@ export default function PianoPlayer({
     onPlayAccompaniment,
     playbackSpeed,
     metronomeVolume,
+    bpm,
     activeNotes,
     loopRegion,
     onNoteMiss,

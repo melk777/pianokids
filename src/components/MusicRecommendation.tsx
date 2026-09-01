@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Music, Sparkles, Lock, CheckCircle2, Loader2 } from "lucide-react";
-import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { useSFX } from "@/hooks/useSFX";
 
 interface MusicRecommendationProps {
@@ -16,21 +15,24 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { playClick } = useSFX();
-  const supabase = isSupabaseConfigured ? createClientComponent() : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase || !hasPremium || !recommendation.trim() || isSubmitting) return;
+    if (!hasPremium || !recommendation.trim() || isSubmitting) return;
 
     playClick();
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from("song_recommendations")
-        .insert([{ recommendation: recommendation.trim() }]);
-
-      if (error) throw error;
+      const response = await fetch("/api/song-recommendations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recommendation: recommendation.trim() }),
+      });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || "Não foi possível enviar a sugestão.");
+      }
 
       setIsSuccess(true);
       setRecommendation("");
@@ -42,8 +44,6 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
       setIsSubmitting(false);
     }
   };
-
-  if (!supabase) return null;
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-16 mb-12 px-2">
@@ -141,7 +141,7 @@ export default function MusicRecommendation({ hasPremium }: MusicRecommendationP
                     <Lock size={14} />
                   </div>
                   <p className="text-sm text-white/60">
-                    O chat de sugestões é um recurso exclusivo para nossa **Comunidade Premium**.
+                    As sugestões de músicas são um recurso exclusivo para assinantes Pro.
                   </p>
                 </div>
                 <Link

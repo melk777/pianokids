@@ -5,7 +5,7 @@ const pilotCanonicalSongs = require("../music-sources/pilot/canonical-songs");
 const rebuildCanonicalSongs = require("../music-sources/rebuild/canonical-songs");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
 const PILOT_REPORT = path.join(ROOT_DIR, "docs", "music-pilot-audit.json");
 const REBUILD_REPORT = path.join(ROOT_DIR, "docs", "song-rebuild-audit.json");
 const REPORT_JSON = path.join(ROOT_DIR, "docs", "song-source-fidelity-audit.json");

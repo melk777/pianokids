@@ -3,12 +3,20 @@
 import dynamic from "next/dynamic";
 import { useState, useEffect, useMemo } from "react";
 import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
-import { Mail, Lock, Loader2, ArrowRight, Calendar, User, Phone, CreditCard, Hash } from "lucide-react";
+import { Mail, Lock, Loader2, ArrowRight, Calendar, Phone, CreditCard, Hash, UserRound } from "lucide-react";
 import Link from "next/link";
 import { getURL } from "@/lib/utils/url";
 import { useSearchParams } from "next/navigation";
 import TurnstileWidget from "./TurnstileWidget";
 import { trackEvent } from "@/lib/analytics";
+import { getSafeInternalRedirect } from "@/lib/safe-redirect";
+import {
+  getAgeFromBirthDate,
+  isValidBrazilianPhone,
+  isValidCpf,
+  PARTNER_TERMS_VERSION,
+  PLATFORM_TERMS_VERSION,
+} from "@/lib/registration-validation";
 import {
   LOCAL_DEV_AUTH_COOKIE,
   LOCAL_DEV_AUTH_STORAGE_KEY,
@@ -36,19 +44,21 @@ function getPostLoginPath(role: string | null | undefined) {
 export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: AuthFormProps) {
   const supabase = isSupabaseConfigured ? createClientComponent() : null;
   const searchParams = useSearchParams();
-  const [isLogin, setIsLogin] = useState(true);
+  const isTeacherRegistration = searchParams.get("role") === "teacher";
+  const [isLogin, setIsLogin] = useState(!isTeacherRegistration);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
   // New Registration Fields
+  const [fullName, setFullName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [guardianEmail, setGuardianEmail] = useState("");
   const [cpf, setCpf] = useState("");
   const [phone, setPhone] = useState("");
   const [pixKey, setPixKey] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [agreedToPlatformTerms, setAgreedToPlatformTerms] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(isTeacherRegistration);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaRefreshKey, setCaptchaRefreshKey] = useState(0);
   const [resolvedTurnstileSiteKey, setResolvedTurnstileSiteKey] = useState(
@@ -58,42 +68,40 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const turnstileSiteKey = resolvedTurnstileSiteKey;
+  const selectedPlan = searchParams.get("plan");
+  const postLoginPath = getSafeInternalRedirect(
+    searchParams.get("next"),
+    selectedPlan === "monthly" || selectedPlan === "yearly"
+      ? `/dashboard/subscription?plan=${selectedPlan}`
+      : "/dashboard",
+  );
 
   const [role, setRole] = useState<"student" | "teacher">(
-    (searchParams.get("role") as "student" | "teacher") || "student"
+    isTeacherRegistration ? "teacher" : "student",
   );
 
   // Age calculation logic
   const age = useMemo(() => {
-    if (!birthDate) return null;
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
+    return getAgeFromBirthDate(birthDate);
   }, [birthDate]);
+
+  const latestAdultBirthDate = useMemo(() => {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() - 18);
+    return date.toISOString().slice(0, 10);
+  }, []);
 
     useEffect(() => {
       const refCode = searchParams.get("ref");
       if (refCode) {
         localStorage.setItem("pianify_ref", refCode);
       }
-    
-    const urlRole = searchParams.get("role");
-    if (urlRole === "teacher") {
-      setRole("teacher");
-      setIsLogin(false);
-      setIsTermsModalOpen(true);
-    }
   }, [searchParams]);
 
-  useEffect(() => {
+  const resetCaptcha = () => {
     setCaptchaToken(null);
     setCaptchaRefreshKey((value) => value + 1);
-  }, [isLogin, role]);
+  };
 
   useEffect(() => {
     if (resolvedTurnstileSiteKey) return;
@@ -125,7 +133,49 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   const enterLocalTestMode = () => {
     localStorage.setItem(LOCAL_DEV_AUTH_STORAGE_KEY, "1");
     document.cookie = `${LOCAL_DEV_AUTH_COOKIE}=1; path=/; max-age=86400; SameSite=Lax`;
-    window.location.assign(new URL("/api/auth/local-test", window.location.origin).toString());
+    const localTestUrl = new URL("/api/auth/local-test", window.location.origin);
+    localTestUrl.searchParams.set("redirect", postLoginPath);
+    window.location.assign(localTestUrl.toString());
+  };
+
+  const handleForgotPassword = async () => {
+    if (!supabase) {
+      setMessage({ type: "error", text: "A autenticação ainda não foi configurada neste ambiente." });
+      return;
+    }
+    if (!email.trim()) {
+      setMessage({ type: "error", text: "Digite seu e-mail para receber o link de recuperação." });
+      return;
+    }
+    if (!captchaToken) {
+      setMessage({ type: "error", text: "Confirme a verificação anti-robô antes de recuperar a senha." });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setMessage(null);
+      const callbackUrl = new URL("/auth/callback", getURL());
+      callbackUrl.searchParams.set("next", "/auth/update-password");
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: callbackUrl.toString(),
+        captchaToken,
+      });
+      if (error) throw error;
+      setMessage({
+        type: "success",
+        text: "Se este e-mail estiver cadastrado, enviaremos um link para criar uma nova senha.",
+      });
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Não foi possível solicitar a recuperação.",
+      });
+      setCaptchaToken(null);
+      setCaptchaRefreshKey((value) => value + 1);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -152,6 +202,33 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
       setMessage({ type: "error", text: "Confirme a verificacao anti-robo antes de continuar." });
       return;
     }
+
+    if (password.length < 8) {
+      setMessage({ type: "error", text: "A senha deve ter pelo menos 8 caracteres." });
+      return;
+    }
+
+    if (!isLogin) {
+      if (fullName.trim().length < 2 || fullName.trim().length > 120) {
+        setMessage({ type: "error", text: "Informe seu nome completo." });
+        return;
+      }
+      if (age === null || age < 0 || age > 120) {
+        setMessage({ type: "error", text: "Informe uma data de nascimento válida." });
+        return;
+      }
+      if (age < 18) {
+        setMessage({
+          type: "error",
+          text: "Cadastros de menores estão temporariamente indisponíveis até concluirmos a verificação do responsável legal.",
+        });
+        return;
+      }
+      if (!agreedToPlatformTerms) {
+        setMessage({ type: "error", text: "Aceite os Termos de Uso e a Política de Privacidade para continuar." });
+        return;
+      }
+    }
     
     // Validation for Teacher Terms
     if (!isLogin && role === "teacher" && !agreedToTerms) {
@@ -160,10 +237,19 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
       return;
     }
 
-    // Validation for Minor Students
-    if (!isLogin && role === "student" && age !== null && age < 18 && !guardianEmail) {
-      setMessage({ type: "error", text: "O e-mail do responsável legal é obrigatório para menores de 18 anos." });
-      return;
+    if (!isLogin && role === "teacher") {
+      if (!isValidCpf(cpf)) {
+        setMessage({ type: "error", text: "Informe um CPF válido." });
+        return;
+      }
+      if (!isValidBrazilianPhone(phone)) {
+        setMessage({ type: "error", text: "Informe um telefone brasileiro válido, com DDD." });
+        return;
+      }
+      if (!pixKey.trim() || pixKey.trim().length > 150) {
+        setMessage({ type: "error", text: "Informe uma chave PIX válida." });
+        return;
+      }
     }
 
     setLoading(true);
@@ -201,22 +287,32 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
         }
 
         trackEvent("auth_login_completed", { role: resolvedRole || role });
-        window.location.assign(new URL(getPostLoginPath(resolvedRole), window.location.origin).toString());
+        const destination =
+          resolvedRole === "student" || !resolvedRole
+            ? postLoginPath
+            : getPostLoginPath(resolvedRole);
+        window.location.assign(new URL(destination, window.location.origin).toString());
       } else {
+        const callbackUrl = new URL("/auth/callback", getURL());
+        callbackUrl.searchParams.set("next", postLoginPath);
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${getURL()}/auth/callback`,
+            emailRedirectTo: callbackUrl.toString(),
             captchaToken,
             data: {
               role,
+              full_name: fullName.trim(),
               referred_by_code,
               birth_date: birthDate,
-              guardian_email: age && age < 18 ? guardianEmail : null,
+              guardian_email: null,
               cpf: role === "teacher" ? cpf : null,
               phone: role === "teacher" ? phone : null,
               pix_key: role === "teacher" ? pixKey : null,
+              terms_accepted: true,
+              terms_version: PLATFORM_TERMS_VERSION,
+              partner_terms_version: role === "teacher" ? PARTNER_TERMS_VERSION : null,
             }
           },
         });
@@ -274,13 +370,19 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
              }}
            />
            <button 
-             onClick={() => setRole("student")}
+             onClick={() => {
+               setRole("student");
+               resetCaptcha();
+             }}
              className={`flex-1 py-2 text-xs font-bold relative z-10 transition-colors duration-300 ${role === "student" ? "text-black" : "text-white/40 hover:text-white/70"}`}
            >
              SOU ALUNO
            </button>
            <button 
-             onClick={() => setRole("teacher")}
+             onClick={() => {
+               setRole("teacher");
+               resetCaptcha();
+             }}
              className={`flex-1 py-2 text-xs font-bold relative z-10 transition-colors duration-300 ${role === "teacher" ? "text-black" : "text-white/40 hover:text-white/70"}`}
            >
              SOU PROFESSOR
@@ -313,9 +415,9 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
               </h2>
               <p className="text-white/50 text-center text-sm mb-8">
                 {isLogin
-                  ? (role === "teacher" ? "Área exclusiva para professores parcerios." : "Continue sua jornada musical de onde parou.")
+                  ? (role === "teacher" ? "Área exclusiva para professores parceiros." : "Continue sua jornada musical de onde parou.")
                   : role === "teacher" 
-                    ? "Crie sua conta e comece a lucrar com suas indicações."
+                    ? "Crie sua conta para acompanhar indicações e comissões elegíveis."
                     : "Crie sua conta gratuita e comece a tocar hoje mesmo."}
               </p>
 
@@ -356,18 +458,49 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                       <input
                         type="password"
                         required
+                        minLength={8}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
                         className="input-field pl-11"
                       />
                     </div>
+                    {isLogin && (
+                      <div className="text-right">
+                        <button
+                          type="button"
+                          onClick={handleForgotPassword}
+                          disabled={loading}
+                          className="text-xs font-semibold text-cyan/80 transition hover:text-cyan disabled:opacity-50"
+                        >
+                          Esqueci minha senha
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Registration-only fields */}
                 {!isLogin && (
                   <div className="space-y-4 pt-2">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-white/40 ml-1 uppercase tracking-wider">Nome completo</label>
+                      <div className="relative group">
+                        <UserRound className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:icon-gradient transition-colors" />
+                        <input
+                          type="text"
+                          required
+                          minLength={2}
+                          maxLength={120}
+                          autoComplete="name"
+                          value={fullName}
+                          onChange={(event) => setFullName(event.target.value)}
+                          placeholder="Seu nome completo"
+                          className="input-field pl-11"
+                        />
+                      </div>
+                    </div>
+
                     {/* Common Field: Birth Date */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-medium text-white/40 ml-1 uppercase tracking-wider">Data de Nascimento</label>
@@ -376,30 +509,16 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                         <input
                           type="date"
                           required
+                          max={latestAdultBirthDate}
                           value={birthDate}
                           onChange={(e) => setBirthDate(e.target.value)}
                           className="input-field pl-11"
                         />
                       </div>
                     </div>
-
-                    {/* Conditional: Guardian Email for Minors */}
-                    {role === "student" && age !== null && age < 18 && (
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-cyan/70 ml-1 uppercase tracking-wider italic">E-mail do Responsável (Obrigatório)</label>
-                        <div className="relative group">
-                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan/30 group-focus-within:icon-gradient transition-colors" />
-                          <input
-                            type="email"
-                            required
-                            value={guardianEmail}
-                            onChange={(e) => setGuardianEmail(e.target.value)}
-                            placeholder="email.do.pai@email.com"
-                            className="input-field pl-11 border-cyan/30 focus:border-cyan"
-                          />
-                        </div>
-                      </div>
-                    )}
+                    <p className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-relaxed text-white/45">
+                      Nesta fase de lançamento, o cadastro está disponível apenas para maiores de 18 anos. O acesso de menores será aberto após a implantação da verificação do responsável legal.
+                    </p>
 
                     {/* Teacher Exclusive Fields */}
                     {role === "teacher" && (
@@ -467,6 +586,20 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                         </div>
                       </div>
                     )}
+
+                    <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                      <input
+                        type="checkbox"
+                        id="platform-terms"
+                        required
+                        checked={agreedToPlatformTerms}
+                        onChange={(event) => setAgreedToPlatformTerms(event.target.checked)}
+                        className="mt-0.5 h-5 w-5 rounded border-white/10 bg-white/5 text-cyan focus:ring-cyan/50"
+                      />
+                      <label htmlFor="platform-terms" className="text-xs leading-relaxed text-white/60">
+                        Li e aceito os <Link href="/termos" target="_blank" className="font-bold text-cyan hover:underline">Termos de Uso</Link> e a <Link href="/privacidade" target="_blank" className="font-bold text-cyan hover:underline">Política de Privacidade</Link>.
+                      </label>
+                    </div>
                   </div>
                 )}
 
@@ -512,6 +645,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                   onClick={() => {
                     setIsLogin(!isLogin);
                     setMessage(null);
+                    resetCaptcha();
                   }}
                   className="text-sm text-white/40 hover:text-white transition-colors"
                 >

@@ -1,12 +1,12 @@
 # Auditoria de pre-lancamento comercial
 
-Gerado em: 2026-08-07T20:07:21.867Z
+Gerado em: 2026-09-01T18:22:19.062Z
 
 ## Resumo
 
 - Total: 44
-- OK: 40
-- Alertas: 4
+- OK: 39
+- Alertas: 5
 - Falhas: 0
 - Pendencias criticas abertas: 3
 
@@ -23,7 +23,7 @@ Gerado em: 2026-08-07T20:07:21.867Z
 | OK | env | STRIPE_MONTHLY_PRICE_ID | high | Presente em .env.example. |
 | OK | env | STRIPE_YEARLY_PRICE_ID | high | Presente em .env.example. |
 | OK | env | NEXT_PUBLIC_SITE_URL | high | Presente em .env.example. |
-| OK | env-local | .env.local completo | medium | Arquivo local encontrado com todas as 9 chaves obrigatorias. Valores nao sao expostos no relatorio. |
+| WARN | env-local | .env.local completo | medium | Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor. |
 | OK | build | script build | high | Script de build configurado. |
 | OK | dependencies | baseline segura do Next.js | critical | Next.js ^16.3.0 com baseline de seguranca atualizada; o CI tambem executa npm audit. |
 | OK | qa | QA responsivo automatizado | high | Script de QA responsivo/interativo existe. |

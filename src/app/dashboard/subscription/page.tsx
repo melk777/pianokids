@@ -13,16 +13,27 @@ import {
   Loader2,
   ArrowRight
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+
+type CheckoutPlan = "monthly" | "yearly";
 
 export default function SubscriptionPage() {
+  return (
+    <Suspense fallback={<SubscriptionLoading />}>
+      <SubscriptionContent />
+    </Suspense>
+  );
+}
+
+function SubscriptionContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { playClick } = useSFX();
   const { 
     planType, 
@@ -32,9 +43,24 @@ export default function SubscriptionPage() {
     currency, 
     invoices, 
     isPro, 
-    loading 
+    loading,
+    customerId,
+    refresh,
   } = useSubscription();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<CheckoutPlan | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<CheckoutPlan>(() =>
+    searchParams.get("plan") === "yearly" ? "yearly" : "monthly",
+  );
+  const checkoutParam = searchParams.get("checkout");
+  const checkoutNotice = checkoutParam === "success" || checkoutParam === "canceled" ? checkoutParam : null;
+  const [billingMessage, setBillingMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (checkoutNotice === "success") {
+      void refresh();
+    }
+  }, [checkoutNotice, refresh]);
 
   const handleBack = () => {
     playClick();
@@ -60,6 +86,41 @@ export default function SubscriptionPage() {
     }
   };
 
+  const handleCheckout = async (plan: CheckoutPlan) => {
+    try {
+      setBillingMessage(null);
+      setCheckoutLoading(plan);
+      playClick();
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planKey: plan }),
+      });
+      const data = await response.json();
+
+      if (response.status === 401 && data.redirect) {
+        router.push(data.redirect);
+        return;
+      }
+      if (data.url) {
+        window.location.assign(data.url);
+        return;
+      }
+      if (data.code === "subscription_exists") {
+        setBillingMessage("Já existe uma assinatura para esta conta. Use o portal de cobrança para gerenciá-la.");
+        await refresh();
+        return;
+      }
+
+      setBillingMessage(data.error || "Não foi possível iniciar a assinatura.");
+    } catch (error) {
+      console.error("Checkout error:", error);
+      setBillingMessage("Não foi possível conectar ao pagamento. Tente novamente.");
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
+
   const calculateDaysActive = () => {
     if (!subscriptionStart) return 0;
     const start = new Date(subscriptionStart);
@@ -71,26 +132,41 @@ export default function SubscriptionPage() {
   const daysActive = calculateDaysActive();
 
   const benefits = [
-    "Acesso a mais de 100 músicas",
-    "Novas músicas adicionadas semanalmente",
-    "Reconhecimento de áudio via inteligência artificial",
+    "Acesso ao catálogo completo de músicas",
+    "Prática livre ilimitada",
+    "Reconhecimento de notas pelo microfone",
     "Relatórios detalhados de precisão e progresso",
-    "Suporte prioritário via WhatsApp",
-    "Peça 2 músicas pra você aprender no modo facil e dificil por mês"
+    "Suporte pela central de contato",
   ];
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-cyan animate-spin" />
-      </div>
-    );
+    return <SubscriptionLoading />;
   }
 
   return (
     <>
       <main className="min-h-screen bg-black text-white pt-28 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
+          {checkoutNotice && (
+            <div
+              className={`mb-6 rounded-2xl border p-4 text-sm ${
+                checkoutNotice === "success"
+                  ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
+                  : "border-amber-400/30 bg-amber-400/10 text-amber-100"
+              }`}
+            >
+              {checkoutNotice === "success"
+                ? "Pagamento concluído. Seu acesso será atualizado assim que a confirmação do Stripe for processada."
+                : "Pagamento cancelado. Nenhuma cobrança foi realizada; você pode tentar novamente quando quiser."}
+            </div>
+          )}
+
+          {billingMessage && (
+            <div className="mb-6 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100">
+              {billingMessage}
+            </div>
+          )}
+
           {/* Back Button */}
           <motion.button
             initial={{ x: -20, opacity: 0 }}
@@ -125,7 +201,7 @@ export default function SubscriptionPage() {
                       <div className="flex items-center gap-2 mt-1">
                         <span className={`w-2 h-2 rounded-full ${isPro ? "bg-green-400 animate-pulse" : "bg-white/20"}`} />
                         <span className={`text-xs font-bold uppercase tracking-widest ${isPro ? "text-green-400" : "text-white/40"}`}>
-                          {isPro ? "Assinatura Ativa" : "Plano Gratuito"}
+                          {planType === "trial" ? "Teste gratuito ativo" : isPro ? "Acesso Pro ativo" : "Plano Gratuito"}
                         </span>
                       </div>
                     </div>
@@ -137,7 +213,17 @@ export default function SubscriptionPage() {
                         Plano Atual
                       </span>
                       <span className="text-lg font-bold">
-                        {planType === "yearly" ? "Pianify Pro Anual" : planType === "monthly" ? "Pianify Pro Mensal" : "Free"}
+                        {planType === "yearly"
+                          ? "Pianify Pro Anual"
+                          : planType === "monthly"
+                            ? "Pianify Pro Mensal"
+                            : planType === "trial"
+                              ? "Teste gratuito"
+                              : planType === "admin_granted" || planType === "special_access"
+                                ? "Acesso especial"
+                                : planType === "past_due"
+                                  ? "Pagamento pendente"
+                                  : "Gratuito"}
                       </span>
                     </div>
                     <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
@@ -270,23 +356,60 @@ export default function SubscriptionPage() {
 
                   <div className="h-px bg-white/5 w-full my-4" />
 
-                  <button
-                    onClick={handlePortal}
-                    disabled={portalLoading}
-                    className="w-full py-4 px-6 rounded-2xl bg-white text-black font-black flex items-center justify-center gap-3 hover:bg-white/90 active:scale-95 transition-all shadow-xl shadow-white/5 disabled:opacity-50"
-                  >
-                    {portalLoading ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <>
-                        Gerenciar no Stripe
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                  <p className="text-[10px] text-center text-white/30 px-4">
-                    Altere seu cartão de crédito, plano ou cancele sua assinatura com segurança no portal oficial do Stripe.
-                  </p>
+                  {isPro && customerId ? (
+                    <>
+                      <button
+                        onClick={handlePortal}
+                        disabled={portalLoading}
+                        className="w-full py-4 px-6 rounded-2xl bg-white text-black font-black flex items-center justify-center gap-3 hover:bg-white/90 active:scale-95 transition-all shadow-xl shadow-white/5 disabled:opacity-50"
+                      >
+                        {portalLoading ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <>
+                            Gerenciar no Stripe
+                            <ArrowRight className="w-4 h-4" />
+                          </>
+                        )}
+                      </button>
+                      <p className="text-[10px] text-center text-white/30 px-4">
+                        Altere seu cartão, plano ou cancelamento com segurança no portal oficial do Stripe.
+                      </p>
+                    </>
+                  ) : !isPro || planType === "trial" || planType === "past_due" ? (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPlan("monthly")}
+                          className={`rounded-xl border p-3 text-left text-xs transition ${selectedPlan === "monthly" ? "border-cyan bg-cyan/10" : "border-white/10 bg-white/[0.03]"}`}
+                        >
+                          <span className="block font-black">Mensal</span>
+                          <span className="text-white/50">R$ 29,90/mês</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPlan("yearly")}
+                          className={`rounded-xl border p-3 text-left text-xs transition ${selectedPlan === "yearly" ? "border-cyan bg-cyan/10" : "border-white/10 bg-white/[0.03]"}`}
+                        >
+                          <span className="block font-black">Anual</span>
+                          <span className="text-white/50">R$ 239,90/ano</span>
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => handleCheckout(selectedPlan)}
+                        disabled={checkoutLoading !== null}
+                        className="w-full py-4 px-6 rounded-2xl bg-white text-black font-black flex items-center justify-center gap-3 hover:bg-white/90 active:scale-95 transition-all disabled:opacity-50"
+                      >
+                        {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Assinar Pianify Pro"}
+                        {!checkoutLoading && <ArrowRight className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-center text-xs text-emerald-200">
+                      Seu acesso Pro foi concedido sem cobrança recorrente vinculada a esta conta.
+                    </p>
+                  )}
                   <div className="flex justify-center gap-4 text-[11px] font-bold text-white/35">
                     <Link href="/reembolso" className="transition-colors hover:text-cyan">
                       Reembolso
@@ -326,5 +449,13 @@ export default function SubscriptionPage() {
         </div>
       </main>
     </>
+  );
+}
+
+function SubscriptionLoading() {
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <Loader2 className="w-8 h-8 text-cyan animate-spin" />
+    </div>
   );
 }

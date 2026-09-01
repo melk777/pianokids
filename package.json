@@ -10,6 +10,8 @@
     "build": "node scripts/build-song-catalog-index.js && node --max-old-space-size=4096 ./node_modules/next/dist/bin/next build",
     "start": "next start",
     "lint": "eslint .",
+    "test": "node --test tests/*.test.ts",
+    "test:access": "node --test tests/access-control.test.ts",
     "parse-midi": "node scripts/midi-to-json.js",
     "parse-midi-graded": "node scripts/midi-to-graded-json.js && node scripts/build-song-catalog-index.js",
     "build-song-catalog-index": "node scripts/build-song-catalog-index.js",

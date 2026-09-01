@@ -34,7 +34,7 @@ export default function TeacherAffiliateSection() {
           >
             Transforme sua Escola em um Polo de <br />
             <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent font-black">
-              Tecnologia e Renda Recorrente
+              Tecnologia e parceria para professores
             </span>
           </motion.h2>
           <motion.p
@@ -44,7 +44,7 @@ export default function TeacherAffiliateSection() {
             transition={{ delay: 0.2 }}
             className="text-white/60 text-xl font-medium max-w-2xl mx-auto mb-10"
           >
-            Complemente as aulas dos seus alunos com a plataforma Pianify e ganhe R$ 5,00/mês no plano mensal ou R$ 40,00 por cada assinatura anual ativa. Todo mundo ganha!
+            Complemente as aulas dos seus alunos com a Pianify e receba as comissões previstas para indicações elegíveis: R$ 5,00 por fatura mensal ou R$ 40,00 por fatura anual confirmada.
           </motion.p>
         </div>
 
@@ -86,7 +86,7 @@ export default function TeacherAffiliateSection() {
                 {/* Side-by-Side Results */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="glass p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5">
-                    <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1">Ganhos Mensais</p>
+                    <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1">Estimativa mensal</p>
                     <div className="text-xl sm:text-2xl font-black text-white">
                       R$ {(safeStudents * 5).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </div>
@@ -94,7 +94,7 @@ export default function TeacherAffiliateSection() {
                   </div>
 
                   <div className="glass p-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/5">
-                    <p className="text-[10px] font-bold text-cyan-500 uppercase tracking-widest mb-1">Bônus Anual</p>
+                    <p className="text-[10px] font-bold text-cyan-500 uppercase tracking-widest mb-1">Estimativa anual</p>
                     <div className="text-xl sm:text-2xl font-black text-white">
                       R$ {(safeStudents * 40).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </div>
@@ -120,7 +120,7 @@ export default function TeacherAffiliateSection() {
              className="flex flex-col h-full justify-center"
           >
             <h3 className="text-2xl font-black mb-8 text-white leading-tight">
-              Sua autoridade como professor, aliada à tecnologia que <span className="text-cyan">escala seus ganhos</span>.
+              Sua experiência como professor, aliada a uma tecnologia que <span className="text-cyan">organiza indicações e repasses</span>.
             </h3>
             
             <div className="space-y-6 text-white/70 font-medium text-lg leading-relaxed">
@@ -128,8 +128,8 @@ export default function TeacherAffiliateSection() {
                 <p className="font-bold text-white mb-2 italic">Como funciona a parceria:</p>
                 <ul className="space-y-3 pl-4 border-l-2 border-cyan/30">
                   <li>• Seus alunos ganham uma ferramenta poderosa de auxílio aos estudos.</li>
-                  <li>• Você oferece um diferencial tecnológico exclusivo na sua região.</li>
-                  <li>• Você recebe <strong className="text-white">repasse mensal vitalício</strong> por cada assinatura ativa.</li>
+                  <li>• Você oferece uma ferramenta digital complementar aos estudos.</li>
+                  <li>• Você recebe o repasse previsto enquanto a assinatura indicada estiver elegível e as regras do programa forem atendidas.</li>
                 </ul>
               </div>
 
@@ -140,20 +140,20 @@ export default function TeacherAffiliateSection() {
                   <li className="flex items-center gap-3"><div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]" /> <span className="text-white">Plano Anual = <strong className="text-cyan-400">R$ 40,00 de repasse no ano</strong></span></li>
                 </ul>
                 <p className="text-[11px] text-white/30 uppercase tracking-widest font-bold mt-4">
-                  Sem limites de indicação. Sua rede, seu lucro.
+                  As comissões seguem as regras de confirmação, carência e estorno do programa.
                 </p>
               </div>
 
                 <div className="p-5 bg-gradient-to-br from-cyan/15 via-black/40 to-magenta/10 border border-white/10 rounded-2xl text-white/90 text-[15px] shadow-2xl">
-                  <strong className="text-cyan">Zero Esforço Comercial:</strong> Você não vende. Você apenas compartilha uma solução que acelera o progresso do seu aluno. Nós cuidamos do resto.
+                  <strong className="text-cyan">Indicação transparente:</strong> compartilhe a ferramenta somente com alunos que possam se beneficiar e deixe claros preço, condições e caráter opcional da assinatura.
                 </div>
 
                <div>
-                 <p className="font-bold text-white mb-2">É uma parceria onde todo mundo ganha:</p>
+                 <p className="font-bold text-white mb-2">O que a parceria oferece:</p>
                  <ul className="space-y-2 pl-4 border-l-2 border-magenta/30">
-                   <li>• O aluno aprende mais</li>
-                   <li>• Você aumenta sua renda</li>
-                   <li>• E ainda fortalece sua autoridade como professor</li>
+                   <li>• O aluno recebe uma ferramenta adicional de prática</li>
+                   <li>• Você pode receber comissões por assinaturas elegíveis</li>
+                   <li>• O painel centraliza indicações e repasses</li>
                  </ul>
                </div>
             </div>

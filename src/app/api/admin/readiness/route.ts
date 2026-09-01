@@ -26,6 +26,9 @@ const REQUIRED_ENV = [
   "STRIPE_MONTHLY_PRICE_ID",
   "STRIPE_YEARLY_PRICE_ID",
   "NEXT_PUBLIC_SITE_URL",
+  "COMPANY_LEGAL_NAME",
+  "COMPANY_TAX_ID",
+  "COMPANY_ADDRESS",
 ] as const;
 
 function statusWeight(status: ReadinessStatus) {
@@ -114,7 +117,7 @@ export async function GET() {
 
       const { count: profileCount, error: profileError } = await serviceClient
         .from("profiles")
-        .select("id", { count: "exact", head: true });
+        .select("id, terms_version", { count: "exact", head: true });
 
       checks.push({
         id: "profiles-table",
@@ -123,6 +126,28 @@ export async function GET() {
         status: profileError ? "fail" : "pass",
         detail: profileError ? profileError.message : `${profileCount ?? 0} perfis encontrados.`,
       });
+
+      const launchTables = [
+        "billing_invoices",
+        "teacher_commission_entries",
+        "stripe_webhook_events",
+      ] as const;
+      const launchTableChecks = await Promise.all(
+        launchTables.map(async (table) => {
+          const { error } = await serviceClient.from(table).select("*", { head: true });
+          return { table, error };
+        }),
+      );
+      for (const { table, error } of launchTableChecks) {
+        checks.push({
+          id: `schema-${table}`,
+          label: `Tabela ${table}`,
+          area: "supabase",
+          status: error ? "fail" : "pass",
+          detail: error ? error.message : "Migração de lançamento disponível.",
+          action: error ? "Aplicar todas as migrações em staging antes do deploy." : undefined,
+        });
+      }
     }
 
     checks.push({

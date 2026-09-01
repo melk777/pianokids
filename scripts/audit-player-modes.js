@@ -3,12 +3,15 @@ const path = require("path");
 const pianoRange = require("../config/piano-range.json");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
 const REPORT_JSON = path.join(ROOT_DIR, "docs", "player-mode-audit.json");
 const REPORT_MD = path.join(ROOT_DIR, "docs", "player-mode-audit.md");
 
 const PLAYER_MIN_MIDI = pianoRange.startMidi;
 const PLAYER_MAX_MIDI = pianoRange.endMidi;
+// Sustained pedal and tied notes in the canonical MIDI sources can legitimately
+// exceed 12 seconds. The player supports them; only extreme values are suspect.
+const MAX_SUSPICIOUS_NOTE_DURATION_SECONDS = 30;
 const DIFFICULTIES = ["beginner", "medium", "pro"];
 const HAND_MODES = [
   { id: "right", includeLeftHand: false, includeRightHand: true },
@@ -142,7 +145,11 @@ function auditMode(song, difficulty, handMode) {
     if (!Number.isFinite(note.time) || note.time < 0) {
       addIssue(issues, "critical", "bad_time", "Nota com tempo invalido.", { time: note.time });
     }
-    if (!Number.isFinite(note.duration) || note.duration <= 0 || note.duration > 12) {
+    if (
+      !Number.isFinite(note.duration) ||
+      note.duration <= 0 ||
+      note.duration > MAX_SUSPICIOUS_NOTE_DURATION_SECONDS
+    ) {
       addIssue(issues, "high", "bad_duration", "Nota com duracao suspeita para o player.", { duration: note.duration });
     }
     const left = isLeft(note);

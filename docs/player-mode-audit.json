@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-07T20:03:48.737Z",
+  "generatedAt": "2026-09-01T18:10:00.608Z",
   "songs": 90,
   "modes": [
     {
@@ -2279,15 +2279,8 @@
       "accompaniment": 1711,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "doumkatchaikosvky",
@@ -2298,27 +2291,8 @@
       "accompaniment": 1613,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "doumkatchaikosvky",
@@ -2329,15 +2303,8 @@
       "accompaniment": 0,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "doumkatchaikosvky",
@@ -2348,15 +2315,8 @@
       "accompaniment": 132,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "doumkatchaikosvky",
@@ -2379,15 +2339,8 @@
       "accompaniment": 0,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "doumkatchaikosvky",
@@ -2398,15 +2351,8 @@
       "accompaniment": 1711,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "doumkatchaikosvky",
@@ -2417,27 +2363,8 @@
       "accompaniment": 2568,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "doumkatchaikosvky",
@@ -2448,45 +2375,8 @@
       "accompaniment": 0,
       "firstTime": 0,
       "lastEnd": 573,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 12.5
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        },
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 14
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "escravos-de-jo",
@@ -3049,15 +2939,8 @@
       "accompaniment": 228,
       "firstTime": 0,
       "lastEnd": 123.428,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 15.408
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "fugue-sur-le-nom-de-bachrimsky-korsakov",
@@ -3128,15 +3011,8 @@
       "accompaniment": 276,
       "firstTime": 0,
       "lastEnd": 123.428,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 15.408
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "fugue-sur-le-nom-de-bachrimsky-korsakov",
@@ -3147,15 +3023,8 @@
       "accompaniment": 0,
       "firstTime": 0,
       "lastEnd": 123.428,
-      "issues": [
-        {
-          "severity": "high",
-          "code": "bad_duration",
-          "message": "Nota com duracao suspeita para o player.",
-          "duration": 15.408
-        }
-      ],
-      "status": "revisao"
+      "issues": [],
+      "status": "OK"
     },
     {
       "songId": "fuguefragmentmozart",
@@ -9873,214 +9742,12 @@
     }
   ],
   "statusCounts": {
-    "OK": 799,
-    "revisao": 11
+    "OK": 810
   },
   "severityCounts": {
-    "high": 20,
     "low": 3
   },
   "issues": [
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "beginner",
-      "handMode": "right",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "beginner",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "beginner",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "beginner",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "beginner",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "medium",
-      "handMode": "right",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "medium",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "right",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 12.5
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "doumkatchaikosvky",
-      "title": "Dumka",
-      "difficulty": "pro",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 14
-    },
-    {
-      "songId": "fugue-sur-le-nom-de-bachrimsky-korsakov",
-      "title": "Fuga sobre o Nome de Bach",
-      "difficulty": "beginner",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 15.408
-    },
-    {
-      "songId": "fugue-sur-le-nom-de-bachrimsky-korsakov",
-      "title": "Fuga sobre o Nome de Bach",
-      "difficulty": "pro",
-      "handMode": "left",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 15.408
-    },
-    {
-      "songId": "fugue-sur-le-nom-de-bachrimsky-korsakov",
-      "title": "Fuga sobre o Nome de Bach",
-      "difficulty": "pro",
-      "handMode": "both",
-      "severity": "high",
-      "code": "bad_duration",
-      "message": "Nota com duracao suspeita para o player.",
-      "duration": 15.408
-    },
     {
       "songId": "preludio-n-6-chopin",
       "title": "Prelúdio nº 6",

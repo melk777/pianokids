@@ -14,7 +14,7 @@ const {
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const SOURCE_DIR = path.join(ROOT_DIR, "music-sources", "pilot");
-const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
 const REVIEW_DIR = path.join(ROOT_DIR, "output", "music-review");
 
 function sha256(filePath) {

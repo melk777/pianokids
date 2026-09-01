@@ -1,6 +1,6 @@
 # Auditoria de fidelidade musical por procedencia
 
-Gerado em 2026-08-07T20:03:47.070Z.
+Gerado em 2026-09-01T18:09:13.816Z.
 
 Este relatorio nao usa mais o proprio MIDI legado como prova de fidelidade. Uma musica so e classificada como canonica quando possui fonte independente, edicao, licenca, data de verificacao e comparacao exata com o resultado final.
 

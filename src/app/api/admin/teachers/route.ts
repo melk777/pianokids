@@ -1,77 +1,81 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { createServerSupabaseReadClient, createSupabaseAdminClient } from "@/lib/server/supabase";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { cookies: { get(name: string) { return cookieStore.get(name)?.value; } } }
-    );
+    const supabase = await createServerSupabaseReadClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (!user) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    if (adminProfile?.role !== 'admin') {
-      return NextResponse.json({ error: "Forbidden. Admin only." }, { status: 403 });
-    }
-
-    // Buscando todos os professores e todos os estudantes que possuem referred_by preenchido
-    const { data: teachers, error: errT } = await supabase
+    const { data: viewer, error: viewerError } = await supabase
       .from("profiles")
-      .select("id, full_name, username, balance_withdrawn_total, created_at, pix_key")
-      .eq("role", "teacher")
-      .order("created_at", { ascending: false });
-
-    if (errT) throw errT;
-
-    const { data: students, error: errS } = await supabase
-      .from("profiles")
-      .select("id, full_name, username, subscription_status, subscription_plan_interval, referred_by")
-      .not("referred_by", "is", null);
-
-    if (errS) throw errS;
-
-    interface TeacherProf {
-      id: string;
-      balance_withdrawn_total: number | null;
-      [key: string]: unknown;
-    }
-    interface StudentProf {
-      referred_by?: string | null;
-      subscription_status?: string | null;
-      subscription_plan_interval?: string | null;
-      [key: string]: unknown;
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (viewerError) throw viewerError;
+    if (viewer?.role !== "admin") {
+      return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
     }
 
-    const teacherStats = teachers.map((teacher: TeacherProf) => {
-        const referredStudents = students.filter((s: StudentProf) => s.referred_by === teacher.id);
-        const activeStudents = referredStudents.filter((s: StudentProf) => s.subscription_status === 'active' || s.subscription_status === 'admin_granted');
-        
-        let estimatedRevenue = 0;
-        activeStudents.forEach((s: StudentProf) => {
-           estimatedRevenue += (s.subscription_plan_interval === 'year' ? 40 : 5);
-        });
+    const admin = createSupabaseAdminClient();
+    const [teachersResult, studentsResult, commissionsResult] = await Promise.all([
+      admin
+        .from("profiles")
+        .select("id, full_name, username, balance_withdrawn_total, created_at, pix_key")
+        .eq("role", "teacher")
+        .order("created_at", { ascending: false }),
+      admin
+        .from("profiles")
+        .select("id, subscription_status, referred_by")
+        .not("referred_by", "is", null),
+      admin
+        .from("teacher_commission_entries")
+        .select("teacher_id, amount, settled_at"),
+    ]);
+    if (teachersResult.error) throw teachersResult.error;
+    if (studentsResult.error) throw studentsResult.error;
+    if (commissionsResult.error) throw commissionsResult.error;
 
-        return {
-            ...teacher,
-            totalStudents: referredStudents.length,
-            activeStudents: activeStudents.length,
-            estimatedRevenue,
-            formattedRevenue: Math.max(0, estimatedRevenue - Number(teacher.balance_withdrawn_total || 0))
-        };
+    const students = studentsResult.data ?? [];
+    const commissions = commissionsResult.data ?? [];
+    const teachers = (teachersResult.data ?? []).map((teacher) => {
+      const referredStudents = students.filter(
+        (student) => student.referred_by === teacher.id,
+      );
+      const teacherEntries = commissions.filter(
+        (entry) => entry.teacher_id === teacher.id,
+      );
+      const lifetimeNet = teacherEntries.reduce(
+        (sum, entry) => sum + Number(entry.amount || 0),
+        0,
+      );
+      const unsettledNet = teacherEntries
+        .filter((entry) => !entry.settled_at)
+        .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+
+      return {
+        ...teacher,
+        totalStudents: referredStudents.length,
+        activeStudents: referredStudents.filter(
+          (student) => student.subscription_status === "active",
+        ).length,
+        estimatedRevenue: Number(lifetimeNet.toFixed(2)),
+        formattedRevenue: Math.max(0, Number(unsettledNet.toFixed(2))),
+      };
     });
 
-    return NextResponse.json({ teachers: teacherStats });
+    return NextResponse.json({ teachers });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    return NextResponse.json({ error: "Unknown error" }, { status: 500 });
+    console.error("Admin teachers route error:", error);
+    return NextResponse.json(
+      { error: "Não foi possível carregar os professores." },
+      { status: 500 },
+    );
   }
 }

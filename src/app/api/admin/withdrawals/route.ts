@@ -57,7 +57,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { withdrawal_id, status, receipt_path } = await request.json();
-    const allowedStatuses = new Set(["pendente", "aprovado", "concluido", "rejeitado"]);
+    const allowedStatuses = new Set(["aprovado", "rejeitado"]);
 
     if (typeof withdrawal_id !== "string" || !allowedStatuses.has(status)) {
       return NextResponse.json({ error: "Dados invalidos" }, { status: 400 });
@@ -89,49 +89,24 @@ export async function POST(request: Request) {
     const { data: adminProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
     if (adminProfile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { data: withdrawal, error: withdrawalError } = await supabase
-      .from("withdrawals")
-      .select("id, teacher_id, amount, status")
-      .eq("id", withdrawal_id)
-      .maybeSingle();
-
-    if (withdrawalError) throw withdrawalError;
-    if (!withdrawal) {
-      return NextResponse.json({ error: "Saque nao encontrado" }, { status: 404 });
-    }
-
-    const { data: updatedWithdrawal, error: updErr } = await supabase
-      .from("withdrawals")
-      .update({
-        status,
-        receipt_path: normalizedReceiptPath,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", withdrawal.id)
-      .select("id, teacher_id, amount, status, receipt_path, updated_at")
-      .single();
-
-    if (updErr) throw updErr;
-
-    const { data: paidWithdrawals, error: paidWithdrawalsError } = await supabase
-      .from("withdrawals")
-      .select("amount")
-      .eq("teacher_id", withdrawal.teacher_id)
-      .in("status", ["aprovado", "concluido"]);
-
-    if (paidWithdrawalsError) throw paidWithdrawalsError;
-
-    const paidTotal = (paidWithdrawals ?? []).reduce(
-      (sum, paidWithdrawal) => sum + Number(paidWithdrawal.amount || 0),
-      0,
+    const { data: updatedWithdrawal, error: reviewError } = await supabase.rpc(
+      "review_teacher_withdrawal",
+      {
+        p_withdrawal_id: withdrawal_id,
+        p_status: status,
+        p_receipt_path: normalizedReceiptPath,
+      },
     );
 
-    const { error: profileUpdateError } = await supabase
-      .from("profiles")
-      .update({ balance_withdrawn_total: paidTotal })
-      .eq("id", withdrawal.teacher_id);
-
-    if (profileUpdateError) throw profileUpdateError;
+    if (reviewError) {
+      if (reviewError.code === "P0002") {
+        return NextResponse.json({ error: "Saque não encontrado." }, { status: 404 });
+      }
+      if (reviewError.code === "22023") {
+        return NextResponse.json({ error: reviewError.message }, { status: 409 });
+      }
+      throw reviewError;
+    }
 
     return NextResponse.json({ success: true, withdrawal: updatedWithdrawal });
   } catch (error: unknown) {

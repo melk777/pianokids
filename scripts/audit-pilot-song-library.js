@@ -8,7 +8,7 @@ const { chordPitchClasses, round, sortNotes } = require("./pilot-arrangement-uti
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const SOURCE_DIR = path.join(ROOT_DIR, "music-sources", "pilot");
-const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
 const REPORT_JSON = path.join(ROOT_DIR, "docs", "music-pilot-audit.json");
 const REPORT_MD = path.join(ROOT_DIR, "docs", "music-pilot-audit.md");
 const PLAYER_MIN_MIDI = pianoRange.startMidi;

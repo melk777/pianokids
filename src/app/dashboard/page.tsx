@@ -572,9 +572,9 @@ export default function Dashboard() {
                       </div>
 
                       <p className="text-sm text-white/60 mb-6 leading-relaxed">
-                        {hasAccess
+                        {isSubscribed
                           ? "Você tem acesso ilimitado a todas as lições, músicas e ferramentas de prática da plataforma."
-                          : "Você está no plano gratuito. Desbloqueie todo o poder do Pianify assinando o Premium."}
+                          : "Sua conta gratuita está ativa. Você pode praticar o catálogo livre e assinar o Pro para liberar as músicas premium."}
                       </p>
 
                       <button

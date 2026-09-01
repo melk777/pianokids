@@ -8,7 +8,7 @@ const { verifyFrozenMusicPilot } = require("./verify-frozen-music-pilot");
 const { buildArrangements } = require("./rebuild-song-utils");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
 const REVIEW_DIR = path.join(ROOT_DIR, "output", "music-review-rebuild");
 
 function publicProvenance(entry) {

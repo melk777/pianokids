@@ -4,7 +4,7 @@ const path = require("path");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const LOCK_PATH = path.join(ROOT_DIR, "music-sources", "rebuild", "frozen-pilot-lock.json");
-const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
 
 function sha256(filePath) {
   return crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex").toUpperCase();

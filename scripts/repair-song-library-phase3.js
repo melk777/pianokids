@@ -5,7 +5,7 @@ const { Midi } = require("@tonejs/midi");
 const songManifest = require("./song-manifest");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public/songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data/songs");
 const MIDI_DIR = path.join(ROOT_DIR, "public/midi");
 const TARGET_IDS = new Set(["trois-nouvelles-etudes-no-1-f-minorchopin"]);
 const GROUP_WINDOW = 0.12;

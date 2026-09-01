@@ -1,127 +1,101 @@
-import { createServerClient } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { createServerSupabaseReadClient, createSupabaseAdminClient } from "@/lib/server/supabase";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
-
-    const { data: { user } } = await supabase.auth.getUser();
-
+    const supabase = await createServerSupabaseReadClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError) throw authError;
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
     }
 
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-    if (!serviceRoleKey || !supabaseUrl) {
-      return NextResponse.json(
-        { error: "Configuracao segura do servidor ausente." },
-        { status: 500 }
-      );
-    }
-
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
-
-    const { data: teacherProfile, error: teacherProfileError } = await supabaseAdmin
+    const supabaseAdmin = createSupabaseAdminClient();
+    const { data: teacherProfile, error: teacherError } = await supabaseAdmin
       .from("profiles")
-      .select("role, referral_code, balance_withdrawn_total")
+      .select("role, referral_code")
       .eq("id", user.id)
-      .single();
-
-    if (teacherProfileError) {
-      console.error("Teacher profile stats error:", teacherProfileError);
-      return NextResponse.json(
-        { error: "Nao foi possivel localizar o perfil do professor." },
-        { status: 500 }
-      );
-    }
-
+      .maybeSingle();
+    if (teacherError) throw teacherError;
     if (teacherProfile?.role !== "teacher") {
-      return NextResponse.json({ error: "Acesso negado. Apenas professores." }, { status: 403 });
+      return NextResponse.json({ error: "Acesso exclusivo para professores." }, { status: 403 });
     }
 
-    const { data: students, error } = await supabaseAdmin
-      .from("profiles")
-      .select("id, full_name, username, subscription_status, subscription_plan_interval, created_at, songs_completed, trophies, last_practice_date")
-      .eq("referred_by", user.id)
-      .order("created_at", { ascending: false });
+    const [{ data: students, error: studentsError }, { data: entries, error: entriesError }] =
+      await Promise.all([
+        supabaseAdmin
+          .from("profiles")
+          .select("id, full_name, username, subscription_status, subscription_plan_interval, created_at, songs_completed, trophies, last_practice_date")
+          .eq("referred_by", user.id)
+          .order("created_at", { ascending: false }),
+        supabaseAdmin
+          .from("teacher_commission_entries")
+          .select("amount, available_at, withdrawal_id, settled_at")
+          .eq("teacher_id", user.id),
+      ]);
 
-    if (error) {
-      console.error("Teacher students stats error:", error);
-      return NextResponse.json({ error: "Nao foi possivel carregar os alunos do professor." }, { status: 500 });
-    }
+    if (studentsError) throw studentsError;
+    if (entriesError) throw entriesError;
 
-    let activeStudentsCount = 0;
-    let balanceAvailableTotal = 0;
-    let balancePendingTotal = 0;
+    const now = Date.now();
+    let balanceAvailable = 0;
+    let balancePending = 0;
+    let unsettledBalance = 0;
+    let estimatedEarnings = 0;
 
-    const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+    for (const entry of entries ?? []) {
+      const amount = Number(entry.amount || 0);
+      estimatedEarnings += amount;
+      if (entry.withdrawal_id || entry.settled_at) continue;
 
-    const formattedStudents = students?.map((s) => {
-      const isActive = s.subscription_status === "active" || s.subscription_status === "admin_granted";
-      const isYearly = s.subscription_plan_interval === "year";
-      const commissionValue = isYearly ? 40.0 : 5.0;
+      unsettledBalance += amount;
 
-      if (isActive) {
-        activeStudentsCount++;
-
-        const registrationDate = new Date(s.created_at);
-        if (registrationDate < thirtyDaysAgo) {
-          balanceAvailableTotal += commissionValue;
-        } else {
-          balancePendingTotal += commissionValue;
-        }
+      if (new Date(entry.available_at).getTime() <= now) {
+        balanceAvailable += amount;
       }
+    }
 
-      return {
-        id: s.id,
-        name: s.full_name || "Sem Nome",
-        username: s.username || "Sem Email",
-        status: isActive ? "Ativo" : "Inativo",
-        plan_interval: isYearly ? "Anual" : "Mensal",
-        songs_completed: s.songs_completed || 0,
-        trophies: s.trophies || 0,
-        last_practice: s.last_practice_date || "Nunca praticou",
-        created_at: s.created_at,
-      };
-    }) || [];
+    balanceAvailable = Math.max(0, balanceAvailable);
+    balancePending = Math.max(0, unsettledBalance - balanceAvailable);
 
-    const withdrawn = Number(teacherProfile.balance_withdrawn_total || 0);
-    const finalAvailable = Math.max(0, balanceAvailableTotal - withdrawn);
+    const formattedStudents = (students ?? []).map((student) => ({
+      id: student.id,
+      name: student.full_name || "Sem nome",
+      username: student.username || "Sem usuário",
+      status:
+        student.subscription_status === "active"
+          ? "Ativo"
+          : student.subscription_status === "trialing"
+            ? "Em teste"
+            : "Inativo",
+      plan_interval:
+        student.subscription_plan_interval === "year" ? "Anual" : "Mensal",
+      songs_completed: student.songs_completed || 0,
+      trophies: student.trophies || 0,
+      last_practice: student.last_practice_date || "Nunca praticou",
+      created_at: student.created_at,
+    }));
 
     return NextResponse.json({
       referral_code: teacherProfile.referral_code,
-      activeStudents: activeStudentsCount,
-      balance_available: finalAvailable,
-      balance_pending: balancePendingTotal,
-      estimatedEarnings: balanceAvailableTotal + balancePendingTotal,
+      activeStudents: (students ?? []).filter(
+        (student) => student.subscription_status === "active",
+      ).length,
+      balance_available: Number(balanceAvailable.toFixed(2)),
+      balance_pending: Number(balancePending.toFixed(2)),
+      estimatedEarnings: Number(estimatedEarnings.toFixed(2)),
       students: formattedStudents,
     });
   } catch (error: unknown) {
-    const errBase = error instanceof Error ? error.message : "Error";
     console.error("Teacher stats route error:", error);
-    return NextResponse.json({ error: errBase }, { status: 500 });
+    return NextResponse.json(
+      { error: "Não foi possível carregar os dados do professor." },
+      { status: 500 },
+    );
   }
 }

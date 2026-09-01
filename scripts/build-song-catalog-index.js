@@ -2,8 +2,9 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = path.resolve(__dirname, "..");
-const songsDir = path.join(rootDir, "public", "songs");
+const songsDir = path.join(rootDir, "data", "songs");
 const outputFile = path.join(rootDir, "public", "song-catalog-index.json");
+const manifestFile = path.join(rootDir, "data", "song-file-index.json");
 const metadata = require("./song-catalog-metadata.js");
 const { repairMojibake } = require("./text-normalization");
 
@@ -28,6 +29,7 @@ const SPECIAL_COVERS = {
 };
 
 const EXTRA_SONGS = [];
+const songFileManifest = {};
 
 function sanitizeString(value) {
   return typeof value === "string" ? repairMojibake(value) : value;
@@ -85,6 +87,14 @@ function buildEntryFromJsonFile(fileName) {
   const parsed = JSON.parse(fs.readFileSync(absolutePath, "utf8"));
   const meta = metadata[parsed.id] || {};
 
+  if (!parsed.id || typeof parsed.id !== "string") {
+    throw new Error(`Song file ${fileName} does not contain a valid id.`);
+  }
+  if (songFileManifest[parsed.id]) {
+    throw new Error(`Duplicate song id ${parsed.id} in ${fileName}.`);
+  }
+  songFileManifest[parsed.id] = fileName;
+
   const title = sanitizeString(meta.title || parsed.title || parsed.id);
   const artist = sanitizeString(meta.artist || parsed.artist || "Tradicional");
   const category = sanitizeString(meta.category || parsed.category || "Outros");
@@ -102,7 +112,7 @@ function buildEntryFromJsonFile(fileName) {
     isPremium: meta.isPremium ?? Boolean(parsed.isPremium),
     coverUrl,
     noteCount: Array.isArray(parsed.notes) ? parsed.notes.length : 0,
-    jsonPath: `/songs/${fileName}`,
+    jsonPath: `/api/songs/${encodeURIComponent(parsed.id)}`,
     notes: [],
   };
 }
@@ -122,6 +132,11 @@ function main() {
   });
 
   fs.writeFileSync(outputFile, `${JSON.stringify(entries, null, 2)}\n`, "utf8");
+  fs.writeFileSync(
+    manifestFile,
+    `${JSON.stringify(songFileManifest, null, 2)}\n`,
+    "utf8",
+  );
   console.log(`Catalog index rebuilt with ${entries.length} songs.`);
 }
 

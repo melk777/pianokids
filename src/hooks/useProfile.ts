@@ -84,31 +84,9 @@ export function useProfile() {
 
       if (fetchError) {
         if (fetchError.code === "PGRST116") {
-          const newProfile = {
-            id: user.id,
-            full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Aluno",
-            username: user.email?.split("@")[0] || `user_${user.id.slice(0, 5)}`,
-            username_changes_count: 0,
-            role: user.user_metadata?.role === "teacher" ? "teacher" : "student",
-            trophies: 1,
-            streak_days: 0,
-            total_practice_time: 0,
-            average_accuracy: 0,
-            songs_played: 0,
-            songs_completed: 0,
-            last_practice_date: null,
-          };
-          const { data: inserted, error: insertError } = await supabase
-            .from("profiles")
-            .insert(newProfile)
-            .select()
-            .single();
-
-          if (insertError) {
-            throw insertError;
-          }
-          const normalizedProfile = normalizeProfile(inserted);
-          setProfile(await hydratePracticeSnapshot(normalizedProfile));
+          throw new Error(
+            "Seu cadastro foi autenticado, mas o perfil ainda nao foi provisionado. Entre novamente ou contate o suporte.",
+          );
         } else {
           throw fetchError;
         }
@@ -191,7 +169,12 @@ export function useProfile() {
         throw new Error("A imagem deve ter no maximo 2 MB.");
       }
 
-      const fileExt = file.name.split(".").pop();
+      const extensionByType: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp",
+      };
+      const fileExt = extensionByType[file.type];
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage

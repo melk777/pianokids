@@ -12,10 +12,14 @@ function getSpecialAccessIds(): Set<string> {
   );
 }
 
-type AccessProfile = {
+export type AccessProfile = {
   subscription_status?: string | null;
   trial_ends_at?: string | null;
 } | null | undefined;
+
+export type SongAccess = {
+  isPremium: boolean;
+};
 
 export function hasSpecialAccess(userId: string | null | undefined, email?: string | null): boolean {
   const normalizedList = getSpecialAccessIds();
@@ -26,7 +30,25 @@ export function hasSpecialAccess(userId: string | null | undefined, email?: stri
   return false;
 }
 
-export function hasStudentExperienceAccess(profile: AccessProfile, now: Date = new Date()): boolean {
+export function isActiveTrial(profile: AccessProfile, now: Date = new Date()): boolean {
+  if (profile?.subscription_status !== "trialing" || !profile.trial_ends_at) {
+    return false;
+  }
+
+  const trialEndsAt = new Date(profile.trial_ends_at);
+  return !Number.isNaN(trialEndsAt.getTime()) && now < trialEndsAt;
+}
+
+/**
+ * Every authenticated student with a profile keeps access to the free catalog.
+ * Premium access is evaluated separately so an expired trial never blocks the
+ * free learning experience.
+ */
+export function hasStudentExperienceAccess(profile: AccessProfile): boolean {
+  return Boolean(profile);
+}
+
+export function hasPremiumAccess(profile: AccessProfile, now: Date = new Date()): boolean {
   if (!profile) return false;
 
   if (
@@ -36,10 +58,17 @@ export function hasStudentExperienceAccess(profile: AccessProfile, now: Date = n
     return true;
   }
 
-  if (profile.subscription_status !== "trialing" || !profile.trial_ends_at) {
-    return false;
-  }
+  return isActiveTrial(profile, now);
+}
 
-  const trialEndsAt = new Date(profile.trial_ends_at);
-  return !Number.isNaN(trialEndsAt.getTime()) && now < trialEndsAt;
+export function canAccessSong(
+  song: SongAccess,
+  profile: AccessProfile,
+  options: { hasSpecialAccess?: boolean; now?: Date } = {},
+): boolean {
+  if (options.hasSpecialAccess) return true;
+  if (!hasStudentExperienceAccess(profile)) return false;
+  if (!song.isPremium) return true;
+
+  return hasPremiumAccess(profile, options.now);
 }

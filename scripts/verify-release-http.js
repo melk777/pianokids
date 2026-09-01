@@ -11,19 +11,36 @@ const checks = [
   { path: "/sitemap.xml", expected: [200], contains: "urlset" },
   { path: "/api/health", expected: [200], jsonStatus: "ok" },
   { path: "/dashboard/songs", expected: [307, 401] },
+  { path: "/dashboard/membership", expected: [307] },
   { path: "/api/admin/readiness", expected: [307, 401] },
+  { path: "/api/account/export", expected: [307, 401] },
+  { path: "/songs/fur-elise.json", expected: [404] },
+  { path: "/api/songs/fur-elise", expected: [401] },
+  {
+    path: "/api/song-recommendations",
+    method: "POST",
+    body: { recommendation: "Teste não autenticado" },
+    expected: [401],
+  },
   {
     path: "/api/stripe/checkout",
     method: "POST",
     body: { planKey: "monthly" },
     expected: [401],
+    expectedWhenUnconfigured: [500],
   },
   { path: "/api/stripe/portal", method: "POST", expected: [307, 401] },
-  { path: "/api/stripe/webhook", method: "POST", body: {}, expected: [400] },
+  {
+    path: "/api/stripe/webhook",
+    method: "POST",
+    body: {},
+    expected: [400],
+    expectedWhenUnconfigured: [503],
+  },
   { path: "/pagina-que-nao-existe", expected: [404], contains: "página saiu do compasso" },
 ];
 
-async function runCheck(check) {
+async function runCheck(check, unconfiguredLocal) {
   const response = await fetch(`${BASE_URL}${check.path}`, {
     method: check.method || "GET",
     redirect: "manual",
@@ -31,7 +48,11 @@ async function runCheck(check) {
     body: check.body ? JSON.stringify(check.body) : undefined,
   });
   const body = await response.text();
-  const statusOk = check.expected.includes(response.status);
+  const expectedStatuses =
+    unconfiguredLocal && check.expectedWhenUnconfigured
+      ? check.expectedWhenUnconfigured
+      : check.expected;
+  const statusOk = expectedStatuses.includes(response.status);
   const contentOk = check.contains ? body.toLowerCase().includes(check.contains.toLowerCase()) : true;
   let jsonOk = true;
 
@@ -53,11 +74,26 @@ async function runCheck(check) {
 }
 
 async function run() {
+  const baseHostname = new URL(BASE_URL).hostname;
+  const isLocal = baseHostname === "127.0.0.1" || baseHostname === "localhost";
+  const healthResponse = await fetch(`${BASE_URL}/api/health`, { redirect: "manual" });
+  const health = await healthResponse.json().catch(() => null);
+  const unconfiguredLocal =
+    isLocal &&
+    healthResponse.ok &&
+    Array.isArray(health?.missingConfiguration) &&
+    health.missingConfiguration.length > 0;
   const results = [];
-  for (const check of checks) results.push(await runCheck(check));
+  for (const check of checks) results.push(await runCheck(check, unconfiguredLocal));
 
   const failures = results.filter((result) => !result.passed);
-  console.log(JSON.stringify({ baseUrl: BASE_URL, passed: results.length - failures.length, total: results.length, results }, null, 2));
+  console.log(JSON.stringify({
+    baseUrl: BASE_URL,
+    mode: unconfiguredLocal ? "local-degraded" : "fully-configured",
+    passed: results.length - failures.length,
+    total: results.length,
+    results,
+  }, null, 2));
 
   if (failures.length > 0) process.exitCode = 1;
 }

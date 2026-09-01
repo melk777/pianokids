@@ -22,7 +22,8 @@ import {
   ExternalLink,
   Gauge,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Download,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -40,7 +41,7 @@ import type { Song } from "@/lib/types";
 export default function ProfilePage() {
   const { profile, loading: profileLoading, error: profileError, updateProfile, uploadAvatar } = useProfile();
   const { 
-    hasAccess: isSubscribed, 
+    isPro: isSubscribed,
     planType, 
     loading: subLoading,
   } = useSubscription();
@@ -482,7 +483,7 @@ export default function ProfilePage() {
             <div className="space-y-3 relative z-10 mt-6">
               {profile?.role === "teacher" ? (
                  <div className="text-center py-3 bg-white/5 border border-white/10 rounded-xl">
-                   <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Acesso Administrativo Vitalício</p>
+                   <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Acesso do perfil de parceiro</p>
                  </div>
               ) : isSubscribed ? (
                 planType !== 'admin_granted' && planType !== 'special_access' ? (
@@ -599,6 +600,23 @@ export default function ProfilePage() {
             )}
           </section>
         )}
+
+        <section className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <h3 className="text-lg font-bold">Seus dados</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/45">
+            Baixe uma cópia em JSON com seu perfil, histórico de prática, solicitações e registros de cobrança associados à conta.
+          </p>
+          <a
+            href="/api/account/export"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-black uppercase tracking-wider text-white transition hover:bg-white/10"
+          >
+            <Download className="h-4 w-4" />
+            Baixar meus dados
+          </a>
+          <p className="mt-4 text-xs text-white/35">
+            Para corrigir ou excluir dados, envie uma solicitação autenticada pela central de contato. Registros que precisem ser mantidos por obrigação legal podem ser preservados pelo prazo aplicável.
+          </p>
+        </section>
       </div>
     </main>
   );

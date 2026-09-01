@@ -44,18 +44,5 @@ export async function loadSongById(id: string): Promise<Song | undefined> {
     return undefined;
   }
 
-  if (!entry.jsonPath) {
-    return { ...entry, notes: entry.notes ?? [] };
-  }
-
-  const songPayload = await fetchJson<Partial<Song>>(entry.jsonPath);
-
-  return {
-    ...(songPayload as Song),
-    ...entry,
-    notes: Array.isArray(songPayload.notes) ? songPayload.notes : [],
-    arrangements: songPayload.arrangements ?? null,
-    notes1Hand: songPayload.notes1Hand ?? null,
-    notes2Hands: songPayload.notes2Hands ?? null,
-  };
+  return fetchJson<Song>(`/api/songs/${encodeURIComponent(id)}`);
 }

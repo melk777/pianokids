@@ -7,7 +7,7 @@ const { normalizeSongHands, sanitizeSingleHandArrangements, validateSongHands } 
 const { repairMojibake } = require("./text-normalization");
 
 const MIDI_DIR = path.resolve(__dirname, "../public/midi");
-const SONGS_DIR = path.resolve(__dirname, "../public/songs");
+const SONGS_DIR = path.resolve(__dirname, "../data/songs");
 const GROUP_WINDOW_SECONDS = 0.09;
 const CLASSICAL_IDS = new Set([
   "ode-to-joy",
@@ -353,7 +353,7 @@ function main() {
   cleanSongsDir();
   let warningCount = 0;
 
-  console.log(`Reconstruindo ${songManifest.length} musica(s) em public/songs...`);
+  console.log(`Reconstruindo ${songManifest.length} musica(s) em data/songs...`);
 
   for (const entry of songManifest) {
     const result = writeSongJson(entry);

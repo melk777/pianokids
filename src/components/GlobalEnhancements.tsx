@@ -16,6 +16,7 @@ const GlobalSocialOverlay = dynamic(() => import("@/components/Social/GlobalSoci
 export default function GlobalEnhancements() {
   const pathname = usePathname();
   const shouldLoadEnhancements = pathname?.startsWith("/dashboard");
+  const socialFeaturesEnabled = process.env.NEXT_PUBLIC_SOCIAL_FEATURES_ENABLED === "true";
 
   if (!shouldLoadEnhancements) {
     return null;
@@ -24,7 +25,7 @@ export default function GlobalEnhancements() {
   return (
     <>
       <StarryBackground />
-      <GlobalSocialOverlay />
+      {socialFeaturesEnabled && <GlobalSocialOverlay />}
     </>
   );
 }

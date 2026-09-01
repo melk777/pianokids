@@ -10,7 +10,7 @@ const faqs = [
     icon: <Keyboard className="w-4 h-4" />,
     question: "Preciso de um piano ou teclado físico?",
     answer:
-      "Sim, você precisará de um piano real ou teclado musical físico. A grande vantagem é que o Pianify não exige cabos! Usamos o microfone do seu dispositivo para 'ouvir' e dar feedback instantâneo, seja em um piano acústico ou teclado digital.",
+      "Não para experimentar: você pode usar o teclado do computador ou as teclas na tela. Para praticar no próprio instrumento, use um teclado MIDI compatível ou autorize o microfone para reconhecimento de notas.",
   },
   {
     icon: <CreditCard className="w-4 h-4" />,
@@ -28,25 +28,25 @@ const faqs = [
     icon: <CreditCard className="w-4 h-4" />,
     question: "Como funciona a assinatura Pianify Pro?",
     answer:
-      "Oferecemos planos Mensal e Anual. Com o Pianify Pro, você tem acesso ilimitado a todas as músicas, prática livre e suporte prioritário. O aprendizado é gamificado para todas as idades, garantindo evolução constante.",
+      "Oferecemos planos mensal e anual. Com o Pianify Pro, você tem acesso ao catálogo completo, prática livre e progresso salvo. Neste lançamento, o cadastro está disponível somente para maiores de 18 anos.",
   },
   {
     icon: <ShieldCheck className="w-4 h-4" />,
     question: "O método funciona para adultos também?",
     answer:
-      "Com certeza! Embora o visual seja divertido e colorido, a metodologia de reconhecimento de notas e progressão é extremamente eficaz para adultos que buscam um aprendizado prático, direto e sem a pressão das aulas tradicionais.",
+      "Sim. Neste lançamento, a experiência foi direcionada a adultos que buscam uma prática guiada, visual e progressiva no próprio ritmo.",
   },
   {
     icon: <Zap className="w-4 h-4" />,
     question: "Quais são os requisitos técnicos?",
     answer:
-      "O Pianify funciona em qualquer navegador moderno (Chrome, Edge, Safari e Firefox). Basta permitir o acesso ao microfone quando solicitado e você estará pronto para tocar.",
+      "As páginas principais funcionam em navegadores modernos. Microfone e MIDI dependem do navegador e do aparelho; para MIDI, prefira Chrome ou Edge em computador e faça o teste de compatibilidade antes de assinar.",
   },
   {
     icon: <Zap className="w-4 h-4" />,
     question: "Já tenho uma base musical. O Pianify é para mim?",
     answer:
-      "Sim! Nossa biblioteca de músicas abrange níveis que vão do básico ao avançado. Se você já toca, o Pianify ajudará você a aprimorar sua leitura de partituras e precisão rítmica de uma forma muito mais dinâmica.",
+      "Sim. A biblioteca oferece arranjos do básico ao avançado, estudo por mãos, controle de velocidade e repetição de trechos para praticar coordenação e precisão.",
   },
 ];
 

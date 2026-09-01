@@ -8,9 +8,19 @@ const sections = [
     body: "A Pianify oferece aulas interativas, biblioteca musical, reconhecimento de notas por microfone e ferramentas de acompanhamento de progresso. O usuario deve utilizar a plataforma de forma licita, respeitosa e compatível com a finalidade educacional do servico.",
   },
   {
+    icon: <UserCheck className="h-5 w-5 text-magenta" />,
+    title: "Idade mínima no lançamento",
+    body: "O cadastro de conta está disponível somente para pessoas com 18 anos ou mais. Contas para menores serão disponibilizadas apenas após a implantação de mecanismos adequados de aferição de idade, supervisão e consentimento do responsável quando aplicável.",
+  },
+  {
     icon: <CheckCircle2 className="h-5 w-5 text-magenta" />,
     title: "Conta, acesso e assinatura",
     body: "Alguns recursos podem exigir cadastro, login e assinatura ativa. O acesso Pro e liberado conforme o plano contratado e o processamento do pagamento. O usuario e responsavel por manter seus dados de acesso em seguranca.",
+  },
+  {
+    icon: <CheckCircle2 className="h-5 w-5 text-cyan" />,
+    title: "Renovação e cancelamento",
+    body: "Os planos pagos são renovados automaticamente no período mensal ou anual escolhido, até o cancelamento. O preço e a periodicidade são informados antes do pagamento. O cancelamento pode ser feito no portal de cobrança e impede a renovação seguinte, mantendo o acesso até o fim do período pago, salvo reembolso ou determinação legal.",
   },
   {
     icon: <ShieldCheck className="h-5 w-5 text-cyan" />,
@@ -25,6 +35,10 @@ const sections = [
 ];
 
 export default function TermosPage() {
+  const providerName = process.env.COMPANY_LEGAL_NAME || "Identificação empresarial pendente";
+  const providerTaxId = process.env.COMPANY_TAX_ID || "CNPJ pendente";
+  const providerAddress = process.env.COMPANY_ADDRESS || "Endereço pendente";
+
   return (
     <main className="relative min-h-screen overflow-hidden px-6 pb-24 pt-32">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[500px] bg-gradient-to-b from-cyan/5 via-transparent to-transparent" />
@@ -38,7 +52,7 @@ export default function TermosPage() {
           <h1 className="mb-6 text-4xl font-black text-white md:text-6xl">
             Termos de <span className="text-cyan">Uso</span>
           </h1>
-          <p className="text-lg text-white/60">Atualizado em 30 de Abril de 2026</p>
+          <p className="text-lg text-white/60">Versão 2026-09-01</p>
         </div>
 
         <div className="glass space-y-10 rounded-[2.5rem] border border-white/10 p-8 md:p-12">
@@ -79,6 +93,10 @@ export default function TermosPage() {
               Para duvidas sobre estes termos, suporte ou solicitacoes relacionadas a conta, fale conosco em
               contato@pianify.com.br.
             </p>
+            <div className="mt-4 space-y-1 text-sm leading-relaxed text-white/45">
+              <p>Fornecedor: {providerName} — {providerTaxId}</p>
+              <p>{providerAddress}</p>
+            </div>
           </section>
         </div>
 

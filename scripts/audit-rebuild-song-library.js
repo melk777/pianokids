@@ -11,7 +11,7 @@ const {
 } = require("./rebuild-song-utils");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public", "songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
 const REPORT_JSON = path.join(ROOT_DIR, "docs", "song-rebuild-audit.json");
 const REPORT_MD = path.join(ROOT_DIR, "docs", "song-rebuild-audit.md");
 

@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { normalizeSongHands, sanitizeSingleHandArrangements, validateSongHands } = require("./song-hand-utils");
 
-const SONGS_DIR = path.resolve(__dirname, "../public/songs");
+const SONGS_DIR = path.resolve(__dirname, "../data/songs");
 
 function getSongFiles() {
   if (!fs.existsSync(SONGS_DIR)) {
@@ -19,13 +19,13 @@ function main() {
   const files = getSongFiles();
 
   if (files.length === 0) {
-    console.log("Nenhum JSON encontrado em public/songs.");
+    console.log("Nenhum JSON encontrado em data/songs.");
     return;
   }
 
   let warningCount = 0;
 
-  console.log(`Auditando ${files.length} arquivo(s) JSON em public/songs...`);
+  console.log(`Auditando ${files.length} arquivo(s) JSON em data/songs...`);
 
   for (const fileName of files) {
     const filePath = path.join(SONGS_DIR, fileName);

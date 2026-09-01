@@ -6,7 +6,7 @@ const songCatalogMetadata = require("./song-catalog-metadata");
 const { repairMojibake } = require("./text-normalization");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public/songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data/songs");
 const MIDI_DIR = path.join(ROOT_DIR, "public/midi");
 const REPORT_JSON = path.join(ROOT_DIR, "docs/song-library-quality-audit.json");
 const REPORT_MD = path.join(ROOT_DIR, "docs/song-library-quality-audit.md");

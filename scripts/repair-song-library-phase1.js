@@ -5,7 +5,7 @@ const songManifest = require("./song-manifest");
 const { repairMojibake } = require("./text-normalization");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
-const SONGS_DIR = path.join(ROOT_DIR, "public/songs");
+const SONGS_DIR = path.join(ROOT_DIR, "data/songs");
 const PLAYER_MIN_MIDI = pianoRange.startMidi;
 const PLAYER_MAX_MIDI = pianoRange.endMidi;
 const GROUP_WINDOW_SECONDS = 0.12;

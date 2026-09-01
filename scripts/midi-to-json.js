@@ -9,7 +9,7 @@ const { Midi } = require("@tonejs/midi");
  */
 
 const MIDI_DIR = path.resolve(__dirname, "../public/midi");
-const SONGS_DIR = path.resolve(__dirname, "../public/songs");
+const SONGS_DIR = path.resolve(__dirname, "../data/songs");
 
 async function parseMidiFile(filePath) {
   if (!fs.existsSync(filePath)) return null;
@@ -108,7 +108,7 @@ async function convertMidi() {
 
     const outputPath = path.join(SONGS_DIR, `${base}.json`);
     fs.writeFileSync(outputPath, JSON.stringify(jsonOutput, null, 2));
-    console.log(`✅ Sucesso! JSON gerado em public/songs/${base}.json`);
+    console.log(`✅ Sucesso! JSON gerado em data/songs/${base}.json`);
   }
 }
 

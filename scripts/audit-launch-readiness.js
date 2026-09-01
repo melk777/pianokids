@@ -191,9 +191,9 @@ function run() {
     checks,
     "stripe",
     "webhook assinado",
-    has("src/app/api/stripe/webhook/route.ts", /constructEvent\(body,\s*sig,\s*webhookSecret\)/) &&
+    has("src/app/api/stripe/webhook/route.ts", /stripe\.webhooks\.constructEvent\(/) &&
       has("src/app/api/stripe/webhook/route.ts", /STRIPE_WEBHOOK_SECRET/) &&
-      has("src/app/api/stripe/webhook/route.ts", /SUPABASE_SERVICE_ROLE_KEY/)
+      has("src/app/api/stripe/webhook/route.ts", /createSupabaseAdminClient/)
       ? "pass"
       : "fail",
     "Webhook valida assinatura Stripe e usa service role apenas no servidor.",
@@ -302,9 +302,9 @@ function run() {
     "teacher-api",
     "saques de professores",
     has("src/app/api/teacher/withdraw/route.ts", /role\s*!==\s*["']teacher["']/) &&
-      has("src/app/api/teacher/withdraw/route.ts", /amount\s*>\s*availableBalance/) &&
-      has("src/app/api/teacher/withdraw/route.ts", /status["']?,?\s*["']pendente["']/) &&
-      exists("supabase/migrations/20260805231500_harden_teacher_withdrawals.sql")
+      has("src/app/api/teacher/withdraw/route.ts", /request_teacher_withdrawal/) &&
+      has("supabase/migrations/20260901000000_launch_billing_hardening.sql", /create or replace function public\.request_teacher_withdrawal/i) &&
+      has("supabase/migrations/20260901000000_launch_billing_hardening.sql", /for update/i)
       ? "pass"
       : "fail",
     "Saque valida role, saldo disponivel, reservas pendentes e unicidade no banco.",
@@ -315,8 +315,9 @@ function run() {
     checks,
     "admin-api",
     "atualizacao idempotente de saques",
-    has("src/app/api/admin/withdrawals/route.ts", /paidWithdrawals/) &&
-      has("src/app/api/admin/withdrawals/route.ts", /balance_withdrawn_total:\s*paidTotal/)
+    has("src/app/api/admin/withdrawals/route.ts", /review_teacher_withdrawal/) &&
+      has("supabase/migrations/20260901000000_launch_billing_hardening.sql", /create or replace function public\.review_teacher_withdrawal/i) &&
+      has("supabase/migrations/20260901000000_launch_billing_hardening.sql", /status\s*<>\s*'pendente'/i)
       ? "pass"
       : "fail",
     "O total pago deve ser recalculado a partir dos saques, sem somar novamente a cada clique.",
@@ -348,7 +349,7 @@ function run() {
   );
 
   const songFiles = fs
-    .readdirSync(path.join(ROOT, "public", "songs"))
+    .readdirSync(path.join(ROOT, "data", "songs"))
     .filter((name) => name.endsWith(".json"));
   add(
     checks,

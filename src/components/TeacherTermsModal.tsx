@@ -78,7 +78,7 @@ export default function TeacherTermsModal({ onAccept, isOpen }: TeacherTermsModa
             </p>
 
             <p>
-              O parceiro utiliza a plataforma como ferramenta terceirizada para complementar suas atividades pedagógicas ou profissionais, recebendo <span className="text-magenta font-bold">comissões/royalties exclusivas</span> pelas indicações ativas que resultarem em assinaturas confirmadas.
+              O parceiro utiliza a plataforma como ferramenta complementar às suas atividades pedagógicas ou profissionais e pode receber <span className="text-magenta font-bold">as comissões previstas no programa</span> por indicações que resultarem em assinaturas confirmadas, observadas as regras de validação, carência e estorno.
             </p>
 
             <p>

@@ -14,12 +14,18 @@ jobs:
       # Variáveis do Supabase (Essenciais para o Build)
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
       
       # Outras variáveis de ambiente
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
       STRIPE_MONTHLY_PRICE_ID: ${{ secrets.STRIPE_MONTHLY_PRICE_ID }}
       STRIPE_YEARLY_PRICE_ID: ${{ secrets.STRIPE_YEARLY_PRICE_ID }}
+      NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+      COMPANY_LEGAL_NAME: ${{ secrets.COMPANY_LEGAL_NAME }}
+      COMPANY_TAX_ID: ${{ secrets.COMPANY_TAX_ID }}
+      COMPANY_ADDRESS: ${{ secrets.COMPANY_ADDRESS }}
 
     steps:
       - uses: actions/checkout@v4
@@ -34,14 +40,21 @@ jobs:
           echo "Verificando presença de variáveis críticas (sem mostrar valores)..."
           [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] && echo "✅ NEXT_PUBLIC_SUPABASE_URL presente" || echo "❌ NEXT_PUBLIC_SUPABASE_URL ausente"
           [ -n "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ] && echo "✅ NEXT_PUBLIC_SUPABASE_ANON_KEY presente" || echo "❌ NEXT_PUBLIC_SUPABASE_ANON_KEY ausente"
-          [ -n "$STRIPE_SECRET_KEY" ] && echo "✅ STRIPE_SECRET_KEY presente" || echo "❌ STRIPE_SECRET_KEY ausente"
-          
-          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
-            echo "ERRO: Variáveis essenciais do Supabase não encontradas nos GitHub Secrets."
-            exit 1
-          fi
+          required_vars="NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_TURNSTILE_SITE_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET STRIPE_MONTHLY_PRICE_ID STRIPE_YEARLY_PRICE_ID NEXT_PUBLIC_SITE_URL COMPANY_LEGAL_NAME COMPANY_TAX_ID COMPANY_ADDRESS"
+          missing=0
+          for var_name in $required_vars; do
+            if [ -n "$(printenv "$var_name")" ]; then
+              echo "✅ $var_name presente"
+            else
+              echo "❌ $var_name ausente"
+              missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ] || exit 1
       - name: Checagem de Tipos (TypeScript)
         run: npx tsc --noEmit
+      - name: Testes automatizados
+        run: npm test
       - name: ESLint
         run: npm run lint
       - name: Auditoria de Dependencias de Producao

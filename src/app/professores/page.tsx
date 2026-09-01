@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronRight, Link as LinkIcon, DollarSign, Clock, MessageCircle, Mail, Users } from "lucide-react";
+import { ChevronRight, Link as LinkIcon, DollarSign, Clock, Mail, Users } from "lucide-react";
 import Link from "next/link";
 import { useSFX } from "@/hooks/useSFX";
 import TeacherAffiliateSection from "@/components/TeacherAffiliateSection";
@@ -37,7 +37,7 @@ export default function ProfessoresPage() {
           transition={{ delay: 0.2 }}
           className="text-white/60 text-xl font-medium max-w-2xl mx-auto mb-10"
         >
-          Complemente as aulas dos seus alunos com a plataforma Pianify e ganhe R$ 5,00/mês no plano mensal ou R$ 40,00 por cada assinatura anual ativa. Todo mundo ganha!
+          Complemente as aulas dos seus alunos com a Pianify e receba as comissões previstas para indicações elegíveis: R$ 5,00 por fatura mensal ou R$ 40,00 por fatura anual confirmada.
         </motion.p>
         <motion.div
            initial={{ opacity: 0, y: 20 }}
@@ -79,7 +79,7 @@ export default function ProfessoresPage() {
                   </div>
                   <div>
                     <h4 className="text-white font-bold text-lg mb-1">Link Único de Indicação</h4>
-                    <p className="text-white/50">Você terá um link personalizado oficial. Basta copiá-arlo e enviar no WhatsApp ou colocar na bio da sua escola.</p>
+                    <p className="text-white/50">Você terá um link personalizado oficial. Basta copiá-lo e compartilhar com seus alunos ou colocar na bio da sua escola.</p>
                   </div>
                 </div>
 
@@ -88,8 +88,8 @@ export default function ProfessoresPage() {
                     <Users className="w-5 h-5 text-emerald-400" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg mb-1">Acompanhamento dos Alunos Real-Time</h4>
-                    <p className="text-white/50">Nosso sistema não esconde nada! Você verá na sua tabela os Nomes e perfis de todos os alunos que acessaram pelo seu link e se a assinatura deles está ativa ou não.</p>
+                    <h4 className="text-white font-bold text-lg mb-1">Acompanhamento dos alunos</h4>
+                    <p className="text-white/50">O painel mostra os alunos vinculados ao seu código, o status da assinatura e indicadores pedagógicos necessários ao acompanhamento.</p>
                   </div>
                 </div>
 
@@ -108,8 +108,8 @@ export default function ProfessoresPage() {
                     <Clock className="w-5 h-5 text-amber-400" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg mb-1">Saques Garantidos (30 dias)</h4>
-                    <p className="text-white/50">Cada comissão entra na sua carteira visível imediatamente. O valor fica disponível para transferência bancária exatamente 30 dias após o pagamento do aluno compensar.</p>
+                    <h4 className="text-white font-bold text-lg mb-1">Disponibilidade após 30 dias</h4>
+                    <p className="text-white/50">Cada comissão confirmada aparece no extrato e fica disponível 30 dias após o pagamento, sujeita a estornos, disputas e às regras do programa.</p>
                   </div>
                 </div>
               </div>
@@ -159,7 +159,7 @@ export default function ProfessoresPage() {
                 className="absolute -right-6 -bottom-6 glass px-6 py-4 rounded-2xl border border-emerald-500/30 flex items-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
               >
                 <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-white font-bold">R$ 500,00 Liberados</span>
+                <span className="text-white font-bold">Saldo ilustrativo do painel</span>
               </motion.div>
             </div>
           </div>
@@ -170,17 +170,13 @@ export default function ProfessoresPage() {
       <section className="max-w-4xl mx-auto px-6 mb-32 text-center">
         <h2 className="text-3xl font-bold text-white mb-6">Você não está sozinho</h2>
         <p className="text-white/60 text-lg mb-10">
-          Nossa equipe de suporte trata nossos professores parceiros como prioridade VIP. Sempre que precisar de ajuda com repasses, links ou dúvidas de alunos, estaremos à disposição rapidamente via:
+          Para dúvidas sobre repasses, links ou alunos, use nossa central de contato:
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-6">
           <div className="glass px-8 py-6 rounded-2xl border border-white/10 flex items-center justify-center gap-4">
             <Mail className="w-6 h-6 text-cyan" />
             <span className="text-white font-bold">E-mail Direto</span>
-          </div>
-          <div className="glass px-8 py-6 rounded-2xl border border-white/10 flex items-center justify-center gap-4">
-            <MessageCircle className="w-6 h-6 text-emerald-400" />
-            <span className="text-white font-bold">Suporte via WhatsApp</span>
           </div>
         </div>
       </section>
@@ -190,9 +186,9 @@ export default function ProfessoresPage() {
         <div className="glass rounded-3xl p-12 text-center border border-white/10 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-cyan/10 to-magenta/10 opacity-50" />
           <div className="relative z-10">
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-6">Pronto para aumentar sua renda?</h2>
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-6">Pronto para conhecer a parceria?</h2>
             <p className="text-white/70 text-lg mb-10 max-w-xl mx-auto">
-              Seja para gerar uma grana extra no fim do mês ou transformar as indicações numa mensalidade sólida, acesse agora e garanta seu link especial.
+              Crie sua conta de professor para receber um código próprio e acompanhar indicações, comissões e repasses elegíveis no painel.
             </p>
             <Link 
               href="/login?role=teacher"
