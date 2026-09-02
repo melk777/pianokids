@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  canManageStripeSubscription,
   pickRelevantSubscription,
   stripeSubscriptionHasPremium,
   subscriptionBlocksCheckout,
@@ -20,6 +21,14 @@ test("only active and trialing Stripe subscriptions unlock Pro", () => {
   assert.equal(stripeSubscriptionHasPremium("trialing"), true);
   assert.equal(stripeSubscriptionHasPremium("past_due"), false);
   assert.equal(stripeSubscriptionHasPremium("unpaid"), false);
+});
+
+test("only paid Stripe plans show subscription management", () => {
+  assert.equal(canManageStripeSubscription("monthly", true, "cus_123"), true);
+  assert.equal(canManageStripeSubscription("yearly", true, "cus_123"), true);
+  assert.equal(canManageStripeSubscription("trial", true, "cus_123"), false);
+  assert.equal(canManageStripeSubscription("free", false, "cus_123"), false);
+  assert.equal(canManageStripeSubscription("monthly", true, null), false);
 });
 
 test("the active subscription wins over newer canceled records", () => {

@@ -33,6 +33,18 @@ export function stripeSubscriptionHasPremium(status: string) {
   return PREMIUM_STATUSES.has(status);
 }
 
+export function canManageStripeSubscription(
+  planType: string,
+  isPro: boolean,
+  customerId: string | null,
+) {
+  return Boolean(
+    isPro &&
+      customerId &&
+      (planType === "monthly" || planType === "yearly"),
+  );
+}
+
 export function pickRelevantSubscription<T extends StripeSubscriptionLike>(
   subscriptions: T[],
 ): T | undefined {

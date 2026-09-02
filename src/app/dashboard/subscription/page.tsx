@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
+import { canManageStripeSubscription } from "@/lib/stripe-subscription";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Suspense, useEffect, useState } from "react";
@@ -55,6 +56,11 @@ function SubscriptionContent() {
   const checkoutParam = searchParams.get("checkout");
   const checkoutNotice = checkoutParam === "success" || checkoutParam === "canceled" ? checkoutParam : null;
   const [billingMessage, setBillingMessage] = useState<string | null>(null);
+  const hasStripeSubscription = canManageStripeSubscription(
+    planType,
+    isPro,
+    customerId,
+  );
 
   useEffect(() => {
     if (checkoutNotice === "success") {
@@ -356,7 +362,7 @@ function SubscriptionContent() {
 
                   <div className="h-px bg-white/5 w-full my-4" />
 
-                  {isPro && customerId ? (
+                  {hasStripeSubscription ? (
                     <>
                       <button
                         onClick={handlePortal}
