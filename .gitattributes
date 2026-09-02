@@ -2,6 +2,7 @@
 # part of the music provenance audit, so whitespace normalization is disabled.
 music-sources/**/*.ly -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 music-sources/**/*.xml -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+music-sources/**/*.json -text whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 music-sources/**/*.pdf binary
 music-sources/**/*.mid binary
 music-sources/**/*.zip binary
