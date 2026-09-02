@@ -54,6 +54,7 @@ export default function FAQ() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Radix interactivity is enabled only after hydration to keep SSR markup stable.
     setIsMounted(true);
   }, []);
 

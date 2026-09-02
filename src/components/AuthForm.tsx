@@ -127,6 +127,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   }, [resolvedTurnstileSiteKey]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Local test availability depends on the hydrated browser hostname.
     setCanUseLocalTestAuth(isLocalDevHost(window.location.hostname));
   }, []);
 

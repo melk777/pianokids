@@ -2,7 +2,7 @@ import "server-only";
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { Song } from "@/lib/types";
+import type { Song, SongSourceProvenance } from "@/lib/types";
 
 const catalogPath = path.join(process.cwd(), "public", "song-catalog-index.json");
 const manifestPath = path.join(process.cwd(), "data", "song-file-index.json");
@@ -10,6 +10,18 @@ const songsDirectory = path.join(process.cwd(), "data", "songs");
 
 let catalogPromise: Promise<Song[]> | null = null;
 let manifestPromise: Promise<Record<string, string>> | null = null;
+let creditsPromise: Promise<SongCredit[]> | null = null;
+
+export interface SongCredit {
+  id: string;
+  title: string;
+  artist: string;
+  source: SongSourceProvenance & {
+    canonical: true;
+    license: string;
+    sourceUrl: string;
+  };
+}
 
 async function readJson<T>(filePath: string): Promise<T> {
   return JSON.parse(await readFile(filePath, "utf8")) as T;
@@ -59,4 +71,36 @@ export async function getServerSongById(songId: string): Promise<Song | undefine
     notes1Hand: payload.notes1Hand ?? null,
     notes2Hands: payload.notes2Hands ?? null,
   };
+}
+
+export function getServerSongCredits() {
+  creditsPromise ??= Promise.all([getServerSongCatalog(), getSongFileManifest()]).then(
+    async ([catalog, manifest]) => {
+      const credits = await Promise.all(
+        catalog.map(async (metadata) => {
+          const fileName = manifest[metadata.id];
+          if (!fileName || path.basename(fileName) !== fileName) {
+            throw new Error(`Song credit mapping is invalid for ${metadata.id}.`);
+          }
+
+          const payload = await readJson<Partial<Song>>(path.join(songsDirectory, fileName));
+          const source = payload.sourceProvenance;
+          if (!source?.canonical || !source.license || !source.sourceUrl) {
+            throw new Error(`Song rights metadata is incomplete for ${metadata.id}.`);
+          }
+
+          return {
+            id: metadata.id,
+            title: metadata.title,
+            artist: metadata.artist,
+            source: source as SongCredit["source"],
+          } satisfies SongCredit;
+        }),
+      );
+
+      return credits.sort((left, right) => left.title.localeCompare(right.title, "pt-BR"));
+    },
+  );
+
+  return creditsPromise;
 }

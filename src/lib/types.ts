@@ -85,6 +85,21 @@ export interface SongArrangements {
   hard?: SongNote[] | null;
 }
 
+export interface SongSourceProvenance {
+  canonical?: boolean;
+  kind?: string;
+  title?: string;
+  composer?: string;
+  edition?: string;
+  sourceUrl?: string;
+  license?: string;
+  licenseUrl?: string;
+  verifiedAt?: string;
+  attribution?: string;
+}
+
+export type SongReviewStatus = "pending_owner_review" | "published" | "blocked";
+
 export interface Song {
   id: string;
   title: string;
@@ -102,4 +117,6 @@ export interface Song {
   arrangements?: SongArrangements | null;
   notes1Hand?: SongNote[] | null;
   notes2Hands?: SongNote[] | null;
+  reviewStatus?: SongReviewStatus;
+  sourceProvenance?: SongSourceProvenance | null;
 }

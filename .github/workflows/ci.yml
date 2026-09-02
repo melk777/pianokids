@@ -10,22 +10,20 @@ jobs:
     env:
       # Configuração para forçar Node.js 24 em todas as ações
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      
-      # Variáveis do Supabase (Essenciais para o Build)
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
-      
-      # Outras variáveis de ambiente
-      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-      STRIPE_MONTHLY_PRICE_ID: ${{ secrets.STRIPE_MONTHLY_PRICE_ID }}
-      STRIPE_YEARLY_PRICE_ID: ${{ secrets.STRIPE_YEARLY_PRICE_ID }}
-      NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
-      COMPANY_LEGAL_NAME: ${{ secrets.COMPANY_LEGAL_NAME }}
-      COMPANY_TAX_ID: ${{ secrets.COMPANY_TAX_ID }}
-      COMPANY_ADDRESS: ${{ secrets.COMPANY_ADDRESS }}
+
+      # O CI valida código com valores inertes. Credenciais reais ficam somente na Vercel.
+      NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_ci_placeholder
+      SUPABASE_SERVICE_ROLE_KEY: sb_secret_ci_placeholder
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      STRIPE_SECRET_KEY: sk_test_ci_placeholder
+      STRIPE_WEBHOOK_SECRET: whsec_ci_placeholder
+      STRIPE_MONTHLY_PRICE_ID: price_ci_monthly
+      STRIPE_YEARLY_PRICE_ID: price_ci_yearly
+      NEXT_PUBLIC_SITE_URL: https://example.invalid
+      COMPANY_LEGAL_NAME: Pianify CI
+      COMPANY_TAX_ID: Identificação fiscal de teste
+      COMPANY_ADDRESS: Endereço de teste do CI
 
     steps:
       - uses: actions/checkout@v4
@@ -35,9 +33,9 @@ jobs:
           cache: 'npm'
       - name: Instalar Dependências
         run: npm ci
-      - name: Validar Configuração de Segredos
+      - name: Validar Configuração de CI
         run: |
-          echo "Verificando presença de variáveis críticas (sem mostrar valores)..."
+          echo "Verificando presença de variáveis inertes de build (sem mostrar valores)..."
           [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] && echo "✅ NEXT_PUBLIC_SUPABASE_URL presente" || echo "❌ NEXT_PUBLIC_SUPABASE_URL ausente"
           [ -n "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ] && echo "✅ NEXT_PUBLIC_SUPABASE_ANON_KEY presente" || echo "❌ NEXT_PUBLIC_SUPABASE_ANON_KEY ausente"
           required_vars="NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_TURNSTILE_SITE_KEY STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET STRIPE_MONTHLY_PRICE_ID STRIPE_YEARLY_PRICE_ID NEXT_PUBLIC_SITE_URL COMPANY_LEGAL_NAME COMPANY_TAX_ID COMPANY_ADDRESS"
@@ -55,6 +53,16 @@ jobs:
         run: npx tsc --noEmit
       - name: Testes automatizados
         run: npm test
+      - name: Auditorias do catalogo musical
+        run: |
+          npm run validate-song-hands
+          npm run audit-song-rights
+          npm run audit-player-modes
+          npm run audit-song-source-fidelity
+          npm run audit-music-rebuild
+          npm run audit-song-library
+      - name: Auditoria de prontidao para lancamento
+        run: npm run audit-launch-readiness
       - name: ESLint
         run: npm run lint
       - name: Auditoria de Dependencias de Producao

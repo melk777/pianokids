@@ -86,6 +86,7 @@ export default function TeacherDashboard() {
 
   useEffect(() => {
     if (activeTab === 'finances') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Opening the finance tab synchronizes it with authenticated API data.
       fetchWithdrawals();
     }
   }, [activeTab]);

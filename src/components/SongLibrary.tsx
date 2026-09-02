@@ -91,6 +91,7 @@ export default function SongLibrary({ songs, hasPremium, hasAccess }: SongLibrar
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- A changed filter intentionally resets result pagination.
     setVisibleFilteredCount(FILTERED_PAGE_SIZE);
   }, [deferredSearchTerm, selectedCategory]);
 
@@ -112,6 +113,7 @@ export default function SongLibrary({ songs, hasPremium, hasAccess }: SongLibrar
   }, [deferredSearchTerm, filteredSongs.length]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Available category changes reconcile per-category pagination state.
     setCategoryVisibleCounts((current) => {
       const nextCounts: Record<string, number> = {};
       for (const category of categoriesToRender) {

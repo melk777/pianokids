@@ -3,24 +3,16 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { createSupabaseAdminClient } from "@/lib/server/supabase";
 import { getStripe } from "@/lib/stripe";
+import {
+  buildSubscriptionProfileUpdate,
+  getExpandableId,
+  getInvoicePaymentIntentId,
+  getInvoiceSubscriptionId,
+  getRefundInvoiceStatus,
+  shouldRestoreDisputedCommission,
+} from "@/lib/stripe-webhook";
 
 export const dynamic = "force-dynamic";
-
-function getExpandableId(value: { id: string } | string | null | undefined) {
-  if (!value) return null;
-  return typeof value === "string" ? value : value.id;
-}
-
-function getInvoiceSubscriptionId(invoice: Stripe.Invoice) {
-  return getExpandableId(invoice.parent?.subscription_details?.subscription);
-}
-
-function getInvoicePaymentIntentId(invoice: Stripe.Invoice) {
-  const payment = invoice.payments?.data.find(
-    (candidate) => candidate.payment.type === "payment_intent",
-  );
-  return getExpandableId(payment?.payment.payment_intent);
-}
 
 async function findInvoiceIdForCharge(stripe: Stripe, charge: Stripe.Charge) {
   const paymentIntentId = getExpandableId(charge.payment_intent);
@@ -68,22 +60,9 @@ async function updateProfileFromSubscription(
   supabase: SupabaseClient,
   subscription: Stripe.Subscription,
 ) {
-  const customerId = getExpandableId(subscription.customer);
-  if (!customerId) throw new Error("Subscription is missing its customer.");
+  const { customerId, userId, values } = buildSubscriptionProfileUpdate(subscription);
 
-  const userId = subscription.metadata?.userId;
-  const interval = subscription.items.data[0]?.price.recurring?.interval ?? null;
-  const trialEndsAt = subscription.trial_end
-    ? new Date(subscription.trial_end * 1000).toISOString()
-    : null;
-
-  let query = supabase.from("profiles").update({
-    subscription_status: subscription.status,
-    stripe_subscription_id: subscription.id,
-    stripe_customer_id: customerId,
-    subscription_plan_interval: interval,
-    trial_ends_at: subscription.status === "trialing" ? trialEndsAt : null,
-  });
+  let query = supabase.from("profiles").update(values);
   query = userId ? query.eq("id", userId) : query.eq("stripe_customer_id", customerId);
 
   const { error } = await query;
@@ -229,8 +208,7 @@ export async function POST(req: NextRequest) {
             p_reference: event.id,
             p_source_type: "refund",
             p_refunded_amount: charge.amount_refunded,
-            p_invoice_status:
-              charge.amount_refunded >= charge.amount ? "refunded" : "partially_refunded",
+            p_invoice_status: getRefundInvoiceStatus(charge.amount, charge.amount_refunded),
           });
           if (error) throw error;
         }
@@ -256,7 +234,7 @@ export async function POST(req: NextRequest) {
 
       case "charge.dispute.closed": {
         const dispute = event.data.object as Stripe.Dispute;
-        if (dispute.status === "won") {
+        if (shouldRestoreDisputedCommission(dispute.status)) {
           const charge = await resolveCharge(stripe, dispute.charge);
           const invoiceId = await findInvoiceIdForCharge(stripe, charge);
           if (invoiceId) {

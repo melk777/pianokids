@@ -25,6 +25,7 @@ export default function TeacherTermsModal({ onAccept, isOpen }: TeacherTermsModa
 
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Every modal opening requires a fresh read-to-bottom acknowledgement.
       setHasReadToBottom(false);
     }
   }, [isOpen]);

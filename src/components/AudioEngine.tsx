@@ -112,6 +112,7 @@ export default function AudioEngine() {
   useEffect(() => {
     if (!isListening || !stepStartedAt || !["silence", "single", "chord"].includes(calibrationStep)) {
       if (calibrationStep === "idle" || calibrationStep === "done") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Calibration phase changes intentionally reset progress.
         setProgress(0);
       }
       return;

@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-09-01T18:22:19.061Z",
+  "generatedAt": "2026-09-02T22:44:06.503Z",
   "summary": {
-    "total": 44,
-    "pass": 39,
-    "warn": 5,
+    "total": 47,
+    "pass": 43,
+    "warn": 4,
     "fail": 0,
-    "criticalOpen": 3
+    "criticalOpen": 2
   },
   "checks": [
     {
@@ -72,11 +72,32 @@
       "details": "Presente em .env.example."
     },
     {
+      "category": "env",
+      "item": "COMPANY_LEGAL_NAME",
+      "status": "pass",
+      "severity": "high",
+      "details": "Presente em .env.example."
+    },
+    {
+      "category": "env",
+      "item": "COMPANY_TAX_ID",
+      "status": "pass",
+      "severity": "high",
+      "details": "Presente em .env.example."
+    },
+    {
+      "category": "env",
+      "item": "COMPANY_ADDRESS",
+      "status": "pass",
+      "severity": "high",
+      "details": "Presente em .env.example."
+    },
+    {
       "category": "env-local",
       "item": ".env.local completo",
       "status": "warn",
       "severity": "medium",
-      "details": "Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor."
+      "details": "Arquivo local protegido, mas faltam 12 chaves obrigatorias: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_TURNSTILE_SITE_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID, NEXT_PUBLIC_SITE_URL, COMPANY_LEGAL_NAME, COMPANY_TAX_ID, COMPANY_ADDRESS."
     },
     {
       "category": "build",
@@ -97,7 +118,7 @@
       "item": "QA responsivo automatizado",
       "status": "pass",
       "severity": "high",
-      "details": "Script de QA responsivo/interativo existe."
+      "details": "Quatro viewports concluiram tutorial/orientacao, partida, interacoes e tela final sem problemas detectados."
     },
     {
       "category": "analytics",
@@ -277,9 +298,9 @@
     {
       "category": "legal",
       "item": "direitos autorais das musicas",
-      "status": "warn",
+      "status": "pass",
       "severity": "critical",
-      "details": "Revisao juridica/manual ainda e necessaria antes de anunciar em escala. A auditoria tecnica nao comprova licenca comercial de melodias, arranjos, imagens ou marcas."
+      "details": "As 90 musicas possuem procedencia, licenca e atribuicao publicamente documentadas; o indice comercial nao usa capas externas. A verificacao tecnica nao substitui parecer juridico."
     },
     {
       "category": "catalog",

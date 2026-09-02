@@ -18,6 +18,14 @@ function has(file, pattern) {
   return pattern.test(read(file));
 }
 
+function readJsonOrNull(relPath) {
+  try {
+    return JSON.parse(read(relPath));
+  } catch {
+    return null;
+  }
+}
+
 function envKeys(file) {
   if (!exists(file)) return new Set();
   return new Set(
@@ -44,6 +52,8 @@ function run() {
 
   const checks = [];
   const packageJson = JSON.parse(read("package.json"));
+  const responsiveQaReport = readJsonOrNull("docs/responsive-player-qa.json");
+  const songRightsReport = readJsonOrNull("docs/song-rights-audit.json");
   const scripts = packageJson.scripts || {};
   const nextVersion = packageJson.dependencies?.next || "";
   const nextVersionMatch = nextVersion.match(/(\d+)\.(\d+)\.(\d+)/);
@@ -62,6 +72,9 @@ function run() {
     "STRIPE_MONTHLY_PRICE_ID",
     "STRIPE_YEARLY_PRICE_ID",
     "NEXT_PUBLIC_SITE_URL",
+    "COMPANY_LEGAL_NAME",
+    "COMPANY_TAX_ID",
+    "COMPANY_ADDRESS",
   ];
   const missingLocalEnv = requiredEnv.filter((key) => !localEnv.has(key));
 
@@ -116,10 +129,17 @@ function run() {
     checks,
     "qa",
     "QA responsivo automatizado",
-    exists("scripts/responsive-pianoengine-qa.js") ? "pass" : "fail",
-    exists("scripts/responsive-pianoengine-qa.js")
-      ? "Script de QA responsivo/interativo existe."
-      : "Falta script de QA responsivo/interativo.",
+    exists("scripts/responsive-pianoengine-qa.js") &&
+      responsiveQaReport?.summary?.viewports === 4 &&
+      responsiveQaReport?.summary?.issues === 0 &&
+      responsiveQaReport?.summary?.allStatesReached === true
+      ? "pass"
+      : "fail",
+    responsiveQaReport?.summary?.viewports === 4 &&
+      responsiveQaReport?.summary?.issues === 0 &&
+      responsiveQaReport?.summary?.allStatesReached === true
+      ? "Quatro viewports concluiram tutorial/orientacao, partida, interacoes e tela final sem problemas detectados."
+      : "O QA responsivo precisa ser executado com quatro viewports e terminar sem problemas.",
     "high",
   );
 
@@ -177,7 +197,7 @@ function run() {
     checks,
     "stripe",
     "checkout autenticado",
-    has("src/app/api/stripe/checkout/route.ts", /supabase\.auth\.getUser\(\)/) &&
+    has("src/app/api/stripe/checkout/route.ts", /(?:supabase\.auth\.getUser|getOptionalSupabaseUser)\(/) &&
       has("src/app/api/stripe/checkout/route.ts", /status:\s*401/) &&
       has("src/app/api/stripe/checkout/route.ts", /STRIPE_MONTHLY_PRICE_ID/) &&
       has("src/app/api/stripe/checkout/route.ts", /STRIPE_YEARLY_PRICE_ID/)
@@ -204,7 +224,7 @@ function run() {
     checks,
     "stripe",
     "portal autenticado",
-    has("src/app/api/stripe/portal/route.ts", /supabase\.auth\.getUser\(\)/) &&
+    has("src/app/api/stripe/portal/route.ts", /(?:supabase\.auth\.getUser|getOptionalSupabaseUser)\(/) &&
       has("src/app/api/stripe/portal/route.ts", /status:\s*401/)
       ? "pass"
       : "fail",
@@ -364,8 +384,12 @@ function run() {
     checks,
     "legal",
     "direitos autorais das musicas",
-    "warn",
-    "Revisao juridica/manual ainda e necessaria antes de anunciar em escala. A auditoria tecnica nao comprova licenca comercial de melodias, arranjos, imagens ou marcas.",
+    songRightsReport?.summary?.ready === true
+      ? "pass"
+      : "fail",
+    songRightsReport?.summary?.ready === true
+      ? "As 90 musicas possuem procedencia, licenca e atribuicao publicamente documentadas; o indice comercial nao usa capas externas. A verificacao tecnica nao substitui parecer juridico."
+      : "A auditoria de direitos do catalogo esta ausente ou possui bloqueios.",
     "critical",
   );
 

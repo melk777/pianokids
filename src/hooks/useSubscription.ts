@@ -75,6 +75,7 @@ export function useSubscription() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- The effect synchronizes billing state from the authenticated API.
     checkSubscription();
   }, [checkSubscription]);
 

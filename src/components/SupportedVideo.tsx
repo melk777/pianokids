@@ -28,6 +28,7 @@ export default function SupportedVideo({
 
   useEffect(() => {
     const probe = document.createElement("video");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Media capability is available only from the hydrated browser.
     setCanPlay(probe.canPlayType(type) !== "");
     setCheckedSupport(true);
   }, [type]);

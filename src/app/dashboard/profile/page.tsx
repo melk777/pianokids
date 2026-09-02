@@ -58,6 +58,7 @@ export default function ProfilePage() {
   // Sync initial state when profile or editing mode changes
   useEffect(() => {
     if (profile && !editing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Remote profile changes hydrate the local editor draft.
       setFullName(profile.full_name || "");
       setUsername(profile.username || "");
     }

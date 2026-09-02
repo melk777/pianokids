@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Music, Star, BarChart3, ChevronDown, Piano, Library, AudioWaveform, Trophy } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 import HeroVideo from "@/components/HeroVideo";
 import { trackEvent } from "@/lib/analytics";
@@ -58,17 +57,14 @@ const LIBRARY_PREVIEW = [
   {
     title: "Para Elisa",
     composer: "Ludwig van Beethoven",
-    image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Beethoven.jpg",
   },
   {
     title: "Marcha Turca",
     composer: "Wolfgang Amadeus Mozart",
-    image: "https://upload.wikimedia.org/wikipedia/commons/f/fc/Barbara_Krafft_-_Portr%C3%A4t_Wolfgang_Amadeus_Mozart_%281819%29.jpg",
   },
   {
     title: "Minueto em Sol",
     composer: "Johann Sebastian Bach",
-    image: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Johann_Sebastian_Bach.jpg",
   },
 ] as const;
 
@@ -307,13 +303,9 @@ export default function Home() {
                     {LIBRARY_PREVIEW.map((song) => (
                       <div key={song.title} className="overflow-hidden rounded-[1.3rem] border border-white/10 bg-white/[0.03]">
                         <div className="relative aspect-[4/5]">
-                          <Image
-                            src={song.image}
-                            alt={song.title}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 320px"
-                            className="object-cover object-top"
-                          />
+                          <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_50%_28%,rgba(0,234,255,0.24),transparent_34%),linear-gradient(145deg,rgba(255,0,229,0.16),rgba(9,9,11,0.96))]">
+                            <Piano aria-hidden="true" className="h-14 w-14 text-cyan/80" />
+                          </div>
                         </div>
                         <div className="p-3">
                           <p className="text-sm font-black text-white">{song.title}</p>
@@ -508,32 +500,23 @@ export default function Home() {
             <div className="flex items-center gap-2 text-white/40 text-[13px] font-medium tracking-tight">
               <span className="opacity-70">Pianify © {new Date().getFullYear()}</span>
             </div>
-            <Link href="/contato" className="text-sm font-bold text-white/40 transition hover:text-white">
+            <Link href="/contato" className="inline-flex min-h-11 items-center text-sm font-bold text-white/40 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
               Central de contato
             </Link>
-            <div className="flex items-center gap-6 text-sm text-white/30">
-              <Link
-                href="/termos"
-                className="hover:text-white/60 transition-colors"
-              >
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/45">
+              <Link href="/termos" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
                 Termos
               </Link>
-              <Link
-                href="/privacidade"
-                className="hover:text-white/60 transition-colors"
-              >
+              <Link href="/privacidade" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
                 Privacidade
               </Link>
-              <Link
-                href="/reembolso"
-                className="hover:text-white/60 transition-colors"
-              >
+              <Link href="/reembolso" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
                 Reembolso
               </Link>
-              <Link
-                href="/contato"
-                className="hover:text-white/60 transition-colors"
-              >
+              <Link href="/creditos" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
+                Créditos musicais
+              </Link>
+              <Link href="/contato" className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
                 Contato
               </Link>
             </div>

@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-09-02T22:01:16.029Z",
+  "viewports": [
+    {
+      "viewport": "mobile-portrait",
+      "size": "390x844",
+      "issues": [],
+      "states": {
+        "tutorial": true,
+        "playing": true,
+        "ended": true
+      }
+    },
+    {
+      "viewport": "mobile-landscape",
+      "size": "844x390",
+      "issues": [],
+      "states": {
+        "tutorial": true,
+        "playing": true,
+        "ended": true
+      }
+    },
+    {
+      "viewport": "tablet",
+      "size": "834x1112",
+      "issues": [],
+      "states": {
+        "tutorial": true,
+        "playing": true,
+        "ended": true
+      }
+    },
+    {
+      "viewport": "desktop",
+      "size": "1440x900",
+      "issues": [],
+      "states": {
+        "tutorial": true,
+        "playing": true,
+        "ended": true
+      }
+    }
+  ],
+  "summary": {
+    "viewports": 4,
+    "issues": 0,
+    "allStatesReached": true
+  }
+}

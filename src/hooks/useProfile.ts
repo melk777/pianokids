@@ -283,6 +283,7 @@ export function useProfile() {
   }, [supabase]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- The effect synchronizes authenticated profile data from Supabase.
     fetchProfile();
   }, [fetchProfile]);
 

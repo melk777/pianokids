@@ -40,6 +40,7 @@ export function useMIDI(): UseMIDIReturn {
 
   // Check support only on client (after hydration)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Web MIDI support is a browser-only value detected after hydration.
     setIsSupported(
       typeof navigator !== "undefined" && "requestMIDIAccess" in navigator
     );

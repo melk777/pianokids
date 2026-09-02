@@ -231,6 +231,7 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- The effect synchronizes the dashboard with authenticated API data.
     fetchAll();
   }, []);
 
@@ -283,6 +284,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (activeTab === 'financial') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- The selected month drives an authenticated API refresh.
         fetchExpenses(expenseMonthYear);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

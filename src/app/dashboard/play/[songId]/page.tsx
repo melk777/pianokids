@@ -163,6 +163,7 @@ function PlayPageContent() {
 
   useEffect(() => {
     if (isFreePlay) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Route changes intentionally synchronize the loaded player state.
       setSong(FREE_PLAY_SONG);
       setSongLoading(false);
       return;
@@ -265,12 +266,14 @@ function PlayPageContent() {
   }, [audio]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- The preference is browser-only and must be read after hydration.
     setShowTutorial(shouldAutoOpenGameTutorial());
   }, []);
 
   useEffect(() => {
     if (!showTutorial) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Opening the tutorial intentionally resets its state machine.
     setTutorialActions(createTutorialActionState());
     setTutorialRunId((current) => current + 1);
     setGameState("playing");
@@ -368,6 +371,7 @@ function PlayPageContent() {
             ? 0.9
             : 0.75
         : 1;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Difficulty changes intentionally reset the user-adjustable playback speed.
     setPlaybackSpeed(difficulty === "beginner" ? beginnerSpeed : 1);
   }, [difficulty, gameState, isTutorialSimulation, song?.bpm, song?.id]);
 
@@ -524,6 +528,7 @@ function PlayPageContent() {
 
     const leadTime = 4;
     const startTime = audio.getCurrentTime() + leadTime;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Countdown completion advances the player state machine.
     setAudioStartTime(startTime);
     setGameState("playing");
     setIsPlaying(true);
@@ -655,6 +660,7 @@ function PlayPageContent() {
 
   useEffect(() => {
     const duration = song?.duration ?? 0;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Loading a different song intentionally resets playback controls.
     setCurrentPlaybackTime(0);
     setLoopStart(0);
     setLoopEnd(duration);
@@ -686,6 +692,7 @@ function PlayPageContent() {
     if (leftHand || rightHand) {
       const isBothHands = leftHand && rightHand;
       if (queryDifficulty === "beginner" || queryDifficulty === "medium" || queryDifficulty === "pro") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- URL parameters initialize the interactive player after navigation.
         setDifficulty(queryDifficulty);
       } else {
         setDifficulty(isBothHands ? "pro" : "medium");
@@ -698,6 +705,7 @@ function PlayPageContent() {
     if (gameState !== "idle") return;
 
     if (activeNotes.size > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- An external MIDI/microphone note intentionally starts the game state machine.
       startGame();
       return;
     }

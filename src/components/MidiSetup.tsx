@@ -17,6 +17,7 @@ export default function MidiSetup({ isOpen, isConnected, onConnect, onClose }: M
   // Solicita automaticamente permissão MIDI assim que o Componente abrir
   useEffect(() => {
     if (isOpen && !isConnected && !hasRequested) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- The guard records the one permission request caused by opening this dialog.
       setHasRequested(true);
       // Tentativa silenciosa de pedir permissão do navegador
       onConnect();

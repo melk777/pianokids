@@ -188,6 +188,7 @@ export function useAudioInput() {
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Audio capability is a browser-only value detected after hydration.
       setIsSupported(false);
       setError("Seu navegador nao suporta entrada de audio.");
       return;

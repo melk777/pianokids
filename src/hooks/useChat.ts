@@ -58,6 +58,7 @@ export function useChat(friendId: string | null) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- The effect synchronizes messages with Supabase and its realtime subscription.
     fetchMessages();
 
     if (!friendId) return;

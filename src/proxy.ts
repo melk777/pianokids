@@ -29,6 +29,7 @@ function isAlwaysPublicRoute(pathname: string) {
     pathname.startsWith("/privacidade") ||
     pathname.startsWith("/termos") ||
     pathname.startsWith("/reembolso") ||
+    pathname.startsWith("/creditos") ||
     pathname.startsWith("/contato")
   );
 }

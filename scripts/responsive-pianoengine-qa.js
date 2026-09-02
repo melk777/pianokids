@@ -1,9 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
+const WebSocket = require("ws");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const TMP_DIR = path.join(ROOT_DIR, "tmp", "responsive-qa");
+const PORTABLE_REPORT_PATH = path.join(ROOT_DIR, "docs", "responsive-player-qa.json");
 const CHROME_PATHS = [
   process.env.CHROME_PATH,
   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -46,7 +48,10 @@ function wait(ms) {
 }
 
 async function fetchJson(url, options) {
-  const response = await fetch(url, options);
+  const response = await fetch(url, {
+    ...options,
+    signal: options?.signal ?? AbortSignal.timeout(5000),
+  });
   if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
   return response.json();
 }
@@ -71,20 +76,41 @@ class CdpPage {
     this.events = [];
 
     this.ready = new Promise((resolve, reject) => {
-      this.ws.addEventListener("open", resolve, { once: true });
-      this.ws.addEventListener("error", reject, { once: true });
+      const timeout = setTimeout(() => {
+        reject(new Error(`Tempo esgotado conectando ao CDP: ${wsUrl}`));
+      }, 10000);
+      const settle = (callback) => (event) => {
+        clearTimeout(timeout);
+        callback(event);
+      };
+
+      this.ws.addEventListener("open", settle(resolve), { once: true });
+      this.ws.addEventListener("error", settle(reject), { once: true });
+      this.ws.addEventListener(
+        "close",
+        settle(() => reject(new Error(`CDP fechou antes de ficar pronto: ${wsUrl}`))),
+        { once: true },
+      );
     });
 
     this.ws.addEventListener("message", (event) => {
-      const payload = JSON.parse(event.data);
+      const payload = JSON.parse(String(event.data));
       if (payload.id && this.pending.has(payload.id)) {
-        const { resolve, reject } = this.pending.get(payload.id);
+        const { resolve, reject, timeout } = this.pending.get(payload.id);
         this.pending.delete(payload.id);
+        clearTimeout(timeout);
         if (payload.error) reject(new Error(payload.error.message));
         else resolve(payload.result);
         return;
       }
       if (payload.method) this.events.push(payload);
+    });
+    this.ws.addEventListener("close", (event) => {
+      for (const [id, pending] of this.pending) {
+        clearTimeout(pending.timeout);
+        pending.reject(new Error(`CDP fechou durante o comando ${id} (codigo ${event.code}).`));
+      }
+      this.pending.clear();
     });
   }
 
@@ -93,7 +119,11 @@ class CdpPage {
     const id = this.nextId++;
     const message = JSON.stringify({ id, method, params });
     const result = new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject });
+      const timeout = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`Tempo esgotado no comando CDP ${method}.`));
+      }, 15000);
+      this.pending.set(id, { resolve, reject, timeout });
     });
     this.ws.send(message);
     return result;
@@ -376,6 +406,7 @@ async function run() {
   if (!chrome) throw new Error("Chrome/Edge nao encontrado para QA responsivo.");
 
   const port = 9333 + Math.floor(Math.random() * 400);
+  console.log(`Iniciando QA responsivo com ${path.basename(chrome)} na porta ${port}.`);
   const userDataDir = path.join(TMP_DIR, `chrome-profile-${Date.now()}`);
   const browser = spawn(chrome, [
     "--headless=new",
@@ -398,12 +429,17 @@ async function run() {
   browser.stderr.on("data", (chunk) => {
     chromeLog += chunk.toString();
   });
+  browser.on("exit", (code) => {
+    if (code && chromeLog) console.error(`Chrome encerrou com codigo ${code}:\n${chromeLog.slice(-4000)}`);
+  });
 
   try {
     await waitForEndpoint(`http://127.0.0.1:${port}/json/version`).catch((error) => {
       throw new Error(`${error.message}\nChrome output:\n${chromeLog.slice(-4000)}`);
     });
+    console.log("CDP do navegador respondeu; criando pagina de teste.");
     const target = await fetchJson(`http://127.0.0.1:${port}/json/new`, { method: "PUT" });
+    console.log(`Alvo CDP criado: ${target.id}.`);
     const page = new CdpPage(target.webSocketDebuggerUrl);
     await page.send("Page.enable");
     await page.send("Runtime.enable");
@@ -411,6 +447,7 @@ async function run() {
     const report = [];
 
     for (const viewport of VIEWPORTS) {
+      console.log(`Testando ${viewport.name} (${viewport.width}x${viewport.height}).`);
       await page.send("Emulation.setDeviceMetricsOverride", {
         width: viewport.width,
         height: viewport.height,
@@ -554,7 +591,26 @@ async function run() {
     const outputPath = path.join(TMP_DIR, "responsive-report.json");
     fs.writeFileSync(outputPath, JSON.stringify({ generatedAt: new Date().toISOString(), report }, null, 2));
 
-    console.log(JSON.stringify({ outputPath, summary }, null, 2));
+    const portableReport = {
+      generatedAt: new Date().toISOString(),
+      viewports: summary.map((entry) => ({
+        viewport: entry.viewport,
+        size: entry.size,
+        issues: entry.issues,
+        states: entry.states,
+      })),
+      summary: {
+        viewports: summary.length,
+        issues: summary.reduce((total, entry) => total + entry.issues.length, 0),
+        allStatesReached: summary.every((entry) => Object.values(entry.states).every(Boolean)),
+      },
+    };
+    fs.writeFileSync(PORTABLE_REPORT_PATH, `${JSON.stringify(portableReport, null, 2)}\n`, "utf8");
+
+    console.log(JSON.stringify({ outputPath, portableReportPath: PORTABLE_REPORT_PATH, summary }, null, 2));
+    if (portableReport.summary.issues > 0 || !portableReport.summary.allStatesReached) {
+      process.exitCode = 1;
+    }
   } finally {
     browser.kill();
     await new Promise((resolve) => {
@@ -565,7 +621,16 @@ async function run() {
       browser.once("exit", resolve);
       setTimeout(resolve, 2000);
     });
-    fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 });
+    const resolvedTmpDir = path.resolve(TMP_DIR);
+    const resolvedUserDataDir = path.resolve(userDataDir);
+    if (!resolvedUserDataDir.startsWith(`${resolvedTmpDir}${path.sep}`)) {
+      throw new Error(`Perfil temporario fora do diretorio de QA: ${resolvedUserDataDir}`);
+    }
+    try {
+      fs.rmSync(resolvedUserDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 });
+    } catch (error) {
+      console.warn(`Nao foi possivel remover o perfil temporario ${resolvedUserDataDir}: ${error.message}`);
+    }
   }
 }
 

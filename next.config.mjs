@@ -7,7 +7,7 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com https://upload.wikimedia.org https://*.supabase.co",
+  "img-src 'self' data: blob: https://*.supabase.co",
   "font-src 'self' data:",
   "media-src 'self' data: blob:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://challenges.cloudflare.com",
@@ -32,15 +32,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
         hostname: "**.supabase.co",
-      },
-      {
-        protocol: "https",
-        hostname: "upload.wikimedia.org",
       },
     ],
   },

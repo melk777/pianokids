@@ -16,6 +16,7 @@ export default function OrientationOverlay() {
       typeof navigator !== "undefined" &&
       (navigator.maxTouchPoints > 0 || "ontouchstart" in window);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Touch capability is a browser-only value detected after hydration.
     setIsTouchDevice(hasTouch);
   }, []);
 

@@ -31,6 +31,7 @@ export default function SongsPage() {
   useEffect(() => {
     trackEvent("library_view");
     const preferences = getStoredOnboardingPreferences();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Onboarding preferences live in browser storage and are read after hydration.
     setOnboardingPreferences(preferences);
     setOnboardingOpen(!preferences);
   }, []);

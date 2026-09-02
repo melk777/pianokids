@@ -18,12 +18,14 @@
     "validate-song-hands": "node scripts/validate-song-hands.js",
     "audit-song-library": "node scripts/audit-song-library.js",
     "audit-player-modes": "node scripts/audit-player-modes.js",
+    "qa:responsive": "node scripts/responsive-pianoengine-qa.js",
     "audit-launch-readiness": "node scripts/audit-launch-readiness.js",
     "verify-release-http": "node scripts/verify-release-http.js",
     "repair-song-library:phase1": "node scripts/repair-song-library-phase1.js && node scripts/build-song-catalog-index.js",
     "repair-song-library:phase2": "node scripts/repair-song-library-phase2.js && node scripts/build-song-catalog-index.js",
     "repair-song-library:phase3": "node scripts/repair-song-library-phase3.js && node scripts/build-song-catalog-index.js",
     "audit-song-source-fidelity": "node scripts/audit-song-source-fidelity.js",
+    "audit-song-rights": "node scripts/audit-song-rights.js",
     "build-music-pilot": "node scripts/build-pilot-song-library.js && node scripts/build-song-catalog-index.js",
     "audit-music-pilot": "node scripts/audit-pilot-song-library.js",
     "verify-frozen-music-pilot": "node scripts/verify-frozen-music-pilot.js",
@@ -62,6 +64,7 @@
     "eslint-config-next": "^16.3.0",
     "postcss": "^8.5.9",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "ws": "^8.21.3"
   }
 }

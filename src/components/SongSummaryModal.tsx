@@ -46,6 +46,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
 
   useEffect(() => {
     if (!isOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Reopening the modal intentionally starts a fresh configuration draft.
     setPracticeHandMode("right");
     setMicEnabled(false);
     setSelectedDifficulty("beginner");
