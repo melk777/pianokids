@@ -58,9 +58,9 @@ Use [`.env.example`](.env.example) como referência. Nunca envie `.env.local` ou
 | `NEXT_PUBLIC_SITE_URL` | URL pública usada em redirecionamentos |
 | `NEXT_PUBLIC_SOCIAL_FEATURES_ENABLED` | Deve permanecer `false` no primeiro lançamento |
 | `NEXT_PUBLIC_SHOW_VERIFIED_TESTIMONIALS` | Só use `true` com depoimentos reais e autorizados |
-| `COMPANY_LEGAL_NAME` | Razão social exibida nos documentos legais |
-| `COMPANY_TAX_ID` | CNPJ exibido nos documentos legais |
-| `COMPANY_ADDRESS` | Endereço empresarial exibido nos documentos legais |
+| `COMPANY_LEGAL_NAME` | Nome completo da pessoa física ou razão social exibida nos documentos legais |
+| `COMPANY_TAX_ID` | Identificação com prefixo, por exemplo `CPF: ...` ou `CNPJ: ...` |
+| `COMPANY_ADDRESS` | Endereço físico de atendimento exibido nos documentos legais |
 
 ## Teclado MIDI
 

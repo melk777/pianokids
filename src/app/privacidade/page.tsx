@@ -1,10 +1,18 @@
 import { Shield, Lock, Eye, Users, FileText } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 export default function PrivacidadePage() {
-  const controllerName = process.env.COMPANY_LEGAL_NAME || "Identificação empresarial pendente";
-  const controllerTaxId = process.env.COMPANY_TAX_ID || "CNPJ pendente";
-  const controllerAddress = process.env.COMPANY_ADDRESS || "Endereço pendente";
+  const controllerName = process.env.COMPANY_LEGAL_NAME || "Identificação do controlador pendente";
+  const controllerTaxId = process.env.COMPANY_TAX_ID || "CPF ou CNPJ pendente";
+  const controllerAddress = process.env.COMPANY_ADDRESS || "Endereço de atendimento pendente";
 
   return (
     <main className="min-h-screen pt-32 pb-24 px-6 relative overflow-hidden">

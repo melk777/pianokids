@@ -1,5 +1,13 @@
 import { AlertCircle, CheckCircle2, FileText, ShieldCheck, UserCheck } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const sections = [
   {
@@ -35,9 +43,9 @@ const sections = [
 ];
 
 export default function TermosPage() {
-  const providerName = process.env.COMPANY_LEGAL_NAME || "Identificação empresarial pendente";
-  const providerTaxId = process.env.COMPANY_TAX_ID || "CNPJ pendente";
-  const providerAddress = process.env.COMPANY_ADDRESS || "Endereço pendente";
+  const providerName = process.env.COMPANY_LEGAL_NAME || "Identificação do fornecedor pendente";
+  const providerTaxId = process.env.COMPANY_TAX_ID || "CPF ou CNPJ pendente";
+  const providerAddress = process.env.COMPANY_ADDRESS || "Endereço de atendimento pendente";
 
   return (
     <main className="relative min-h-screen overflow-hidden px-6 pb-24 pt-32">
