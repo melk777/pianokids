@@ -3,6 +3,7 @@ import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import { isMissingSupabaseSessionError } from "@/lib/supabase-auth";
 
 function getPublicSupabaseEnvironment() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -37,6 +38,18 @@ export async function createServerSupabaseReadClient() {
       },
     },
   });
+}
+
+export async function getOptionalSupabaseUser(
+  supabase: Awaited<ReturnType<typeof createServerSupabaseReadClient>>,
+) {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error && !isMissingSupabaseSessionError(error)) throw error;
+  return user;
 }
 
 export function createSupabaseAdminClient() {

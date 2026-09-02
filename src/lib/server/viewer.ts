@@ -7,7 +7,7 @@ import {
   isLocalDevAuthAllowed,
   LOCAL_DEV_AUTH_COOKIE,
 } from "@/lib/localDevAuth";
-import { createServerSupabaseReadClient } from "@/lib/server/supabase";
+import { createServerSupabaseReadClient, getOptionalSupabaseUser } from "@/lib/server/supabase";
 
 export type ServerViewer = {
   userId: string;
@@ -55,15 +55,7 @@ export async function getServerViewer(): Promise<ServerViewer | null> {
   }
 
   const supabase = await createServerSupabaseReadClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError) {
-    throw new Error(`Could not validate the authenticated user: ${authError.message}`);
-  }
-
+  const user = await getOptionalSupabaseUser(supabase);
   if (!user) return null;
 
   const { data: profile, error: profileError } = await supabase

@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { hasSpecialAccess, isActiveTrial } from "@/lib/access-control";
-import { createServerSupabaseReadClient, createSupabaseAdminClient } from "@/lib/server/supabase";
+import {
+  createServerSupabaseReadClient,
+  createSupabaseAdminClient,
+  getOptionalSupabaseUser,
+} from "@/lib/server/supabase";
 import { getStripe } from "@/lib/stripe";
 import {
   pickRelevantSubscription,
@@ -28,12 +32,7 @@ const freeResponse = {
 export async function GET() {
   try {
     const supabase = await createServerSupabaseReadClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError) throw authError;
+    const user = await getOptionalSupabaseUser(supabase);
     if (!user) {
       return NextResponse.json(
         { status: "unauthorized", hasAccess: false, isPro: false },

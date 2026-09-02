@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseReadClient } from "@/lib/server/supabase";
+import { createServerSupabaseReadClient, getOptionalSupabaseUser } from "@/lib/server/supabase";
 
 export const dynamic = "force-dynamic";
 
 async function requireTeacher() {
   const supabase = await createServerSupabaseReadClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError) throw authError;
+  const user = await getOptionalSupabaseUser(supabase);
   if (!user) return { response: NextResponse.json({ error: "Não autenticado." }, { status: 401 }) };
 
   const { data: profile, error: profileError } = await supabase

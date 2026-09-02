@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hasSpecialAccess } from "@/lib/access-control";
-import { createServerSupabaseReadClient, createSupabaseAdminClient } from "@/lib/server/supabase";
+import {
+  createServerSupabaseReadClient,
+  createSupabaseAdminClient,
+  getOptionalSupabaseUser,
+} from "@/lib/server/supabase";
 import { getStripe } from "@/lib/stripe";
 import { subscriptionBlocksCheckout } from "@/lib/stripe-subscription";
 import { getURL } from "@/lib/utils/url";
@@ -23,12 +27,7 @@ export async function POST(req: NextRequest) {
 
     const subscriptionPath = `/dashboard/subscription?plan=${planKey}`;
     const supabase = await createServerSupabaseReadClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError) throw authError;
+    const user = await getOptionalSupabaseUser(supabase);
     if (!user) {
       return NextResponse.json(
         {

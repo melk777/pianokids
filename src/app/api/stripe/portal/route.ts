@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseReadClient } from "@/lib/server/supabase";
+import { createServerSupabaseReadClient, getOptionalSupabaseUser } from "@/lib/server/supabase";
 import { getStripe } from "@/lib/stripe";
 import { getURL } from "@/lib/utils/url";
 
@@ -8,12 +8,7 @@ export const dynamic = "force-dynamic";
 export async function POST() {
   try {
     const supabase = await createServerSupabaseReadClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError) throw authError;
+    const user = await getOptionalSupabaseUser(supabase);
     if (!user) {
       return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
     }
