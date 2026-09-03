@@ -395,6 +395,19 @@ function run() {
 
   add(
     checks,
+    "stripe",
+    "chaves live bloqueadas fora da producao",
+    exists("src/lib/stripe-environment.ts") &&
+      has("src/lib/stripe.ts", /assertSafeStripeEnvironment/) &&
+      has("src/app/api/health/route.ts", /stripeEnvironment/)
+      ? "pass"
+      : "fail",
+    "Preview e desenvolvimento devem rejeitar chaves Stripe live antes de criar qualquer cobranca.",
+    "critical",
+  );
+
+  add(
+    checks,
     "catalog",
     "revisao auditiva final da biblioteca",
     "warn",
@@ -428,6 +441,19 @@ function run() {
     hasInitialSchema
       ? "Schema inicial e endurecimentos posteriores estao versionados em supabase/migrations."
       : "O repositorio ainda nao contem uma migracao inicial completa de profiles, withdrawals e politicas RLS. Exporte e versione o schema antes de operar em producao.",
+    "critical",
+  );
+
+  add(
+    checks,
+    "database",
+    "endurecimento final do Security Advisor",
+    exists("supabase/migrations/20260903000000_security_advisor_hardening.sql") &&
+      has("supabase/migrations/20260903000000_security_advisor_hardening.sql", /avatars_select_own/) &&
+      has("supabase/migrations/20260903000000_security_advisor_hardening.sql", /revoke execute on function public\.handle_new_user\(\)/i)
+      ? "pass"
+      : "fail",
+    "Funcoes de trigger nao devem ser chamadas pela API e o bucket publico nao deve permitir enumeracao ampla.",
     "critical",
   );
 

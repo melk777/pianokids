@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-09-02T23:09:16.631Z",
+  "generatedAt": "2026-09-03T20:08:01.473Z",
   "summary": {
-    "total": 47,
-    "pass": 43,
+    "total": 49,
+    "pass": 45,
     "warn": 4,
     "fail": 0,
     "criticalOpen": 2
@@ -303,6 +303,13 @@
       "details": "As 90 musicas possuem procedencia, licenca e atribuicao publicamente documentadas; o indice comercial nao usa capas externas. A verificacao tecnica nao substitui parecer juridico."
     },
     {
+      "category": "stripe",
+      "item": "chaves live bloqueadas fora da producao",
+      "status": "pass",
+      "severity": "critical",
+      "details": "Preview e desenvolvimento devem rejeitar chaves Stripe live antes de criar qualquer cobranca."
+    },
+    {
       "category": "catalog",
       "item": "revisao auditiva final da biblioteca",
       "status": "warn",
@@ -322,6 +329,13 @@
       "status": "pass",
       "severity": "critical",
       "details": "Schema inicial e endurecimentos posteriores estao versionados em supabase/migrations."
+    },
+    {
+      "category": "database",
+      "item": "endurecimento final do Security Advisor",
+      "status": "pass",
+      "severity": "critical",
+      "details": "Funcoes de trigger nao devem ser chamadas pela API e o bucket publico nao deve permitir enumeracao ampla."
     },
     {
       "category": "business",

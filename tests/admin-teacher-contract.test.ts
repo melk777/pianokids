@@ -65,3 +65,17 @@ test("withdrawal migration reserves and settles commission entries transactional
   assert.match(migration, /set settled_at = now\(\)/i);
   assert.match(migration, /revoke insert on public\.withdrawals from authenticated/i);
 });
+
+test("server-only financial tables are removed from direct client access", () => {
+  const migration = source("supabase/migrations/20260903000000_security_advisor_hardening.sql");
+  assert.match(migration, /revoke all on public\.company_expenses from anon, authenticated/i);
+  assert.match(migration, /revoke all on public\.song_recommendations from anon, authenticated/i);
+  assert.match(migration, /revoke all on public\.withdrawals from anon, authenticated/i);
+
+  const teacherWithdrawals = source("src/app/api/teacher/withdraw/route.ts");
+  const adminWithdrawals = source("src/app/api/admin/withdrawals/route.ts");
+  const adminExpenses = source("src/app/api/admin/expenses/route.ts");
+  assert.match(teacherWithdrawals, /createSupabaseAdminClient/);
+  assert.match(adminWithdrawals, /createSupabaseAdminClient/);
+  assert.match(adminExpenses, /createSupabaseAdminClient/);
+});
