@@ -4,6 +4,7 @@ import {
   createSupabaseAdminClient,
   getOptionalSupabaseUser,
 } from "@/lib/server/supabase";
+import { calculateTeacherBalances } from "@/lib/dashboard-financial";
 
 export const dynamic = "force-dynamic";
 
@@ -42,26 +43,7 @@ export async function GET() {
     if (studentsError) throw studentsError;
     if (entriesError) throw entriesError;
 
-    const now = Date.now();
-    let balanceAvailable = 0;
-    let balancePending = 0;
-    let unsettledBalance = 0;
-    let estimatedEarnings = 0;
-
-    for (const entry of entries ?? []) {
-      const amount = Number(entry.amount || 0);
-      estimatedEarnings += amount;
-      if (entry.withdrawal_id || entry.settled_at) continue;
-
-      unsettledBalance += amount;
-
-      if (new Date(entry.available_at).getTime() <= now) {
-        balanceAvailable += amount;
-      }
-    }
-
-    balanceAvailable = Math.max(0, balanceAvailable);
-    balancePending = Math.max(0, unsettledBalance - balanceAvailable);
+    const balances = calculateTeacherBalances(entries ?? []);
 
     const formattedStudents = (students ?? []).map((student) => ({
       id: student.id,
@@ -86,9 +68,9 @@ export async function GET() {
       activeStudents: (students ?? []).filter(
         (student) => student.subscription_status === "active",
       ).length,
-      balance_available: Number(balanceAvailable.toFixed(2)),
-      balance_pending: Number(balancePending.toFixed(2)),
-      estimatedEarnings: Number(estimatedEarnings.toFixed(2)),
+      balance_available: balances.balanceAvailable,
+      balance_pending: balances.balancePending,
+      estimatedEarnings: balances.estimatedEarnings,
       students: formattedStudents,
     });
   } catch (error: unknown) {

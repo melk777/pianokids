@@ -6,21 +6,32 @@ const checks = [
   { path: "/privacidade", expected: [200], contains: "Privacidade" },
   { path: "/reembolso", expected: [200], contains: "Reembolso" },
   { path: "/contato", expected: [200], contains: "Pianify" },
+  { path: "/professores", expected: [200], contains: "Professor" },
+  { path: "/login?role=teacher", expected: [200, 307] },
   { path: "/manifest.webmanifest", expected: [200], contains: "Pianify" },
   { path: "/robots.txt", expected: [200], contains: "Sitemap" },
   { path: "/sitemap.xml", expected: [200], contains: "urlset" },
-  { path: "/api/health", expected: [200], jsonStatus: "ok" },
-  { path: "/dashboard/songs", expected: [307, 401] },
+  { path: "/api/health", expected: [200], jsonStatus: "ok", expectedWhenUnconfigured: [503], jsonStatusWhenUnconfigured: "unready" },
+  { path: "/dashboard/songs", expected: [307, 401], expectedWhenUnconfigured: [503] },
   { path: "/dashboard/membership", expected: [307] },
-  { path: "/api/admin/readiness", expected: [307, 401] },
-  { path: "/api/account/export", expected: [307, 401] },
+  { path: "/api/admin/readiness", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/admin/stats", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/admin/teachers", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/admin/financial", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/admin/analytics", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/admin/expenses", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/admin/withdrawals", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/teacher/stats", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/teacher/withdraw", expected: [307, 401], expectedWhenUnconfigured: [503] },
+  { path: "/api/account/export", expected: [307, 401], expectedWhenUnconfigured: [503] },
   { path: "/songs/fur-elise.json", expected: [404] },
-  { path: "/api/songs/fur-elise", expected: [401] },
+  { path: "/api/songs/fur-elise", expected: [401], expectedWhenUnconfigured: [500] },
   {
     path: "/api/song-recommendations",
     method: "POST",
     body: { recommendation: "Teste não autenticado" },
     expected: [401],
+    expectedWhenUnconfigured: [500],
   },
   {
     path: "/api/stripe/checkout",
@@ -29,7 +40,7 @@ const checks = [
     expected: [401],
     expectedWhenUnconfigured: [500],
   },
-  { path: "/api/stripe/portal", method: "POST", expected: [307, 401] },
+  { path: "/api/stripe/portal", method: "POST", expected: [307, 401], expectedWhenUnconfigured: [503] },
   {
     path: "/api/stripe/webhook",
     method: "POST",
@@ -56,9 +67,14 @@ async function runCheck(check, unconfiguredLocal) {
   const contentOk = check.contains ? body.toLowerCase().includes(check.contains.toLowerCase()) : true;
   let jsonOk = true;
 
-  if (check.jsonStatus) {
+  const expectedJsonStatus =
+    unconfiguredLocal && check.jsonStatusWhenUnconfigured
+      ? check.jsonStatusWhenUnconfigured
+      : check.jsonStatus;
+
+  if (expectedJsonStatus) {
     try {
-      jsonOk = JSON.parse(body).status === check.jsonStatus;
+      jsonOk = JSON.parse(body).status === expectedJsonStatus;
     } catch {
       jsonOk = false;
     }
@@ -80,9 +96,8 @@ async function run() {
   const health = await healthResponse.json().catch(() => null);
   const unconfiguredLocal =
     isLocal &&
-    healthResponse.ok &&
-    Array.isArray(health?.missingConfiguration) &&
-    health.missingConfiguration.length > 0;
+    (health?.checks?.configuration === "incomplete" ||
+      (Array.isArray(health?.missingConfiguration) && health.missingConfiguration.length > 0));
   const results = [];
   for (const check of checks) results.push(await runCheck(check, unconfiguredLocal));
 

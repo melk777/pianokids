@@ -1,11 +1,13 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Users, CheckCircle, LayoutDashboard, Search, UploadCloud, FileText, X, ShieldAlert, LineChart as ChartIcon, Wallet, BarChart3, TrendingUp, MousePointerClick, Music2, AlertTriangle, Target, Rocket } from "lucide-react";
 import { createClientComponent } from "@/lib/supabase";
 import { useSFX } from "@/hooks/useSFX";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend } from "recharts";
+import { readApiJson } from "@/lib/client-api";
+import { summarizeAdminCosts } from "@/lib/dashboard-financial";
 
 interface AdminStats {
   totalStudents: number;
@@ -20,10 +22,10 @@ interface AdminStats {
 
 interface ChartDataPoint {
   name: string;
-  revenue: number;
-  profit: number;
+  faturamento: number;
+  custoProfessores: number;
   custosVariaveis: number;
-  [key: string]: unknown;
+  lucroLiquido: number;
 }
 
 interface ExpenseHistoryItem {
@@ -33,6 +35,14 @@ interface ExpenseHistoryItem {
   copyrights: string | number;
   other: string | number;
   [key: string]: unknown;
+}
+
+interface AdminWithdrawalsResponse {
+  withdrawals: AdminWithdrawal[];
+}
+
+interface AdminTeachersResponse {
+  teachers: AdminTeacher[];
 }
 
 interface FinancialStats {
@@ -173,6 +183,18 @@ function FinancialChartTooltip({
   );
 }
 
+function formatCurrencyInput(value: number): string {
+  if (!value) return "";
+  const parts = Number(value).toFixed(2).split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return parts.join(",");
+}
+
+function unmaskCurrency(value: string): number {
+  if (!value) return 0;
+  return Number(value.replace(/\./g, "").replace(",", "."));
+}
+
 export default function AdminDashboard() {
   type AdminTab = 'overview' | 'growth' | 'launch' | 'financial' | 'withdrawals' | 'teachers';
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -183,6 +205,7 @@ export default function AdminDashboard() {
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
   const [teachers, setTeachers] = useState<AdminTeacher[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   
   // Date filter (Number of months back, e.g., 3, 6, 12)
   const [financialFilter, setFinancialFilter] = useState<number>(12);
@@ -194,6 +217,8 @@ export default function AdminDashboard() {
   const [expensesData, setExpensesData] = useState<Record<string, string>>({ marketing: "", development: "", copyrights: "", other: "" });
   const [expensesHistory, setExpensesHistory] = useState<ExpenseHistoryItem[]>([]);
   const [isSavingExpenses, setIsSavingExpenses] = useState(false);
+  const [expensesError, setExpensesError] = useState<string | null>(null);
+  const [expensesMessage, setExpensesMessage] = useState<string | null>(null);
 
   // States para o Comprovante (Modal)
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<AdminWithdrawal | null>(null);
@@ -202,9 +227,9 @@ export default function AdminDashboard() {
   const [searchTeacher, setSearchTeacher] = useState("");
   
   const { playClick, playSuccess, playError } = useSFX();
-  const supabase = createClientComponent();
+  const supabase = useMemo(() => createClientComponent(), []);
 
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const [resStats, resWith, resTeach, resFin, resGrowth, resReadiness] = await Promise.all([
@@ -216,32 +241,35 @@ export default function AdminDashboard() {
         fetch('/api/admin/readiness')
       ]);
 
-      if (resStats.ok) setStats(await resStats.json());
-      if (resWith.ok) setWithdrawals((await resWith.json()).withdrawals);
-      if (resTeach.ok) setTeachers((await resTeach.json()).teachers);
-      if (resFin.ok) setFinances(await resFin.json());
-      if (resGrowth.ok) setAnalytics(await resGrowth.json());
-      if (resReadiness.ok) setReadiness(await resReadiness.json());
-      
+      const [statsData, withdrawalsData, teachersData, financialData, growthData, readinessData] =
+        await Promise.all([
+          readApiJson<AdminStats>(resStats, "Não foi possível carregar o panorama administrativo"),
+          readApiJson<AdminWithdrawalsResponse>(resWith, "Não foi possível carregar os repasses"),
+          readApiJson<AdminTeachersResponse>(resTeach, "Não foi possível carregar os professores"),
+          readApiJson<FinancialStats>(resFin, "Não foi possível carregar os dados financeiros"),
+          readApiJson<GrowthAnalytics>(resGrowth, "Não foi possível carregar os dados de crescimento"),
+          readApiJson<LaunchReadiness>(resReadiness, "Não foi possível carregar a prontidão de lançamento"),
+        ]);
+
+      setStats(statsData);
+      setWithdrawals(withdrawalsData.withdrawals || []);
+      setTeachers(teachersData.teachers || []);
+      setFinances(financialData);
+      setAnalytics(growthData);
+      setReadiness(readinessData);
+      setLoadError(null);
     } catch (e) {
       console.error(e);
+      setLoadError(e instanceof Error ? e.message : "Falha de comunicação com o painel administrativo.");
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- The effect synchronizes the dashboard with authenticated API data.
-    fetchAll();
   }, []);
 
-  const formatCurToInput = (val: number) => {
-      if (!val) return "";
-      const v = Number(val).toFixed(2);
-      const parts = v.split(".");
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      return parts.join(",");
-  };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial load synchronizes the dashboard with authenticated API data.
+    fetchAll();
+  }, [fetchAll]);
 
   const handleMaskChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
      let v = e.target.value.replace(/\D/g, "");
@@ -255,43 +283,42 @@ export default function AdminDashboard() {
      setExpensesData({ ...expensesData, [field]: parts.join(",") });
   };
 
-  const unmask = (val: string) => {
-      if (!val) return 0;
-      return Number(val.replace(/\./g, "").replace(",", "."));
-  };
-
-  const fetchExpenses = async (monthYear: string) => {
+  const fetchExpenses = useCallback(async (monthYear: string) => {
+      setExpensesError(null);
       try {
-          const res = await fetch(`/api/admin/expenses?month_year=${monthYear}`);
-          if (res.ok) {
-              const data = await res.json();
-              setExpensesData({
-                  marketing: formatCurToInput(data.marketing),
-                  development: formatCurToInput(data.development),
-                  copyrights: formatCurToInput(data.copyrights),
-                  other: formatCurToInput(data.other)
-              });
-          }
-          const resAll = await fetch('/api/admin/expenses');
-          if (resAll.ok) {
-              const dataAll = await resAll.json();
-              setExpensesHistory(dataAll.expenses || []);
-          }
+          const [res, resAll] = await Promise.all([
+            fetch(`/api/admin/expenses?month_year=${encodeURIComponent(monthYear)}`),
+            fetch('/api/admin/expenses'),
+          ]);
+          const [data, dataAll] = await Promise.all([
+            readApiJson<ExpenseHistoryItem>(res, "Não foi possível carregar as despesas do mês"),
+            readApiJson<{ expenses: ExpenseHistoryItem[] }>(resAll, "Não foi possível carregar o histórico de despesas"),
+          ]);
+
+          setExpensesData({
+              marketing: formatCurrencyInput(Number(data.marketing)),
+              development: formatCurrencyInput(Number(data.development)),
+              copyrights: formatCurrencyInput(Number(data.copyrights)),
+              other: formatCurrencyInput(Number(data.other)),
+          });
+          setExpensesHistory(dataAll.expenses || []);
       } catch (error) {
           console.error(error);
+          setExpensesError(error instanceof Error ? error.message : "Falha ao carregar as despesas.");
       }
-  };
+  }, []);
 
   useEffect(() => {
     if (activeTab === 'financial') {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- The selected month drives an authenticated API refresh.
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- The selected month synchronizes the financial form with authenticated API data.
         fetchExpenses(expenseMonthYear);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, expenseMonthYear]);
+  }, [activeTab, expenseMonthYear, fetchExpenses]);
 
   const submitExpenses = async () => {
       setIsSavingExpenses(true);
+      setExpensesError(null);
+      setExpensesMessage(null);
       playClick();
       try {
           const res = await fetch('/api/admin/expenses', {
@@ -299,20 +326,19 @@ export default function AdminDashboard() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ 
                   month_year: expenseMonthYear, 
-                  marketing: unmask(expensesData.marketing),
-                  development: unmask(expensesData.development),
-                  copyrights: unmask(expensesData.copyrights),
-                  other: unmask(expensesData.other)
+                  marketing: unmaskCurrency(expensesData.marketing),
+                  development: unmaskCurrency(expensesData.development),
+                  copyrights: unmaskCurrency(expensesData.copyrights),
+                  other: unmaskCurrency(expensesData.other)
               })
           });
-          if (res.ok) {
-              playSuccess();
-              fetchAll(); // Atualiza o gráfico Recharts instantaneamente!
-          } else {
-              playError();
-          }
-      } catch {
+          await readApiJson<{ success: boolean }>(res, "Não foi possível salvar as despesas");
+          await Promise.all([fetchAll(), fetchExpenses(expenseMonthYear)]);
+          playSuccess();
+          setExpensesMessage("Despesas salvas e DRE atualizado.");
+      } catch (error) {
           playError();
+          setExpensesError(error instanceof Error ? error.message : "Não foi possível salvar as despesas.");
       } finally {
           setIsSavingExpenses(false);
       }
@@ -321,17 +347,20 @@ export default function AdminDashboard() {
   const deleteExpense = async (mYear: string) => {
       if(!confirm(`Excluir as despesas contábeis do mês ${mYear}?`)) return;
       playClick();
+      setExpensesError(null);
+      setExpensesMessage(null);
       try {
-          const res = await fetch(`/api/admin/expenses?month_year=${mYear}`, { method: 'DELETE' });
-          if(res.ok) {
-              playSuccess();
-              if (mYear === expenseMonthYear) {
-                  setExpensesData({ marketing: "", development: "", copyrights: "", other: "" });
-              }
-              fetchAll();
+          const res = await fetch(`/api/admin/expenses?month_year=${encodeURIComponent(mYear)}`, { method: 'DELETE' });
+          await readApiJson<{ success: boolean }>(res, "Não foi possível excluir as despesas");
+          if (mYear === expenseMonthYear) {
+              setExpensesData({ marketing: "", development: "", copyrights: "", other: "" });
           }
-      } catch {
+          await Promise.all([fetchAll(), fetchExpenses(expenseMonthYear)]);
+          playSuccess();
+          setExpensesMessage(`Despesas de ${mYear} excluídas.`);
+      } catch (error) {
           playError();
+          setExpensesError(error instanceof Error ? error.message : "Não foi possível excluir as despesas.");
       }
   };
 
@@ -444,10 +473,32 @@ export default function AdminDashboard() {
     </div>;
   }
 
+  if (!stats) {
+    return (
+      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 px-6 py-10 text-center" role="alert">
+        <p className="text-base font-semibold text-red-300">Não foi possível carregar o painel administrativo.</p>
+        <p className="mt-2 text-sm text-white/45">{loadError || "Tente novamente em alguns instantes."}</p>
+        <button
+          type="button"
+          onClick={fetchAll}
+          className="mt-5 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-black transition hover:bg-white/90"
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
+
   const filteredTeachers = teachers.filter(t => t.full_name?.toLowerCase().includes(searchTeacher.toLowerCase()) || t.username?.toLowerCase().includes(searchTeacher.toLowerCase()));
 
   // Filtragem local dos X meses para o Gráfico
   const visibleChartData = finances?.chartData.slice(-financialFilter) || [];
+  const currentVariableCosts = visibleChartData.at(-1)?.custosVariaveis || 0;
+  const currentCosts = summarizeAdminCosts({
+    gatewayAndManualCosts: currentVariableCosts,
+    gatewayCosts: finances?.monthGatewayCost || 0,
+    teacherCommissions: finances?.monthTeacherPayouts || 0,
+  });
 
   return (
     <div className="space-y-6">
@@ -455,8 +506,25 @@ export default function AdminDashboard() {
         <h2 className="text-2xl font-bold flex items-center gap-2">
             <ShieldAlert className="text-cyan w-6 h-6" /> Controle Master Pianify
         </h2>
-        <button onClick={fetchAll} className="text-xs font-semibold px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full transition text-white">Atualizar Dados</button>
+        <button
+          type="button"
+          onClick={fetchAll}
+          disabled={loading}
+          className="text-xs font-semibold px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full transition text-white disabled:cursor-wait disabled:opacity-50"
+        >
+          {loading ? "Atualizando..." : "Atualizar Dados"}
+        </button>
       </div>
+
+      {loadError && (
+        <div className="flex items-start gap-3 rounded-2xl border border-red-500/20 bg-red-500/5 p-4 text-red-300" role="alert">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <div>
+            <p className="text-sm font-bold">A atualização do painel falhou.</p>
+            <p className="mt-1 text-xs text-white/55">Os dados abaixo podem estar desatualizados. {loadError}</p>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2 border-b border-white/5 mb-8 p-1">
         {[
@@ -761,19 +829,19 @@ export default function AdminDashboard() {
 
                  <div className="glass p-5 rounded-2xl border border-red-500/20 bg-red-500/5">
                      <p className="text-xs text-red-500/80 uppercase font-black mb-1">Custos Mensais Gerais</p>
-                     <p className="text-3xl text-white font-bold mb-2">R$ {(finances.monthGatewayCost + finances.monthTeacherPayouts + (visibleChartData[visibleChartData.length-1]?.custosVariaveis || 0)).toFixed(2)}</p>
+                     <p className="text-3xl text-white font-bold mb-2">R$ {currentCosts.totalCosts.toFixed(2)}</p>
                      <p className="text-[10px] font-bold text-white/30 border-t border-red-500/10 pt-2 flex flex-col gap-1">
-                        <span>Gateway (5%): R$ {finances.monthGatewayCost.toFixed(2)}</span>
-                        <span>Parcerias: R$ {finances.monthTeacherPayouts.toFixed(2)}</span>
-                        <span>Variáveis (Admin): R$ {(visibleChartData[visibleChartData.length-1]?.custosVariaveis || 0).toFixed(2)}</span>
+                        <span>Taxas Stripe: R$ {finances.monthGatewayCost.toFixed(2)}</span>
+                        <span>Comissões de professores: R$ {finances.monthTeacherPayouts.toFixed(2)}</span>
+                        <span>Despesas informadas: R$ {currentCosts.manualCosts.toFixed(2)}</span>
                      </p>
                  </div>
 
                  <div className="glass p-5 rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-transparent">
-                     <p className="text-xs text-emerald-400 uppercase font-black mb-1 flex items-center gap-1">Líquido na Conta <CheckCircle className="w-3 h-3"/></p>
+                     <p className="text-xs text-emerald-400 uppercase font-black mb-1 flex items-center gap-1">Resultado Líquido Estimado <CheckCircle className="w-3 h-3"/></p>
                      <p className="text-3xl text-emerald-400 font-black mb-2">R$ {finances.monthNetProfit.toFixed(2)}</p>
                      <p className="text-[10px] font-bold text-white/70 border-t border-emerald-500/20 pt-2">
-                        Este é o capital livre e disponível pra você.
+                         Receita reconhecida menos taxas, comissões e despesas cadastradas.
                      </p>
                  </div>
              </div>
@@ -798,7 +866,20 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                {(expensesError || expensesMessage) && (
+                  <div
+                    className={`mb-5 rounded-xl border p-3 text-sm ${
+                      expensesError
+                        ? "border-red-500/20 bg-red-500/5 text-red-300"
+                        : "border-emerald-500/20 bg-emerald-500/5 text-emerald-300"
+                    }`}
+                    role={expensesError ? "alert" : "status"}
+                  >
+                    {expensesError || expensesMessage}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                     <div>
                         <p className="text-xs text-white/50 uppercase font-bold mb-2">Tráfego & Marketing</p>
                         <div className="relative">
@@ -818,6 +899,13 @@ export default function AdminDashboard() {
                         <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-sm">R$</span>
                             <input type="text" placeholder="0,00" value={expensesData.copyrights} onChange={(e) => handleMaskChange(e, 'copyrights')} className="w-full pl-9 pr-4 py-3 bg-black border border-white/10 rounded-xl text-sm focus:border-cyan outline-none text-white transition"/>
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-xs text-white/50 uppercase font-bold mb-2">Outros Custos</p>
+                        <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-sm">R$</span>
+                            <input type="text" inputMode="decimal" placeholder="0,00" value={expensesData.other} onChange={(e) => handleMaskChange(e, 'other')} className="w-full pl-9 pr-4 py-3 bg-black border border-white/10 rounded-xl text-sm focus:border-cyan outline-none text-white transition"/>
                         </div>
                     </div>
                     <button 
@@ -841,6 +929,7 @@ export default function AdminDashboard() {
                                         <th className="py-3 px-4">Marketing</th>
                                         <th className="py-3 px-4">Dev / Servidores</th>
                                         <th className="py-3 px-4">Direitos Musicais</th>
+                                        <th className="py-3 px-4">Outros</th>
                                         <th className="py-3 pl-4 text-right">Ação</th>
                                     </tr>
                                 </thead>
@@ -851,6 +940,7 @@ export default function AdminDashboard() {
                                             <td className="py-3 px-4 opacity-80">R$ {Number(exp.marketing).toFixed(2)}</td>
                                             <td className="py-3 px-4 opacity-80">R$ {Number(exp.development).toFixed(2)}</td>
                                             <td className="py-3 px-4 opacity-80">R$ {Number(exp.copyrights).toFixed(2)}</td>
+                                            <td className="py-3 px-4 opacity-80">R$ {Number(exp.other).toFixed(2)}</td>
                                             <td className="py-3 pl-4 text-right">
                                                 <button onClick={() => setExpenseMonthYear(exp.month_year)} className="text-[10px] uppercase font-black text-cyan hover:text-white px-2 py-1 border border-cyan/20 rounded mr-2 transition">
                                                     Editar

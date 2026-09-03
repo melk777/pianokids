@@ -37,6 +37,10 @@ import {
   type PracticeRecommendation,
 } from "@/lib/practiceProgress";
 import { trackEvent } from "@/lib/analytics";
+import {
+  getDashboardDescription,
+  isStudentDashboardRole,
+} from "@/lib/dashboard-role";
 const TeacherDashboard = dynamic(() => import("@/components/TeacherDashboard"), {
   loading: () => null,
 });
@@ -106,12 +110,17 @@ export default function Dashboard() {
     };
   }, []);
 
-  // Ativação automática do microfone
+  // O microfone pertence exclusivamente à experiência de estudo.
   useEffect(() => {
-    if (isSupported && !isListening) {
+    if (
+      !profileLoading &&
+      isStudentDashboardRole(profile?.role) &&
+      isSupported &&
+      !isListening
+    ) {
       startMic();
     }
-  }, [isSupported, isListening, startMic]);
+  }, [profile?.role, profileLoading, isSupported, isListening, startMic]);
 
   const handleSubscribe = async (planKey: string) => {
     try {
@@ -208,11 +217,10 @@ export default function Dashboard() {
               </Link>!
             </h1>
             <p className="text-white/50 text-lg max-w-2xl">
-              {profile?.role === "teacher" 
-                ? "Gestão Administrativa: Acompanhe o progresso de seus alunos e gerencie seu link de indicações."
-                : profile?.trophies && profile.trophies > 1 
-                ? "Você está indo muito bem! Continue praticando para ganhar mais troféus." 
-                : "Seu primeiro troféu de boas-vindas já está na sua estante! Vamos tocar?"}
+              {getDashboardDescription(
+                profile?.role,
+                Boolean(profile?.trophies && profile.trophies > 1),
+              )}
             </p>
           </div>
 

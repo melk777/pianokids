@@ -1,16 +1,17 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { Copy, Users, DollarSign, CheckCircle, AlertCircle, LayoutDashboard, LineChart, Wallet, CreditCard, Calendar } from "lucide-react";
 import { useSFX } from "@/hooks/useSFX";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart as RechartsLineChart, Line } from 'recharts';
+import { readApiJson } from "@/lib/client-api";
 
 interface StudentData {
   id: string;
   name: string;
   username: string;
-  status: "Ativo" | "Inativo";
+  status: "Ativo" | "Em teste" | "Inativo";
   plan_interval: "Mensal" | "Anual";
   songs_completed: number;
   trophies: number;
@@ -41,6 +42,9 @@ export default function TeacherDashboard() {
   const [withdrawals, setWithdrawals] = useState<WithdrawalData[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [withdrawalsLoading, setWithdrawalsLoading] = useState(false);
+  const [withdrawalsError, setWithdrawalsError] = useState<string | null>(null);
+  const [isRequestingWithdrawal, setIsRequestingWithdrawal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [withdrawMessage, setWithdrawMessage] = useState<{type: 'success'|'error', text: string} | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -48,55 +52,60 @@ export default function TeacherDashboard() {
   
   const { playClick, playSuccess, playError } = useSFX();
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("/api/teacher/stats");
-        const data = await res.json();
-
-        if (!res.ok) {
-          setLoadError(data?.error || "Nao foi possivel carregar o dashboard do professor.");
-          setStats(null);
-          return;
-        }
-
-        setStats(data);
-        setLoadError(null);
-      } catch (err) {
-        console.error(err);
-        setLoadError("Falha de comunicacao ao carregar o painel do professor.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
+  const fetchStats = useCallback(async (showInitialLoading = true) => {
+    if (showInitialLoading) setLoading(true);
+    try {
+      const res = await fetch("/api/teacher/stats");
+      const data = await readApiJson<StatsData>(res, "Não foi possível carregar o painel do professor");
+      setStats(data);
+      setLoadError(null);
+    } catch (err) {
+      console.error(err);
+      setLoadError(err instanceof Error ? err.message : "Falha de comunicação ao carregar o painel do professor.");
+    } finally {
+      if (showInitialLoading) setLoading(false);
+    }
   }, []);
 
-  const fetchWithdrawals = async () => {
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial load synchronizes the dashboard with authenticated API data.
+    fetchStats();
+  }, [fetchStats]);
+
+  const fetchWithdrawals = useCallback(async () => {
+    setWithdrawalsLoading(true);
+    setWithdrawalsError(null);
     try {
       const res = await fetch("/api/teacher/withdraw");
-      if (res.ok) {
-        const data = await res.json();
-        setWithdrawals(data.withdrawals || []);
-      }
-    } catch {
-      console.error("Failed to fetch withdrawals");
+      const data = await readApiJson<{ withdrawals: WithdrawalData[] }>(res, "Não foi possível carregar o histórico de saques");
+      setWithdrawals(data.withdrawals || []);
+    } catch (error) {
+      console.error(error);
+      setWithdrawalsError(error instanceof Error ? error.message : "Falha ao carregar o histórico de saques.");
+    } finally {
+      setWithdrawalsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (activeTab === 'finances') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- Opening the finance tab synchronizes it with authenticated API data.
       fetchWithdrawals();
     }
-  }, [activeTab]);
+  }, [activeTab, fetchWithdrawals]);
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (stats?.referral_code) {
       playClick();
-      navigator.clipboard.writeText(`${window.location.origin}/?ref=${stats.referral_code}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      try {
+        await navigator.clipboard.writeText(`${window.location.origin}/?ref=${stats.referral_code}`);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        playError();
+        setWithdrawMessage({ type: 'error', text: "Não foi possível copiar o link. Selecione-o e copie manualmente." });
+        setTimeout(() => setWithdrawMessage(null), 5000);
+      }
     }
   };
 
@@ -109,31 +118,28 @@ export default function TeacherDashboard() {
       return;
     }
 
+    setIsRequestingWithdrawal(true);
     try {
       const res = await fetch("/api/teacher/withdraw", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ amount: stats.balance_available })
       });
-      const data = await res.json();
+      const data = await readApiJson<{ success: boolean }>(res, "Não foi possível solicitar o saque");
 
       if (data.success) {
         playSuccess();
         setWithdrawMessage({type: 'success', text: "Solicitação enviada com sucesso! Em análise."});
-        fetchWithdrawals(); // Atualiza a tabela
-        
-        // Atualização otimista no front-end para evitar duplo clique
-        setStats({
-          ...stats,
-          balance_available: 0
-        });
+        await Promise.all([fetchWithdrawals(), fetchStats(false)]);
       } else {
-         playError();
-         setWithdrawMessage({type: 'error', text: data.error || "Erro ao solicitar saque."});
+        throw new Error("O servidor não confirmou a solicitação de saque.");
       }
-    } catch {
+    } catch (error) {
       playError();
-      setWithdrawMessage({type: 'error', text: "Falha na comunicação com o servidor."});
+      setWithdrawMessage({
+        type: 'error',
+        text: error instanceof Error ? error.message : "Falha na comunicação com o servidor.",
+      });
+    } finally {
+      setIsRequestingWithdrawal(false);
     }
 
     setTimeout(() => setWithdrawMessage(null), 5000);
@@ -176,7 +182,7 @@ export default function TeacherDashboard() {
     return sortedData;
   }, [stats, chartFilter]);
 
-  if (loading) {
+  if (loading && !stats) {
     return (
       <div className="flex bg-black items-center justify-center min-h-[50vh]">
         <div className="w-8 h-8 rounded-full border-2 border-cyan border-t-transparent animate-spin" />
@@ -189,6 +195,13 @@ export default function TeacherDashboard() {
       <div className="rounded-2xl border border-red-500/15 bg-red-500/5 px-6 py-10 text-center">
         <p className="text-base font-semibold text-red-300">Nao foi possivel carregar o dashboard do professor.</p>
         <p className="mt-2 text-sm text-white/45">{loadError || "Tente novamente em alguns instantes."}</p>
+        <button
+          type="button"
+          onClick={() => fetchStats()}
+          className="mt-5 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-black transition hover:bg-white/90"
+        >
+          Tentar novamente
+        </button>
       </div>
     );
   }
@@ -234,6 +247,16 @@ export default function TeacherDashboard() {
           Afiliado Autorizado
         </div>
       </div>
+
+      {loadError && (
+        <div className="flex items-start gap-3 rounded-2xl border border-red-500/20 bg-red-500/5 p-4 text-red-300" role="alert">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          <div>
+            <p className="text-sm font-bold">A atualização do painel falhou.</p>
+            <p className="mt-1 text-xs text-white/55">Os dados abaixo podem estar desatualizados. {loadError}</p>
+          </div>
+        </div>
+      )}
 
       {renderTabsNav()}
 
@@ -433,8 +456,12 @@ export default function TeacherDashboard() {
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-[10px] font-black border border-emerald-500/20">
                               <CheckCircle className="w-3 h-3" /> ATIVO
                             </span>
+                          ) : student.status === "Em teste" ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-300 text-[10px] font-black border border-amber-500/20">
+                              EM TESTE
+                            </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 text-white/40 text-[10px] font-black border border-white/10">PENDENTE</span>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 text-white/40 text-[10px] font-black border border-white/10">INATIVO</span>
                           )}
                         </td>
                       </tr>
@@ -465,10 +492,24 @@ export default function TeacherDashboard() {
                     ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
                     : "bg-red-500/10 border-red-500/20 text-red-400"
                 }`}
+                role={withdrawMessage.type === 'error' ? 'alert' : 'status'}
               >
                 {withdrawMessage.type === 'success' ? <CheckCircle className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
                 <p className="text-sm font-medium">{withdrawMessage.text}</p>
               </motion.div>
+            )}
+
+            {withdrawalsError && (
+              <div className="flex items-center justify-between gap-4 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-red-300" role="alert">
+                <p className="text-sm">{withdrawalsError}</p>
+                <button
+                  type="button"
+                  onClick={fetchWithdrawals}
+                  className="shrink-0 rounded-lg border border-red-300/20 px-3 py-1.5 text-xs font-bold transition hover:bg-red-300/10"
+                >
+                  Tentar novamente
+                </button>
+              </div>
             )}
 
             <div className="grid lg:grid-cols-2 gap-6">
@@ -488,10 +529,10 @@ export default function TeacherDashboard() {
 
                  <button
                     onClick={handleWithdrawRequest}
-                    disabled={stats.balance_available <= 0}
+                    disabled={stats.balance_available <= 0 || isRequestingWithdrawal}
                     className="w-full py-4 bg-emerald-500 text-white font-bold rounded-2xl hover:bg-emerald-400 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_40px_rgba(16,185,129,0.4)]"
                   >
-                    Solicitar Saque Total
+                    {isRequestingWithdrawal ? "Enviando solicitação..." : "Solicitar Saque Total"}
                   </button>
               </div>
 
@@ -500,7 +541,11 @@ export default function TeacherDashboard() {
                    <CreditCard className="w-4 h-4" /> Histórico de Saques
                  </h3>
                  <div className="flex-1 overflow-y-auto w-full custom-scrollbar max-h-[300px]">
-                   {withdrawals.length === 0 ? (
+                   {withdrawalsLoading ? (
+                     <div className="flex h-full min-h-40 items-center justify-center p-8" aria-label="Carregando saques">
+                       <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan border-t-transparent" />
+                     </div>
+                   ) : withdrawals.length === 0 ? (
                      <div className="flex flex-col items-center justify-center h-full text-white/20 p-8">
                        <Calendar className="w-8 h-8 mb-2" />
                        <p className="text-sm font-medium">Nenhum saque solicitado ainda</p>

@@ -22,6 +22,7 @@ import { useSFX } from "@/hooks/useSFX";
 import { usePathname, useRouter } from "next/navigation";
 import { useProfile } from "@/hooks/useProfile";
 import Image from "next/image";
+import { getDashboardLabel, shouldShowPlanLink } from "@/lib/dashboard-role";
 
 export default function Header() {
   const supabase = useMemo(
@@ -36,6 +37,8 @@ export default function Header() {
   const { isPlaying, toggleBackgroundMusic } = useBackgroundMusic();
   const { playClick } = useSFX();
   const { profile } = useProfile();
+  const dashboardLabel = getDashboardLabel(profile?.role);
+  const showPlanLink = shouldShowPlanLink(profile?.role, Boolean(user));
 
   useEffect(() => {
     if (!supabase) return;
@@ -104,7 +107,7 @@ export default function Header() {
               {isPlaying ? <Volume2 className="w-4 h-4 icon-gradient" /> : <VolumeX className="w-4 h-4" />}
             </button>
             
-            {profile?.role !== "teacher" && (
+            {showPlanLink && (
               <button onClick={scrollToPricing} className={navLinkClass}>
                 <Sparkles className="w-3.5 h-3.5" />
                 Ver Planos
@@ -151,7 +154,7 @@ export default function Header() {
 
                 <Link href="/dashboard" onClick={() => playClick()} className="flex items-center gap-1.5 ml-1 px-5 py-2 text-[13px] font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-white/90">
                   <LayoutDashboard className="w-3.5 h-3.5" />
-                  {profile?.role === "teacher" ? "Painel do Parceiro" : "Painel do Aluno"}
+                  {dashboardLabel}
                 </Link>
                 <button onClick={handleLogout} className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-red-400/70 hover:text-red-400 transition-colors duration-200 rounded-xl hover:bg-red-400/5 group">
                   <LogOut className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
@@ -188,7 +191,7 @@ export default function Header() {
         <div className="fixed inset-x-0 top-[72px] z-40 md:hidden transition-all duration-200">
             <div className="mx-4 rounded-2xl bg-black/80 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.5)] overflow-hidden">
               <nav className="flex flex-col p-3 gap-1">
-                {profile?.role !== "teacher" && (
+                {showPlanLink && (
                   <button onClick={scrollToPricing} className={mobileLinkClass}>
                     <Sparkles className="w-4 h-4 icon-gradient" />
                     Ver Planos
@@ -227,7 +230,7 @@ export default function Header() {
                     </Link>
                     <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3.5 text-sm font-semibold text-black bg-white rounded-xl">
                       <LayoutDashboard className="w-4 h-4 text-black" />
-                      {profile?.role === "teacher" ? "Painel do Parceiro" : "Painel do Aluno"}
+                      {dashboardLabel}
                     </Link>
                     <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-400/80 hover:text-red-400 hover:bg-red-400/5 rounded-xl">
                       <LogOut className="w-4 h-4" />
