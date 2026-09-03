@@ -7,8 +7,14 @@ export interface StripeEnvironmentCheck {
 }
 
 export function getStripeKeyMode(key: string | undefined): StripeKeyMode {
-  if (key?.startsWith("sk_live_")) return "live";
-  if (key?.startsWith("sk_test_")) return "test";
+  const normalizedKey = key?.trim();
+
+  if (normalizedKey?.startsWith("sk_live_") || normalizedKey?.startsWith("rk_live_")) {
+    return "live";
+  }
+  if (normalizedKey?.startsWith("sk_test_") || normalizedKey?.startsWith("rk_test_")) {
+    return "test";
+  }
   return "unknown";
 }
 

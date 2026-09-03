@@ -5,7 +5,11 @@ import { evaluateStripeEnvironment, getStripeKeyMode } from "../src/lib/stripe-e
 test("identifies live and test Stripe keys without exposing their values", () => {
   assert.equal(getStripeKeyMode("sk_live_example"), "live");
   assert.equal(getStripeKeyMode("sk_test_example"), "test");
+  assert.equal(getStripeKeyMode("rk_live_example"), "live");
+  assert.equal(getStripeKeyMode("rk_test_example"), "test");
+  assert.equal(getStripeKeyMode("  rk_live_example  "), "live");
   assert.equal(getStripeKeyMode("invalid"), "unknown");
+  assert.equal(getStripeKeyMode(undefined), "unknown");
 });
 
 test("allows live Stripe only in Vercel production", () => {
