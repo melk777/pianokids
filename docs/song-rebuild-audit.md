@@ -1,13 +1,13 @@
 # Auditoria das musicas reconstruidas
 
-Gerado em 2026-09-02T23:07:00.694Z. A comparacao e feita contra os arquivos canonicos preservados por checksum. As musicas continuam pendentes de revisao auditiva do proprietario.
+Gerado em 2026-09-25T19:52:21.343Z. A comparacao e feita contra os arquivos canonicos preservados por checksum. As musicas continuam pendentes de revisao auditiva do proprietario.
 
 ## Resumo
 
-- Reconstruidas: 82
-- Prontas para revisao: 82
+- Reconstruidas: 104
+- Prontas para revisao: 104
 - Bloqueadas: 0
-- Fidelidade exata: 82/82
+- Fidelidade exata: 104/104
 - Lote piloto intacto: 8/8
 
 | Musica | Estado | Easy/Medium/Hard | Faixa MIDI | Fidelidade | Erros |
@@ -94,3 +94,25 @@ Gerado em 2026-09-02T23:07:00.694Z. A comparacao e feita contra os arquivos cano
 | Meu Pintinho Amarelinho | ready_for_owner_review | 82/98/146 | 36-69 | exata | - |
 | Parabéns pra Você | ready_for_owner_review | 25/33/57 | 36-72 | exata | - |
 | Bella Ciao | ready_for_owner_review | 80/96/144 | 38-70 | exata | - |
+| Que Segurança | ready_for_owner_review | 73/105/285 | 43-76 | exata | - |
+| A Deus Demos Glória | ready_for_owner_review | 90/138/356 | 43-74 | exata | - |
+| Alegria ao Mundo | ready_for_owner_review | 57/76/186 | 43-74 | exata | - |
+| Eis dos Anjos a Harmonia | ready_for_owner_review | 77/115/284 | 40-74 | exata | - |
+| Vem, Tu, Onipotente | ready_for_owner_review | 41/53/141 | 43-76 | exata | - |
+| Ó Deus, Nosso Socorro | ready_for_owner_review | 28/42/103 | 43-74 | exata | - |
+| Guiado pela Mão | ready_for_owner_review | 73/105/265 | 45-76 | exata | - |
+| Formoso Senhor Jesus | ready_for_owner_review | 42/70/159 | 43-77 | exata | - |
+| O Primeiro Natal | ready_for_owner_review | 73/109/260 | 45-74 | exata | - |
+| Junto ao Rio | ready_for_owner_review | 70/99/267 | 45-74 | exata | - |
+| Louvai ao Senhor, Rei Poderoso | ready_for_owner_review | 55/83/199 | 41-74 | exata | - |
+| Sou Teu, Senhor | ready_for_owner_review | 69/97/272 | 43-74 | exata | - |
+| Mais Amor a Ti | ready_for_owner_review | 40/68/157 | 44-73 | exata | - |
+| Mil Línguas Eu Quisera Ter | ready_for_owner_review | 29/51/106 | 43-74 | exata | - |
+| Tal Qual Estou | ready_for_owner_review | 40/65/141 | 45-74 | exata | - |
+| Minha Fé Contempla a Ti | ready_for_owner_review | 38/64/148 | 42-74 | exata | - |
+| Anjos das Alturas | ready_for_owner_review | 49/73/179 | 41-75 | exata | - |
+| Como um Pastor | ready_for_owner_review | 64/92/246 | 45-74 | exata | - |
+| Abre Meus Olhos | ready_for_owner_review | 61/84/236 | 44-72 | exata | - |
+| Jesus Chama | ready_for_owner_review | 30/52/119 | 44-73 | exata | - |
+| Doxologia | ready_for_owner_review | 34/68/124 | 43-74 | exata | - |
+| Comigo Habita | ready_for_owner_review | 40/68/156 | 42-71 | exata | - |

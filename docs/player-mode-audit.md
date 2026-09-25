@@ -1,10 +1,10 @@
 # Auditoria dos modos reais do player
 
-Gerado em: 2026-09-03T20:07:57.357Z
+Gerado em: 2026-09-25T19:48:46.531Z
 
-Musicas: 90
-Modos testados: 810
-OK: 810
+Musicas: 112
+Modos testados: 1008
+OK: 1008
 Revisao: 0
 Precisa correcao: 0
 

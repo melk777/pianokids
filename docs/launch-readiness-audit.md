@@ -1,6 +1,6 @@
 # Auditoria de pre-lancamento comercial
 
-Gerado em: 2026-09-03T20:08:01.474Z
+Gerado em: 2026-09-25T19:50:55.643Z
 
 ## Resumo
 
@@ -26,9 +26,9 @@ Gerado em: 2026-09-03T20:08:01.474Z
 | OK | env | COMPANY_LEGAL_NAME | high | Presente em .env.example. |
 | OK | env | COMPANY_TAX_ID | high | Presente em .env.example. |
 | OK | env | COMPANY_ADDRESS | high | Presente em .env.example. |
-| WARN | env-local | .env.local completo | medium | Arquivo local protegido, mas faltam 12 chaves obrigatorias: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_TURNSTILE_SITE_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID, NEXT_PUBLIC_SITE_URL, COMPANY_LEGAL_NAME, COMPANY_TAX_ID, COMPANY_ADDRESS. |
+| WARN | env-local | .env.local completo | medium | Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor. |
 | OK | build | script build | high | Script de build configurado. |
-| OK | dependencies | baseline segura do Next.js | critical | Next.js ^16.3.0 com baseline de seguranca atualizada; o CI tambem executa npm audit. |
+| OK | dependencies | baseline segura do Next.js | critical | Next.js ^16.3.6 com baseline de seguranca atualizada; o CI tambem executa npm audit. |
 | OK | qa | QA responsivo automatizado | high | Quatro viewports concluiram tutorial/orientacao, partida, interacoes e tela final sem problemas detectados. |
 | OK | analytics | tracking interno do funil | high | Cliente, API e tabela versionada de analytics interno devem existir para medir conversao. |
 | OK | qa | auditoria de modos do player | high | Auditoria de modos do player esta configurada. |
@@ -54,7 +54,7 @@ Gerado em: 2026-09-03T20:08:01.474Z
 | OK | admin-api | atualizacao idempotente de saques | critical | O total pago deve ser recalculado a partir dos saques, sem somar novamente a cada clique. |
 | OK | privacy | analytics sem IP bruto | high | O funil nao precisa persistir o endereco IP do visitante. |
 | OK | security-headers | headers de seguranca | medium | Headers basicos de seguranca configurados no Next. |
-| OK | catalog | biblioteca carregavel | high | 90 arquivos de musica encontrados e indice publico existe. |
+| OK | catalog | biblioteca carregavel | high | 112 arquivos de musica encontrados e indice publico existe. |
 | OK | legal | direitos autorais das musicas | critical | As 90 musicas possuem procedencia, licenca e atribuicao publicamente documentadas; o indice comercial nao usa capas externas. A verificacao tecnica nao substitui parecer juridico. |
 | OK | stripe | chaves live bloqueadas fora da producao | critical | Preview e desenvolvimento devem rejeitar chaves Stripe live antes de criar qualquer cobranca. |
 | WARN | catalog | revisao auditiva final da biblioteca | critical | As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao. |

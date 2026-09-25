@@ -1,4 +1,4 @@
-module.exports = {
+const metadata = {
   "borboletinha": {
     title: "Borboletinha",
     artist: "Folclore Brasileiro",
@@ -639,3 +639,10 @@ module.exports = {
     isPremium: true,
   },
 };
+
+// Catalog metadata for the wave 5 hymns is kept next to their sources.
+for (const hymn of require("../music-sources/rebuild/wave-5-hymns")) {
+  metadata[hymn.id] = hymn.catalog;
+}
+
+module.exports = metadata;

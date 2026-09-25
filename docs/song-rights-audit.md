@@ -1,11 +1,11 @@
 # Auditoria de direitos e atribuicoes do catalogo
 
-Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a consistencia do registro de procedencia; ela nao substitui parecer juridico individual.
+Gerado em 2026-09-25T19:48:45.656Z. Esta auditoria verifica a existencia e a consistencia do registro de procedencia; ela nao substitui parecer juridico individual.
 
 ## Resumo
 
-- Musicas verificadas: 90
-- Procedencias documentadas: 90
+- Musicas verificadas: 112
+- Procedencias documentadas: 112
 - Bloqueadas: 0
 - Capas externas no indice: 0
 - Pagina publica de creditos: sim
@@ -24,9 +24,13 @@ Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a con
 | Musica | Artista | Licenca | Estado editorial | Direitos | Pendencias |
 | --- | --- | --- | --- | --- | --- |
 | A Canoa Virou | Tradicional | Public Domain (traditional Brazilian musical work; only the two-stanza traditional form is used); third-party reference files are not redistributed | pending_owner_review | documented | - |
+| A Deus Demos Glória | William H. Doane | Public Domain | pending_owner_review | documented | - |
 | A Dona Aranha | Tradicional | Public Domain (traditional nursery-rhyme melody); Portuguese lyrics and third-party arrangements are not redistributed | pending_owner_review | documented | - |
+| Abre Meus Olhos | Clara H. Scott | Public Domain | pending_owner_review | documented | - |
+| Alegria ao Mundo | arr. Lowell Mason | Public Domain | pending_owner_review | documented | - |
 | Alvo Mais que a Neve | James Nicholson | Public Domain | pending_owner_review | documented | - |
 | Amazing Grace | John Newton | Public Domain | pending_owner_review | documented | - |
+| Anjos das Alturas | Henry Smart | Public Domain | pending_owner_review | documented | - |
 | Aos Pes da Cruz | Isaac Watts / Ralph E. Hudson | Public Domain | pending_owner_review | documented | - |
 | Atirei o Pau no Gato | Tradicional | Public Domain (traditional Brazilian musical work); third-party reference files and arrangements are not redistributed | pending_owner_review | documented | - |
 | Ave Maria | Franz Schubert | Public Domain | pending_owner_review | documented | - |
@@ -40,15 +44,20 @@ Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a con
 | Fantasia-Impromptu | Frédéric Chopin | Public Domain | pending_owner_review | documented | - |
 | Chuvas de Graca | Daniel W. Whittle | Public Domain | pending_owner_review | documented | - |
 | Ciranda, Cirandinha | Tradicional | CC BY-SA 3.0 (reference transcription); traditional composition in the public domain | pending_owner_review | documented | - |
+| Comigo Habita | William H. Monk | Public Domain | pending_owner_review | documented | - |
+| Como um Pastor | William B. Bradbury | Public Domain | pending_owner_review | documented | - |
 | Conta as Bencaos | Johnson Oatman Jr. | Public Domain | pending_owner_review | documented | - |
 | Coroai | Matthew Bridges | Public Domain | pending_owner_review | documented | - |
 | O Cravo Bem Temperado II: Prelúdio II | Johann Sebastian Bach | Public Domain | pending_owner_review | documented | - |
 | Deus Velara por Ti | Civilla D. Martin | Public Domain | pending_owner_review | documented | - |
 | Dumka | Piotr Ilitch Tchaikovsky | Public Domain | pending_owner_review | documented | - |
+| Doxologia | Louis Bourgeois | Public Domain | pending_owner_review | documented | - |
+| Eis dos Anjos a Harmonia | Felix Mendelssohn | Public Domain | pending_owner_review | documented | - |
 | Escravos de Jó | Tradicional | CC BY-SA 3.0 (score transcription); traditional melody public domain | pending_owner_review | documented | - |
 | Estudo em Lá Menor | Frédéric Chopin | Public Domain | pending_owner_review | documented | - |
 | Fantasia em Ré Menor | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
 | Firme nas Promessas | Russell Kelso Carter | Public Domain | pending_owner_review | documented | - |
+| Formoso Senhor Jesus | Melodia silesiana | Public Domain | pending_owner_review | documented | - |
 | Fuga em Mi Bemol Maior, KV 153/375f | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
 | Fuga sobre o Nome de Bach | Nikolai Rimsky-Korsakov | Public Domain | pending_owner_review | documented | - |
 | Fragmento de Fuga | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
@@ -56,14 +65,21 @@ Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a con
 | Para Elisa | Ludwig van Beethoven | Public Domain | pending_owner_review | documented | - |
 | Giga em Sol Maior | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
 | Gloria, Gloria, Aleluia | Julia Ward Howe | Public Domain | pending_owner_review | documented | - |
+| Guiado pela Mão | William B. Bradbury | Public Domain | pending_owner_review | documented | - |
 | Gymnopédie nº 1 | Erik Satie | Public Domain | pending_owner_review | documented | - |
 | Na Gruta do Rei da Montanha | Edvard Grieg | Public Domain | pending_owner_review | documented | - |
+| Jesus Chama | William H. Jude | Public Domain | pending_owner_review | documented | - |
 | Jubiloso, Te Adoramos | Henry van Dyke / Beethoven | Public Domain | pending_owner_review | documented | - |
+| Junto ao Rio | Robert Lowry | Public Domain | pending_owner_review | documented | - |
+| Louvai ao Senhor, Rei Poderoso | Stralsund Gesangbuch | Public Domain | pending_owner_review | documented | - |
+| Mais Amor a Ti | William H. Doane | Public Domain | pending_owner_review | documented | - |
 | Mais Perto Quero Estar | Sarah Flower Adams | Public Domain | pending_owner_review | documented | - |
 | Manso e Suave | Will L. Thompson | Public Domain | pending_owner_review | documented | - |
 | Marcha dos Soldadinhos de Madeira | Piotr Ilitch Tchaikovsky | Public Domain | pending_owner_review | documented | - |
 | Marcha Fúnebre, KV 453a | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
 | Meu Pintinho Amarelinho | Folclore Brasileiro | Public Domain traditional children's song; modern recordings and branded arrangements are excluded | pending_owner_review | documented | - |
+| Mil Línguas Eu Quisera Ter | Carl G. Gläser | Public Domain | pending_owner_review | documented | - |
+| Minha Fé Contempla a Ti | Lowell Mason | Public Domain | pending_owner_review | documented | - |
 | Minha Machadinha | Tradicional | Public Domain (traditional musical work); third-party reference files are not redistributed | pending_owner_review | documented | - |
 | Minueto em Sol Maior | Christian Petzold | Public Domain | pending_owner_review | documented | - |
 | Valsa do Minuto (Op. 64 nº 1) | Frédéric Chopin | Public Domain | pending_owner_review | documented | - |
@@ -73,6 +89,8 @@ Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a con
 | Noite Feliz | Franz Xaver Gruber | Public Domain | pending_owner_review | documented | - |
 | Noite e Dia | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
 | O Cravo e a Rosa | Tradicional | Public Domain | pending_owner_review | documented | - |
+| Ó Deus, Nosso Socorro | William Croft | Public Domain | pending_owner_review | documented | - |
+| O Primeiro Natal | Tradicional inglês | Public Domain | pending_owner_review | documented | - |
 | O Sapo não Lava o Pé | Folclore Brasileiro | Public Domain (traditional Brazilian children's song); third-party reference files are not redistributed | pending_owner_review | documented | - |
 | O Vem, O Vem, Emanuel | Tradicional | Public Domain | pending_owner_review | documented | - |
 | Ode à Alegria | Ludwig van Beethoven | Public Domain | pending_owner_review | documented | - |
@@ -93,6 +111,7 @@ Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a con
 | Prelúdio nº 6 | Frédéric Chopin | Public Domain | pending_owner_review | documented | - |
 | Prelúdio nº 7 | Frédéric Chopin | Public Domain | pending_owner_review | documented | - |
 | Primeira Arabesca | Claude Debussy | Public Domain | pending_owner_review | documented | - |
+| Que Segurança | Phoebe P. Knapp | Public Domain | pending_owner_review | documented | - |
 | Rocha Eterna | Augustus Toplady | Public Domain | pending_owner_review | documented | - |
 | Samba Lelê | Tradicional | Public Domain (traditional Brazilian folk song) | pending_owner_review | documented | - |
 | Santo, Santo, Santo | Reginald Heber | Public Domain | pending_owner_review | documented | - |
@@ -101,8 +120,10 @@ Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a con
 | Sonata nº 2 em Si Bemol Menor: Finale | Frédéric Chopin | Public Domain | pending_owner_review | documented | - |
 | Sonata em Dó Maior (Fragmento) | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
 | Sou Feliz com Jesus | Horatio Spafford | Public Domain | pending_owner_review | documented | - |
+| Sou Teu, Senhor | William H. Doane | Public Domain | pending_owner_review | documented | - |
 | Clair de Lune | Claude Debussy | Public Domain | pending_owner_review | documented | - |
 | Lago dos Cisnes: Dança Napolitana | Piotr Ilitch Tchaikovsky | Public Domain | pending_owner_review | documented | - |
+| Tal Qual Estou | William B. Bradbury | Public Domain | pending_owner_review | documented | - |
 | Tao Sublime Sacramento | Tradicional Liturgico | Public Domain | pending_owner_review | documented | - |
 | Teresinha de Jesus | Tradicional | Public Domain | pending_owner_review | documented | - |
 | As Estações: Agosto | Piotr Ilitch Tchaikovsky | Public Domain | pending_owner_review | documented | - |
@@ -112,4 +133,5 @@ Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a con
 | Três Novos Estudos nº 1 em Fá Menor | Frédéric Chopin | Public Domain | pending_owner_review | documented | - |
 | Marcha Turca | Wolfgang Amadeus Mozart | Public Domain | pending_owner_review | documented | - |
 | Tutu Marambá | Tradicional | Public Domain (traditional Brazilian lullaby and 1930 edition); historical scan not bundled | pending_owner_review | documented | - |
+| Vem, Tu, Onipotente | Felice de Giardini | Public Domain | pending_owner_review | documented | - |
 | Vinde Fieis | John Francis Wade | Public Domain | pending_owner_review | documented | - |

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T20:08:01.473Z",
+  "generatedAt": "2026-09-25T19:50:55.642Z",
   "summary": {
     "total": 49,
     "pass": 45,
@@ -97,7 +97,7 @@
       "item": ".env.local completo",
       "status": "warn",
       "severity": "medium",
-      "details": "Arquivo local protegido, mas faltam 12 chaves obrigatorias: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_TURNSTILE_SITE_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID, NEXT_PUBLIC_SITE_URL, COMPANY_LEGAL_NAME, COMPANY_TAX_ID, COMPANY_ADDRESS."
+      "details": "Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor."
     },
     {
       "category": "build",
@@ -111,7 +111,7 @@
       "item": "baseline segura do Next.js",
       "status": "pass",
       "severity": "critical",
-      "details": "Next.js ^16.3.0 com baseline de seguranca atualizada; o CI tambem executa npm audit."
+      "details": "Next.js ^16.3.6 com baseline de seguranca atualizada; o CI tambem executa npm audit."
     },
     {
       "category": "qa",
@@ -293,7 +293,7 @@
       "item": "biblioteca carregavel",
       "status": "pass",
       "severity": "high",
-      "details": "90 arquivos de musica encontrados e indice publico existe."
+      "details": "112 arquivos de musica encontrados e indice publico existe."
     },
     {
       "category": "legal",

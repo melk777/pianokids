@@ -15,7 +15,8 @@ export default defineConfig([
     },
   },
   {
-    files: ["scripts/**/*.{js,cjs}"],
+    // CommonJS build scripts and the music source manifests they load.
+    files: ["scripts/**/*.{js,cjs}", "music-sources/**/*.js"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
       "@typescript-eslint/no-unused-vars": "warn",

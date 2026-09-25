@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-02T23:07:00.694Z",
+  "generatedAt": "2026-09-25T19:52:21.343Z",
   "summary": {
-    "songs": 82,
-    "readyForOwnerReview": 82,
+    "songs": 104,
+    "readyForOwnerReview": 104,
     "blocked": 0,
-    "exactFidelity": 82,
+    "exactFidelity": 104,
     "frozenPilot": 8
   },
   "songs": [
@@ -1887,6 +1887,512 @@
       "fidelity": {
         "expected": 144,
         "actual": 144,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "que-seguranca",
+      "title": "Que Segurança",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 73,
+        "medium": 105,
+        "hard": 285
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 76
+      },
+      "fidelity": {
+        "expected": 285,
+        "actual": 285,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "a-deus-demos-gloria",
+      "title": "A Deus Demos Glória",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 90,
+        "medium": 138,
+        "hard": 356
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 356,
+        "actual": 356,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "alegria-ao-mundo",
+      "title": "Alegria ao Mundo",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 57,
+        "medium": 76,
+        "hard": 186
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 186,
+        "actual": 186,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "eis-dos-anjos-a-harmonia",
+      "title": "Eis dos Anjos a Harmonia",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 77,
+        "medium": 115,
+        "hard": 284
+      },
+      "range": {
+        "minMidi": 40,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 284,
+        "actual": 284,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "vem-tu-onipotente",
+      "title": "Vem, Tu, Onipotente",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 41,
+        "medium": 53,
+        "hard": 141
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 76
+      },
+      "fidelity": {
+        "expected": 141,
+        "actual": 141,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "o-deus-nosso-socorro",
+      "title": "Ó Deus, Nosso Socorro",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 28,
+        "medium": 42,
+        "hard": 103
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 103,
+        "actual": 103,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "guiado-pela-mao",
+      "title": "Guiado pela Mão",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 73,
+        "medium": 105,
+        "hard": 265
+      },
+      "range": {
+        "minMidi": 45,
+        "maxMidi": 76
+      },
+      "fidelity": {
+        "expected": 265,
+        "actual": 265,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "formoso-senhor-jesus",
+      "title": "Formoso Senhor Jesus",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 42,
+        "medium": 70,
+        "hard": 159
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 77
+      },
+      "fidelity": {
+        "expected": 159,
+        "actual": 159,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "o-primeiro-natal",
+      "title": "O Primeiro Natal",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 73,
+        "medium": 109,
+        "hard": 260
+      },
+      "range": {
+        "minMidi": 45,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 260,
+        "actual": 260,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "junto-ao-rio",
+      "title": "Junto ao Rio",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 70,
+        "medium": 99,
+        "hard": 267
+      },
+      "range": {
+        "minMidi": 45,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 267,
+        "actual": 267,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "louvai-ao-senhor-rei-poderoso",
+      "title": "Louvai ao Senhor, Rei Poderoso",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 55,
+        "medium": 83,
+        "hard": 199
+      },
+      "range": {
+        "minMidi": 41,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 199,
+        "actual": 199,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "sou-teu-senhor",
+      "title": "Sou Teu, Senhor",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 69,
+        "medium": 97,
+        "hard": 272
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 272,
+        "actual": 272,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "mais-amor-a-ti",
+      "title": "Mais Amor a Ti",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 40,
+        "medium": 68,
+        "hard": 157
+      },
+      "range": {
+        "minMidi": 44,
+        "maxMidi": 73
+      },
+      "fidelity": {
+        "expected": 157,
+        "actual": 157,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "mil-linguas-eu-quisera-ter",
+      "title": "Mil Línguas Eu Quisera Ter",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 29,
+        "medium": 51,
+        "hard": 106
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 106,
+        "actual": 106,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "tal-qual-estou",
+      "title": "Tal Qual Estou",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 40,
+        "medium": 65,
+        "hard": 141
+      },
+      "range": {
+        "minMidi": 45,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 141,
+        "actual": 141,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "minha-fe-contempla-a-ti",
+      "title": "Minha Fé Contempla a Ti",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 38,
+        "medium": 64,
+        "hard": 148
+      },
+      "range": {
+        "minMidi": 42,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 148,
+        "actual": 148,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "anjos-das-alturas",
+      "title": "Anjos das Alturas",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 49,
+        "medium": 73,
+        "hard": 179
+      },
+      "range": {
+        "minMidi": 41,
+        "maxMidi": 75
+      },
+      "fidelity": {
+        "expected": 179,
+        "actual": 179,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "como-um-pastor",
+      "title": "Como um Pastor",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 64,
+        "medium": 92,
+        "hard": 246
+      },
+      "range": {
+        "minMidi": 45,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 246,
+        "actual": 246,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "abre-meus-olhos",
+      "title": "Abre Meus Olhos",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 61,
+        "medium": 84,
+        "hard": 236
+      },
+      "range": {
+        "minMidi": 44,
+        "maxMidi": 72
+      },
+      "fidelity": {
+        "expected": 236,
+        "actual": 236,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "jesus-chama",
+      "title": "Jesus Chama",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 30,
+        "medium": 52,
+        "hard": 119
+      },
+      "range": {
+        "minMidi": 44,
+        "maxMidi": 73
+      },
+      "fidelity": {
+        "expected": 119,
+        "actual": 119,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "doxologia",
+      "title": "Doxologia",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 34,
+        "medium": 68,
+        "hard": 124
+      },
+      "range": {
+        "minMidi": 43,
+        "maxMidi": 74
+      },
+      "fidelity": {
+        "expected": 124,
+        "actual": 124,
+        "missing": 0,
+        "extra": 0,
+        "exact": true
+      },
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "comigo-habita",
+      "title": "Comigo Habita",
+      "status": "ready_for_owner_review",
+      "counts": {
+        "easy": 40,
+        "medium": 68,
+        "hard": 156
+      },
+      "range": {
+        "minMidi": 42,
+        "maxMidi": 71
+      },
+      "fidelity": {
+        "expected": 156,
+        "actual": 156,
         "missing": 0,
         "extra": 0,
         "exact": true

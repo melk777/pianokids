@@ -1,16 +1,16 @@
 # Auditoria de fidelidade musical por procedencia
 
-Gerado em 2026-09-02T23:06:52.099Z.
+Gerado em 2026-09-25T19:48:44.883Z.
 
 Este relatorio nao usa mais o proprio MIDI legado como prova de fidelidade. Uma musica so e classificada como canonica quando possui fonte independente, edicao, licenca, data de verificacao e comparacao exata com o resultado final.
 
 ## Resumo
 
-- Catalogo total: 90
-- Fontes canonicas prontas para revisao: 90
+- Catalogo total: 112
+- Fontes canonicas prontas para revisao: 112
 - Fontes canonicas bloqueadas: 0
 - Legado ainda sem verificacao independente: 0
-- Fidelidade exata comprovada: 90
+- Fidelidade exata comprovada: 112
 
 ## Lote canonico
 
@@ -106,6 +106,28 @@ Este relatorio nao usa mais o proprio MIDI legado como prova de fidelidade. Uma 
 | Meu Pintinho Amarelinho | notation-json-derived-midi | Public Domain traditional children's song; modern recordings and branded arrangements are excluded | sim | ready_for_owner_review | - |
 | Parabéns pra Você | notation-json-derived-midi | Public Domain melody from Good Morning to All (1893); instrumental only; Portuguese lyrics are not bundled | sim | ready_for_owner_review | - |
 | Bella Ciao | notation-json-derived-midi | Traditional folk melody; Pianify notation derived from a CC0 LilyPond edition; no television-series arrangement or branding | sim | ready_for_owner_review | - |
+| Que Segurança | midi | Public Domain | sim | ready_for_owner_review | - |
+| A Deus Demos Glória | midi | Public Domain | sim | ready_for_owner_review | - |
+| Alegria ao Mundo | midi | Public Domain | sim | ready_for_owner_review | - |
+| Eis dos Anjos a Harmonia | midi | Public Domain | sim | ready_for_owner_review | - |
+| Vem, Tu, Onipotente | midi | Public Domain | sim | ready_for_owner_review | - |
+| Ó Deus, Nosso Socorro | midi | Public Domain | sim | ready_for_owner_review | - |
+| Guiado pela Mão | midi | Public Domain | sim | ready_for_owner_review | - |
+| Formoso Senhor Jesus | midi | Public Domain | sim | ready_for_owner_review | - |
+| O Primeiro Natal | midi | Public Domain | sim | ready_for_owner_review | - |
+| Junto ao Rio | midi | Public Domain | sim | ready_for_owner_review | - |
+| Louvai ao Senhor, Rei Poderoso | midi | Public Domain | sim | ready_for_owner_review | - |
+| Sou Teu, Senhor | midi | Public Domain | sim | ready_for_owner_review | - |
+| Mais Amor a Ti | midi | Public Domain | sim | ready_for_owner_review | - |
+| Mil Línguas Eu Quisera Ter | midi | Public Domain | sim | ready_for_owner_review | - |
+| Tal Qual Estou | midi | Public Domain | sim | ready_for_owner_review | - |
+| Minha Fé Contempla a Ti | midi | Public Domain | sim | ready_for_owner_review | - |
+| Anjos das Alturas | midi | Public Domain | sim | ready_for_owner_review | - |
+| Como um Pastor | midi | Public Domain | sim | ready_for_owner_review | - |
+| Abre Meus Olhos | midi | Public Domain | sim | ready_for_owner_review | - |
+| Jesus Chama | midi | Public Domain | sim | ready_for_owner_review | - |
+| Doxologia | midi | Public Domain | sim | ready_for_owner_review | - |
+| Comigo Habita | midi | Public Domain | sim | ready_for_owner_review | - |
 
 ## Catalogo legado
 
