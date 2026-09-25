@@ -79,6 +79,11 @@ const nextConfig = {
         source: "/login",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
+      {
+        // Piano recordings never change in place; a new set would use a new folder.
+        source: "/audio/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
   async redirects() {

@@ -27,7 +27,7 @@ export default async function CreditosPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
             A Pianify mantém a autoria, a fonte consultada e a licença de cada obra. O catálogo usa composições em
-            domínio público ou materiais com licença compatível, sem redistribuir gravações de terceiros.
+            domínio público ou materiais com licença compatível. O som do piano usa amostras abertas, creditadas abaixo.
           </p>
         </header>
 
@@ -129,6 +129,26 @@ export default async function CreditosPage() {
               </li>
             ))}
           </ol>
+        </section>
+
+        <section aria-labelledby="som-do-piano" className="mt-8 rounded-3xl border border-white/10 bg-zinc-950/75 p-6 text-sm leading-relaxed text-white/65">
+          <h2 id="som-do-piano" className="font-black text-white">Som do piano</h2>
+          <p className="mt-2">
+            <strong className="text-white/85">Salamander Grand Piano V2</strong>, gravado por Alexander Holm, distribuído sob a licença{" "}
+            <a
+              className="font-bold text-cyan hover:underline"
+              href="https://creativecommons.org/licenses/by/3.0/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Creative Commons Atribuição 3.0
+            </a>
+            . Usamos a seleção de amostras em MP3 publicada pelo projeto{" "}
+            <a className="font-bold text-cyan hover:underline" href="https://github.com/Tonejs/audio" target="_blank" rel="noreferrer">
+              Tone.js
+            </a>
+            , afinada no aplicativo para cobrir as 88 teclas.
+          </p>
         </section>
 
         <aside className="mt-8 rounded-3xl border border-magenta/20 bg-magenta/[0.05] p-6 text-sm leading-relaxed text-white/65">
