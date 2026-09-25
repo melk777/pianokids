@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse, NextRequest } from "next/server";
+import { createSupabaseAdminClient } from "@/lib/server/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -30,13 +31,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Formato de mes invalido" }, { status: 400 });
     }
 
+    const admin = createSupabaseAdminClient();
+
     if (monthYear) {
-      const { data, error } = await supabase.from("company_expenses").select("*").eq("month_year", monthYear).maybeSingle();
+      const { data, error } = await admin.from("company_expenses").select("*").eq("month_year", monthYear).maybeSingle();
       if (error) throw error;
       return NextResponse.json(data || { month_year: monthYear, marketing: 0, development: 0, copyrights: 0, other: 0 });
     }
 
-    const { data, error } = await supabase.from("company_expenses").select("*");
+    const { data, error } = await admin.from("company_expenses").select("*");
     if (error) throw error;
     return NextResponse.json({ expenses: data || [] });
   } catch (error: unknown) {
@@ -65,7 +68,8 @@ export async function POST(request: NextRequest) {
     const { data: adminProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
     if (adminProfile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { error: upsertErr } = await supabase
+    const admin = createSupabaseAdminClient();
+    const { error: upsertErr } = await admin
       .from("company_expenses")
       .upsert({
         month_year,
@@ -106,7 +110,8 @@ export async function DELETE(request: NextRequest) {
     const { data: adminProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
     if (adminProfile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { error: delErr } = await supabase.from("company_expenses").delete().eq("month_year", monthYear);
+    const admin = createSupabaseAdminClient();
+    const { error: delErr } = await admin.from("company_expenses").delete().eq("month_year", monthYear);
     if (delErr) throw delErr;
 
     return NextResponse.json({ success: true });

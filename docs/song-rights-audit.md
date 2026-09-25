@@ -1,6 +1,6 @@
 # Auditoria de direitos e atribuicoes do catalogo
 
-Gerado em 2026-09-02T23:06:44.815Z. Esta auditoria verifica a existencia e a consistencia do registro de procedencia; ela nao substitui parecer juridico individual.
+Gerado em 2026-09-03T20:07:58.922Z. Esta auditoria verifica a existencia e a consistencia do registro de procedencia; ela nao substitui parecer juridico individual.
 
 ## Resumo
 

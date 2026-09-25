@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/server/supabase";
+import { evaluateStripeEnvironment } from "@/lib/stripe-environment";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,11 @@ const REQUIRED_ENVIRONMENT = [
 export async function GET() {
   const missing = REQUIRED_ENVIRONMENT.filter((name) => !process.env[name]?.trim());
   let database = "not_checked";
+  const stripeEnvironment = evaluateStripeEnvironment({
+    key: process.env.STRIPE_SECRET_KEY,
+    vercelEnvironment: process.env.VERCEL_ENV,
+    nodeEnvironment: process.env.NODE_ENV,
+  });
 
   if (missing.length === 0) {
     try {
@@ -40,7 +46,8 @@ export async function GET() {
     }
   }
 
-  const productionReady = missing.length === 0 && database === "reachable";
+  const productionReady =
+    missing.length === 0 && database === "reachable" && stripeEnvironment.ok;
   const healthy = process.env.NODE_ENV === "production" ? productionReady : true;
 
   return NextResponse.json(
@@ -51,6 +58,7 @@ export async function GET() {
       checks: {
         configuration: missing.length === 0 ? "complete" : "incomplete",
         database,
+        stripeEnvironment: stripeEnvironment.ok ? "safe" : "unsafe",
       },
       ...(missing.length > 0 && process.env.NODE_ENV !== "production"
         ? { missingConfiguration: missing }

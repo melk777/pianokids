@@ -55,6 +55,7 @@ function SubscriptionContent() {
   );
   const checkoutParam = searchParams.get("checkout");
   const checkoutNotice = checkoutParam === "success" || checkoutParam === "canceled" ? checkoutParam : null;
+  const premiumRedirect = searchParams.get("reason") === "premium";
   const [billingMessage, setBillingMessage] = useState<string | null>(null);
   const hasStripeSubscription = canManageStripeSubscription(
     planType,
@@ -167,6 +168,16 @@ function SubscriptionContent() {
             </div>
           )}
 
+          {premiumRedirect && !isPro && (
+            <div className="mb-6 rounded-2xl border border-cyan/30 bg-cyan/10 p-4 text-sm text-white/80">
+              Essa música faz parte do catálogo Pro. Assine para liberar todas as músicas, ou{" "}
+              <Link href="/dashboard/songs" className="font-semibold text-cyan underline-offset-2 hover:underline">
+                volte à biblioteca
+              </Link>{" "}
+              e escolha uma música gratuita.
+            </div>
+          )}
+
           {billingMessage && (
             <div className="mb-6 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100">
               {billingMessage}
@@ -251,7 +262,7 @@ function SubscriptionContent() {
               >
                 <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-cyan" />
-                  Benefícios do seu Plano
+                  {isPro ? "Benefícios do seu Plano" : "O que o Pianify Pro libera"}
                 </h2>
                 <div className="grid gap-4">
                   {benefits.map((benefit, i) => (

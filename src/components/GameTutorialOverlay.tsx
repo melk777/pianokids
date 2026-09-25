@@ -12,10 +12,14 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
+  Cable,
   Check,
   Gauge,
   Hand,
   Infinity as InfinityIcon,
+  Keyboard,
+  Mic,
+  MousePointerClick,
   Music2,
   Sparkles,
   TimerReset,
@@ -23,12 +27,27 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-const STORAGE_KEY = "pianokids_game_tutorial_seen_v4";
+type TutorialListItem = { icon: LucideIcon; label: string; detail: string };
+
+const INPUT_OPTIONS: TutorialListItem[] = [
+  { icon: Keyboard, label: "Computador", detail: "Teclas A S D F…" },
+  { icon: MousePointerClick, label: "Piano da tela", detail: "Clique nas teclas" },
+  { icon: Cable, label: "Teclado MIDI", detail: "Botão MIDI no topo" },
+  { icon: Mic, label: "Microfone", detail: "Piano acústico" },
+];
+
+const PRACTICE_TOOLS: TutorialListItem[] = [
+  { icon: Gauge, label: "Velocidade − / +", detail: "Diminua para aprender e aumente quando estiver seguro." },
+  { icon: InfinityIcon, label: "Loop A-B", detail: "Repita só o trecho difícil, sem recomeçar a música." },
+];
+
+// v5: shorter first-lesson flow. Bumping the key shows it once to everyone.
+const STORAGE_KEY = "pianokids_game_tutorial_seen_v5";
 const SPOTLIGHT_PADDING = 12;
 const CARD_GAP = 18;
-const CARD_MAX_WIDTH = 390;
-const CARD_ESTIMATED_HEIGHT = 338;
-const TUTORIAL_HEADER_CLEARANCE = 132;
+const CARD_MAX_WIDTH = 380;
+const CARD_ESTIMATED_HEIGHT = 300;
+const TUTORIAL_HEADER_CLEARANCE = 120;
 
 export type GameTutorialTargetId =
   | "fallingNotes"
@@ -53,6 +72,7 @@ export type GameTutorialStep = {
   targetId?: GameTutorialTargetId;
   requiredAction?: GameTutorialActionId;
   actionHint?: string;
+  keyHint?: string;
   successText?: string;
   preferredPlacement?: "top" | "bottom" | "left" | "right";
 };
@@ -68,92 +88,74 @@ type CardRect = {
   left: number;
   top: number;
   width: number;
+  maxHeight: number;
+  // "bottom" keeps the card glued just above its target and lets it grow upward.
+  anchor: "top" | "bottom";
 };
+
+function markTutorialSeen() {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, "true");
+  } catch {
+    // Storage can be unavailable (private mode); the tutorial just shows again.
+  }
+}
 
 const STEPS: readonly GameTutorialStep[] = [
   {
     id: "welcome",
     scene: "welcome",
-    chapter: "Primeiro voo",
-    title: "Sua primeira vitória começa com uma nota.",
-    description:
-      "Em poucos instantes você vai encontrar o Dó central, ler as notas caindo e descobrir as três ferramentas que tornam qualquer trecho mais fácil.",
+    chapter: "Primeira aula",
+    title: "Vamos tocar sua primeira nota.",
+    description: "São 4 passos rápidos. Você pode tocar de qualquer um destes jeitos:",
     icon: "sparkles",
   },
   {
     id: "middle-c",
     scene: "focus",
-    chapter: "Missão 1 · ponto de partida",
-    title: "Encontre o Dó central",
-    description:
-      "O C4 é o centro visual do teclado. As notas vão esperar por você: toque a tecla marcada quando ela acender.",
+    chapter: "Passo 1 de 4 · primeira nota",
+    title: "Toque o Dó central",
+    description: "A tecla acesa é o Dó (C4), o ponto de partida de quase toda música. Ela espera você tocar.",
     icon: "hand",
     targetId: "keyboard",
     requiredAction: "keyboard",
-    actionHint: "Toque C4 no teclado da tela, do computador ou no seu piano MIDI.",
-    successText: "Perfeito. Você encontrou o centro do teclado.",
+    keyHint: "A",
+    actionHint: "Aperte A no computador ou clique na tecla acesa.",
+    successText: "Isso! Você tocou sua primeira nota.",
     preferredPlacement: "top",
   },
   {
     id: "falling-notes",
     scene: "focus",
-    chapter: "Missão 2 · leitura visual",
-    title: "Leia a música de cima para baixo",
+    chapter: "Passo 2 de 4 · como ler",
+    title: "As notas caem até o teclado",
     description:
-      "Cada bloco é uma nota. A largura mostra a tecla; o comprimento mostra por quanto tempo ela deve permanecer pressionada.",
+      "Cada bloco mostra qual tecla tocar. Toque quando ele encostar na linha. Blocos compridos pedem que você segure a tecla.",
     icon: "music",
     targetId: "fallingNotes",
     preferredPlacement: "right",
   },
   {
-    id: "tempo",
-    scene: "focus",
-    chapter: "Missão 3 · seu ritmo",
-    title: "Faça a música caber no seu tempo",
-    description:
-      "Diminuir a velocidade não é tocar pior. É dar ao cérebro tempo para transformar movimento em memória.",
-    icon: "speed",
-    targetId: "speed",
-    requiredAction: "speed",
-    actionHint: "Use − ou + para experimentar outra velocidade.",
-    successText: "Ótimo. Agora o andamento trabalha a seu favor.",
-    preferredPlacement: "bottom",
-  },
-  {
-    id: "loop",
-    scene: "focus",
-    chapter: "Missão 4 · repetição inteligente",
-    title: "Isole o trecho que precisa de atenção",
-    description:
-      "O loop repete somente a parte difícil. Assim você pratica o problema, em vez de recomeçar a música inteira.",
-    icon: "loop",
-    targetId: "loop",
-    requiredAction: "loop",
-    actionHint: "Ative Loop. Depois você poderá ajustar os pontos A e B.",
-    successText: "Trecho isolado. Repetir com intenção acelera o aprendizado.",
-    preferredPlacement: "bottom",
-  },
-  {
     id: "wait-mode",
     scene: "focus",
-    chapter: "Missão 5 · toque sem pressão",
-    title: "Deixe a música esperar por você",
+    chapter: "Passo 3 de 4 · sem pressa",
+    title: "Ligue o modo Espera",
     description:
-      "No modo espera, o andamento para na próxima nota até você acertar. Você aprende com calma, sem perseguir a música.",
+      "Com a Espera ligada, a música para em cada nota até você acertar. É o melhor jeito de aprender uma música nova.",
     icon: "waiting",
     targetId: "waiting",
     requiredAction: "waiting",
-    actionHint: "Ative Espera para assumir o controle do andamento.",
-    successText: "Isso. A música só avança quando você estiver pronto.",
+    actionHint: "Clique em Espera na barra de cima.",
+    successText: "Pronto. A música agora anda no seu ritmo.",
     preferredPlacement: "bottom",
   },
   {
     id: "ready",
     scene: "celebration",
-    chapter: "Jornada liberada",
-    title: "Agora o palco é seu.",
+    chapter: "Passo 4 de 4 · tudo pronto",
+    title: "Agora é com você!",
     description:
-      "Você já sabe encontrar o centro, acompanhar as notas e transformar um trecho difícil em uma prática possível. Escolha uma música e construa a próxima vitória.",
+      "Deixamos a Espera ligada para sua primeira música. Quando quiser, use também estas ferramentas da barra de cima. O ícone ? reabre este tutorial.",
     icon: "check",
   },
 ] as const;
@@ -216,10 +218,26 @@ function getCardPosition(
 
   if (compact) {
     const placeAbove = rect.top + rect.height / 2 > containerHeight / 2;
+    const top = placeAbove ? safeTop : containerHeight - height - 12;
     return {
       width,
       left: (containerWidth - width) / 2,
-      top: placeAbove ? safeTop : containerHeight - height - 12,
+      top,
+      maxHeight: Math.max(170, (placeAbove ? rect.top - CARD_GAP : containerHeight - 12) - top),
+      anchor: placeAbove ? "bottom" : "top",
+    };
+  }
+
+  // Large targets (the falling-notes lane) leave no room around them: float the
+  // card inside the top of the target instead of covering the keyboard below.
+  if (rect.width > containerWidth * 0.6 && rect.height > containerHeight * 0.35) {
+    const top = Math.max(safeTop, rect.top + CARD_GAP);
+    return {
+      width,
+      left: clamp(rect.left + rect.width / 2 - width / 2, 12, containerWidth - width - 12),
+      top,
+      maxHeight: Math.max(170, rect.top + rect.height - CARD_GAP - top),
+      anchor: "top",
     };
   }
 
@@ -248,10 +266,25 @@ function getCardPosition(
   if (placement === "left") left = rect.left - width - CARD_GAP;
   if (placement === "right") left = rect.left + rect.width + CARD_GAP;
 
+  const clampedLeft = clamp(left, 12, containerWidth - width - 12);
+  if (placement === "top") {
+    // Use all the room above the target so the card never needs to scroll.
+    return {
+      width,
+      left: clampedLeft,
+      top: safeTop,
+      maxHeight: Math.max(170, rect.top - CARD_GAP - safeTop),
+      anchor: "bottom",
+    };
+  }
+
+  const clampedTop = clamp(top, safeTop, containerHeight - height - 12);
   return {
     width,
-    left: clamp(left, 12, containerWidth - width - 12),
-    top: clamp(top, safeTop, containerHeight - height - 12),
+    left: clampedLeft,
+    top: clampedTop,
+    maxHeight: Math.max(170, containerHeight - 12 - clampedTop),
+    anchor: "top",
   };
 }
 
@@ -367,10 +400,16 @@ export default function GameTutorialOverlay({
   }, [activeTargetRef, containerRef, currentStep]);
 
   const handleFinish = useCallback(() => {
-    window.localStorage.setItem(STORAGE_KEY, "true");
+    markTutorialSeen();
     onComplete?.();
     onClose();
   }, [onClose, onComplete]);
+
+  // Closing early also counts as "seen": the help button reopens it on demand.
+  const handleDismiss = useCallback(() => {
+    markTutorialSeen();
+    onClose();
+  }, [onClose]);
 
   const handleNext = useCallback(() => {
     if (!currentActionCompleted) return;
@@ -388,7 +427,7 @@ export default function GameTutorialOverlay({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        handleDismiss();
         return;
       }
       if (event.key === "Enter" && currentActionCompleted) {
@@ -399,7 +438,21 @@ export default function GameTutorialOverlay({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentActionCompleted, handleNext, onClose]);
+  }, [currentActionCompleted, handleDismiss, handleNext]);
+
+  const renderList = (items: TutorialListItem[], tone: "cyan" | "emerald", label: string, columns: boolean) => (
+    <ul className={`mt-4 ${columns ? "grid grid-cols-2 gap-2" : "space-y-2"}`} aria-label={label}>
+      {items.map(({ icon: ItemIcon, label: itemLabel, detail }) => (
+        <li key={itemLabel} className="flex items-start gap-2.5 rounded-2xl border border-white/8 bg-white/[0.04] px-3 py-2.5">
+          <ItemIcon size={16} className={`mt-0.5 shrink-0 ${tone === "cyan" ? "text-cyan" : "text-emerald-300"}`} />
+          <div className="min-w-0">
+            <p className="text-xs font-bold leading-tight text-white/90">{itemLabel}</p>
+            <p className="mt-1 text-[11px] leading-snug text-white/55">{detail}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
 
   const tutorialCard = (
     <motion.section
@@ -408,161 +461,124 @@ export default function GameTutorialOverlay({
       aria-modal="false"
       aria-labelledby="pianify-tutorial-title"
       aria-describedby="pianify-tutorial-description"
-      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 18, scale: 0.97 }}
+      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12, scale: 0.98 }}
-      transition={{ duration: reduceMotion ? 0 : 0.28, ease: "easeOut" }}
+      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -10, scale: 0.98 }}
+      transition={{ duration: reduceMotion ? 0 : 0.24, ease: "easeOut" }}
       data-testid="game-tutorial-card"
-      className="pointer-events-auto relative overflow-y-auto rounded-[1.75rem] border border-white/12 bg-zinc-950/94 p-5 text-white shadow-[0_30px_100px_rgba(0,0,0,0.72),0_0_48px_rgba(34,211,238,0.09),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl sm:p-6"
-      style={{ maxHeight: "min(338px, calc(70vh - 132px))" }}
+      className="pointer-events-auto relative flex max-h-full flex-col overflow-hidden rounded-3xl border border-white/12 bg-zinc-950/95 text-white shadow-[0_30px_100px_rgba(0,0,0,0.72),0_0_48px_rgba(34,211,238,0.09),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl"
+      style={currentStep.scene === "focus" && cardRect ? { maxHeight: cardRect.maxHeight } : undefined}
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
         <div className="absolute -right-16 -top-20 h-44 w-44 rounded-full bg-cyan/12 blur-3xl" />
         <div className="absolute -bottom-24 -left-20 h-48 w-48 rounded-full bg-emerald-400/8 blur-3xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(125deg,rgba(255,255,255,0.035),transparent_38%)]" />
       </div>
 
-      <div className="relative">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <motion.div
-              animate={reduceMotion ? undefined : { rotate: [0, 3, -3, 0], scale: [1, 1.05, 1] }}
-              transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-              className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl border ${
-                currentStep.scene === "celebration"
-                  ? "border-emerald-300/30 bg-emerald-300/14 text-emerald-200"
-                  : "border-cyan/25 bg-cyan/10 text-cyan"
-              }`}
-            >
-              <StepIcon size={21} strokeWidth={2.2} />
-            </motion.div>
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.28em] text-cyan/80">
-                Pianify · jornada guiada
-              </p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/38">
-                {currentStep.chapter}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Fechar tutorial"
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/45 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+      <div className="relative flex shrink-0 items-center justify-between gap-3 px-5 pt-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <div
+            className={`grid h-10 w-10 shrink-0 place-items-center rounded-2xl border ${
+              currentStep.scene === "celebration"
+                ? "border-emerald-300/30 bg-emerald-300/14 text-emerald-200"
+                : "border-cyan/25 bg-cyan/10 text-cyan"
+            }`}
           >
-            <X size={16} />
-          </button>
+            <StepIcon size={19} strokeWidth={2.2} />
+          </div>
+          <p className="truncate text-[11px] font-bold uppercase tracking-[0.16em] text-cyan/85">
+            {currentStep.chapter}
+          </p>
         </div>
+        <button
+          type="button"
+          onClick={handleDismiss}
+          aria-label="Fechar tutorial"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/55 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+        >
+          <X size={16} />
+        </button>
+      </div>
 
-        {currentStep.scene === "welcome" ? (
-          <div className="relative mx-auto my-5 grid h-24 w-24 place-items-center">
-            <motion.span
-              aria-hidden
-              animate={reduceMotion ? undefined : { rotate: 360 }}
-              transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 rounded-full border border-dashed border-cyan/30"
-            />
-            <motion.span
-              aria-hidden
-              animate={reduceMotion ? undefined : { rotate: -360 }}
-              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-3 rounded-full border border-emerald-300/20"
-            />
-            <Music2 className="text-cyan drop-shadow-[0_0_16px_rgba(34,211,238,0.7)]" size={30} />
-          </div>
-        ) : null}
-
-        {currentStep.scene === "celebration" ? (
-          <div className="my-5 grid grid-cols-3 gap-2" aria-label="Resumo do tutorial">
-            {[
-              ["1", "ponto central"],
-              ["3", "ferramentas"],
-              ["∞", "novas tentativas"],
-            ].map(([value, label]) => (
-              <div key={label} className="rounded-2xl border border-white/8 bg-white/[0.035] px-2 py-3 text-center">
-                <p className="text-lg font-black text-cyan">{value}</p>
-                <p className="mt-1 text-[8px] font-bold uppercase tracking-[0.13em] text-white/38">{label}</p>
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        <h2 id="pianify-tutorial-title" className="mt-5 text-balance text-2xl font-black leading-[1.08] tracking-tight sm:text-[1.75rem]">
+      <div className="relative min-h-0 flex-1 overflow-y-auto px-5 pb-1">
+        <h2 id="pianify-tutorial-title" className="mt-4 text-balance text-[1.4rem] font-black leading-[1.12] tracking-tight">
           {currentStep.title}
         </h2>
-        <p id="pianify-tutorial-description" className="mt-3 text-sm leading-relaxed text-white/64">
+        <p id="pianify-tutorial-description" className="mt-2 text-sm leading-relaxed text-white/72">
           {currentStep.description}
         </p>
+
+        {currentStep.scene === "welcome" ? renderList(INPUT_OPTIONS, "cyan", "Formas de tocar", true) : null}
+        {currentStep.scene === "celebration" ? renderList(PRACTICE_TOOLS, "emerald", "Ferramentas de estudo", false) : null}
 
         {currentStep.actionHint ? (
           <div
             aria-live="polite"
-            className={`mt-5 flex items-start gap-3 rounded-2xl border px-3.5 py-3 text-xs font-bold leading-relaxed ${
+            className={`mt-4 flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-[13px] font-semibold leading-snug ${
               currentActionCompleted
                 ? "border-emerald-300/25 bg-emerald-300/10 text-emerald-100"
                 : "border-cyan/25 bg-cyan/10 text-cyan"
             }`}
           >
-            <span
-              className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${
-                currentActionCompleted ? "bg-emerald-300 text-black" : "border border-cyan/35 bg-black/25"
-              }`}
-            >
-              {currentActionCompleted ? <Check size={12} strokeWidth={3} /> : <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan" />}
-            </span>
+            {currentActionCompleted ? (
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-emerald-300 text-black">
+                <Check size={14} strokeWidth={3} />
+              </span>
+            ) : currentStep.keyHint ? (
+              <kbd className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-cyan/40 bg-black/40 font-sans text-base font-black text-white shadow-[0_3px_0_rgba(34,211,238,0.35)]">
+                {currentStep.keyHint}
+              </kbd>
+            ) : (
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-cyan/35 bg-black/25">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan" />
+              </span>
+            )}
             <span>{currentActionCompleted ? currentStep.successText : currentStep.actionHint}</span>
           </div>
         ) : null}
+      </div>
 
-        <div className="mt-6 flex items-center justify-between gap-3 border-t border-white/8 pt-4">
-          <div className="flex items-center gap-2">
-            {stepIndex > 0 ? (
-              <button
-                type="button"
-                onClick={handlePrevious}
-                className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.035] text-white/55 transition hover:border-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
-                aria-label="Voltar para a etapa anterior"
-              >
-                <ArrowLeft size={16} />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/35 transition hover:text-white/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
-              >
-                Agora não
-              </button>
-            )}
-          </div>
-
+      <div className="relative flex shrink-0 items-center justify-between gap-3 border-t border-white/8 px-5 py-4">
+        {stepIndex > 0 ? (
           <button
             type="button"
-            onClick={handleNext}
-            disabled={!currentActionCompleted}
-            className={`flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-[10px] font-black uppercase tracking-[0.18em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ${
-              currentActionCompleted
-                ? currentStep.scene === "celebration"
-                  ? "bg-emerald-300 text-black shadow-[0_0_24px_rgba(110,231,183,0.2)] hover:bg-emerald-200"
-                  : "bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.10)] hover:bg-cyan"
-                : "cursor-not-allowed border border-white/8 bg-white/[0.04] text-white/28"
-            }`}
+            onClick={handlePrevious}
+            className="flex h-10 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.035] px-3 text-xs font-semibold text-white/65 transition hover:border-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
           >
-            {currentStep.scene === "welcome"
-              ? "Começar missão"
-              : currentStep.scene === "celebration"
-                ? "Tocar minha música"
-                : currentActionCompleted
-                  ? "Próxima missão"
-                  : "Complete a ação"}
-            {currentActionCompleted ? <ArrowRight size={14} /> : null}
+            <ArrowLeft size={14} />
+            Voltar
           </button>
-        </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleDismiss}
+            className="px-1 text-xs font-semibold text-white/50 transition hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+          >
+            Pular tutorial
+          </button>
+        )}
 
-        <p className="mt-3 text-center text-[8px] font-bold uppercase tracking-[0.18em] text-white/20">
-          Enter para avançar · Esc para sair
-        </p>
+        <button
+          type="button"
+          onClick={handleNext}
+          disabled={!currentActionCompleted}
+          title={currentActionCompleted ? "Enter para avançar" : undefined}
+          className={`flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ${
+            currentActionCompleted
+              ? currentStep.scene === "celebration"
+                ? "bg-emerald-300 text-black shadow-[0_0_24px_rgba(110,231,183,0.2)] hover:bg-emerald-200"
+                : "bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.10)] hover:bg-cyan"
+              : "cursor-not-allowed border border-white/10 bg-white/[0.04] text-white/40"
+          }`}
+        >
+          {currentStep.scene === "welcome"
+            ? "Começar"
+            : currentStep.scene === "celebration"
+              ? "Tocar a música"
+              : currentActionCompleted
+                ? "Continuar"
+                : "Faça a ação acima"}
+          {currentActionCompleted ? <ArrowRight size={15} /> : null}
+        </button>
       </div>
     </motion.section>
   );
@@ -606,12 +622,12 @@ export default function GameTutorialOverlay({
       <AnimatePresence mode="wait">
         {centeredScene ? (
           <div className="absolute inset-x-0 bottom-[calc(30%+12px)] top-28 flex items-center justify-center px-3 sm:px-5">
-            <div className="max-h-full w-full max-w-[430px]">{tutorialCard}</div>
+            <div className="flex h-full w-full max-w-[420px] items-center">{tutorialCard}</div>
           </div>
         ) : cardRect ? (
           <div
-            className="absolute"
-            style={{ left: cardRect.left, top: cardRect.top, width: cardRect.width }}
+            className={`absolute flex flex-col ${cardRect.anchor === "bottom" ? "justify-end" : "justify-start"}`}
+            style={{ left: cardRect.left, top: cardRect.top, width: cardRect.width, height: cardRect.maxHeight }}
           >
             {tutorialCard}
           </div>

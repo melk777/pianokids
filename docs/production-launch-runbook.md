@@ -39,6 +39,7 @@ Somente depois desse ciclo completo substitua as chaves de teste pelas chaves de
 - Conferir que previews não recebem, por engano, as credenciais live do Stripe.
 - Executar o workflow de CI e exigir sucesso em tipos, testes, lint, auditoria de dependências e build.
 - Verificar que `/api/health` retorna `200` em produção; um `503` indica ambiente ou banco incompleto.
+- Manter as funções da Vercel na mesma região do banco. O `vercel.json` fixa `pdx1` porque o Supabase de produção está em `us-west-2`; se o banco mudar de região, atualize essa configuração.
 
 ## 5. Validar produto ponta a ponta
 

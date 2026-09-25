@@ -37,12 +37,31 @@ export async function loadSongs(): Promise<Song[]> {
 }
 
 export async function loadSongById(id: string): Promise<Song | undefined> {
-  const catalog = await loadCatalogIndex();
-  const entry = catalog.find((song) => song.id === id);
+  // The song route already validates the id and access, so request it directly
+  // instead of downloading the whole catalog index first.
+  const url = `/api/songs/${encodeURIComponent(id)}`;
+  let lastError: unknown;
 
-  if (!entry) {
-    return undefined;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (response.status === 404) return undefined;
+      if (!response.ok) {
+        const error = new Error(`Failed to load ${url} (${response.status})`);
+        // Auth and permission answers will not change on a retry.
+        if (response.status < 500) throw Object.assign(error, { permanent: true });
+        throw error;
+      }
+
+      return (await response.json()) as Song;
+    } catch (error) {
+      lastError = error;
+      if ((error as { permanent?: boolean }).permanent) break;
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+    }
   }
 
-  return fetchJson<Song>(`/api/songs/${encodeURIComponent(id)}`);
+  throw lastError instanceof Error ? lastError : new Error(`Failed to load ${url}`);
 }

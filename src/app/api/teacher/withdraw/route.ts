@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseReadClient, getOptionalSupabaseUser } from "@/lib/server/supabase";
+import {
+  createServerSupabaseReadClient,
+  createSupabaseAdminClient,
+  getOptionalSupabaseUser,
+} from "@/lib/server/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +30,8 @@ export async function GET() {
     const auth = await requireTeacher();
     if ("response" in auth) return auth.response;
 
-    const { data: withdrawals, error } = await auth.supabase
+    const admin = createSupabaseAdminClient();
+    const { data: withdrawals, error } = await admin
       .from("withdrawals")
       .select("id, amount, status, created_at, updated_at")
       .eq("teacher_id", auth.user.id)

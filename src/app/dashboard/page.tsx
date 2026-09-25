@@ -26,6 +26,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { createClientComponent } from "@/lib/supabase";
+import { loadPracticeSnapshot } from "@/lib/practiceSnapshot";
 import { loadSongs } from "@/lib/songCatalog";
 import type { PracticeSession } from "@/lib/types";
 import {
@@ -60,7 +61,7 @@ export default function Dashboard() {
   const [songCount, setSongCount] = useState(0);
   const [songs, setSongs] = useState<Awaited<ReturnType<typeof loadSongs>>>([]);
   const [recentSessions, setRecentSessions] = useState<PracticeSession[]>([]);
-  const { isSupported, isListening, start: startMic, error: audioError, activeAudioNote, activeAudioNotes } = useAudioInput();
+  const { isSupported, isListening, permissionStatus, start: startMic, error: audioError, activeAudioNote, activeAudioNotes } = useAudioInput();
   const detectedNoteNames = activeAudioNotes.length > 0
     ? activeAudioNotes.map((note) => note.name)
     : activeAudioNote
@@ -94,14 +95,9 @@ export default function Dashboard() {
     let mounted = true;
 
     const loadPracticeHistory = async () => {
-      try {
-        const response = await fetch("/api/practice/session", { cache: "no-store" });
-        const data = await response.json();
-        if (!mounted || !response.ok || !data?.supported) return;
-        setRecentSessions((data.recentSessions || []) as PracticeSession[]);
-      } catch {
-        if (!mounted) return;
-      }
+      const snapshot = await loadPracticeSnapshot();
+      if (!mounted || !snapshot?.supported) return;
+      setRecentSessions(snapshot.recentSessions);
     };
 
     loadPracticeHistory();
@@ -110,17 +106,20 @@ export default function Dashboard() {
     };
   }, []);
 
-  // O microfone pertence exclusivamente à experiência de estudo.
+  // O microfone pertence exclusivamente à experiência de estudo. Só religa
+  // sozinho quando o aluno já concedeu a permissão; caso contrário, o pedido
+  // do navegador fica para o clique em "Conectar".
   useEffect(() => {
     if (
       !profileLoading &&
       isStudentDashboardRole(profile?.role) &&
       isSupported &&
+      permissionStatus === "granted" &&
       !isListening
     ) {
       startMic();
     }
-  }, [profile?.role, profileLoading, isSupported, isListening, startMic]);
+  }, [profile?.role, profileLoading, isSupported, permissionStatus, isListening, startMic]);
 
   const handleSubscribe = async (planKey: string) => {
     try {
@@ -317,7 +316,7 @@ export default function Dashboard() {
                   {/* Recognition Info */}
                   {isListening && (
                     <p className="mt-3 text-[10px] text-white/20 border-t border-white/[0.04] pt-3 italic">
-                      O chat de sugestões é um recurso exclusivo para nossa **Comunidade Premium**.
+                      Toque uma nota no seu instrumento para testar o reconhecimento.
                     </p>
                   )}
                 </div>
@@ -381,7 +380,7 @@ export default function Dashboard() {
                 <div className={`mb-6 rounded-2xl border p-5 ${insightToneClass}`}>
                   <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
-                      <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] opacity-70">Proximo passo</p>
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] opacity-70">Próximo passo</p>
                       <h3 className="text-xl font-black text-white">{progressInsight.title}</h3>
                       <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/60">{progressInsight.message}</p>
                     </div>
@@ -391,8 +390,8 @@ export default function Dashboard() {
                   </div>
 
                   <div className="mb-4 grid grid-cols-3 gap-2">
-                    <ProgressInsightMetric label="Semana" value={`${progressInsight.weeklySessions} sessoes`} />
-                    <ProgressInsightMetric label="Media recente" value={`${progressInsight.averageRecentAccuracy}%`} />
+                    <ProgressInsightMetric label="Semana" value={`${progressInsight.weeklySessions} sessões`} />
+                    <ProgressInsightMetric label="Média recente" value={`${progressInsight.averageRecentAccuracy}%`} />
                     <ProgressInsightMetric label="Melhor" value={`${progressInsight.bestRecentAccuracy}%`} />
                   </div>
 
@@ -720,7 +719,7 @@ function AchievementTile({ achievement }: { achievement: PracticeAchievement }) 
 }
 
 function RecommendedLessonCard({ recommendation, onClick }: { recommendation: PracticeRecommendation; onClick: () => void }) {
-  const handLabel = recommendation.handMode === "both" ? "Duas maos" : recommendation.handMode === "left" ? "Mao esquerda" : "Mao direita";
+  const handLabel = recommendation.handMode === "both" ? "Duas mãos" : recommendation.handMode === "left" ? "Mão esquerda" : "Mão direita";
   const difficultyLabel = recommendation.difficulty === "pro" ? "Profissional" : recommendation.difficulty === "medium" ? "Intermediario" : "Iniciante";
 
   return (
@@ -753,7 +752,7 @@ function RecommendedLessonCard({ recommendation, onClick }: { recommendation: Pr
         onClick={onClick}
         className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan to-magenta px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white transition hover:opacity-90"
       >
-        Comecar agora
+        Começar agora
         <ChevronRight className="h-3.5 w-3.5" />
       </Link>
     </div>

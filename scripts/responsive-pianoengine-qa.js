@@ -460,14 +460,14 @@ async function run() {
       });
       await page.send("Emulation.setTouchEmulationEnabled", { enabled: viewport.touch });
       await navigateAndWait(page, TARGET_URL);
-      await evaluate(page, `localStorage.removeItem("pianokids_game_tutorial_seen_v4")`);
+      await evaluate(page, `localStorage.removeItem("pianokids_game_tutorial_seen_v5")`);
       await navigateAndWait(page, PLAYER_URL);
       await waitForTestId(page, "piano-canvas");
       const tutorialLayout = await collectLayout(page);
       const tutorialShot = await capture(page, viewport, "tutorial");
 
       await evaluate(page, `(() => {
-        localStorage.setItem("pianokids_game_tutorial_seen_v4", "true");
+        localStorage.setItem("pianokids_game_tutorial_seen_v5", "true");
       })()`);
       await navigateAndWait(page, PLAYER_URL);
       await evaluate(page, `window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyA", key: "a", bubbles: true }))`);
@@ -518,7 +518,7 @@ async function run() {
           interactionIssues.push(`Botao do metronomo nao alterou o valor (${initialInteraction.metronome} -> ${metronomeState.metronome}).`);
         }
 
-        await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v4", "true")`);
+        await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v5", "true")`);
         await navigateAndWait(page, PLAYER_URL);
         await evaluate(page, `window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyA", key: "a", bubbles: true }))`);
         await waitForTestId(page, "piano-canvas");
@@ -537,7 +537,7 @@ async function run() {
         }
       }
 
-      await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v4", "true")`);
+      await evaluate(page, `localStorage.setItem("pianokids_game_tutorial_seen_v5", "true")`);
       await navigateAndWait(page, PLAYER_URL);
       await evaluate(page, `window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyA", key: "a", bubbles: true }))`);
       await waitForTestId(page, "piano-canvas");

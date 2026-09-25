@@ -87,8 +87,8 @@ export function buildPracticeProgressInsight(profile: Profile | null, sessions: 
 
   if (!profile || recent.length === 0) {
     return {
-      title: "Primeira meta: tocar uma musica",
-      message: "Escolha uma musica facil, toque em velocidade confortavel e deixe o app criar seu historico real.",
+      title: "Primeira meta: tocar uma música",
+      message: "Escolha uma música fácil, toque em velocidade confortável e deixe o app criar seu histórico real.",
       actionLabel: "Abrir biblioteca",
       actionHref: "/dashboard/songs",
       tone: "start",
@@ -101,9 +101,9 @@ export function buildPracticeProgressInsight(profile: Profile | null, sessions: 
 
   if (averageRecentAccuracy < 70) {
     return {
-      title: "Semana de consolidacao",
-      message: "Sua precisao recente pede repeticoes mais lentas. Priorize modo espera e trechos curtos antes de subir o andamento.",
-      actionLabel: "Treinar musica recente",
+      title: "Semana de consolidação",
+      message: "Sua precisão recente pede repetições mais lentas. Priorize modo espera e trechos curtos antes de subir o andamento.",
+      actionLabel: "Treinar música recente",
       actionHref: focusSession?.song_id ? `/dashboard/play/${focusSession.song_id}` : "/dashboard/songs",
       tone: "review",
       weeklySessions,
@@ -115,8 +115,8 @@ export function buildPracticeProgressInsight(profile: Profile | null, sessions: 
 
   if ((profile.streak_days || 0) < 3 || weeklySessions < 3) {
     return {
-      title: "Construir constancia",
-      message: "O proximo salto vem de sessoes curtas em dias seguidos. Uma musica por dia ja melhora leitura e memoria muscular.",
+      title: "Construir constância",
+      message: "O próximo salto vem de sessões curtas em dias seguidos. Uma música por dia já melhora leitura e memória muscular.",
       actionLabel: "Praticar hoje",
       actionHref: "/dashboard/songs",
       tone: "steady",
@@ -130,7 +130,7 @@ export function buildPracticeProgressInsight(profile: Profile | null, sessions: 
   if (averageRecentAccuracy >= 88 && bestRecentAccuracy >= 92) {
     return {
       title: "Pronto para novo desafio",
-      message: "Seu historico recente esta forte. Experimente uma dificuldade acima ou uma musica com duas maos.",
+      message: "Seu histórico recente está forte. Experimente uma dificuldade acima ou uma música com duas mãos.",
       actionLabel: "Buscar desafio",
       actionHref: "/dashboard/songs",
       tone: "advance",
@@ -142,9 +142,9 @@ export function buildPracticeProgressInsight(profile: Profile | null, sessions: 
   }
 
   return {
-    title: "Manter evolucao",
-    message: "Voce esta criando uma boa base. Repita a musica mais recente buscando mais combo e menos notas fora do tempo.",
-    actionLabel: "Continuar pratica",
+    title: "Manter evolução",
+    message: "Você está criando uma boa base. Repita a música mais recente buscando mais combo e menos notas fora do tempo.",
+    actionLabel: "Continuar prática",
     actionHref: focusSession?.song_id ? `/dashboard/play/${focusSession.song_id}` : "/dashboard/songs",
     tone: "steady",
     weeklySessions,
@@ -166,7 +166,7 @@ export function buildPracticeAchievements(profile: Profile | null, sessions: Pra
     {
       id: "first-session",
       title: "Primeira Nota",
-      description: "Registrar sua primeira pratica.",
+      description: "Registrar sua primeira prática.",
       achieved: sessions.length > 0,
       progress: Math.min(sessions.length, 1),
       target: 1,
@@ -183,8 +183,8 @@ export function buildPracticeAchievements(profile: Profile | null, sessions: Pra
     },
     {
       id: "precision-90",
-      title: "Precisao 90+",
-      description: "Fazer 3 sessoes com 90%+.",
+      title: "Precisão 90+",
+      description: "Fazer 3 sessões com 90%+.",
       achieved: highAccuracySessions >= 3,
       progress: Math.min(highAccuracySessions, 3),
       target: 3,
@@ -192,8 +192,8 @@ export function buildPracticeAchievements(profile: Profile | null, sessions: Pra
     },
     {
       id: "ten-completions",
-      title: "Repertorio 10",
-      description: "Concluir 10 musicas.",
+      title: "Repertório 10",
+      description: "Concluir 10 músicas.",
       achieved: completedSessions >= 10,
       progress: Math.min(completedSessions, 10),
       target: 10,
@@ -202,7 +202,7 @@ export function buildPracticeAchievements(profile: Profile | null, sessions: Pra
     {
       id: "one-hour",
       title: "Uma Hora Real",
-      description: "Acumular 60 minutos de pratica.",
+      description: "Acumular 60 minutos de prática.",
       achieved: totalMinutes >= 60,
       progress: Math.min(totalMinutes, 60),
       target: 60,
@@ -210,8 +210,8 @@ export function buildPracticeAchievements(profile: Profile | null, sessions: Pra
     },
     {
       id: "two-hands",
-      title: "Duas Maos",
-      description: "Tocar 5 sessoes com as duas maos.",
+      title: "Duas Mãos",
+      description: "Tocar 5 sessões com as duas mãos.",
       achieved: bothHandsSessions >= 5,
       progress: Math.min(bothHandsSessions, 5),
       target: 5,
@@ -220,7 +220,7 @@ export function buildPracticeAchievements(profile: Profile | null, sessions: Pra
     {
       id: "pro-mode",
       title: "Modo Pro",
-      description: "Completar 3 sessoes profissionais.",
+      description: "Completar 3 sessões profissionais.",
       achieved: proSessions >= 3,
       progress: Math.min(proSessions, 3),
       target: 3,
@@ -236,21 +236,21 @@ export function buildPracticeGoals(profile: Profile | null, sessions: PracticeSe
   return [
     {
       id: "weekly-sessions",
-      title: "Sessoes na semana",
+      title: "Sessões na semana",
       current: insight.weeklySessions,
       target: 5,
       unit: "sessoes",
     },
     {
       id: "weekly-completions",
-      title: "Musicas concluidas",
+      title: "Músicas concluídas",
       current: completedThisWeek,
       target: 3,
       unit: "musicas",
     },
     {
       id: "recent-accuracy",
-      title: "Precisao recente",
+      title: "Precisão recente",
       current: insight.averageRecentAccuracy,
       target: insight.averageRecentAccuracy >= 88 ? 92 : 85,
       unit: "%",
@@ -274,7 +274,7 @@ export function buildPracticeRecommendation(profile: Profile | null, sessions: P
     return {
       songId: song.id,
       songTitle: song.title,
-      reason: "Comece por uma musica curta e facil para calibrar leitura, timing e captura.",
+      reason: "Comece por uma música curta e fácil para calibrar leitura, timing e captura.",
       difficulty: "beginner",
       handMode: "right",
       href: buildPlayHref(song.id, "beginner", "right"),
@@ -287,11 +287,11 @@ export function buildPracticeRecommendation(profile: Profile | null, sessions: P
     return {
       songId: weakSong.id,
       songTitle: weakSong.title,
-      reason: "Essa musica apareceu com precisao baixa recentemente. Reforce com mao direita, modo espera e velocidade menor.",
+      reason: "Essa música apareceu com precisão baixa recentemente. Reforce com mão direita, modo espera e velocidade menor.",
       difficulty,
       handMode: "right",
       href: buildPlayHref(weakSong.id, difficulty, "right"),
-      label: "Revisao recomendada",
+      label: "Revisão recomendada",
     };
   }
 
@@ -320,10 +320,10 @@ export function buildPracticeRecommendation(profile: Profile | null, sessions: P
   return {
     songId: song.id,
     songTitle: song.title,
-    reason: "Trabalhe equilibrio entre as maos mantendo uma musica conhecida.",
+    reason: "Trabalhe equilíbrio entre as mãos mantendo uma música conhecida.",
     difficulty: averageRecentAccuracy >= 78 ? "medium" : "beginner",
     handMode,
     href: buildPlayHref(song.id, averageRecentAccuracy >= 78 ? "medium" : "beginner", handMode),
-    label: "Aula de equilibrio",
+    label: "Aula de equilíbrio",
   };
 }

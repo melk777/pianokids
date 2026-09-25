@@ -7,6 +7,7 @@ import SongLibrary from "@/components/SongLibrary";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import { ChevronRight, Loader2, Play, Sparkles } from "lucide-react";
 import type { PracticeSession, Song } from "@/lib/types";
+import { loadPracticeSnapshot } from "@/lib/practiceSnapshot";
 import { loadSongs } from "@/lib/songCatalog";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useProfile } from "@/hooks/useProfile";
@@ -54,14 +55,9 @@ export default function SongsPage() {
     let mounted = true;
 
     const loadPracticeHistory = async () => {
-      try {
-        const response = await fetch("/api/practice/session", { cache: "no-store" });
-        const data = await response.json();
-        if (!mounted || !response.ok || !data?.supported) return;
-        setRecentSessions((data.recentSessions || []) as PracticeSession[]);
-      } catch {
-        if (!mounted) return;
-      }
+      const snapshot = await loadPracticeSnapshot();
+      if (!mounted || !snapshot?.supported) return;
+      setRecentSessions(snapshot.recentSessions);
     };
 
     loadPracticeHistory();

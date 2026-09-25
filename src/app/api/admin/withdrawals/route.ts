@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { createSupabaseAdminClient } from "@/lib/server/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,8 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { data: withdrawals, error } = await supabase
+    const admin = createSupabaseAdminClient();
+    const { data: withdrawals, error } = await admin
       .from("withdrawals")
       .select(`
          *,
@@ -37,7 +39,7 @@ export async function GET() {
           return { ...withdrawal, receipt_url: null };
         }
 
-        const { data } = await supabase.storage
+        const { data } = await admin.storage
           .from("receipts")
           .createSignedUrl(withdrawal.receipt_path, 60 * 60);
 

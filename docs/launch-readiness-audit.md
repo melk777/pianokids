@@ -1,11 +1,11 @@
 # Auditoria de pre-lancamento comercial
 
-Gerado em: 2026-09-02T23:09:16.641Z
+Gerado em: 2026-09-03T20:08:01.474Z
 
 ## Resumo
 
-- Total: 47
-- OK: 43
+- Total: 49
+- OK: 45
 - Alertas: 4
 - Falhas: 0
 - Pendencias criticas abertas: 2
@@ -56,9 +56,11 @@ Gerado em: 2026-09-02T23:09:16.641Z
 | OK | security-headers | headers de seguranca | medium | Headers basicos de seguranca configurados no Next. |
 | OK | catalog | biblioteca carregavel | high | 90 arquivos de musica encontrados e indice publico existe. |
 | OK | legal | direitos autorais das musicas | critical | As 90 musicas possuem procedencia, licenca e atribuicao publicamente documentadas; o indice comercial nao usa capas externas. A verificacao tecnica nao substitui parecer juridico. |
+| OK | stripe | chaves live bloqueadas fora da producao | critical | Preview e desenvolvimento devem rejeitar chaves Stripe live antes de criar qualquer cobranca. |
 | WARN | catalog | revisao auditiva final da biblioteca | critical | As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao. |
 | OK | brand | nome comercial consistente | high | Pianify e o nome comercial usado na documentacao e no produto. |
 | OK | database | schema e migracoes reproduziveis | critical | Schema inicial e endurecimentos posteriores estao versionados em supabase/migrations. |
+| OK | database | endurecimento final do Security Advisor | critical | Funcoes de trigger nao devem ser chamadas pela API e o bucket publico nao deve permitir enumeracao ampla. |
 | WARN | business | teste de compra real | critical | Exige teste manual em producao/sandbox Stripe: checkout, webhook, portal, cancelamento, past_due e reativacao. |
 | WARN | devices | teste em aparelhos fisicos | high | Exige teste manual em iPhone, Android, tablet, notebook e desktop, principalmente microfone, MIDI, audio e orientacao. |
 

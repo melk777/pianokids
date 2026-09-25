@@ -37,6 +37,13 @@ interface WithdrawalData {
 
 type TabType = 'overview' | 'students' | 'charts' | 'finances';
 
+const WITHDRAWAL_STATUS_LABELS: Record<string, string> = {
+  pendente: "Em análise",
+  aprovado: "Aprovado",
+  concluido: "Pago",
+  rejeitado: "Recusado",
+};
+
 export default function TeacherDashboard() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [withdrawals, setWithdrawals] = useState<WithdrawalData[]>([]);
@@ -193,7 +200,7 @@ export default function TeacherDashboard() {
   if (!stats) {
     return (
       <div className="rounded-2xl border border-red-500/15 bg-red-500/5 px-6 py-10 text-center">
-        <p className="text-base font-semibold text-red-300">Nao foi possivel carregar o dashboard do professor.</p>
+        <p className="text-base font-semibold text-red-300">Não foi possível carregar o painel do professor.</p>
         <p className="mt-2 text-sm text-white/45">{loadError || "Tente novamente em alguns instantes."}</p>
         <button
           type="button"
@@ -403,7 +410,7 @@ export default function TeacherDashboard() {
             className="glass rounded-2xl border border-white/10 overflow-hidden"
           >
             <div className="p-6 border-b border-white/5 flex items-center justify-between">
-               <h3 className="text-lg font-bold">Base de Alunos Refenciados</h3>
+               <h3 className="text-lg font-bold">Alunos Indicados</h3>
                <div className="flex items-center gap-2">
                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
                  <span className="text-sm font-semibold">{stats.activeStudents} ativos</span>
@@ -414,7 +421,7 @@ export default function TeacherDashboard() {
               {stats.students.length === 0 ? (
                 <div className="p-12 flex flex-col items-center justify-center text-center">
                    <AlertCircle className="w-8 h-8 text-white/20 mb-3" />
-                   <h4 className="text-white/80 font-semibold mb-1">Você ainda não referenciou nenhum aluno</h4>
+                   <h4 className="text-white/80 font-semibold mb-1">Você ainda não indicou nenhum aluno</h4>
                    <p className="text-white/40 text-sm max-w-xs">Use o seu link exclusivo encontrado na aba &quot;Visão Geral&quot;.</p>
                 </div>
               ) : (
@@ -524,7 +531,7 @@ export default function TeacherDashboard() {
                    <p className="text-5xl font-black text-white mb-2">
                       R$ {stats.balance_available.toFixed(2).replace('.', ',')}
                    </p>
-                   <p className="text-sm text-emerald-400 font-semibold mb-8">Disponível para Saque PIX imediato</p>
+                   <p className="text-sm text-emerald-400 font-semibold mb-8">Disponível para solicitar saque via PIX</p>
                  </div>
 
                  <button
@@ -564,7 +571,7 @@ export default function TeacherDashboard() {
                                   w.status === 'pendente' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
                                   'bg-red-500/10 text-red-400 border-red-500/20'
                                }`}>
-                                 {w.status}
+                                 {WITHDRAWAL_STATUS_LABELS[w.status] ?? w.status}
                                </span>
                              </div>
                            </li>
