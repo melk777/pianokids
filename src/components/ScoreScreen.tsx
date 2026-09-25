@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo } from "react";
 import confetti from "canvas-confetti";
-import { Clock3, Gauge, LogOut, Music2, RotateCcw, SkipForward, Star, Target, TrendingUp } from "lucide-react";
+import { Clock3, Gauge, Hourglass, LogOut, Music2, RotateCcw, SkipForward, Star, Target, TrendingUp } from "lucide-react";
 import type { PracticeFeedbackSummary } from "@/lib/types";
 import type { Difficulty } from "@/lib/songFilters";
 import { buildPracticePlan } from "@/lib/practicePlan";
@@ -199,10 +199,18 @@ export default function ScoreScreen({
           <section className="grid gap-3">
             {feedback && (
               <>
-                <div className="grid grid-cols-3 gap-2">
+                <div className={`grid gap-2 ${feedback.longNotes ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
                   <StatCard icon={<Target size={14} />} label="Notas" value={`${feedback.hits}/${feedback.totalNotes || 0}`} tone="text-cyan" />
                   <StatCard icon={<Star size={14} />} label="Perfeitas" value={`${feedback.perfectHits}`} tone="text-amber-300" />
                   <StatCard icon={<Clock3 size={14} />} label="Timing" value={`${feedback.averageTimingMs}ms`} tone="text-emerald-300" />
+                  {feedback.longNotes ? (
+                    <StatCard
+                      icon={<Hourglass size={14} />}
+                      label="Notas longas"
+                      value={`${feedback.sustainedNotes ?? 0}/${feedback.longNotes}`}
+                      tone="text-violet-300"
+                    />
+                  ) : null}
                 </div>
 
                 <div className="rounded-xl border border-white/10 bg-black/35 p-4">

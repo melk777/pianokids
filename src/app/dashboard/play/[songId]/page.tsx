@@ -7,6 +7,8 @@ import Link from "next/link";
 import ScoreScreen from "@/components/ScoreScreen";
 import OrientationOverlay from "@/components/OrientationOverlay";
 import PianoPlayer from "@/components/PianoPlayer";
+import LatencyCalibration from "@/components/LatencyCalibration";
+import { readStoredLatencyMs, storeLatencyMs } from "@/lib/latencyCalibration";
 import GameTutorialOverlay, {
   type GameTutorialActionId,
   type GameTutorialStep,
@@ -30,6 +32,7 @@ import {
   Cable,
   CircleHelp,
   Gauge,
+  Hand,
   Mic,
   MicOff,
   Music,
@@ -37,13 +40,16 @@ import {
   Play,
   Repeat,
   RotateCcw,
+  Timer,
   TimerReset,
   Volume2,
   VolumeX,
   X,
 } from "lucide-react";
 
-const NON_STARTING_KEYS = new Set(["Enter", "Tab", "Escape", "Shift", "Control", "Alt", "Meta", "CapsLock"]);
+const FINGERING_STORAGE_KEY = "pianify.showFingering";
+
+const NON_STARTING_KEYS =new Set(["Enter", "Tab", "Escape", "Shift", "Control", "Alt", "Meta", "CapsLock"]);
 
 // Shared toolbar styles keep every control the same height and contrast.
 const TOOLBAR_GROUP = "flex h-10 items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-1";
@@ -240,6 +246,20 @@ function PlayPageContent() {
   const [metronomeVolume, setMetronomeVolume] = useState(0.08);
   const [showMicHint, setShowMicHint] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showCalibration, setShowCalibration] = useState(false);
+  const [inputLatencyMs, setInputLatencyMs] = useState(0);
+  const [showFingering, setShowFingering] = useState(true);
+
+  useEffect(() => {
+    // Browser-only preferences are read after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is unavailable during SSR.
+    setInputLatencyMs(readStoredLatencyMs());
+    try {
+      setShowFingering(window.localStorage.getItem(FINGERING_STORAGE_KEY) !== "0");
+    } catch {
+      // Keep the default when storage is unavailable.
+    }
+  }, []);
   const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
   const [loopStart, setLoopStart] = useState(0);
   const [loopEnd, setLoopEnd] = useState(0);
@@ -729,7 +749,7 @@ function PlayPageContent() {
   }, [handSelection, searchParams, startMic]);
 
   useEffect(() => {
-    if (gameState !== "idle") return;
+    if (gameState !== "idle" || showCalibration) return;
 
     if (activeNotes.size > 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- An external MIDI/microphone note intentionally starts the game state machine.
@@ -746,7 +766,7 @@ function PlayPageContent() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeNotes, gameState, isTutorialSimulation, startGame]);
+  }, [activeNotes, gameState, isTutorialSimulation, showCalibration, startGame]);
 
   const filteredNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
@@ -1210,6 +1230,35 @@ function PlayPageContent() {
               {audioEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
             </button>
             <button
+              onClick={() => {
+                const next = !showFingering;
+                setShowFingering(next);
+                try {
+                  window.localStorage.setItem(FINGERING_STORAGE_KEY, next ? "1" : "0");
+                } catch {
+                  // Preference only lasts for this visit when storage is unavailable.
+                }
+              }}
+              aria-pressed={showFingering}
+              className={`${TOOLBAR_BUTTON} ${showFingering ? TOOLBAR_ACTIVE : TOOLBAR_IDLE}`}
+              title="Mostrar o dedo sugerido (1 = polegar, 5 = mínimo) em cada nota"
+            >
+              <Hand size={15} />
+              <span className="hidden 2xl:inline">Dedos</span>
+            </button>
+            <button
+              onClick={() => {
+                if (gameState === "playing" && !isPaused && !isTutorialSimulation) togglePause();
+                setShowCalibration(true);
+              }}
+              disabled={isTutorialSimulation}
+              aria-label="Calibrar atraso"
+              className={`${TOOLBAR_BUTTON} ${inputLatencyMs > 0 ? "text-cyan hover:bg-white/8" : "text-white/75 hover:bg-white/8 hover:text-white"} disabled:opacity-40`}
+              title={`Calibrar atraso de fones e teclado (atual: ${inputLatencyMs} ms)`}
+            >
+              <Timer size={15} />
+            </button>
+            <button
               onClick={() => setShowTutorial(true)}
               aria-label="Abrir tutorial"
               className={`${TOOLBAR_BUTTON} text-white/75 hover:bg-white/8 hover:text-white`}
@@ -1220,6 +1269,21 @@ function PlayPageContent() {
           </div>
         </div>
       </header>
+
+      {showCalibration ? (
+        <LatencyCalibration
+          currentLatencyMs={inputLatencyMs}
+          getAudioTime={audio.getCurrentTime}
+          playTick={audio.playTick}
+          resumeAudio={audio.resume}
+          midiSignal={midi.lastNote}
+          onSave={(value) => {
+            setInputLatencyMs(value);
+            storeLatencyMs(value);
+          }}
+          onClose={() => setShowCalibration(false)}
+        />
+      ) : null}
 
       <div className="relative flex flex-1 flex-col overflow-hidden">
         {showMicHint && (
@@ -1331,6 +1395,12 @@ function PlayPageContent() {
                   <kbd className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">Espaço</kbd>
                   pausa
                 </span>
+                {showFingering && (
+                  <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                    <span className="grid h-5 w-5 place-items-center rounded-full border border-amber-200/60 bg-black text-[10px] font-black text-white">1</span>
+                    número na nota = dedo (1 polegar … 5 mínimo)
+                  </span>
+                )}
                 <span className={`rounded-full border px-3 py-1.5 ${isWaitingMode ? "border-cyan/30 bg-cyan/10 text-cyan" : "border-white/10 bg-white/[0.04]"}`}>
                   Espera {isWaitingMode ? "ligada" : "desligada"} · {Math.round(playbackSpeed * 100)}%
                 </span>
@@ -1405,6 +1475,9 @@ function PlayPageContent() {
                     ? TUTORIAL_KEYBOARD_NOTE
                     : undefined
                 }
+                showFingering={showFingering}
+                judgeHolds={!isMicActive}
+                inputLatency={isTutorialSimulation ? 0 : inputLatencyMs / 1000}
               />
             </motion.div>
           )}
