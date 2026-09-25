@@ -60,7 +60,7 @@ export default function Dashboard() {
   const [songCount, setSongCount] = useState(0);
   const [songs, setSongs] = useState<Awaited<ReturnType<typeof loadSongs>>>([]);
   const [recentSessions, setRecentSessions] = useState<PracticeSession[]>([]);
-  const { isSupported, isListening, start: startMic, error: audioError, activeAudioNote, activeAudioNotes } = useAudioInput();
+  const { isSupported, isListening, permissionStatus, start: startMic, error: audioError, activeAudioNote, activeAudioNotes } = useAudioInput();
   const detectedNoteNames = activeAudioNotes.length > 0
     ? activeAudioNotes.map((note) => note.name)
     : activeAudioNote
@@ -110,17 +110,20 @@ export default function Dashboard() {
     };
   }, []);
 
-  // O microfone pertence exclusivamente à experiência de estudo.
+  // O microfone pertence exclusivamente à experiência de estudo. Só religa
+  // sozinho quando o aluno já concedeu a permissão; caso contrário, o pedido
+  // do navegador fica para o clique em "Conectar".
   useEffect(() => {
     if (
       !profileLoading &&
       isStudentDashboardRole(profile?.role) &&
       isSupported &&
+      permissionStatus === "granted" &&
       !isListening
     ) {
       startMic();
     }
-  }, [profile?.role, profileLoading, isSupported, isListening, startMic]);
+  }, [profile?.role, profileLoading, isSupported, permissionStatus, isListening, startMic]);
 
   const handleSubscribe = async (planKey: string) => {
     try {
@@ -317,7 +320,7 @@ export default function Dashboard() {
                   {/* Recognition Info */}
                   {isListening && (
                     <p className="mt-3 text-[10px] text-white/20 border-t border-white/[0.04] pt-3 italic">
-                      O chat de sugestões é um recurso exclusivo para nossa **Comunidade Premium**.
+                      Toque uma nota no seu instrumento para testar o reconhecimento.
                     </p>
                   )}
                 </div>
