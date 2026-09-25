@@ -39,14 +39,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Que Segurança",
-      "artist": "Phoebe P. Knapp",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "a-deus-demos-gloria",
@@ -84,14 +77,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "A Deus Demos Glória",
-      "artist": "William H. Doane",
-      "category": "Religiosos",
-      "difficulty": "Médio",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "alegria-ao-mundo",
@@ -129,14 +115,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Alegria ao Mundo",
-      "artist": "arr. Lowell Mason",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "eis-dos-anjos-a-harmonia",
@@ -174,14 +153,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Eis dos Anjos a Harmonia",
-      "artist": "Felix Mendelssohn",
-      "category": "Religiosos",
-      "difficulty": "Médio",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "vem-tu-onipotente",
@@ -219,14 +191,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Vem, Tu, Onipotente",
-      "artist": "Felice de Giardini",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "o-deus-nosso-socorro",
@@ -264,14 +229,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Ó Deus, Nosso Socorro",
-      "artist": "William Croft",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "guiado-pela-mao",
@@ -309,14 +267,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Guiado pela Mão",
-      "artist": "William B. Bradbury",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "formoso-senhor-jesus",
@@ -354,14 +305,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Formoso Senhor Jesus",
-      "artist": "Melodia silesiana",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "o-primeiro-natal",
@@ -399,14 +343,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "O Primeiro Natal",
-      "artist": "Tradicional inglês",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "junto-ao-rio",
@@ -444,14 +381,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Junto ao Rio",
-      "artist": "Robert Lowry",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "louvai-ao-senhor-rei-poderoso",
@@ -489,14 +419,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Louvai ao Senhor, Rei Poderoso",
-      "artist": "Stralsund Gesangbuch",
-      "category": "Religiosos",
-      "difficulty": "Médio",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "sou-teu-senhor",
@@ -534,14 +457,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Sou Teu, Senhor",
-      "artist": "William H. Doane",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "mais-amor-a-ti",
@@ -579,14 +495,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Mais Amor a Ti",
-      "artist": "William H. Doane",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "mil-linguas-eu-quisera-ter",
@@ -624,14 +533,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Mil Línguas Eu Quisera Ter",
-      "artist": "Carl G. Gläser",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "tal-qual-estou",
@@ -669,14 +571,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Tal Qual Estou",
-      "artist": "William B. Bradbury",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "minha-fe-contempla-a-ti",
@@ -714,14 +609,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Minha Fé Contempla a Ti",
-      "artist": "Lowell Mason",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "anjos-das-alturas",
@@ -759,14 +647,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Anjos das Alturas",
-      "artist": "Henry Smart",
-      "category": "Religiosos",
-      "difficulty": "Médio",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "como-um-pastor",
@@ -804,14 +685,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Como um Pastor",
-      "artist": "William B. Bradbury",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "abre-meus-olhos",
@@ -849,14 +723,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Abre Meus Olhos",
-      "artist": "Clara H. Scott",
-      "category": "Religiosos",
-      "difficulty": "Médio",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "jesus-chama",
@@ -894,14 +761,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Jesus Chama",
-      "artist": "William H. Jude",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "doxologia",
@@ -939,14 +799,7 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Doxologia",
-      "artist": "Louis Bourgeois",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   },
   {
     "id": "comigo-habita",
@@ -984,13 +837,6 @@ module.exports = [
     ],
     "easyStrategy": "top-voice",
     "mediumStrategy": "melody-with-bass-outline",
-    "bassOutlineBeats": 2,
-    "catalog": {
-      "title": "Comigo Habita",
-      "artist": "William H. Monk",
-      "category": "Religiosos",
-      "difficulty": "Fácil",
-      "isPremium": false
-    }
+    "bassOutlineBeats": 2
   }
 ];

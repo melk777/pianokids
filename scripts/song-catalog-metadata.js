@@ -640,9 +640,163 @@ const metadata = {
   },
 };
 
-// Catalog metadata for the wave 5 hymns is kept next to their sources.
-for (const hymn of require("../music-sources/rebuild/wave-5-hymns")) {
-  metadata[hymn.id] = hymn.catalog;
-}
+// Wave 5 hymns (sources in music-sources/rebuild/wave-5). Kept inline because
+// music-sources/ is not uploaded to Vercel (see .vercelignore).
+Object.assign(metadata, {
+  "que-seguranca": {
+    title: "Que Segurança",
+    artist: "Phoebe P. Knapp",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "a-deus-demos-gloria": {
+    title: "A Deus Demos Glória",
+    artist: "William H. Doane",
+    category: "Religiosos",
+    difficulty: "Médio",
+    isPremium: false,
+  },
+  "alegria-ao-mundo": {
+    title: "Alegria ao Mundo",
+    artist: "arr. Lowell Mason",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "eis-dos-anjos-a-harmonia": {
+    title: "Eis dos Anjos a Harmonia",
+    artist: "Felix Mendelssohn",
+    category: "Religiosos",
+    difficulty: "Médio",
+    isPremium: false,
+  },
+  "vem-tu-onipotente": {
+    title: "Vem, Tu, Onipotente",
+    artist: "Felice de Giardini",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "o-deus-nosso-socorro": {
+    title: "Ó Deus, Nosso Socorro",
+    artist: "William Croft",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "guiado-pela-mao": {
+    title: "Guiado pela Mão",
+    artist: "William B. Bradbury",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "formoso-senhor-jesus": {
+    title: "Formoso Senhor Jesus",
+    artist: "Melodia silesiana",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "o-primeiro-natal": {
+    title: "O Primeiro Natal",
+    artist: "Tradicional inglês",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "junto-ao-rio": {
+    title: "Junto ao Rio",
+    artist: "Robert Lowry",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "louvai-ao-senhor-rei-poderoso": {
+    title: "Louvai ao Senhor, Rei Poderoso",
+    artist: "Stralsund Gesangbuch",
+    category: "Religiosos",
+    difficulty: "Médio",
+    isPremium: false,
+  },
+  "sou-teu-senhor": {
+    title: "Sou Teu, Senhor",
+    artist: "William H. Doane",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "mais-amor-a-ti": {
+    title: "Mais Amor a Ti",
+    artist: "William H. Doane",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "mil-linguas-eu-quisera-ter": {
+    title: "Mil Línguas Eu Quisera Ter",
+    artist: "Carl G. Gläser",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "tal-qual-estou": {
+    title: "Tal Qual Estou",
+    artist: "William B. Bradbury",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "minha-fe-contempla-a-ti": {
+    title: "Minha Fé Contempla a Ti",
+    artist: "Lowell Mason",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "anjos-das-alturas": {
+    title: "Anjos das Alturas",
+    artist: "Henry Smart",
+    category: "Religiosos",
+    difficulty: "Médio",
+    isPremium: false,
+  },
+  "como-um-pastor": {
+    title: "Como um Pastor",
+    artist: "William B. Bradbury",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "abre-meus-olhos": {
+    title: "Abre Meus Olhos",
+    artist: "Clara H. Scott",
+    category: "Religiosos",
+    difficulty: "Médio",
+    isPremium: false,
+  },
+  "jesus-chama": {
+    title: "Jesus Chama",
+    artist: "William H. Jude",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "doxologia": {
+    title: "Doxologia",
+    artist: "Louis Bourgeois",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+  "comigo-habita": {
+    title: "Comigo Habita",
+    artist: "William H. Monk",
+    category: "Religiosos",
+    difficulty: "Fácil",
+    isPremium: false,
+  },
+});
 
 module.exports = metadata;
