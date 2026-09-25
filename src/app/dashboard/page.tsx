@@ -384,7 +384,7 @@ export default function Dashboard() {
                 <div className={`mb-6 rounded-2xl border p-5 ${insightToneClass}`}>
                   <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
-                      <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] opacity-70">Proximo passo</p>
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] opacity-70">Próximo passo</p>
                       <h3 className="text-xl font-black text-white">{progressInsight.title}</h3>
                       <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/60">{progressInsight.message}</p>
                     </div>
@@ -394,8 +394,8 @@ export default function Dashboard() {
                   </div>
 
                   <div className="mb-4 grid grid-cols-3 gap-2">
-                    <ProgressInsightMetric label="Semana" value={`${progressInsight.weeklySessions} sessoes`} />
-                    <ProgressInsightMetric label="Media recente" value={`${progressInsight.averageRecentAccuracy}%`} />
+                    <ProgressInsightMetric label="Semana" value={`${progressInsight.weeklySessions} sessões`} />
+                    <ProgressInsightMetric label="Média recente" value={`${progressInsight.averageRecentAccuracy}%`} />
                     <ProgressInsightMetric label="Melhor" value={`${progressInsight.bestRecentAccuracy}%`} />
                   </div>
 
@@ -723,7 +723,7 @@ function AchievementTile({ achievement }: { achievement: PracticeAchievement }) 
 }
 
 function RecommendedLessonCard({ recommendation, onClick }: { recommendation: PracticeRecommendation; onClick: () => void }) {
-  const handLabel = recommendation.handMode === "both" ? "Duas maos" : recommendation.handMode === "left" ? "Mao esquerda" : "Mao direita";
+  const handLabel = recommendation.handMode === "both" ? "Duas mãos" : recommendation.handMode === "left" ? "Mão esquerda" : "Mão direita";
   const difficultyLabel = recommendation.difficulty === "pro" ? "Profissional" : recommendation.difficulty === "medium" ? "Intermediario" : "Iniciante";
 
   return (
@@ -756,7 +756,7 @@ function RecommendedLessonCard({ recommendation, onClick }: { recommendation: Pr
         onClick={onClick}
         className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan to-magenta px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white transition hover:opacity-90"
       >
-        Comecar agora
+        Começar agora
         <ChevronRight className="h-3.5 w-3.5" />
       </Link>
     </div>
