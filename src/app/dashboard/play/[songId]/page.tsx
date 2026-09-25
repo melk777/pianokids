@@ -8,6 +8,7 @@ import ScoreScreen from "@/components/ScoreScreen";
 import OrientationOverlay from "@/components/OrientationOverlay";
 import PianoPlayer from "@/components/PianoPlayer";
 import LatencyCalibration from "@/components/LatencyCalibration";
+import { describeGoal, findLesson, isLessonComplete, lessonHref, nextLessonAfter } from "@/lib/learningPath";
 import { readStoredLatencyMs, storeLatencyMs } from "@/lib/latencyCalibration";
 import GameTutorialOverlay, {
   type GameTutorialActionId,
@@ -40,6 +41,7 @@ import {
   Play,
   Repeat,
   RotateCcw,
+  Target,
   Timer,
   TimerReset,
   Volume2,
@@ -234,6 +236,12 @@ function PlayPageContent() {
   };
 
   const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
+  // A lesson from the learning path, when the song was opened from it.
+  const activeLesson = useMemo(() => {
+    const found = findLesson(searchParams.get("lesson"));
+    return found && found.songId === songId ? found : undefined;
+  }, [searchParams, songId]);
+  const [lessonPassed, setLessonPassed] = useState<boolean | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "countdown" | "playing" | "ended">("idle");
@@ -604,6 +612,29 @@ function PlayPageContent() {
       setIsPlaying(false);
       setGameState("ended");
 
+      const handMode =
+        handSelection.includeLeftHand && handSelection.includeRightHand
+          ? "both"
+          : handSelection.includeRightHand
+            ? "right"
+            : handSelection.includeLeftHand
+              ? "left"
+              : "unknown";
+
+      if (activeLesson) {
+        setLessonPassed(
+          isLessonComplete(activeLesson, [
+            {
+              songId: activeLesson.songId,
+              difficulty,
+              handMode,
+              bestAccuracy: Math.round(summary.accuracy),
+              completions: summary.completed ? 1 : 0,
+            },
+          ]),
+        );
+      }
+
       if (isFreePlay || !profile || !song || hasRecordedSessionRef.current) {
         return;
       }
@@ -618,17 +649,10 @@ function PlayPageContent() {
         songId: song.id,
         songTitle: song.title,
         difficulty,
-        handMode:
-          handSelection.includeLeftHand && handSelection.includeRightHand
-            ? "both"
-            : handSelection.includeRightHand
-              ? "right"
-              : handSelection.includeLeftHand
-                ? "left"
-                : "unknown",
+        handMode,
       });
     },
-    [difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, isFreePlay, profile, recordPracticeSession, song],
+    [activeLesson, difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, isFreePlay, profile, recordPracticeSession, song],
   );
 
   const handleSetLoopStart = useCallback(() => {
@@ -1361,6 +1385,15 @@ function PlayPageContent() {
               exit={{ opacity: 0 }}
               className="flex h-full select-none flex-col items-center justify-center px-6 py-10 text-center"
             >
+              {activeLesson && (
+                <div className="mb-6 flex max-w-md items-center gap-3 rounded-2xl border border-cyan/30 bg-cyan/10 px-4 py-3 text-left">
+                  <Target size={18} className="shrink-0 text-cyan" />
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan">Aula {activeLesson.id}</p>
+                    <p className="text-sm text-white/85">Meta: {describeGoal(activeLesson)}.</p>
+                  </div>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={startGame}
@@ -1493,11 +1526,27 @@ function PlayPageContent() {
                 restartGame();
               }}
               onPracticeRange={startFocusedPractice}
+              lesson={
+                activeLesson
+                  ? {
+                      title: activeLesson.title,
+                      goal: describeGoal(activeLesson),
+                      passed: Boolean(lessonPassed),
+                      nextTitle: nextLessonAfter(activeLesson.id)?.title,
+                    }
+                  : undefined
+              }
               onNext={() => {
+                if (activeLesson) {
+                  const next = lessonPassed ? nextLessonAfter(activeLesson.id) : undefined;
+                  // Full navigation so the next lesson starts with a fresh player state.
+                  window.location.assign(next ? lessonHref(next) : "/dashboard/trilha");
+                  return;
+                }
                 router.push("/dashboard/songs");
               }}
               onExit={() => {
-                router.push("/dashboard/songs");
+                router.push(activeLesson ? "/dashboard/trilha" : "/dashboard/songs");
               }}
             />
           )}

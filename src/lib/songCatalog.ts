@@ -1,4 +1,5 @@
 import type { Song } from "@/lib/types";
+import { getExercises, toCatalogEntry } from "@/lib/exercises";
 
 let catalogCache: Song[] | null = null;
 
@@ -33,7 +34,8 @@ async function loadCatalogIndex(): Promise<Song[]> {
 }
 
 export async function loadSongs(): Promise<Song[]> {
-  return loadCatalogIndex();
+  const catalog = await loadCatalogIndex();
+  return [...catalog, ...getExercises().map(toCatalogEntry)];
 }
 
 export async function loadSongById(id: string): Promise<Song | undefined> {

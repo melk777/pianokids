@@ -3,6 +3,7 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Song, SongSourceProvenance } from "@/lib/types";
+import { getExerciseById, toCatalogEntry } from "@/lib/exercises";
 
 const catalogPath = path.join(process.cwd(), "public", "song-catalog-index.json");
 const manifestPath = path.join(process.cwd(), "data", "song-file-index.json");
@@ -38,11 +39,18 @@ async function getSongFileManifest() {
 }
 
 export async function getServerSongMetadata(songId: string) {
+  // Generated exercises are not in the file catalog.
+  const exercise = getExerciseById(songId);
+  if (exercise) return toCatalogEntry(exercise);
+
   const catalog = await getServerSongCatalog();
   return catalog.find((song) => song.id === songId);
 }
 
 export async function getServerSongById(songId: string): Promise<Song | undefined> {
+  const exercise = getExerciseById(songId);
+  if (exercise) return exercise;
+
   const [metadata, manifest] = await Promise.all([
     getServerSongMetadata(songId),
     getSongFileManifest(),

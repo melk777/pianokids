@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import type { PracticeSession, Profile } from "@/lib/types";
-import { buildPracticeAggregate, getBrazilPracticeDate } from "@/lib/practiceHistory";
+import { buildPracticeAggregate, buildSongResults, getBrazilPracticeDate, practiceSecondsOn } from "@/lib/practiceHistory";
 import { canAccessSong, hasSpecialAccess } from "@/lib/access-control";
 import { createSupabaseAdminClient } from "@/lib/server/supabase";
 import { getServerSongMetadata } from "@/lib/server/song-catalog";
@@ -53,6 +53,8 @@ async function loadSessionData(userId: string) {
     sessions,
     aggregate: buildPracticeAggregate(sessions),
     recentSessions: sessions.slice(0, 12),
+    songResults: buildSongResults(sessions),
+    todaySeconds: practiceSecondsOn(sessions),
   };
 }
 
@@ -110,6 +112,8 @@ export async function GET() {
       supported: true,
       aggregate: snapshot.aggregate,
       recentSessions: snapshot.recentSessions,
+      songResults: snapshot.songResults,
+      todaySeconds: snapshot.todaySeconds,
     });
   } catch (error) {
     if (isMissingPracticeSessionsTable(error)) {
@@ -228,6 +232,8 @@ export async function POST(request: Request) {
       supported: true,
       aggregate: snapshot.aggregate,
       recentSessions: snapshot.recentSessions,
+      songResults: snapshot.songResults,
+      todaySeconds: snapshot.todaySeconds,
       profile,
     });
   } catch (error) {
