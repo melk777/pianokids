@@ -28,6 +28,7 @@ const CATEGORIES = [
   { id: "Infantis", label: "Infantis" },
   { id: "Clássicos", label: "Clássicos" },
   { id: "Religiosos", label: "Religiosos" },
+  { id: "Exercícios", label: "Exercícios" },
   { id: "Intro de Filmes", label: "Intro de Filmes" },
 ] as const;
 

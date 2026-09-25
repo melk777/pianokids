@@ -20,7 +20,9 @@ export type AnalyticsEventName =
   | "tutorial_completed"
   | "song_finished"
   | "score_restart_clicked"
-  | "recommended_practice_clicked";
+  | "recommended_practice_clicked"
+  | "lesson_completed"
+  | "mic_session_quality";
 
 export type AnalyticsProperties = Record<string, string | number | boolean | null | undefined>;
 

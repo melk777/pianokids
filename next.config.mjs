@@ -79,6 +79,16 @@ const nextConfig = {
         source: "/login",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
+      {
+        // The service worker must be revalidated so updates reach installed apps.
+        source: "/sw.js",
+        headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }],
+      },
+      {
+        // Piano recordings never change in place; a new set would use a new folder.
+        source: "/audio/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
   async redirects() {

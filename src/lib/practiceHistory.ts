@@ -80,3 +80,40 @@ export function mergeProfileWithPracticeAggregate(profile: Profile, aggregate?: 
     last_practice_date: aggregate.lastPracticeDate,
   };
 }
+
+export interface SongResultSummary {
+  songId: string;
+  difficulty: string;
+  handMode: string;
+  bestAccuracy: number;
+  completions: number;
+}
+
+/** Best accuracy and completed runs per song, difficulty and hand mode. */
+export function buildSongResults(sessions: PracticeSession[]): SongResultSummary[] {
+  const results = new Map<string, SongResultSummary>();
+  for (const session of sessions) {
+    if (!session.song_id) continue;
+    const difficulty = session.difficulty ?? "beginner";
+    const handMode = session.hand_mode ?? "unknown";
+    const key = `${session.song_id}|${difficulty}|${handMode}`;
+    const current = results.get(key) ?? {
+      songId: session.song_id,
+      difficulty,
+      handMode,
+      bestAccuracy: 0,
+      completions: 0,
+    };
+    if (session.completed) {
+      current.completions += 1;
+      current.bestAccuracy = Math.max(current.bestAccuracy, session.accuracy);
+    }
+    results.set(key, current);
+  }
+  return Array.from(results.values());
+}
+
+/** Seconds practiced on the given Brazil calendar day. */
+export function practiceSecondsOn(sessions: PracticeSession[], day = getBrazilPracticeDate()) {
+  return sessions.reduce((total, session) => (session.practiced_on === day ? total + session.duration_seconds : total), 0);
+}

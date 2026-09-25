@@ -62,6 +62,12 @@ export interface PracticeFeedbackSummary {
   maxCombo: number;
   cleanLoopPasses: number;
   averageTimingMs: number;
+  /** Long notes judged on hold duration, and how many were held to the end. */
+  longNotes?: number;
+  sustainedNotes?: number;
+  shortHolds?: number;
+  /** Unexpected pitches heard by the microphone (not penalized). */
+  inputNoise?: number;
   problemNotes: Array<{
     midi: number;
     name?: string;

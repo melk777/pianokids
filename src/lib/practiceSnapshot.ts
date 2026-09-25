@@ -1,11 +1,16 @@
 "use client";
 
 import type { PracticeAggregate, PracticeSession } from "@/lib/types";
+import type { SongResult } from "@/lib/learningPath";
 
 export interface PracticeSnapshot {
   supported: boolean;
   aggregate: PracticeAggregate | null;
   recentSessions: PracticeSession[];
+  /** Best result per song/difficulty/hands, used by the learning path. */
+  songResults: SongResult[];
+  /** Seconds practiced today (Brazil time), for the daily goal. */
+  todaySeconds: number;
 }
 
 // Header, dashboard pages and the profile hook all need the same practice
@@ -31,6 +36,8 @@ export function loadPracticeSnapshot(): Promise<PracticeSnapshot | null> {
         supported: Boolean(data?.supported),
         aggregate: data?.aggregate ?? null,
         recentSessions: (data?.recentSessions ?? []) as PracticeSession[],
+        songResults: (data?.songResults ?? []) as SongResult[],
+        todaySeconds: Number(data?.todaySeconds) || 0,
       };
     })
     .catch(() => null)

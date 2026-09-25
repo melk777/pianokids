@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ScoreScreen from "@/components/ScoreScreen";
-import OrientationOverlay from "@/components/OrientationOverlay";
 import PianoPlayer from "@/components/PianoPlayer";
+import LatencyCalibration from "@/components/LatencyCalibration";
+import { describeGoal, findLesson, isLessonComplete, lessonHref, nextLessonAfter } from "@/lib/learningPath";
+import { readStoredLatencyMs, storeLatencyMs } from "@/lib/latencyCalibration";
 import GameTutorialOverlay, {
   type GameTutorialActionId,
   type GameTutorialStep,
@@ -30,6 +32,7 @@ import {
   Cable,
   CircleHelp,
   Gauge,
+  Hand,
   Mic,
   MicOff,
   Music,
@@ -37,13 +40,17 @@ import {
   Play,
   Repeat,
   RotateCcw,
+  Target,
+  Timer,
   TimerReset,
   Volume2,
   VolumeX,
   X,
 } from "lucide-react";
 
-const NON_STARTING_KEYS = new Set(["Enter", "Tab", "Escape", "Shift", "Control", "Alt", "Meta", "CapsLock"]);
+const FINGERING_STORAGE_KEY = "pianify.showFingering";
+
+const NON_STARTING_KEYS =new Set(["Enter", "Tab", "Escape", "Shift", "Control", "Alt", "Meta", "CapsLock"]);
 
 // Shared toolbar styles keep every control the same height and contrast.
 const TOOLBAR_GROUP = "flex h-10 items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-1";
@@ -57,6 +64,9 @@ import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useProfile } from "@/hooks/useProfile";
 import { trackEvent } from "@/lib/analytics";
 import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
+import { focusedKeyboardRange } from "@/lib/keyboardRange";
+import { selectMicNotes } from "@/lib/micInput";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const FREE_PLAY_SONG: Song = {
   id: "freeplay",
@@ -228,6 +238,12 @@ function PlayPageContent() {
   };
 
   const [difficulty, setDifficulty] = useState<Difficulty>("beginner");
+  // A lesson from the learning path, when the song was opened from it.
+  const activeLesson = useMemo(() => {
+    const found = findLesson(searchParams.get("lesson"));
+    return found && found.songId === songId ? found : undefined;
+  }, [searchParams, songId]);
+  const [lessonPassed, setLessonPassed] = useState<boolean | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "countdown" | "playing" | "ended">("idle");
@@ -240,6 +256,20 @@ function PlayPageContent() {
   const [metronomeVolume, setMetronomeVolume] = useState(0.08);
   const [showMicHint, setShowMicHint] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showCalibration, setShowCalibration] = useState(false);
+  const [inputLatencyMs, setInputLatencyMs] = useState(0);
+  const [showFingering, setShowFingering] = useState(true);
+
+  useEffect(() => {
+    // Browser-only preferences are read after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is unavailable during SSR.
+    setInputLatencyMs(readStoredLatencyMs());
+    try {
+      setShowFingering(window.localStorage.getItem(FINGERING_STORAGE_KEY) !== "0");
+    } catch {
+      // Keep the default when storage is unavailable.
+    }
+  }, []);
   const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
   const [loopStart, setLoopStart] = useState(0);
   const [loopEnd, setLoopEnd] = useState(0);
@@ -433,7 +463,9 @@ function PlayPageContent() {
       });
     });
 
-    const detectedNotes = activeAudioNotes.length > 0 ? activeAudioNotes : activeAudioNote ? [activeAudioNote] : [];
+    const rawDetected = activeAudioNotes.length > 0 ? activeAudioNotes : activeAudioNote ? [activeAudioNote] : [];
+    // One-hand practice is melodic: keep the clearest pitch, not its harmonics.
+    const detectedNotes = selectMicNotes(rawDetected, !(handSelection.includeLeftHand && handSelection.includeRightHand));
 
     for (const detectedNote of detectedNotes) {
       merged.set(detectedNote.note, {
@@ -445,7 +477,7 @@ function PlayPageContent() {
     }
 
     return merged;
-  }, [activeAudioNote, activeAudioNotes, localInputNotes, midi.activeNotes]);
+  }, [activeAudioNote, activeAudioNotes, handSelection.includeLeftHand, handSelection.includeRightHand, localInputNotes, midi.activeNotes]);
 
   const micHealth = useMemo(() => {
     if (!isMicActive) {
@@ -584,6 +616,42 @@ function PlayPageContent() {
       setIsPlaying(false);
       setGameState("ended");
 
+      const handMode =
+        handSelection.includeLeftHand && handSelection.includeRightHand
+          ? "both"
+          : handSelection.includeRightHand
+            ? "right"
+            : handSelection.includeLeftHand
+              ? "left"
+              : "unknown";
+
+      if (activeLesson) {
+        const passed = isLessonComplete(activeLesson, [
+          {
+            songId: activeLesson.songId,
+            difficulty,
+            handMode,
+            bestAccuracy: Math.round(summary.accuracy),
+            completions: summary.completed ? 1 : 0,
+          },
+        ]);
+        setLessonPassed(passed);
+        if (passed) trackEvent("lesson_completed", { lessonId: activeLesson.id, accuracy: Math.round(summary.accuracy) });
+      }
+
+      if (isMicActive) {
+        // Lets us see whether microphone scoring is fair on real pianos.
+        trackEvent("mic_session_quality", {
+          songId: song?.id ?? songId,
+          handMode,
+          accuracy: Math.round(summary.accuracy),
+          hits: summary.feedback.hits,
+          misses: summary.feedback.misses,
+          noise: summary.feedback.inputNoise ?? 0,
+          calibrated: Boolean(calibrationProfile),
+        });
+      }
+
       if (isFreePlay || !profile || !song || hasRecordedSessionRef.current) {
         return;
       }
@@ -598,17 +666,10 @@ function PlayPageContent() {
         songId: song.id,
         songTitle: song.title,
         difficulty,
-        handMode:
-          handSelection.includeLeftHand && handSelection.includeRightHand
-            ? "both"
-            : handSelection.includeRightHand
-              ? "right"
-              : handSelection.includeLeftHand
-                ? "left"
-                : "unknown",
+        handMode,
       });
     },
-    [difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, isFreePlay, profile, recordPracticeSession, song],
+    [activeLesson, calibrationProfile, difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, isFreePlay, isMicActive, profile, recordPracticeSession, song, songId],
   );
 
   const handleSetLoopStart = useCallback(() => {
@@ -729,7 +790,7 @@ function PlayPageContent() {
   }, [handSelection, searchParams, startMic]);
 
   useEffect(() => {
-    if (gameState !== "idle") return;
+    if (gameState !== "idle" || showCalibration) return;
 
     if (activeNotes.size > 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- An external MIDI/microphone note intentionally starts the game state machine.
@@ -746,7 +807,7 @@ function PlayPageContent() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeNotes, gameState, isTutorialSimulation, startGame]);
+  }, [activeNotes, gameState, isTutorialSimulation, showCalibration, startGame]);
 
   const filteredNotes = useMemo<SongNote[]>(() => {
     if (!song) return [];
@@ -800,6 +861,13 @@ function PlayPageContent() {
   const tutorialNotes = useMemo(() => buildTutorialSimulationNotes(tutorialRunId), [tutorialRunId]);
   const playerNotes = isTutorialSimulation ? tutorialNotes : filteredNotes;
   const playerDuration = isTutorialSimulation ? 120 : (song?.duration ?? 0);
+  // Phones and small tablets show only the octaves in use, so keys stay tappable
+  // in portrait instead of forcing the student to rotate the device.
+  const isCompactScreen = useMediaQuery("(max-width: 1023px)");
+  const keyboardRange = useMemo(
+    () => (isCompactScreen ? focusedKeyboardRange(playerNotes) : { start: PIANO_START_MIDI, end: PIANO_END_MIDI }),
+    [isCompactScreen, playerNotes],
+  );
   const playerAccompanimentNotes = useMemo(() => {
     if (isTutorialSimulation) return [];
     const studentNoteKeys = new Set(playerNotes.map((note) => `${Math.round(note.time * 100)}:${note.midi}`));
@@ -905,7 +973,6 @@ function PlayPageContent() {
 
   return (
     <div ref={pageRef} className="relative flex min-h-screen flex-col overflow-hidden bg-black font-sans text-white">
-      <OrientationOverlay />
 
       {showTutorial ? (
         <GameTutorialOverlay
@@ -1210,6 +1277,35 @@ function PlayPageContent() {
               {audioEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
             </button>
             <button
+              onClick={() => {
+                const next = !showFingering;
+                setShowFingering(next);
+                try {
+                  window.localStorage.setItem(FINGERING_STORAGE_KEY, next ? "1" : "0");
+                } catch {
+                  // Preference only lasts for this visit when storage is unavailable.
+                }
+              }}
+              aria-pressed={showFingering}
+              className={`${TOOLBAR_BUTTON} ${showFingering ? TOOLBAR_ACTIVE : TOOLBAR_IDLE}`}
+              title="Mostrar o dedo sugerido (1 = polegar, 5 = mínimo) em cada nota"
+            >
+              <Hand size={15} />
+              <span className="hidden 2xl:inline">Dedos</span>
+            </button>
+            <button
+              onClick={() => {
+                if (gameState === "playing" && !isPaused && !isTutorialSimulation) togglePause();
+                setShowCalibration(true);
+              }}
+              disabled={isTutorialSimulation}
+              aria-label="Calibrar atraso"
+              className={`${TOOLBAR_BUTTON} ${inputLatencyMs > 0 ? "text-cyan hover:bg-white/8" : "text-white/75 hover:bg-white/8 hover:text-white"} disabled:opacity-40`}
+              title={`Calibrar atraso de fones e teclado (atual: ${inputLatencyMs} ms)`}
+            >
+              <Timer size={15} />
+            </button>
+            <button
               onClick={() => setShowTutorial(true)}
               aria-label="Abrir tutorial"
               className={`${TOOLBAR_BUTTON} text-white/75 hover:bg-white/8 hover:text-white`}
@@ -1221,8 +1317,24 @@ function PlayPageContent() {
         </div>
       </header>
 
+      {showCalibration ? (
+        <LatencyCalibration
+          currentLatencyMs={inputLatencyMs}
+          getAudioTime={audio.getCurrentTime}
+          playTick={audio.playTick}
+          resumeAudio={audio.resume}
+          midiSignal={midi.lastNote}
+          onSave={(value) => {
+            setInputLatencyMs(value);
+            storeLatencyMs(value);
+          }}
+          onClose={() => setShowCalibration(false)}
+        />
+      ) : null}
+
       <div className="relative flex flex-1 flex-col overflow-hidden">
-        {showMicHint && (
+        {/* Only guide the microphone when it is in use; keyboard/MIDI players do not need it. */}
+        {showMicHint && isMicActive && (
           <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex justify-center md:left-auto md:right-5 md:top-4 md:justify-end">
             <div
               className={`pointer-events-auto max-w-md rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-md ${
@@ -1297,6 +1409,15 @@ function PlayPageContent() {
               exit={{ opacity: 0 }}
               className="flex h-full select-none flex-col items-center justify-center px-6 py-10 text-center"
             >
+              {activeLesson && (
+                <div className="mb-6 flex max-w-md items-center gap-3 rounded-2xl border border-cyan/30 bg-cyan/10 px-4 py-3 text-left">
+                  <Target size={18} className="shrink-0 text-cyan" />
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan">Aula {activeLesson.id}</p>
+                    <p className="text-sm text-white/85">Meta: {describeGoal(activeLesson)}.</p>
+                  </div>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={startGame}
@@ -1313,24 +1434,36 @@ function PlayPageContent() {
               <p className="mt-2 max-w-md text-sm leading-relaxed text-white/65">
                 {isLoopEnabled
                   ? `Vamos repetir ${formatLoopTime(loopStart)} – ${formatLoopTime(loopEnd)} a ${Math.round(playbackSpeed * 100)}% da velocidade.`
-                  : "Aperte qualquer tecla do piano ou clique no botão para começar. As notas vão cair até o teclado."}
+                  : isCompactScreen
+                    ? "Toque no botão ou numa tecla do piano para começar. As notas vão cair até o teclado."
+                    : "Aperte qualquer tecla do piano ou clique no botão para começar. As notas vão cair até o teclado."}
               </p>
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-white/70">
-                <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
-                  <span className="flex gap-0.5" aria-hidden>
-                    {["A", "S", "D", "F"].map((key) => (
-                      <kbd key={key} className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">
-                        {key}
-                      </kbd>
-                    ))}
+                {!isCompactScreen && (
+                  <>
+                    <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                      <span className="flex gap-0.5" aria-hidden>
+                        {["A", "S", "D", "F"].map((key) => (
+                          <kbd key={key} className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">
+                            {key}
+                          </kbd>
+                        ))}
+                      </span>
+                      Dó, Ré, Mi, Fá no computador
+                    </span>
+                    <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                      <kbd className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">Espaço</kbd>
+                      pausa
+                    </span>
+                  </>
+                )}
+                {showFingering && (
+                  <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                    <span className="grid h-5 w-5 place-items-center rounded-full border border-amber-200/60 bg-black text-[10px] font-black text-white">1</span>
+                    número na nota = dedo (1 polegar … 5 mínimo)
                   </span>
-                  Dó, Ré, Mi, Fá no computador
-                </span>
-                <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
-                  <kbd className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">Espaço</kbd>
-                  pausa
-                </span>
+                )}
                 <span className={`rounded-full border px-3 py-1.5 ${isWaitingMode ? "border-cyan/30 bg-cyan/10 text-cyan" : "border-white/10 bg-white/[0.04]"}`}>
                   Espera {isWaitingMode ? "ligada" : "desligada"} · {Math.round(playbackSpeed * 100)}%
                 </span>
@@ -1387,8 +1520,8 @@ function PlayPageContent() {
                 playbackSpeed={playbackSpeed}
                 initialPlaybackTime={isLoopEnabled && loopDuration >= 1 ? loopStart : 0}
                 resetKey={`${song.id}:${difficulty}:${handSelection.includeLeftHand}:${handSelection.includeRightHand}:${playerResetKey}`}
-                startNote={PIANO_START_MIDI}
-                endNote={PIANO_END_MIDI}
+                startNote={keyboardRange.start}
+                endNote={keyboardRange.end}
                 loopRegion={{
                   enabled: isLoopEnabled && loopDuration >= 1,
                   start: loopStart,
@@ -1405,6 +1538,10 @@ function PlayPageContent() {
                     ? TUTORIAL_KEYBOARD_NOTE
                     : undefined
                 }
+                showFingering={showFingering}
+                judgeHolds={!isMicActive}
+                lenientInput={isMicActive}
+                inputLatency={isTutorialSimulation ? 0 : inputLatencyMs / 1000}
               />
             </motion.div>
           )}
@@ -1420,11 +1557,27 @@ function PlayPageContent() {
                 restartGame();
               }}
               onPracticeRange={startFocusedPractice}
+              lesson={
+                activeLesson
+                  ? {
+                      title: activeLesson.title,
+                      goal: describeGoal(activeLesson),
+                      passed: Boolean(lessonPassed),
+                      nextTitle: nextLessonAfter(activeLesson.id)?.title,
+                    }
+                  : undefined
+              }
               onNext={() => {
+                if (activeLesson) {
+                  const next = lessonPassed ? nextLessonAfter(activeLesson.id) : undefined;
+                  // Full navigation so the next lesson starts with a fresh player state.
+                  window.location.assign(next ? lessonHref(next) : "/dashboard/trilha");
+                  return;
+                }
                 router.push("/dashboard/songs");
               }}
               onExit={() => {
-                router.push("/dashboard/songs");
+                router.push(activeLesson ? "/dashboard/trilha" : "/dashboard/songs");
               }}
             />
           )}

@@ -4,6 +4,7 @@ import { getURL } from "@/lib/utils/url";
 const PUBLIC_ROUTES = [
   { path: "", changeFrequency: "weekly" as const, priority: 1 },
   { path: "/professores", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/igrejas", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/contato", changeFrequency: "yearly" as const, priority: 0.4 },
   { path: "/reembolso", changeFrequency: "yearly" as const, priority: 0.3 },
   { path: "/creditos", changeFrequency: "monthly" as const, priority: 0.4 },

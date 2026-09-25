@@ -8,6 +8,9 @@ import { TIMING_WINDOWS } from "@/lib/songFilters";
 import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
 import VirtualKeyboard from "./VirtualKeyboard";
 import { calculatePracticeAccuracy } from "@/lib/practice-score";
+import { suggestFingering } from "@/lib/fingering";
+import { isEarlyRelease, isLongNote } from "@/lib/holdScoring";
+import { MIC_TIMING_FACTOR, wasPlayed } from "@/lib/micInput";
 
 interface PianoPlayerProps {
   notes: SongNote[];
@@ -55,6 +58,17 @@ interface PianoPlayerProps {
     keyboardRef?: MutableRefObject<HTMLDivElement | null>;
   };
   tutorialHighlightNote?: number;
+  /** Draw the suggested finger (1-5) on each falling note. */
+  showFingering?: boolean;
+  /** Score how long notes are held (off for the microphone, which cannot hear releases reliably). */
+  judgeHolds?: boolean;
+  /** Measured input/audio delay in seconds, subtracted before judging timing. */
+  inputLatency?: number;
+  /**
+   * Microphone mode: accept octave slips, widen the timing window and count
+   * unexpected pitches as noise instead of penalizing them.
+   */
+  lenientInput?: boolean;
 }
 
 interface VisualEffect {
@@ -83,6 +97,7 @@ interface NoteGroup {
 
 const VIEWPORT_SECONDS = 4;
 const CHORD_GROUP_WINDOW = 0.09;
+const SUSTAIN_BONUS = 50;
 
 const COLORS = {
   hitZoneLine: "rgba(125, 249, 255, 0.72)",
@@ -171,12 +186,17 @@ export default function PianoPlayer({
   onPracticeSuggestion,
   tutorialTargets,
   tutorialHighlightNote,
+  showFingering = true,
+  judgeHolds = true,
+  inputLatency = 0,
+  lenientInput = false,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
-  const timingWindow = TIMING_WINDOWS[difficulty];
+  const timingWindow = TIMING_WINDOWS[difficulty] * (lenientInput ? MIC_TIMING_FACTOR : 1);
   const lastActiveNotesState = useRef("");
   const noteGroups = useMemo(() => buildNoteGroups(notes), [notes]);
+  const fingering = useMemo(() => (showFingering ? suggestFingering(notes) : null), [notes, showFingering]);
 
   const stateRef = useRef({
     score: 0,
@@ -205,6 +225,12 @@ export default function PianoPlayer({
     internalGameTime: initialPlaybackTime,
     lastTickTime: 0,
     playedAccompaniment: new Set<number>(),
+    heldNotes: new Map<number, number>(),
+    releasedEarly: new Set<number>(),
+    longNotes: 0,
+    sustainedNotes: 0,
+    shortHolds: 0,
+    inputNoise: 0,
   });
 
   const scoreUIRef = useRef<HTMLParagraphElement>(null);
@@ -234,6 +260,11 @@ export default function PianoPlayer({
       state.hitNotes = refreshedHits;
       state.missedNotes = refreshedMisses;
       state.effects = [];
+      state.heldNotes.clear();
+      state.releasedEarly.forEach((index) => {
+        const note = notes[index];
+        if (note && note.time >= start && note.time <= end) state.releasedEarly.delete(index);
+      });
 
       if (state.playedAccompaniment.size > 0 && accompanimentNotes.length > 0) {
         const refreshedAccompaniment = new Set<number>();
@@ -290,6 +321,12 @@ export default function PianoPlayer({
       internalGameTime: initialPlaybackTime,
       lastTickTime: 0,
       playedAccompaniment: new Set(),
+      heldNotes: new Map(),
+      releasedEarly: new Set(),
+      longNotes: 0,
+      sustainedNotes: 0,
+      shortHolds: 0,
+      inputNoise: 0,
     };
     lastActiveNotesState.current = "";
 
@@ -388,6 +425,8 @@ export default function PianoPlayer({
       recommendation = `A nota ${problemNotes[0].name ?? problemNotes[0].midi} apareceu como ponto fraco. Isole esse movimento por alguns ciclos.`;
     } else if (weakestRange && weakestRange.misses >= 3) {
       recommendation = `Treine o trecho ${Math.floor(weakestRange.start)}s-${Math.floor(weakestRange.end)}s em velocidade reduzida.`;
+    } else if (state.shortHolds >= 3 && state.shortHolds > state.sustainedNotes / 2) {
+      recommendation = `Você soltou ${state.shortHolds} notas longas antes do fim. Mantenha a tecla pressionada até o bloco terminar de passar pela linha.`;
     } else if (state.lateHits > state.earlyHits && state.lateHits > 2) {
       recommendation = "Você está chegando um pouco tarde. Reduza a velocidade e antecipe a leitura das próximas notas.";
     } else if (state.earlyHits > state.lateHits && state.earlyHits > 2) {
@@ -407,6 +446,10 @@ export default function PianoPlayer({
       maxCombo: state.maxCombo,
       cleanLoopPasses: state.cleanLoopPasses,
       averageTimingMs,
+      longNotes: state.longNotes,
+      sustainedNotes: state.sustainedNotes,
+      shortHolds: state.shortHolds,
+      inputNoise: state.inputNoise,
       problemNotes,
       weakestRange,
       recommendation,
@@ -646,11 +689,24 @@ export default function PianoPlayer({
       const missedSet = state.missedNotes;
       const hitSet = state.hitNotes;
       let missesAdded = false;
+      const latencyInSongTime = inputLatency * playbackSpeed;
+
+      // Long notes still held when they finish passing the line earn the sustain bonus.
+      if (state.heldNotes.size > 0) {
+        state.heldNotes.forEach((_midi, index) => {
+          const note = notes[index];
+          if (!note || elapsed - latencyInSongTime < note.time + note.duration) return;
+          state.heldNotes.delete(index);
+          state.sustainedNotes += 1;
+          state.score += SUSTAIN_BONUS * (Math.floor(state.combo / 5) + 1);
+          missesAdded = true;
+        });
+      }
 
       noteGroups.forEach((group) => {
         const pendingIndices = group.indices.filter((index) => !hitSet.has(index) && !missedSet.has(index));
         if (pendingIndices.length === 0) return;
-        if (elapsed <= group.time + timingWindow) return;
+        if (elapsed <= group.time + timingWindow + latencyInSongTime) return;
 
         state.combo = 0;
         missesAdded = true;
@@ -721,10 +777,11 @@ export default function PianoPlayer({
         let drawHeight = noteHeight;
         let alpha = 0.95;
 
+        const releasedEarly = state.releasedEarly.has(index);
         if (isHit && elapsed >= note.time) {
           const visibleBottom = Math.min(yPos + noteHeight, hitY);
           drawHeight = Math.max(0, visibleBottom - yPos);
-          alpha = elapsed <= noteEndTime ? 0.98 : Math.max(0, 1 - (elapsed - noteEndTime) * 3);
+          alpha = elapsed <= noteEndTime ? (releasedEarly ? 0.32 : 0.98) : Math.max(0, 1 - (elapsed - noteEndTime) * 3);
         } else if (isMiss) {
           alpha = Math.max(0, 0.48 - (elapsed - note.time) * 1.2);
         } else {
@@ -788,7 +845,7 @@ export default function PianoPlayer({
         ctx.roundRect(xPos + rectWidth * 0.1, drawY + 2, Math.max(2, rectWidth * 0.24), Math.max(2, drawHeight - 4), rect.isBlack ? 4 : 7);
         ctx.fill();
 
-        if (isHit && elapsed >= note.time && elapsed <= noteEndTime && drawHeight > 10) {
+        if (isHit && !releasedEarly && elapsed >= note.time && elapsed <= noteEndTime && drawHeight > 10) {
           const drainHeight = Math.max(2, drawHeight * sustainProgress);
           const drainY = Math.max(drawY, hitY - drainHeight);
           const drainGradient = ctx.createLinearGradient(0, drainY, 0, drainY + drainHeight);
@@ -807,14 +864,35 @@ export default function PianoPlayer({
           ctx.fillRect(xPos + rectWidth * 0.18, holdGuideY, rectWidth * 0.64, 2);
         }
 
-        if (drawHeight >= 12 && rectWidth >= 10) {
+        const finger = fingering?.[index] ?? null;
+        const hasFingerBadge = finger !== null && drawHeight >= 18 && rectWidth >= 12;
+        if (hasFingerBadge) {
+          // Finger badge at the leading (bottom) edge, where the eye reads first.
+          const radius = Math.min(rectWidth * 0.42, 10);
+          const badgeY = drawY + drawHeight - radius - 3;
+          ctx.fillStyle = "rgba(0,0,0,0.72)";
+          ctx.beginPath();
+          ctx.arc(noteCenterX, badgeY, radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = palette.edge;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = `900 ${Math.round(radius * 1.25)}px var(--font-geist-mono), monospace`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(String(finger), noteCenterX, badgeY + 0.5);
+        }
+
+        const labelSpace = hasFingerBadge ? drawHeight - 26 : drawHeight;
+        if (labelSpace >= 12 && rectWidth >= 10) {
           ctx.fillStyle = rect.isBlack ? "rgba(255,255,255,0.92)" : palette.ink;
-          const compactLabel = drawHeight < 24;
+          const compactLabel = labelSpace < 24;
           ctx.font = `900 ${compactLabel ? 10 : rect.isBlack ? 11 : 13}px var(--font-geist-mono), monospace`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           const label = midiNoteToName(note.midi);
-          ctx.fillText(compactLabel ? label.replace(/\d/g, "") : label, xPos + rectWidth / 2, drawY + drawHeight / 2);
+          ctx.fillText(compactLabel ? label.replace(/\d/g, "") : label, xPos + rectWidth / 2, drawY + labelSpace / 2);
         }
       }
 
@@ -968,6 +1046,8 @@ export default function PianoPlayer({
     resetLoopWindowState,
     buildFeedbackSummary,
     showLiveFeedback,
+    fingering,
+    inputLatency,
   ]);
 
   useEffect(() => {
@@ -1001,11 +1081,32 @@ export default function PianoPlayer({
       });
     } else {
       const playedNotes = new Set(activeNotes.keys());
+      // The player reacts late by the calibrated delay; judge the moment they meant to play.
+      const judgeTime = state.gameTime - inputLatency * playbackSpeed;
+
+      if (judgeHolds) {
+        state.heldNotes.forEach((midi, index) => {
+          if (playedNotes.has(midi)) return;
+          state.heldNotes.delete(index);
+          const note = notes[index];
+          if (!note) return;
+          if (isEarlyRelease(note, judgeTime)) {
+            state.shortHolds += 1;
+            state.releasedEarly.add(index);
+            showLiveFeedback("Segure mais", "coach");
+          } else {
+            state.sustainedNotes += 1;
+            state.score += SUSTAIN_BONUS * (Math.floor(state.combo / 5) + 1);
+            uiChanged = true;
+          }
+        });
+      }
+
       const candidateGroups = noteGroups
-        .filter((group) => Math.abs(state.gameTime - group.time) <= timingWindow)
+        .filter((group) => Math.abs(judgeTime - group.time) <= timingWindow)
         .filter((group) => group.indices.some((index) => !state.hitNotes.has(index) && !state.missedNotes.has(index)))
         .sort((a, b) => {
-          const delta = Math.abs(state.gameTime - a.time) - Math.abs(state.gameTime - b.time);
+          const delta = Math.abs(judgeTime - a.time) - Math.abs(judgeTime - b.time);
           if (delta !== 0) return delta;
           return b.indices.length - a.indices.length;
         });
@@ -1020,8 +1121,13 @@ export default function PianoPlayer({
 
       if (expectedMidis.size > 0) {
         playedNotes.forEach((midi) => {
-          if (expectedMidis.has(midi)) return;
-          const eventBucket = Math.floor(state.gameTime * 4);
+          if (wasPlayed(expectedMidis, midi, lenientInput)) return;
+          if (lenientInput) {
+            // Microphone noise or harmonics: record it, but do not punish the student.
+            state.inputNoise += 1;
+            return;
+          }
+          const eventBucket = Math.floor(judgeTime * 4);
           const wrongKey = `${midi}-${eventBucket}`;
           if (state.wrongNoteTimes.has(wrongKey)) return;
 
@@ -1043,7 +1149,7 @@ export default function PianoPlayer({
         const pendingIndices = group.indices.filter((index) => !state.hitNotes.has(index) && !state.missedNotes.has(index));
         if (pendingIndices.length === 0) continue;
 
-        const allNotesPresent = pendingIndices.every((index) => playedNotes.has(notes[index].midi));
+        const allNotesPresent = pendingIndices.every((index) => wasPlayed(playedNotes, notes[index].midi, lenientInput));
         if (!allNotesPresent) continue;
 
         pendingIndices.forEach((index) => {
@@ -1052,7 +1158,11 @@ export default function PianoPlayer({
           state.combo += 1;
           state.maxCombo = Math.max(state.maxCombo, state.combo);
           state.hits += 1;
-          const timingDelta = state.gameTime - group.time;
+          if (judgeHolds && isLongNote(note)) {
+            state.longNotes += 1;
+            state.heldNotes.set(index, note.midi);
+          }
+          const timingDelta = judgeTime - group.time;
           state.timingDeltas.push(timingDelta);
           if (Math.abs(timingDelta) <= timingWindow * 0.35) {
             state.perfectHits += 1;
@@ -1081,7 +1191,7 @@ export default function PianoPlayer({
     }
 
     if (uiChanged) updateHUD();
-  }, [activeNotes, getAudioTime, isFreePlay, isPlaying, noteGroups, notes, onNoteHit, showLiveFeedback, timingWindow, updateHUD]);
+  }, [activeNotes, getAudioTime, inputLatency, isFreePlay, isPlaying, judgeHolds, lenientInput, noteGroups, notes, onNoteHit, playbackSpeed, showLiveFeedback, timingWindow, updateHUD]);
 
   return (
     <div className="relative w-full flex-1 overflow-hidden rounded-[1.75rem] border border-cyan/20 bg-zinc-950 shadow-[0_30px_100px_rgba(0,0,0,0.72),0_0_54px_rgba(34,211,238,0.10),inset_0_1px_0_rgba(255,255,255,0.07)] md:rounded-[2.25rem]">

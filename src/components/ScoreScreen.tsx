@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo } from "react";
 import confetti from "canvas-confetti";
-import { Clock3, Gauge, LogOut, Music2, RotateCcw, SkipForward, Star, Target, TrendingUp } from "lucide-react";
+import { Clock3, Gauge, GraduationCap, Hourglass, LogOut, Music2, RotateCcw, SkipForward, Star, Target, TrendingUp } from "lucide-react";
 import type { PracticeFeedbackSummary } from "@/lib/types";
 import type { Difficulty } from "@/lib/songFilters";
 import { buildPracticePlan } from "@/lib/practicePlan";
@@ -19,6 +19,13 @@ interface ScoreScreenProps {
   onPracticeRange?: (range: { start: number; end: number }) => void;
   onNext: () => void;
   onExit: () => void;
+  /** Present when the song was opened as a learning-path lesson. */
+  lesson?: {
+    title: string;
+    goal: string;
+    passed: boolean;
+    nextTitle?: string;
+  };
 }
 
 function clampPercent(value: number) {
@@ -64,6 +71,7 @@ export default function ScoreScreen({
   onPracticeRange,
   onNext,
   onExit,
+  lesson,
 }: ScoreScreenProps) {
   const safeAccuracy = clampPercent(accuracy);
   const isStrong = safeAccuracy >= 80;
@@ -146,6 +154,29 @@ export default function ScoreScreen({
         <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-cyan/50 to-transparent" />
         <div className="pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full bg-cyan/10 blur-3xl" />
 
+        {lesson && (
+          <div
+            data-testid="lesson-result"
+            className={`relative mb-4 flex flex-wrap items-center gap-3 rounded-xl border p-4 ${
+              lesson.passed ? "border-emerald-300/35 bg-emerald-300/10" : "border-amber-300/30 bg-amber-300/10"
+            }`}
+          >
+            <GraduationCap size={22} className={lesson.passed ? "text-emerald-300" : "text-amber-200"} />
+            <div className="min-w-0 flex-1">
+              <p className={`text-sm font-black ${lesson.passed ? "text-emerald-100" : "text-amber-100"}`}>
+                {lesson.passed ? `Aula concluída: ${lesson.title}!` : `Quase lá: ${lesson.title}`}
+              </p>
+              <p className="text-xs text-white/65">
+                {lesson.passed
+                  ? lesson.nextTitle
+                    ? `Próxima aula liberada: ${lesson.nextTitle}.`
+                    : "Você completou a trilha inteira. Parabéns!"
+                  : `Meta: ${lesson.goal}. Repita com calma; o modo Espera ajuda.`}
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
           <section className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.035] p-4">
             <div className="mb-4 flex items-start justify-between gap-4">
@@ -199,10 +230,18 @@ export default function ScoreScreen({
           <section className="grid gap-3">
             {feedback && (
               <>
-                <div className="grid grid-cols-3 gap-2">
+                <div className={`grid gap-2 ${feedback.longNotes ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}>
                   <StatCard icon={<Target size={14} />} label="Notas" value={`${feedback.hits}/${feedback.totalNotes || 0}`} tone="text-cyan" />
                   <StatCard icon={<Star size={14} />} label="Perfeitas" value={`${feedback.perfectHits}`} tone="text-amber-300" />
                   <StatCard icon={<Clock3 size={14} />} label="Timing" value={`${feedback.averageTimingMs}ms`} tone="text-emerald-300" />
+                  {feedback.longNotes ? (
+                    <StatCard
+                      icon={<Hourglass size={14} />}
+                      label="Notas longas"
+                      value={`${feedback.sustainedNotes ?? 0}/${feedback.longNotes}`}
+                      tone="text-violet-300"
+                    />
+                  ) : null}
                 </div>
 
                 <div className="rounded-xl border border-white/10 bg-black/35 p-4">
@@ -290,7 +329,7 @@ export default function ScoreScreen({
                 className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/8 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/12 active:scale-[0.98]"
               >
                 <SkipForward size={18} />
-                Próxima música
+                {lesson ? (lesson.passed && lesson.nextTitle ? "Próxima aula" : "Voltar à trilha") : "Próxima música"}
               </button>
 
               <button

@@ -20,7 +20,7 @@ export default function ProfessoresPage() {
            animate={{ opacity: 1, y: 0 }}
            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan/20 bg-cyan/5 text-cyan text-sm font-semibold mb-8"
         >
-           Programa de Afiliados B2B
+           Para professores de piano, teclado e líderes de louvor
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -28,8 +28,8 @@ export default function ProfessoresPage() {
           transition={{ delay: 0.1 }}
           className="text-5xl md:text-7xl font-black tracking-tight mb-8 leading-tight text-white"
         >
-          Seja um parceiro e gere <br className="hidden md:block" />
-          <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">renda recorrente</span>
+          Alunos praticando em casa <br className="hidden md:block" />
+          <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">e renda recorrente</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -37,7 +37,7 @@ export default function ProfessoresPage() {
           transition={{ delay: 0.2 }}
           className="text-white/60 text-xl font-medium max-w-2xl mx-auto mb-10"
         >
-          Complemente as aulas dos seus alunos com a Pianify e receba as comissões previstas para indicações elegíveis: R$ 5,00 por fatura mensal ou R$ 40,00 por fatura anual confirmada.
+          Passe as aulas da trilha e os exercícios como tarefa de casa, acompanhe quem está praticando no seu painel e receba R$ 5,00 por fatura mensal ou R$ 40,00 por fatura anual confirmada dos alunos que você indicar.
         </motion.p>
         <motion.div
            initial={{ opacity: 0, y: 20 }}

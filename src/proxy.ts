@@ -26,6 +26,7 @@ function isAlwaysPublicRoute(pathname: string) {
     pathname.startsWith("/api/stripe/checkout") ||
     pathname.startsWith("/api/stripe/webhook") ||
     pathname.startsWith("/professores") ||
+    pathname.startsWith("/igrejas") ||
     pathname.startsWith("/privacidade") ||
     pathname.startsWith("/termos") ||
     pathname.startsWith("/reembolso") ||

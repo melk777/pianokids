@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sem conexão · Pianify</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #050505;
+        color: #fff;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        text-align: center;
+        padding: 24px;
+      }
+      h1 { font-size: 1.6rem; margin: 16px 0 8px; }
+      p { color: rgba(255, 255, 255, 0.65); max-width: 320px; line-height: 1.5; margin: 0 auto; }
+      button {
+        margin-top: 24px;
+        padding: 12px 22px;
+        border: 0;
+        border-radius: 12px;
+        background: #22d3ee;
+        color: #000;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/icons/icon-192.png" width="72" height="72" alt="" />
+      <h1>Você está sem internet</h1>
+      <p>A Pianify precisa de conexão para carregar suas aulas e salvar o progresso. Conecte-se e tente de novo.</p>
+      <button type="button" onclick="location.reload()">Tentar de novo</button>
+    </main>
+  </body>
+</html>

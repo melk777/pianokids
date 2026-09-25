@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useEffect, useMemo } from "react";
+import { PIANO_SAMPLES, nearestSample, samplePath } from "@/lib/pianoSamples";
 
 /* ─── Web Audio Engine — 2 canais adaptativos ──────────────────────────
    Canal A: Acompanhamento (volume estável)
@@ -32,6 +33,28 @@ export function useAudioEngine(): AudioEngineReturn {
   const masterGainRef = useRef<GainNode | null>(null);
   const compressorRef = useRef<DynamicsCompressorNode | null>(null);
   const isInitRef = useRef(false);
+  // Decoded piano recordings, keyed by sample name. Missing entries fall back to the synth.
+  const samplesRef = useRef<Map<string, AudioBuffer>>(new Map());
+
+  const loadPianoSamples = useCallback((ctx: AudioContext) => {
+    samplesRef.current = new Map();
+    // Middle of the keyboard first: that is where students play.
+    const ordered = [...PIANO_SAMPLES].sort((a, b) => Math.abs(a.midi - 60) - Math.abs(b.midi - 60));
+    for (const sample of ordered) {
+      fetch(samplePath(sample))
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.arrayBuffer();
+        })
+        .then((data) => ctx.decodeAudioData(data))
+        .then((buffer) => {
+          if (ctxRef.current === ctx) samplesRef.current.set(sample.name, buffer);
+        })
+        .catch(() => {
+          // Keep the synthesized voice for this range.
+        });
+    }
+  }, []);
 
   const init = useCallback(async () => {
     if (ctxRef.current && isInitRef.current) {
@@ -79,10 +102,11 @@ export function useAudioEngine(): AudioEngineReturn {
       channelBGain.current = gainB;
 
       isInitRef.current = true;
+      loadPianoSamples(ctx);
     } catch (err) {
       console.warn("[AudioEngine] Web Audio API not available:", err);
     }
-  }, []);
+  }, [loadPianoSamples]);
 
   const getCurrentTime = useCallback(() => {
     return ctxRef.current?.currentTime || 0;
@@ -103,8 +127,29 @@ export function useAudioEngine(): AudioEngineReturn {
         ctx.resume();
       }
 
-      const freq = midiToFreq(midi);
       const now = Math.max(startTime, ctx.currentTime);
+
+      const { sample, playbackRate } = nearestSample(midi);
+      const buffer = samplesRef.current.get(sample.name);
+      if (buffer) {
+        // Real piano: let the recording ring for the note, then damp it like a key release.
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.playbackRate.setValueAtTime(playbackRate, now);
+        const env = ctx.createGain();
+        const volume = 0.25 + velocity * 0.75;
+        const holdUntil = now + Math.max(0.12, Math.min(duration, 6));
+        env.gain.setValueAtTime(volume, now);
+        env.gain.setValueAtTime(volume, holdUntil);
+        env.gain.exponentialRampToValueAtTime(0.001, holdUntil + 0.35);
+        source.connect(env);
+        env.connect(destinationGain);
+        source.start(now);
+        source.stop(holdUntil + 0.4);
+        return;
+      }
+
+      const freq = midiToFreq(midi);
       const noteVol = velocity * 0.35;
       const releaseTime = Math.min(duration, 2.5);
 

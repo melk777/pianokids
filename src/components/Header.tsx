@@ -14,6 +14,7 @@ import {
   Piano,
   GraduationCap,
   LifeBuoy,
+  Route,
 } from "lucide-react";
 import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { User as AuthUser, Session } from "@supabase/supabase-js";
@@ -84,6 +85,7 @@ export default function Header() {
     window.location.assign(new URL("/", window.location.origin).toString());
   };
 
+  const isStudent = Boolean(user) && profile?.role === "student";
   const navLinkClass = "flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-white/55 hover:text-white/90 transition-colors duration-200 rounded-xl hover:bg-white/[0.04]";
   const mobileLinkClass = "flex items-center gap-3 px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all";
 
@@ -114,14 +116,14 @@ export default function Header() {
               </button>
             )}
 
-            {/* Botão Professor Parceiro — sempre visível */}
+            {/* Students go straight to their path; everyone else sees the partner program. */}
             <Link
-              href="/professores"
+              href={isStudent ? "/dashboard/trilha" : "/professores"}
               onClick={() => playClick()}
               className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold rounded-xl border border-cyan/30 text-cyan hover:bg-cyan/10 transition-all duration-200"
             >
-              <GraduationCap className="w-3.5 h-3.5" />
-              Professor Parceiro
+              {isStudent ? <Route className="w-3.5 h-3.5" /> : <GraduationCap className="w-3.5 h-3.5" />}
+              {isStudent ? "Minha trilha" : "Professor Parceiro"}
             </Link>
 
             <Link href="/contato" onClick={() => playClick()} className={navLinkClass}>
@@ -199,12 +201,12 @@ export default function Header() {
                 )}
                 {/* Botão Professor Parceiro mobile */}
                 <Link
-                  href="/professores"
+                  href={isStudent ? "/dashboard/trilha" : "/professores"}
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-cyan border border-cyan/20 bg-cyan/5 hover:bg-cyan/10 rounded-xl transition-all"
                 >
-                  <GraduationCap className="w-4 h-4" />
-                  Professor Parceiro
+                  {isStudent ? <Route className="w-4 h-4" /> : <GraduationCap className="w-4 h-4" />}
+                  {isStudent ? "Minha trilha" : "Professor Parceiro"}
                 </Link>
                 <Link href="/contato" onClick={() => setMobileOpen(false)} className={mobileLinkClass}>
                   <LifeBuoy className="w-4 h-4 text-cyan" />

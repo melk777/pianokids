@@ -29,6 +29,8 @@ const ALLOWED_EVENTS = new Set([
   "song_finished",
   "score_restart_clicked",
   "recommended_practice_clicked",
+  "lesson_completed",
+  "mic_session_quality",
 ]);
 
 function sanitizeProperties(properties: unknown) {
