@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useProfile } from "@/hooks/useProfile";
 import type { PracticeSession } from "@/lib/types";
+import { loadPracticeSnapshot } from "@/lib/practiceSnapshot";
 import { useSubscription } from "@/hooks/useSubscription";
 import { 
   User, 
@@ -70,10 +71,9 @@ export default function ProfilePage() {
     const loadHistory = async () => {
       try {
         setHistoryLoading(true);
-        const response = await fetch("/api/practice/session", { cache: "no-store" });
-        const data = await response.json();
-        if (!active || !response.ok || !data?.supported) return;
-        setRecentSessions((data.recentSessions || []) as PracticeSession[]);
+        const snapshot = await loadPracticeSnapshot();
+        if (!active || !snapshot?.supported) return;
+        setRecentSessions(snapshot.recentSessions);
       } catch {
         if (!active) return;
       } finally {

@@ -26,6 +26,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSFX } from "@/hooks/useSFX";
 import { createClientComponent } from "@/lib/supabase";
+import { loadPracticeSnapshot } from "@/lib/practiceSnapshot";
 import { loadSongs } from "@/lib/songCatalog";
 import type { PracticeSession } from "@/lib/types";
 import {
@@ -94,14 +95,9 @@ export default function Dashboard() {
     let mounted = true;
 
     const loadPracticeHistory = async () => {
-      try {
-        const response = await fetch("/api/practice/session", { cache: "no-store" });
-        const data = await response.json();
-        if (!mounted || !response.ok || !data?.supported) return;
-        setRecentSessions((data.recentSessions || []) as PracticeSession[]);
-      } catch {
-        if (!mounted) return;
-      }
+      const snapshot = await loadPracticeSnapshot();
+      if (!mounted || !snapshot?.supported) return;
+      setRecentSessions(snapshot.recentSessions);
     };
 
     loadPracticeHistory();

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { Profile } from "@/lib/types";
 import { mergeProfileWithPracticeAggregate } from "@/lib/practiceHistory";
+import { invalidatePracticeSnapshot, loadPracticeSnapshot } from "@/lib/practiceSnapshot";
 import { getLocalDevProfile, isLocalDevAuthEnabled } from "@/lib/localDevAuth";
 
 export type { Profile };
@@ -30,6 +31,55 @@ function normalizeProfile(profile: Partial<Profile>): Profile {
   };
 }
 
+type BrowserSupabase = ReturnType<typeof createClientComponent>;
+
+// The header and the page body both mount useProfile at the same time. Share
+// the auth + profile lookup between them instead of repeating it per component.
+const PROFILE_TTL_MS = 10_000;
+let sharedProfileRequest: { at: number; promise: Promise<Profile | null> } | null = null;
+
+function invalidateSharedProfile() {
+  sharedProfileRequest = null;
+}
+
+function loadSharedBaseProfile(supabase: BrowserSupabase): Promise<Profile | null> {
+  if (sharedProfileRequest && Date.now() - sharedProfileRequest.at < PROFILE_TTL_MS) {
+    return sharedProfileRequest.promise;
+  }
+
+  const promise = (async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    // Start the practice snapshot alongside the profile query instead of after it.
+    void loadPracticeSnapshot();
+
+    const { data, error: fetchError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    if (fetchError) {
+      if (fetchError.code === "PGRST116") {
+        throw new Error(
+          "Seu cadastro foi autenticado, mas o perfil ainda nao foi provisionado. Entre novamente ou contate o suporte.",
+        );
+      }
+      throw fetchError;
+    }
+
+    return normalizeProfile(data);
+  })();
+
+  sharedProfileRequest = { at: Date.now(), promise };
+  // Failed lookups must not be reused.
+  promise.catch(() => {
+    if (sharedProfileRequest?.promise === promise) invalidateSharedProfile();
+  });
+  return promise;
+}
+
 export function useProfile() {
   const supabase = isSupabaseConfigured ? createClientComponent() : null;
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -37,19 +87,12 @@ export function useProfile() {
   const [error, setError] = useState<string | null>(null);
 
   const hydratePracticeSnapshot = useCallback(async (baseProfile: Profile) => {
-    try {
-      const response = await fetch("/api/practice/session", { cache: "no-store" });
-      if (!response.ok) return baseProfile;
-
-      const data = await response.json();
-      if (!data?.supported || !data?.aggregate) {
-        return baseProfile;
-      }
-
-      return mergeProfileWithPracticeAggregate(baseProfile, data.aggregate);
-    } catch {
+    const snapshot = await loadPracticeSnapshot();
+    if (!snapshot?.supported || !snapshot.aggregate) {
       return baseProfile;
     }
+
+    return mergeProfileWithPracticeAggregate(baseProfile, snapshot.aggregate);
   }, []);
 
   const fetchProfile = useCallback(async () => {
@@ -68,32 +111,8 @@ export function useProfile() {
         return;
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        setProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      const { data, error: fetchError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (fetchError) {
-        if (fetchError.code === "PGRST116") {
-          throw new Error(
-            "Seu cadastro foi autenticado, mas o perfil ainda nao foi provisionado. Entre novamente ou contate o suporte.",
-          );
-        } else {
-          throw fetchError;
-        }
-      } else {
-        const normalizedProfile = normalizeProfile(data);
-        setProfile(await hydratePracticeSnapshot(normalizedProfile));
-      }
+      const baseProfile = await loadSharedBaseProfile(supabase);
+      setProfile(baseProfile ? await hydratePracticeSnapshot(baseProfile) : null);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro desconhecido";
       console.error("Error fetching profile:", msg);
@@ -142,6 +161,7 @@ export function useProfile() {
         throw updateError;
       }
 
+      invalidateSharedProfile();
       setProfile(normalizeProfile(data));
       return { success: true };
     } catch (err: unknown) {
@@ -248,6 +268,9 @@ export function useProfile() {
       if (!response.ok) {
         throw new Error(data?.error || "Nao foi possivel salvar a sessao.");
       }
+
+      invalidatePracticeSnapshot();
+      invalidateSharedProfile();
 
       if (data?.profile) {
         const normalized = normalizeProfile(data.profile);
