@@ -29,10 +29,10 @@ const CLIENT_PLANS = {
     price: "R$ 29,90",
     period: "/mês",
     features: [
-      "Acesso a todas as músicas",
-      "Prática livre ilimitada",
-      "Reconhecimento via Microfone",
-      "Progresso salvo",
+      "Todas as músicas do catálogo, incluindo os clássicos",
+      "Exercícios de escalas, arpejos e acordes nas 12 tonalidades",
+      "Trilha guiada do zero ao louvor",
+      "Dedilhado, microfone ou teclado MIDI",
       "Cancele quando quiser",
     ],
   },
@@ -42,9 +42,8 @@ const CLIENT_PLANS = {
     period: "/ano",
     features: [
       "Tudo do plano mensal",
-      "2 meses grátis",
-      "Músicas exclusivas",
-      "Suporte prioritário",
+      "Equivale a R$ 19,99 por mês",
+      "4 meses grátis em relação ao mensal",
     ],
     badge: "Mais popular",
   },
@@ -55,16 +54,16 @@ const SHOW_VERIFIED_TESTIMONIALS =
 
 const LIBRARY_PREVIEW = [
   {
-    title: "Para Elisa",
-    composer: "Ludwig van Beethoven",
+    title: "Amazing Grace",
+    composer: "Hino tradicional",
   },
   {
-    title: "Marcha Turca",
-    composer: "Wolfgang Amadeus Mozart",
+    title: "Noite Feliz",
+    composer: "Franz Xaver Gruber",
   },
   {
-    title: "Minueto em Sol",
-    composer: "Johann Sebastian Bach",
+    title: "Rocha Eterna",
+    composer: "Thomas Hastings",
   },
 ] as const;
 
@@ -120,18 +119,13 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Checkout request failed:", error);
-      alert("Nao foi possivel iniciar a compra agora. Tente novamente em instantes.");
+      alert("Não foi possível iniciar a compra agora. Tente novamente em instantes.");
     }
   };
 
   const goToPricing = (source: string) => {
     trackEvent("landing_cta_clicked", { source, target: "pricing" });
     document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const goToDashboard = (source: string) => {
-    trackEvent("landing_cta_clicked", { source, target: "dashboard" });
-    router.push("/dashboard");
   };
 
   return (
@@ -149,16 +143,17 @@ export default function Home() {
 
             {/* Title */}
             <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
-              <span className="text-white">Aprenda teclado tocando </span>
+              <span className="text-white">Do zero ao louvor </span>
               <br />
               <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
-                musicas de verdade.
+                no seu teclado.
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-              A Pianify mostra as notas, ouve seu instrumento pelo microfone e guia sua evolução como um jogo musical.
+              Aulas guiadas com hinos, exercícios e as notas caindo na tela. Para quem quer tocar na igreja e para
+              professores que querem alunos praticando em casa.
             </p>
 
 
@@ -171,12 +166,13 @@ export default function Home() {
                 Iniciar teste de 7 dias gratuitos
               </button>
 
-              <button
-                onClick={() => goToDashboard("hero_secondary")}
+              <Link
+                href="/igrejas"
+                onClick={() => trackEvent("landing_cta_clicked", { source: "hero_secondary", target: "churches" })}
                 className="rounded-full border border-white/15 bg-white/[0.04] px-8 py-4 text-base font-bold text-white/75 transition hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
               >
-                Ver biblioteca
-              </button>
+                Para igrejas e professores
+              </Link>
 
               <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-5 py-3 text-left backdrop-blur-md">
                 <Star className="h-5 w-5 shrink-0 fill-cyan/20 text-cyan" aria-hidden="true" />
@@ -290,13 +286,13 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-[0.28em] text-magenta/70">Biblioteca Viva</p>
-                      <h3 className="mt-1 text-2xl font-black text-white">Aprenda do infantil ao clássico</h3>
+                      <h3 className="mt-1 text-2xl font-black text-white">Hinos, cantigas, clássicos e exercícios</h3>
                     </div>
                   </div>
 
                   <p className="text-base leading-relaxed text-white/60">
-                    A Pianify reúne músicas infantis, clássicas, intros marcantes e repertórios que mantêm o aluno engajado.
-                    Cada faixa pode ser estudada de forma progressiva e interativa, com suporte para diferentes níveis.
+                    Hinos tradicionais, cantigas brasileiras e clássicos em domínio público, com a fonte de cada obra
+                    documentada. Além das músicas, exercícios de escalas, arpejos e acordes em todas as tonalidades.
                   </p>
 
                   <div className="mt-6 grid gap-3 md:grid-cols-3">
@@ -318,13 +314,13 @@ export default function Home() {
 
                 <div className="rounded-[2rem] border border-white/10 bg-zinc-950/80 p-7 shadow-[0_24px_60px_rgba(0,0,0,0.3)]">
                   <p className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan/70">Aprendizado Guiado</p>
-                  <h3 className="mt-3 text-2xl font-black text-white">O aluno entende o que tocar e como está evoluindo</h3>
+                  <h3 className="mt-3 text-2xl font-black text-white">Uma trilha de aulas, não só uma lista de músicas</h3>
 
                   <div className="mt-6 space-y-4">
                     {[
-                      "As notas caem na tela no momento certo para orientar a execução no teclado real.",
-                      "O reconhecimento confirma em tempo real a quantidade de acertos e a precisão de cada trecho.",
-                      "O progresso visual mostra onde o aluno está na música, facilitando repetir passagens difíceis até dominar.",
+                      "A trilha “Do zero ao louvor” tem 19 aulas em 5 níveis: da primeira nota a acompanhar hinos com as duas mãos.",
+                      "Cada aula tem uma meta clara e libera a próxima quando você chega lá, com meta diária de 10 minutos.",
+                      "O número em cada nota mostra qual dedo usar, e o modo Espera deixa a música no seu ritmo.",
                     ].map((item) => (
                       <div key={item} className="flex gap-3 rounded-[1.15rem] border border-white/10 bg-white/[0.03] p-4">
                         <div className="mt-0.5 h-2.5 w-2.5 rounded-full bg-cyan shadow-[0_0_12px_rgba(34,211,238,0.75)]" />
@@ -335,18 +331,19 @@ export default function Home() {
                 </div>
 
                 <div className="rounded-[2rem] border border-cyan/20 bg-cyan/5 p-7 shadow-[0_24px_60px_rgba(0,0,0,0.3)]">
-                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan/70">Primeira vitoria</p>
-                  <h3 className="mt-3 text-2xl font-black text-white">A aula nao comeca com teoria. Comeca com uma musica tocavel.</h3>
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan/70">Para professores</p>
+                  <h3 className="mt-3 text-2xl font-black text-white">Seus alunos praticando em casa, com você acompanhando.</h3>
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    O onboarding escolhe dificuldade, maos e microfone para o aluno chegar na biblioteca com uma primeira aula sugerida.
+                    Indique a Pianify pelo seu link, veja quem está praticando e receba comissão por cada assinatura.
                   </p>
-                  <button
-                    onClick={() => goToPricing("how_it_works_conversion_card")}
+                  <Link
+                    href="/professores"
+                    onClick={() => trackEvent("landing_cta_clicked", { source: "how_it_works_teachers", target: "teachers" })}
                     className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-black transition hover:bg-cyan-300"
                   >
-                    Comecar com orientacao
+                    Conhecer o programa
                     <ChevronDown className="h-3.5 w-3.5 -rotate-90" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -364,8 +361,8 @@ export default function Home() {
                 Por que <span className="text-gradient font-black">Pianify</span>?
               </h2>
               <p className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                Uma experiência projetada para manter alunos adultos engajados e
-                aprendendo com diversão imediata.
+                Feita para quem quer servir no louvor, para quem sempre quis aprender e para professores que
+                querem ver seus alunos evoluindo entre uma aula e outra.
               </p>
             </div>
 
@@ -439,7 +436,7 @@ export default function Home() {
                 features={[...CLIENT_PLANS.monthly.features]}
                 planKey="monthly"
                 valueNote="Menos que uma aula avulsa"
-                ctaLabel="Comecar mensal"
+                ctaLabel="Começar mensal"
                 onSubscribe={handleSubscribe}
               />
               <PricingCard
@@ -449,7 +446,7 @@ export default function Home() {
                 features={[...CLIENT_PLANS.yearly.features]}
                 badge={CLIENT_PLANS.yearly.badge}
                 planKey="yearly"
-                valueNote="Melhor custo por mes"
+                valueNote="Melhor custo por mês"
                 ctaLabel="Quero evoluir no anual"
                 popular
                 onSubscribe={handleSubscribe}
@@ -469,10 +466,10 @@ export default function Home() {
             </div>
             <div className="mt-12 grid gap-4 md:grid-cols-4">
               {[
-                { value: "90", label: "musicas auditadas no catalogo" },
-                { value: "810", label: "modos de player validados" },
-                { value: "1 ou 2", label: "maos conforme o nivel" },
-                { value: "24h", label: "pratica no seu horario" },
+                { value: "90", label: "músicas com fonte documentada" },
+                { value: "84", label: "exercícios de técnica" },
+                { value: "19", label: "aulas na trilha guiada" },
+                { value: "24h", label: "prática no seu horário" },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center">
                   <p className="text-3xl font-black text-white">{item.value}</p>
@@ -483,9 +480,9 @@ export default function Home() {
 
             <div className="mt-10 rounded-3xl border border-magenta/20 bg-magenta/5 p-6 text-center">
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-magenta">Oferta simples</p>
-              <h3 className="mt-2 text-2xl font-black text-white">Entre, escolha uma musica e toque hoje.</h3>
+              <h3 className="mt-2 text-2xl font-black text-white">Entre, faça a primeira aula e toque hoje.</h3>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/55">
-                Se voce e iniciante, comece com uma mao. Se ja toca, avance para duas maos e niveis mais completos.
+                Se você é iniciante, a trilha começa com uma mão. Se já toca, pule para os níveis com as duas mãos e acordes.
               </p>
             </div>
           </div>
