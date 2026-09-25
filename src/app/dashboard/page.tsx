@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import NextLessonCard from "@/components/NextLessonCard";
+import InstallAppPrompt from "@/components/InstallAppPrompt";
 import { useState, useEffect, useMemo } from "react";
 import { User } from "@supabase/supabase-js";
 import {
@@ -233,6 +234,7 @@ export default function Dashboard() {
               {/* Left Column: MIDI Status + Actions + Lessons */}
             <div className="lg:col-span-2 space-y-8">
               <NextLessonCard />
+              <InstallAppPrompt />
 
               {/* ── MIDI Status Card (Apple-style) ── */}
               <div className="relative overflow-hidden rounded-2xl border border-white/[0.06]">

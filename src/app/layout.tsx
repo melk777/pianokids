@@ -4,6 +4,7 @@ import "./globals.css";
 import { AudioProvider } from "@/contexts/AudioContext";
 import Header from "@/components/Header";
 import GlobalEnhancements from "@/components/GlobalEnhancements";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { getURL } from "@/lib/utils/url";
 
 const geistSans = localFont({
@@ -74,7 +75,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/pianify-icon.svg",
-    apple: "/favicon.ico",
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Pianify",
+    statusBarStyle: "black-translucent",
   },
 };
 
@@ -92,6 +98,7 @@ export default function RootLayout({
         <AudioProvider>
           <Header />
           <GlobalEnhancements />
+          <ServiceWorkerRegister />
           {children}
 
           {/* Global SVG Gradients for Icons */}

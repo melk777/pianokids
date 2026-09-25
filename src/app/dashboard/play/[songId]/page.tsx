@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ScoreScreen from "@/components/ScoreScreen";
-import OrientationOverlay from "@/components/OrientationOverlay";
 import PianoPlayer from "@/components/PianoPlayer";
 import LatencyCalibration from "@/components/LatencyCalibration";
 import { describeGoal, findLesson, isLessonComplete, lessonHref, nextLessonAfter } from "@/lib/learningPath";
@@ -65,6 +64,8 @@ import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useProfile } from "@/hooks/useProfile";
 import { trackEvent } from "@/lib/analytics";
 import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
+import { focusedKeyboardRange } from "@/lib/keyboardRange";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const FREE_PLAY_SONG: Song = {
   id: "freeplay",
@@ -844,6 +845,13 @@ function PlayPageContent() {
   const tutorialNotes = useMemo(() => buildTutorialSimulationNotes(tutorialRunId), [tutorialRunId]);
   const playerNotes = isTutorialSimulation ? tutorialNotes : filteredNotes;
   const playerDuration = isTutorialSimulation ? 120 : (song?.duration ?? 0);
+  // Phones and small tablets show only the octaves in use, so keys stay tappable
+  // in portrait instead of forcing the student to rotate the device.
+  const isCompactScreen = useMediaQuery("(max-width: 1023px)");
+  const keyboardRange = useMemo(
+    () => (isCompactScreen ? focusedKeyboardRange(playerNotes) : { start: PIANO_START_MIDI, end: PIANO_END_MIDI }),
+    [isCompactScreen, playerNotes],
+  );
   const playerAccompanimentNotes = useMemo(() => {
     if (isTutorialSimulation) return [];
     const studentNoteKeys = new Set(playerNotes.map((note) => `${Math.round(note.time * 100)}:${note.midi}`));
@@ -949,7 +957,6 @@ function PlayPageContent() {
 
   return (
     <div ref={pageRef} className="relative flex min-h-screen flex-col overflow-hidden bg-black font-sans text-white">
-      <OrientationOverlay />
 
       {showTutorial ? (
         <GameTutorialOverlay
@@ -1310,7 +1317,8 @@ function PlayPageContent() {
       ) : null}
 
       <div className="relative flex flex-1 flex-col overflow-hidden">
-        {showMicHint && (
+        {/* Only guide the microphone when it is in use; keyboard/MIDI players do not need it. */}
+        {showMicHint && isMicActive && (
           <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex justify-center md:left-auto md:right-5 md:top-4 md:justify-end">
             <div
               className={`pointer-events-auto max-w-md rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-md ${
@@ -1410,24 +1418,30 @@ function PlayPageContent() {
               <p className="mt-2 max-w-md text-sm leading-relaxed text-white/65">
                 {isLoopEnabled
                   ? `Vamos repetir ${formatLoopTime(loopStart)} – ${formatLoopTime(loopEnd)} a ${Math.round(playbackSpeed * 100)}% da velocidade.`
-                  : "Aperte qualquer tecla do piano ou clique no botão para começar. As notas vão cair até o teclado."}
+                  : isCompactScreen
+                    ? "Toque no botão ou numa tecla do piano para começar. As notas vão cair até o teclado."
+                    : "Aperte qualquer tecla do piano ou clique no botão para começar. As notas vão cair até o teclado."}
               </p>
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-white/70">
-                <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
-                  <span className="flex gap-0.5" aria-hidden>
-                    {["A", "S", "D", "F"].map((key) => (
-                      <kbd key={key} className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">
-                        {key}
-                      </kbd>
-                    ))}
-                  </span>
-                  Dó, Ré, Mi, Fá no computador
-                </span>
-                <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
-                  <kbd className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">Espaço</kbd>
-                  pausa
-                </span>
+                {!isCompactScreen && (
+                  <>
+                    <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                      <span className="flex gap-0.5" aria-hidden>
+                        {["A", "S", "D", "F"].map((key) => (
+                          <kbd key={key} className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">
+                            {key}
+                          </kbd>
+                        ))}
+                      </span>
+                      Dó, Ré, Mi, Fá no computador
+                    </span>
+                    <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                      <kbd className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">Espaço</kbd>
+                      pausa
+                    </span>
+                  </>
+                )}
                 {showFingering && (
                   <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
                     <span className="grid h-5 w-5 place-items-center rounded-full border border-amber-200/60 bg-black text-[10px] font-black text-white">1</span>
@@ -1490,8 +1504,8 @@ function PlayPageContent() {
                 playbackSpeed={playbackSpeed}
                 initialPlaybackTime={isLoopEnabled && loopDuration >= 1 ? loopStart : 0}
                 resetKey={`${song.id}:${difficulty}:${handSelection.includeLeftHand}:${handSelection.includeRightHand}:${playerResetKey}`}
-                startNote={PIANO_START_MIDI}
-                endNote={PIANO_END_MIDI}
+                startNote={keyboardRange.start}
+                endNote={keyboardRange.end}
                 loopRegion={{
                   enabled: isLoopEnabled && loopDuration >= 1,
                   start: loopStart,
