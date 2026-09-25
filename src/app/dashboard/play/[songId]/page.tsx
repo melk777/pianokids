@@ -25,7 +25,34 @@ import {
   getSongNotesForDifficulty,
   type HandSelection,
 } from "@/lib/songFilters";
-import { Cable, Volume2, Mic, MicOff, Play, Pause, RotateCcw, CircleHelp } from "lucide-react";
+import {
+  ArrowLeft,
+  Cable,
+  CircleHelp,
+  Gauge,
+  Mic,
+  MicOff,
+  Music,
+  Pause,
+  Play,
+  Repeat,
+  RotateCcw,
+  TimerReset,
+  Volume2,
+  VolumeX,
+  X,
+} from "lucide-react";
+
+const NON_STARTING_KEYS = new Set(["Enter", "Tab", "Escape", "Shift", "Control", "Alt", "Meta", "CapsLock"]);
+
+// Shared toolbar styles keep every control the same height and contrast.
+const TOOLBAR_GROUP = "flex h-10 items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-1";
+const TOOLBAR_BUTTON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors";
+const TOOLBAR_IDLE = "text-white/65 hover:bg-white/8 hover:text-white";
+const TOOLBAR_ACTIVE = "bg-cyan/15 text-cyan";
+const TOOLBAR_ACTIVE_GREEN = "bg-emerald-500/15 text-emerald-300";
+const TOOLBAR_STEPPER =
+  "grid h-7 min-w-7 place-items-center rounded-md bg-white/8 px-1.5 text-sm font-bold text-white/80 transition-colors hover:bg-white/15 hover:text-white";
 import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useProfile } from "@/hooks/useProfile";
 import { trackEvent } from "@/lib/analytics";
@@ -711,7 +738,9 @@ function PlayPageContent() {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "Space") return;
+      if (event.code === "Space" || event.repeat) return;
+      // Navigation keys (e.g. the Enter that closes the tutorial) must not start the song.
+      if (NON_STARTING_KEYS.has(event.key)) return;
       startGame();
     };
 
@@ -790,6 +819,8 @@ function PlayPageContent() {
     setPlayerResetKey((current) => current + 1);
     setTutorialActions(createTutorialActionState());
     setCurrentTutorialAction(null);
+    // Suggestions computed during the tutorial demo do not apply to the real song.
+    setPracticeSuggestion(null);
   }, [song?.duration]);
 
   const handleTutorialComplete = useCallback(() => {
@@ -813,6 +844,8 @@ function PlayPageContent() {
     setPlayerResetKey((current) => current + 1);
     setTutorialActions(createTutorialActionState());
     setCurrentTutorialAction(null);
+    // Suggestions computed during the tutorial demo do not apply to the real song.
+    setPracticeSuggestion(null);
   }, [difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, song?.duration, song?.id, songId]);
 
   const handleTutorialStepChange = useCallback(
@@ -832,9 +865,10 @@ function PlayPageContent() {
         resetTutorialSimulation({ speed: 0.8, loop: false, playing: true });
       } else {
         setPlaybackSpeed((current) => (current < 0.5 ? 0.75 : current));
-        setIsWaitingMode(false);
+        // Beginners leave the tutorial with the wait mode they just learned
+        // still on, so the first real song adapts to their pace.
         setIsLoopEnabled(false);
-        resetTutorialSimulation({ playing: false });
+        resetTutorialSimulation({ playing: false, waiting: step.scene === "celebration" });
       }
     },
     [isTutorialSimulation, resetTutorialSimulation],
@@ -891,19 +925,21 @@ function PlayPageContent() {
         />
       ) : null}
 
-      <div
-        className="z-20 flex h-12 shrink-0 items-center gap-2 overflow-hidden border-b border-white/[0.06] px-2 md:px-5"
-        style={{ background: "rgba(0, 0, 0, 0.45)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+      <header
+        className="z-20 flex h-14 shrink-0 items-center gap-3 overflow-hidden border-b border-white/[0.08] px-2 md:px-4"
+        style={{ background: "rgba(0, 0, 0, 0.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
       >
-        <div className="flex min-w-0 shrink items-center gap-2">
-          <Link href="/dashboard/songs" className="rounded-lg p-1.5 text-white/50 transition-colors hover:bg-white/5 hover:text-white">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
+        <div className="flex min-w-0 shrink items-center gap-2.5">
+          <Link
+            href="/dashboard/songs"
+            aria-label="Voltar para a biblioteca"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-white/60 transition-colors hover:bg-white/8 hover:text-white"
+          >
+            <ArrowLeft size={18} />
           </Link>
-          <div className="min-w-0">
-            <h1 className="truncate text-sm font-bold leading-none">{song.title}</h1>
-            <p className="mt-0.5 truncate text-[8px] uppercase tracking-widest text-white/35">{song.artist}</p>
+          <div className="min-w-0 max-w-[11rem] lg:max-w-[16rem]">
+            <h1 className="truncate text-sm font-bold leading-tight">{song.title}</h1>
+            <p className="truncate text-[11px] leading-tight text-white/50">{song.artist}</p>
           </div>
           <button
             data-testid="control-pause"
@@ -918,291 +954,272 @@ function PlayPageContent() {
               lastPauseTouchRef.current = Date.now();
               togglePause();
             }}
-            className={`flex h-8 min-w-8 items-center justify-center rounded-lg border transition-all ${
+            className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition-all ${
               isPaused
-                ? "border-amber-500/30 bg-amber-500/15 text-amber-300"
-                : "border-white/10 bg-white/[0.03] text-white/55 hover:bg-white/8 hover:text-white"
+                ? "border-amber-400/40 bg-amber-400/15 text-amber-200"
+                : "border-white/12 bg-white/[0.04] text-white/75 hover:bg-white/10 hover:text-white"
             }`}
-            title="Pausar ou continuar"
+            title="Pausar ou continuar (Espaço)"
           >
-            {isPaused ? <Play size={14} className="fill-amber-300" /> : <Pause size={14} />}
+            {isPaused ? <Play size={14} className="fill-amber-200" /> : <Pause size={14} />}
+            <span className="hidden xl:inline">{isPaused ? "Continuar" : "Pausar"}</span>
           </button>
         </div>
 
         <div
           data-testid="piano-top-controls"
-          className="flex min-w-0 flex-1 items-center justify-start gap-1.5 overflow-x-auto overscroll-x-contain pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0 md:justify-end md:gap-2 md:pr-0"
+          className="flex min-w-0 flex-1 items-center justify-start gap-2 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0 md:[&>*:first-child]:ml-auto"
         >
-          <button
-            onClick={() => {
-              setAudioEnabled(!audioEnabled);
-            }}
-            className={`rounded-lg p-1.5 transition-colors ${audioEnabled ? "text-cyan" : "text-white/25"}`}
-            title="Volume"
-          >
-            <Volume2 size={16} />
-          </button>
-
-          <button
-            onClick={() => setShowTutorial(true)}
-            className="rounded-lg p-1.5 text-white/35 transition-colors hover:text-white"
-            title="Tutorial da tela"
-          >
-            <CircleHelp size={16} />
-          </button>
-
-          <button
-            onClick={() => {
-              if (isTutorialSimulation && isMicActive) return;
-              return isMicActive ? stopMic() : startMic();
-            }}
-            className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-bold uppercase tracking-wider transition-all ${
-              isMicActive
-                ? "border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
-                : "border-transparent text-white/30 hover:text-white/50"
-            }`}
-            title="Microfone"
-          >
-            {isMicActive ? <Mic size={13} /> : <MicOff size={13} />}
-            <span className="hidden md:inline">{isMicActive ? "MIC ON" : "MIC OFF"}</span>
-          </button>
-
-          <button
-            onClick={() => (midi.isConnected ? midi.disconnect() : void midi.connect())}
-            disabled={!midi.isSupported}
-            className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-bold uppercase tracking-wider transition-all ${
-              midi.isConnected
-                ? "border-cyan/30 bg-cyan/15 text-cyan"
-                : midi.isSupported
-                  ? "border-transparent text-white/30 hover:text-white/50"
-                  : "cursor-not-allowed border-transparent text-white/15"
-            }`}
-            title={midi.error || (midi.isSupported ? "Conectar teclado MIDI" : "WebMIDI indisponivel neste navegador")}
-          >
-            <Cable size={13} />
-            <span className="hidden md:inline">{midi.isConnected ? "MIDI ON" : "MIDI"}</span>
-          </button>
-
-          <div className="h-5 w-px bg-white/10" />
-
-          <div
-            className="hidden items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 md:flex"
-            title="Atalho de teclado para pausar"
-          >
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/35">Espaco</span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/60">pausa</span>
-          </div>
-
-          <div className="hidden h-5 w-px bg-white/10 md:block" />
-
-        <div className="flex items-center gap-1">
-            <div className="text-right">
-              <p className="text-[8px] font-bold uppercase leading-none tracking-widest text-white/25">Resolução</p>
-              <p className="mt-0.5 text-[10px] font-black leading-none text-white">Full HD</p>
-            </div>
-            <div className="flex h-5 w-5 items-center justify-center rounded bg-emerald-500/20">
-              <div className="h-1 w-1 animate-pulse rounded-full bg-emerald-400" />
-            </div>
-        </div>
-
           {isTutorialSimulation && currentTutorialAction === "keyboard" && (
-            <div className="hidden rounded-lg border border-cyan/25 bg-cyan/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-cyan md:block">
-              Toque C4
+            <div className="hidden items-center gap-2 rounded-lg border border-cyan/30 bg-cyan/10 px-2.5 py-1.5 text-xs font-bold text-cyan md:flex">
+              <kbd className="rounded border border-cyan/40 bg-black/40 px-1.5 font-sans text-[11px] text-white">A</kbd>
+              toca o Dó
             </div>
           )}
 
-          {((!isFreePlay && song.duration > 0) || isTutorialSimulation) && (
-            <>
-              <div className="h-5 w-px bg-white/10" />
+          {/* Input devices */}
+          <div className={TOOLBAR_GROUP}>
+            <button
+              onClick={() => {
+                if (isTutorialSimulation && isMicActive) return;
+                return isMicActive ? stopMic() : startMic();
+              }}
+              aria-pressed={isMicActive}
+              className={`${TOOLBAR_BUTTON} ${isMicActive ? TOOLBAR_ACTIVE_GREEN : TOOLBAR_IDLE}`}
+              title={isMicActive ? "Desligar microfone" : "Tocar com o microfone (piano acústico)"}
+            >
+              {isMicActive ? <Mic size={14} /> : <MicOff size={14} />}
+              <span className="hidden xl:inline">Microfone</span>
+            </button>
+            <button
+              onClick={() => (midi.isConnected ? midi.disconnect() : void midi.connect())}
+              disabled={!midi.isSupported}
+              aria-pressed={midi.isConnected}
+              className={`${TOOLBAR_BUTTON} ${
+                midi.isConnected ? TOOLBAR_ACTIVE : midi.isSupported ? TOOLBAR_IDLE : "cursor-not-allowed text-white/25"
+              }`}
+              title={midi.error || (midi.isSupported ? "Conectar teclado MIDI" : "Este navegador não suporta teclado MIDI")}
+            >
+              <Cable size={14} />
+              <span className="hidden xl:inline">MIDI</span>
+            </button>
+          </div>
 
-              <div ref={loopControlRef} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-2 py-1">
-                <button
-                  data-testid="control-loop-toggle"
-                  data-active={isLoopEnabled ? "true" : "false"}
-                  onClick={() => {
-                    if (isTutorialSimulation) completeTutorialAction("loop");
-                    setIsLoopEnabled((current) => (isTutorialSimulation ? true : !current));
-                    if (isTutorialSimulation) {
-                      window.setTimeout(() => pauseTutorialSimulation(), 2200);
-                    }
-                  }}
-                  className={`rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] transition-colors ${
-                    isLoopEnabled ? "bg-cyan/15 text-cyan" : "text-white/40 hover:text-white/70"
-                  }`}
-                  title="Ativar loop do trecho"
-                >
-                  Loop
-                </button>
-                <button
-                  onClick={() => {
-                    if (isTutorialSimulation) completeTutorialAction("loop");
-                    handleSetLoopStart();
-                  }}
-                  className="rounded-lg bg-white/8 px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/70 transition-colors hover:bg-white/15"
-                  title="Marcar inicio do loop no ponto atual"
-                >
-                  A
-                </button>
-                <button
-                  onClick={() => {
-                    if (isTutorialSimulation) completeTutorialAction("loop");
-                    handleSetLoopEnd();
-                  }}
-                  className="rounded-lg bg-white/8 px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/70 transition-colors hover:bg-white/15"
-                  title="Marcar fim do loop no ponto atual"
-                >
-                  B
-                </button>
-                <button
-                  onClick={handleClearLoop}
-                  className="rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-white/35 transition-colors hover:text-rose-300"
-                  title="Limpar loop"
-                >
-                  Limpar
-                </button>
-                <div className="hidden min-w-[180px] lg:block">
-                  <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.16em] text-white/45">
-                    <span>
-                      {isLoopEnabled && loopDuration > 0
-                        ? `${formatLoopTime(loopStart)} - ${formatLoopTime(loopEnd)}`
-                        : "Trecho completo"}
-                    </span>
-                    <span>{formatLoopTime(currentPlaybackTime)}</span>
-                  </div>
-                  <div className="relative mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
-                    <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-white/5 via-white/10 to-white/5" />
-                    <div
-                      className={`absolute inset-y-0 rounded-full transition-all ${
-                        isLoopEnabled && loopDuration > 0 ? "bg-cyan/60" : "bg-white/20"
-                      }`}
-                      style={{
-                        left: `${loopStartProgress}%`,
-                        width: `${Math.max(loopEndProgress - loopStartProgress, isLoopEnabled ? 2 : 100)}%`,
-                      }}
-                    />
-                    <div
-                      className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border border-white/30 bg-white shadow-[0_0_10px_rgba(255,255,255,0.35)] transition-[left] duration-150"
-                      style={{ left: `calc(${playbackProgress}% - 6px)` }}
-                    />
+          {/* Practice tools */}
+          <div className={TOOLBAR_GROUP}>
+            <div ref={speedControlRef} className="flex items-center gap-1 pl-1.5" title="Velocidade da música">
+              <Gauge size={14} className="text-white/55" aria-hidden />
+              <span className="hidden text-[11px] font-semibold text-white/60 2xl:inline">Velocidade</span>
+              <button
+                data-testid="control-speed-down"
+                aria-label="Diminuir velocidade"
+                onClick={() => {
+                  if (isTutorialSimulation) completeTutorialAction("speed");
+                  setPlaybackSpeed(Math.max(0.15, playbackSpeed - 0.05));
+                  if (isTutorialSimulation) {
+                    window.setTimeout(() => pauseTutorialSimulation(), 1600);
+                  }
+                }}
+                className={TOOLBAR_STEPPER}
+              >
+                −
+              </button>
+              <span data-testid="control-speed-value" className="min-w-[40px] text-center text-xs font-black tabular-nums text-cyan">
+                {Math.round(playbackSpeed * 100)}%
+              </span>
+              <button
+                data-testid="control-speed-up"
+                aria-label="Aumentar velocidade"
+                onClick={() => {
+                  if (isTutorialSimulation) completeTutorialAction("speed");
+                  setPlaybackSpeed(Math.min(1.1, playbackSpeed + 0.05));
+                  if (isTutorialSimulation) {
+                    window.setTimeout(() => pauseTutorialSimulation(), 1600);
+                  }
+                }}
+                className={TOOLBAR_STEPPER}
+              >
+                +
+              </button>
+            </div>
+
+            <span className="h-5 w-px bg-white/10" aria-hidden />
+
+            <button
+              ref={waitingControlRef}
+              data-testid="control-waiting-toggle"
+              data-active={isWaitingMode ? "true" : "false"}
+              aria-pressed={isWaitingMode}
+              onClick={() => {
+                if (isTutorialSimulation) {
+                  completeTutorialAction("waiting");
+                  setIsWaitingMode(true);
+                  return;
+                }
+                setIsWaitingMode((current) => !current);
+              }}
+              className={`${TOOLBAR_BUTTON} ${isWaitingMode ? TOOLBAR_ACTIVE : TOOLBAR_IDLE}`}
+              title="Modo espera: a música para em cada nota até você acertar"
+            >
+              <TimerReset size={14} />
+              <span>Espera</span>
+              <span className={`rounded px-1 text-[10px] font-black ${isWaitingMode ? "bg-cyan/20" : "bg-white/8 text-white/45"}`}>
+                {isWaitingMode ? "ON" : "OFF"}
+              </span>
+            </button>
+
+            {((!isFreePlay && song.duration > 0) || isTutorialSimulation) && (
+              <>
+                <span className="h-5 w-px bg-white/10" aria-hidden />
+                <div ref={loopControlRef} className="flex items-center gap-1">
+                  <button
+                    data-testid="control-loop-toggle"
+                    data-active={isLoopEnabled ? "true" : "false"}
+                    aria-pressed={isLoopEnabled}
+                    onClick={() => {
+                      if (isTutorialSimulation) completeTutorialAction("loop");
+                      setIsLoopEnabled((current) => (isTutorialSimulation ? true : !current));
+                      if (isTutorialSimulation) {
+                        window.setTimeout(() => pauseTutorialSimulation(), 2200);
+                      }
+                    }}
+                    className={`${TOOLBAR_BUTTON} ${isLoopEnabled ? TOOLBAR_ACTIVE : TOOLBAR_IDLE}`}
+                    title="Repetir um trecho da música"
+                  >
+                    <Repeat size={14} />
+                    <span>Loop</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (isTutorialSimulation) completeTutorialAction("loop");
+                      handleSetLoopStart();
+                    }}
+                    className={TOOLBAR_STEPPER}
+                    title="Marcar o início do trecho no ponto atual"
+                  >
+                    A
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (isTutorialSimulation) completeTutorialAction("loop");
+                      handleSetLoopEnd();
+                    }}
+                    className={TOOLBAR_STEPPER}
+                    title="Marcar o fim do trecho no ponto atual"
+                  >
+                    B
+                  </button>
+                  {isLoopEnabled && (
+                    <button
+                      onClick={handleClearLoop}
+                      aria-label="Limpar trecho"
+                      className="grid h-7 w-7 place-items-center rounded-md text-white/50 transition-colors hover:bg-rose-500/10 hover:text-rose-300"
+                      title="Limpar trecho"
+                    >
+                      <X size={13} />
+                    </button>
+                  )}
+                  <div className="hidden min-w-[170px] px-1.5 2xl:block">
+                    <div className="flex items-center justify-between text-[11px] font-semibold tabular-nums text-white/55">
+                      <span>
+                        {isLoopEnabled && loopDuration > 0
+                          ? `${formatLoopTime(loopStart)} – ${formatLoopTime(loopEnd)}`
+                          : "Música inteira"}
+                      </span>
+                      <span>{formatLoopTime(currentPlaybackTime)}</span>
+                    </div>
+                    <div className="relative mt-1 h-1.5 overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className={`absolute inset-y-0 rounded-full transition-all ${
+                          isLoopEnabled && loopDuration > 0 ? "bg-cyan/60" : "bg-white/20"
+                        }`}
+                        style={{
+                          left: `${loopStartProgress}%`,
+                          width: `${Math.max(loopEndProgress - loopStartProgress, isLoopEnabled ? 2 : 100)}%`,
+                        }}
+                      />
+                      <div
+                        className="absolute top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-[left] duration-150"
+                        style={{ left: `calc(${playbackProgress}% - 5px)` }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="h-5 w-px bg-white/10" />
-            </>
-          )}
-
-          <div ref={speedControlRef} className="flex items-center gap-1">
-            <span className="hidden text-[8px] font-bold uppercase tracking-wider text-white/25 md:inline">Vel</span>
-            <button
-              data-testid="control-speed-down"
-              onClick={() => {
-                if (isTutorialSimulation) completeTutorialAction("speed");
-                setPlaybackSpeed(Math.max(0.15, playbackSpeed - 0.05));
-                if (isTutorialSimulation) {
-                  window.setTimeout(() => pauseTutorialSimulation(), 1600);
-                }
-              }}
-              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
-            >
-              -
-            </button>
-            <span data-testid="control-speed-value" className="min-w-[36px] text-center text-[10px] font-black text-cyan">{Math.round(playbackSpeed * 100)}%</span>
-            <button
-              data-testid="control-speed-up"
-              onClick={() => {
-                if (isTutorialSimulation) completeTutorialAction("speed");
-                setPlaybackSpeed(Math.min(1.1, playbackSpeed + 0.05));
-                if (isTutorialSimulation) {
-                  window.setTimeout(() => pauseTutorialSimulation(), 1600);
-                }
-              }}
-              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
-            >
-              +
-            </button>
+              </>
+            )}
           </div>
 
-          <div className="h-5 w-px bg-white/10" />
-
-          <button
-            ref={waitingControlRef}
-            data-testid="control-waiting-toggle"
-            data-active={isWaitingMode ? "true" : "false"}
-            onClick={() => {
-              if (isTutorialSimulation) completeTutorialAction("waiting");
-              setIsWaitingMode(true);
-            }}
-            className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-black uppercase tracking-wider transition-all ${
-              isWaitingMode ? "border-cyan/30 bg-cyan/15 text-cyan" : "border-transparent text-white/30 hover:text-white/50"
-            }`}
-          >
-            <Play size={11} className={isWaitingMode ? "fill-cyan" : ""} />
-            <span className="hidden md:inline">Espera</span>
-            <span className={`text-[9px] font-black ${isWaitingMode ? "text-cyan" : "text-white/40"}`}>
-              {isWaitingMode ? "ON" : "OFF"}
-            </span>
-          </button>
-
-          <div className="h-5 w-px bg-white/10" />
-
-          <div className="flex items-center gap-1">
-            <span className="hidden text-[8px] font-bold uppercase tracking-wider text-white/25 md:inline">Met</span>
+          {/* Metronome */}
+          <div className={`${TOOLBAR_GROUP} pl-2`} title="Volume do metrônomo">
+            <Music size={14} className="text-white/55" aria-hidden />
+            <span className="hidden text-[11px] font-semibold text-white/60 2xl:inline">Metrônomo</span>
             <button
-            data-testid="control-metronome-down"
-            onClick={() => {
-              setMetronomeVolume(Math.max(0, metronomeVolume - 0.02));
-              if (isTutorialSimulation) {
-                audio.playTick(Math.max(0.02, metronomeVolume - 0.02));
-              }
-            }}
-              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
+              data-testid="control-metronome-down"
+              aria-label="Diminuir metrônomo"
+              onClick={() => {
+                setMetronomeVolume(Math.max(0, metronomeVolume - 0.02));
+                if (isTutorialSimulation) {
+                  audio.playTick(Math.max(0.02, metronomeVolume - 0.02));
+                }
+              }}
+              className={TOOLBAR_STEPPER}
             >
-              -
+              −
             </button>
-            <span data-testid="control-metronome-value" className="min-w-[30px] text-center text-[10px] font-black text-white/60">
+            <span data-testid="control-metronome-value" className="min-w-[34px] text-center text-xs font-bold tabular-nums text-white/75">
               {Math.round(metronomeVolume * 100)}%
             </span>
             <button
-            data-testid="control-metronome-up"
-            onClick={() => {
-              setMetronomeVolume(Math.min(0.5, metronomeVolume + 0.02));
-              if (isTutorialSimulation) {
-                audio.playTick(Math.min(0.5, metronomeVolume + 0.02));
-              }
-            }}
-              className="flex h-5 w-5 items-center justify-center rounded bg-white/8 text-xs font-bold text-white/60 transition-colors hover:bg-white/15"
+              data-testid="control-metronome-up"
+              aria-label="Aumentar metrônomo"
+              onClick={() => {
+                setMetronomeVolume(Math.min(0.5, metronomeVolume + 0.02));
+                if (isTutorialSimulation) {
+                  audio.playTick(Math.min(0.5, metronomeVolume + 0.02));
+                }
+              }}
+              className={TOOLBAR_STEPPER}
             >
               +
             </button>
           </div>
 
-          <div className="h-5 w-px bg-white/10" />
-
-          <button
-            data-testid="control-restart"
-            onClick={() => {
-              if (isTutorialSimulation) {
-                resetTutorialSimulation();
-                return;
-              }
-              restartGame();
-            }}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-white/30 transition-all hover:bg-rose-500/10 hover:text-rose-400"
-            title="Reiniciar música"
-          >
-            <RotateCcw size={13} />
-            <span className="hidden text-[9px] font-bold uppercase tracking-wider lg:inline">Reiniciar</span>
-          </button>
-
-          {isPaused && gameState === "playing" && (
-            <div className="flex items-center gap-1 rounded-lg border border-amber-500/30 bg-amber-500/15 px-2 py-1 text-amber-400">
-              <Pause size={12} />
-              <span className="text-[9px] font-black uppercase tracking-wider">Pausado</span>
-            </div>
-          )}
+          <div className={TOOLBAR_GROUP}>
+            <button
+              data-testid="control-restart"
+              onClick={() => {
+                if (isTutorialSimulation) {
+                  resetTutorialSimulation();
+                  return;
+                }
+                restartGame();
+              }}
+              className={`${TOOLBAR_BUTTON} text-white/65 hover:bg-rose-500/10 hover:text-rose-300`}
+              title="Reiniciar música"
+            >
+              <RotateCcw size={14} />
+              <span className="hidden 2xl:inline">Reiniciar</span>
+            </button>
+            <button
+              onClick={() => setAudioEnabled(!audioEnabled)}
+              aria-pressed={audioEnabled}
+              aria-label={audioEnabled ? "Desligar som" : "Ligar som"}
+              className={`${TOOLBAR_BUTTON} ${audioEnabled ? "text-white/75 hover:bg-white/8 hover:text-white" : "text-white/35 hover:bg-white/8"}`}
+              title={audioEnabled ? "Desligar som" : "Ligar som"}
+            >
+              {audioEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+            </button>
+            <button
+              onClick={() => setShowTutorial(true)}
+              aria-label="Abrir tutorial"
+              className={`${TOOLBAR_BUTTON} text-white/75 hover:bg-white/8 hover:text-white`}
+              title="Como tocar (tutorial)"
+            >
+              <CircleHelp size={15} />
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
       <div className="relative flex flex-1 flex-col overflow-hidden">
         {showMicHint && (
@@ -1278,35 +1295,48 @@ function PlayPageContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex h-full cursor-pointer select-none flex-col items-center justify-center p-12 text-center"
-              onClick={startGame}
+              className="flex h-full select-none flex-col items-center justify-center px-6 py-10 text-center"
             >
-              <motion.div
-                animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.7, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="flex flex-col items-center gap-6"
+              <button
+                type="button"
+                onClick={startGame}
+                aria-label="Começar a tocar"
+                className="group relative grid h-24 w-24 place-items-center rounded-full border border-cyan/40 bg-cyan/10 text-white shadow-[0_0_60px_rgba(34,211,238,0.25)] transition hover:scale-105 hover:bg-cyan/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
               >
-                <div className="relative mb-4 flex h-24 w-24 items-center justify-center rounded-full border border-white/20">
-                  <div className="h-12 w-12 animate-pulse rounded-full bg-white/10 blur-xl" />
-                  <Play size={40} className="absolute text-white" />
-                </div>
-                <h2 className="text-3xl font-black uppercase tracking-[8px] text-white">
-                  {isLoopEnabled ? "Trecho preparado" : "Aperte uma tecla para comecar"}
-                </h2>
-                <p className="text-xs font-bold uppercase tracking-[4px] text-cyan/60">
-                  {isLoopEnabled
-                    ? `${formatLoopTime(loopStart)} - ${formatLoopTime(loopEnd)} em ${Math.round(playbackSpeed * 100)}%`
-                    : "O estúdio está pronto e te esperando"}
-                </p>
-                {isLoopEnabled && (
-                  <p className="max-w-md text-xs leading-relaxed text-white/45">
-                    Loop e modo espera estão prontos para você repetir o trecho com calma.
-                  </p>
-                )}
-              </motion.div>
+                <span className="absolute inset-0 animate-ping rounded-full border border-cyan/30 opacity-40 [animation-duration:2.4s]" aria-hidden />
+                <Play size={38} className="ml-1 fill-white" />
+              </button>
+
+              <h2 className="mt-7 text-2xl font-black tracking-tight md:text-3xl">
+                {isLoopEnabled ? "Trecho pronto para praticar" : "Pronto para tocar?"}
+              </h2>
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-white/65">
+                {isLoopEnabled
+                  ? `Vamos repetir ${formatLoopTime(loopStart)} – ${formatLoopTime(loopEnd)} a ${Math.round(playbackSpeed * 100)}% da velocidade.`
+                  : "Aperte qualquer tecla do piano ou clique no botão para começar. As notas vão cair até o teclado."}
+              </p>
+
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-white/70">
+                <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                  <span className="flex gap-0.5" aria-hidden>
+                    {["A", "S", "D", "F"].map((key) => (
+                      <kbd key={key} className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">
+                        {key}
+                      </kbd>
+                    ))}
+                  </span>
+                  Dó, Ré, Mi, Fá no computador
+                </span>
+                <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                  <kbd className="rounded border border-white/20 bg-black/40 px-1.5 font-sans text-[11px] font-bold text-white">Espaço</kbd>
+                  pausa
+                </span>
+                <span className={`rounded-full border px-3 py-1.5 ${isWaitingMode ? "border-cyan/30 bg-cyan/10 text-cyan" : "border-white/10 bg-white/[0.04]"}`}>
+                  Espera {isWaitingMode ? "ligada" : "desligada"} · {Math.round(playbackSpeed * 100)}%
+                </span>
+              </div>
             </motion.div>
           )}
-
           {gameState === "countdown" && (
             <motion.div
               key="countdown"
