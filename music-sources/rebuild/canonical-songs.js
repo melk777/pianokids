@@ -1700,4 +1700,6 @@ module.exports = [
     externalFacsimile: { provider: "Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:BellaCiao_Accordion.png", license: "CC0 1.0 / WTFPL", redistribution: "not bundled; LilyPond source remains the external reference" },
     crossCheckReferences: [{ provider: "Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:BellaCiao_Accordion.png", role: "source page publishes the complete melody and accompaniment notation under CC0" }],
   }),
+  // Wave 5 hymns live in their own file.
+  ...require("./wave-5-hymns"),
 ];

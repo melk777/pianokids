@@ -466,7 +466,7 @@ export default function Home() {
             </div>
             <div className="mt-12 grid gap-4 md:grid-cols-4">
               {[
-                { value: "90", label: "músicas com fonte documentada" },
+                { value: "112", label: "músicas com fonte documentada" },
                 { value: "84", label: "exercícios de técnica" },
                 { value: "19", label: "aulas na trilha guiada" },
                 { value: "24h", label: "prática no seu horário" },
