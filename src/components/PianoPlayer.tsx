@@ -10,6 +10,7 @@ import VirtualKeyboard from "./VirtualKeyboard";
 import { calculatePracticeAccuracy } from "@/lib/practice-score";
 import { suggestFingering } from "@/lib/fingering";
 import { isEarlyRelease, isLongNote } from "@/lib/holdScoring";
+import { MIC_TIMING_FACTOR, wasPlayed } from "@/lib/micInput";
 
 interface PianoPlayerProps {
   notes: SongNote[];
@@ -63,6 +64,11 @@ interface PianoPlayerProps {
   judgeHolds?: boolean;
   /** Measured input/audio delay in seconds, subtracted before judging timing. */
   inputLatency?: number;
+  /**
+   * Microphone mode: accept octave slips, widen the timing window and count
+   * unexpected pitches as noise instead of penalizing them.
+   */
+  lenientInput?: boolean;
 }
 
 interface VisualEffect {
@@ -183,10 +189,11 @@ export default function PianoPlayer({
   showFingering = true,
   judgeHolds = true,
   inputLatency = 0,
+  lenientInput = false,
 }: PianoPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
-  const timingWindow = TIMING_WINDOWS[difficulty];
+  const timingWindow = TIMING_WINDOWS[difficulty] * (lenientInput ? MIC_TIMING_FACTOR : 1);
   const lastActiveNotesState = useRef("");
   const noteGroups = useMemo(() => buildNoteGroups(notes), [notes]);
   const fingering = useMemo(() => (showFingering ? suggestFingering(notes) : null), [notes, showFingering]);
@@ -223,6 +230,7 @@ export default function PianoPlayer({
     longNotes: 0,
     sustainedNotes: 0,
     shortHolds: 0,
+    inputNoise: 0,
   });
 
   const scoreUIRef = useRef<HTMLParagraphElement>(null);
@@ -318,6 +326,7 @@ export default function PianoPlayer({
       longNotes: 0,
       sustainedNotes: 0,
       shortHolds: 0,
+      inputNoise: 0,
     };
     lastActiveNotesState.current = "";
 
@@ -440,6 +449,7 @@ export default function PianoPlayer({
       longNotes: state.longNotes,
       sustainedNotes: state.sustainedNotes,
       shortHolds: state.shortHolds,
+      inputNoise: state.inputNoise,
       problemNotes,
       weakestRange,
       recommendation,
@@ -1111,7 +1121,12 @@ export default function PianoPlayer({
 
       if (expectedMidis.size > 0) {
         playedNotes.forEach((midi) => {
-          if (expectedMidis.has(midi)) return;
+          if (wasPlayed(expectedMidis, midi, lenientInput)) return;
+          if (lenientInput) {
+            // Microphone noise or harmonics: record it, but do not punish the student.
+            state.inputNoise += 1;
+            return;
+          }
           const eventBucket = Math.floor(judgeTime * 4);
           const wrongKey = `${midi}-${eventBucket}`;
           if (state.wrongNoteTimes.has(wrongKey)) return;
@@ -1134,7 +1149,7 @@ export default function PianoPlayer({
         const pendingIndices = group.indices.filter((index) => !state.hitNotes.has(index) && !state.missedNotes.has(index));
         if (pendingIndices.length === 0) continue;
 
-        const allNotesPresent = pendingIndices.every((index) => playedNotes.has(notes[index].midi));
+        const allNotesPresent = pendingIndices.every((index) => wasPlayed(playedNotes, notes[index].midi, lenientInput));
         if (!allNotesPresent) continue;
 
         pendingIndices.forEach((index) => {
@@ -1176,7 +1191,7 @@ export default function PianoPlayer({
     }
 
     if (uiChanged) updateHUD();
-  }, [activeNotes, getAudioTime, inputLatency, isFreePlay, isPlaying, judgeHolds, noteGroups, notes, onNoteHit, playbackSpeed, showLiveFeedback, timingWindow, updateHUD]);
+  }, [activeNotes, getAudioTime, inputLatency, isFreePlay, isPlaying, judgeHolds, lenientInput, noteGroups, notes, onNoteHit, playbackSpeed, showLiveFeedback, timingWindow, updateHUD]);
 
   return (
     <div className="relative w-full flex-1 overflow-hidden rounded-[1.75rem] border border-cyan/20 bg-zinc-950 shadow-[0_30px_100px_rgba(0,0,0,0.72),0_0_54px_rgba(34,211,238,0.10),inset_0_1px_0_rgba(255,255,255,0.07)] md:rounded-[2.25rem]">

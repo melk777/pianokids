@@ -66,6 +66,8 @@ export interface PracticeFeedbackSummary {
   longNotes?: number;
   sustainedNotes?: number;
   shortHolds?: number;
+  /** Unexpected pitches heard by the microphone (not penalized). */
+  inputNoise?: number;
   problemNotes: Array<{
     midi: number;
     name?: string;

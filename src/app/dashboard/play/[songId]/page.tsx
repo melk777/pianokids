@@ -65,6 +65,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { trackEvent } from "@/lib/analytics";
 import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
 import { focusedKeyboardRange } from "@/lib/keyboardRange";
+import { selectMicNotes } from "@/lib/micInput";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const FREE_PLAY_SONG: Song = {
@@ -462,7 +463,9 @@ function PlayPageContent() {
       });
     });
 
-    const detectedNotes = activeAudioNotes.length > 0 ? activeAudioNotes : activeAudioNote ? [activeAudioNote] : [];
+    const rawDetected = activeAudioNotes.length > 0 ? activeAudioNotes : activeAudioNote ? [activeAudioNote] : [];
+    // One-hand practice is melodic: keep the clearest pitch, not its harmonics.
+    const detectedNotes = selectMicNotes(rawDetected, !(handSelection.includeLeftHand && handSelection.includeRightHand));
 
     for (const detectedNote of detectedNotes) {
       merged.set(detectedNote.note, {
@@ -474,7 +477,7 @@ function PlayPageContent() {
     }
 
     return merged;
-  }, [activeAudioNote, activeAudioNotes, localInputNotes, midi.activeNotes]);
+  }, [activeAudioNote, activeAudioNotes, handSelection.includeLeftHand, handSelection.includeRightHand, localInputNotes, midi.activeNotes]);
 
   const micHealth = useMemo(() => {
     if (!isMicActive) {
@@ -623,17 +626,30 @@ function PlayPageContent() {
               : "unknown";
 
       if (activeLesson) {
-        setLessonPassed(
-          isLessonComplete(activeLesson, [
-            {
-              songId: activeLesson.songId,
-              difficulty,
-              handMode,
-              bestAccuracy: Math.round(summary.accuracy),
-              completions: summary.completed ? 1 : 0,
-            },
-          ]),
-        );
+        const passed = isLessonComplete(activeLesson, [
+          {
+            songId: activeLesson.songId,
+            difficulty,
+            handMode,
+            bestAccuracy: Math.round(summary.accuracy),
+            completions: summary.completed ? 1 : 0,
+          },
+        ]);
+        setLessonPassed(passed);
+        if (passed) trackEvent("lesson_completed", { lessonId: activeLesson.id, accuracy: Math.round(summary.accuracy) });
+      }
+
+      if (isMicActive) {
+        // Lets us see whether microphone scoring is fair on real pianos.
+        trackEvent("mic_session_quality", {
+          songId: song?.id ?? songId,
+          handMode,
+          accuracy: Math.round(summary.accuracy),
+          hits: summary.feedback.hits,
+          misses: summary.feedback.misses,
+          noise: summary.feedback.inputNoise ?? 0,
+          calibrated: Boolean(calibrationProfile),
+        });
       }
 
       if (isFreePlay || !profile || !song || hasRecordedSessionRef.current) {
@@ -653,7 +669,7 @@ function PlayPageContent() {
         handMode,
       });
     },
-    [activeLesson, difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, isFreePlay, profile, recordPracticeSession, song],
+    [activeLesson, calibrationProfile, difficulty, handSelection.includeLeftHand, handSelection.includeRightHand, isFreePlay, isMicActive, profile, recordPracticeSession, song, songId],
   );
 
   const handleSetLoopStart = useCallback(() => {
@@ -1524,6 +1540,7 @@ function PlayPageContent() {
                 }
                 showFingering={showFingering}
                 judgeHolds={!isMicActive}
+                lenientInput={isMicActive}
                 inputLatency={isTutorialSimulation ? 0 : inputLatencyMs / 1000}
               />
             </motion.div>
