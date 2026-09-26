@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T19:50:55.642Z",
+  "generatedAt": "2026-09-26T04:49:21.443Z",
   "summary": {
     "total": 49,
     "pass": 45,
@@ -97,7 +97,7 @@
       "item": ".env.local completo",
       "status": "warn",
       "severity": "medium",
-      "details": "Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor."
+      "details": "Arquivo local protegido, mas faltam 8 chaves obrigatorias: SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID, COMPANY_LEGAL_NAME, COMPANY_TAX_ID, COMPANY_ADDRESS."
     },
     {
       "category": "build",
@@ -314,7 +314,7 @@
       "item": "revisao auditiva final da biblioteca",
       "status": "warn",
       "severity": "critical",
-      "details": "As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao."
+      "details": "22 de 112 musicas aprovadas por escuta humana; 90 ainda precisam da revisao de melodia, harmonia, andamento e das tres dificuldades antes da divulgacao."
     },
     {
       "category": "brand",
