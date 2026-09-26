@@ -1,6 +1,6 @@
 # Auditoria de pre-lancamento comercial
 
-Gerado em: 2026-09-25T19:50:55.643Z
+Gerado em: 2026-09-26T04:49:21.445Z
 
 ## Resumo
 
@@ -26,7 +26,7 @@ Gerado em: 2026-09-25T19:50:55.643Z
 | OK | env | COMPANY_LEGAL_NAME | high | Presente em .env.example. |
 | OK | env | COMPANY_TAX_ID | high | Presente em .env.example. |
 | OK | env | COMPANY_ADDRESS | high | Presente em .env.example. |
-| WARN | env-local | .env.local completo | medium | Arquivo local nao encontrado. Producao deve configurar as variaveis no provedor. |
+| WARN | env-local | .env.local completo | medium | Arquivo local protegido, mas faltam 8 chaves obrigatorias: SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID, COMPANY_LEGAL_NAME, COMPANY_TAX_ID, COMPANY_ADDRESS. |
 | OK | build | script build | high | Script de build configurado. |
 | OK | dependencies | baseline segura do Next.js | critical | Next.js ^16.3.6 com baseline de seguranca atualizada; o CI tambem executa npm audit. |
 | OK | qa | QA responsivo automatizado | high | Quatro viewports concluiram tutorial/orientacao, partida, interacoes e tela final sem problemas detectados. |
@@ -57,7 +57,7 @@ Gerado em: 2026-09-25T19:50:55.643Z
 | OK | catalog | biblioteca carregavel | high | 112 arquivos de musica encontrados e indice publico existe. |
 | OK | legal | direitos autorais das musicas | critical | As 90 musicas possuem procedencia, licenca e atribuicao publicamente documentadas; o indice comercial nao usa capas externas. A verificacao tecnica nao substitui parecer juridico. |
 | OK | stripe | chaves live bloqueadas fora da producao | critical | Preview e desenvolvimento devem rejeitar chaves Stripe live antes de criar qualquer cobranca. |
-| WARN | catalog | revisao auditiva final da biblioteca | critical | As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao. |
+| WARN | catalog | revisao auditiva final da biblioteca | critical | 22 de 112 musicas aprovadas por escuta humana; 90 ainda precisam da revisao de melodia, harmonia, andamento e das tres dificuldades antes da divulgacao. |
 | OK | brand | nome comercial consistente | high | Pianify e o nome comercial usado na documentacao e no produto. |
 | OK | database | schema e migracoes reproduziveis | critical | Schema inicial e endurecimentos posteriores estao versionados em supabase/migrations. |
 | OK | database | endurecimento final do Security Advisor | critical | Funcoes de trigger nao devem ser chamadas pela API e o bucket publico nao deve permitir enumeracao ampla. |

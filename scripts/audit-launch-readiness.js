@@ -406,12 +406,21 @@ function run() {
     "critical",
   );
 
+  const songsDir = path.join(ROOT, "data", "songs");
+  const reviewStatuses = fs
+    .readdirSync(songsDir)
+    .filter((file) => file.endsWith(".json"))
+    .map((file) => JSON.parse(fs.readFileSync(path.join(songsDir, file), "utf8")).reviewStatus);
+  const approvedByListening = reviewStatuses.filter((status) => status === "published").length;
+  const pendingListening = reviewStatuses.length - approvedByListening;
   add(
     checks,
     "catalog",
     "revisao auditiva final da biblioteca",
-    "warn",
-    "As 90 musicas possuem fonte canonica e fidelidade estrutural exata, mas a aprovacao por escuta humana de melodia, harmonia, andamento e experiencia das tres dificuldades continua obrigatoria antes da publicacao.",
+    pendingListening === 0 ? "pass" : "warn",
+    pendingListening === 0
+      ? `Todas as ${reviewStatuses.length} musicas foram aprovadas por escuta humana.`
+      : `${approvedByListening} de ${reviewStatuses.length} musicas aprovadas por escuta humana; ${pendingListening} ainda precisam da revisao de melodia, harmonia, andamento e das tres dificuldades antes da divulgacao.`,
     "critical",
   );
 

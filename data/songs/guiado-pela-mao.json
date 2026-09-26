@@ -13,7 +13,12 @@
   "isPremium": false,
   "coverUrl": "/images/covers/placeholder.png",
   "musicalSchemaVersion": 3,
-  "reviewStatus": "pending_owner_review",
+  "reviewStatus": "published",
+  "ownerReview": {
+    "approvedAt": "2026-09-26",
+    "approvedBy": "owner",
+    "note": "Wave 5 hymns approved after listening review."
+  },
   "sourceProvenance": {
     "canonical": true,
     "kind": "midi",
