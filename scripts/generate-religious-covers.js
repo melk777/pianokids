@@ -145,6 +145,30 @@ const covers = [
     palette: ["#ecfccb", "#84cc16", "#365314"],
     symbol: "gathering",
   },
+  // Wave 5 hymns (2026-09). Vector covers until illustrated PNGs are added;
+  // a PNG with the same id takes priority in the catalog automatically.
+  { id: "que-seguranca", title: "Que Segurança", subtitle: "certeza em Jesus", palette: ["#e0f2fe", "#38bdf8", "#0c4a6e"], symbol: "anchor" },
+  { id: "a-deus-demos-gloria", title: "A Deus Demos Glória", subtitle: "louvor ao Pai", palette: ["#fef9c3", "#facc15", "#713f12"], symbol: "light" },
+  { id: "alegria-ao-mundo", title: "Alegria ao Mundo", subtitle: "o Rei chegou", palette: ["#fee2e2", "#ef4444", "#7f1d1d"], symbol: "star" },
+  { id: "eis-dos-anjos-a-harmonia", title: "Eis dos Anjos a Harmonia", subtitle: "canto de Natal", palette: ["#ede9fe", "#a78bfa", "#312e81"], symbol: "trumpet" },
+  { id: "vem-tu-onipotente", title: "Vem, Tu, Onipotente", subtitle: "Rei soberano", palette: ["#fae8ff", "#c084fc", "#4a044e"], symbol: "crown" },
+  { id: "o-deus-nosso-socorro", title: "Ó Deus, Nosso Socorro", subtitle: "abrigo eterno", palette: ["#e0e7ff", "#6366f1", "#1e1b4b"], symbol: "shield" },
+  { id: "guiado-pela-mao", title: "Guiado pela Mão", subtitle: "Ele me conduz", palette: ["#ecfccb", "#84cc16", "#365314"], symbol: "steps" },
+  { id: "formoso-senhor-jesus", title: "Formoso Senhor Jesus", subtitle: "beleza sem igual", palette: ["#ffe4e6", "#fb7185", "#881337"], symbol: "sun" },
+  { id: "o-primeiro-natal", title: "O Primeiro Natal", subtitle: "a estrela guia", palette: ["#dbeafe", "#60a5fa", "#172554"], symbol: "star" },
+  { id: "junto-ao-rio", title: "Junto ao Rio", subtitle: "águas da vida", palette: ["#cffafe", "#22d3ee", "#164e63"], symbol: "river" },
+  { id: "louvai-ao-senhor-rei-poderoso", title: "Louvai ao Senhor", subtitle: "Rei poderoso", palette: ["#fef3c7", "#f59e0b", "#78350f"], symbol: "crown" },
+  { id: "sou-teu-senhor", title: "Sou Teu, Senhor", subtitle: "entrega total", palette: ["#fce7f3", "#ec4899", "#831843"], symbol: "halo" },
+  { id: "mais-amor-a-ti", title: "Mais Amor a Ti", subtitle: "coração rendido", palette: ["#ffe4e6", "#f43f5e", "#4c0519"], symbol: "candle" },
+  { id: "mil-linguas-eu-quisera-ter", title: "Mil Línguas Eu Quisera Ter", subtitle: "para te louvar", palette: ["#dcfce7", "#4ade80", "#14532d"], symbol: "gathering" },
+  { id: "tal-qual-estou", title: "Tal Qual Estou", subtitle: "graça que acolhe", palette: ["#f1f5f9", "#94a3b8", "#0f172a"], symbol: "cross" },
+  { id: "minha-fe-contempla-a-ti", title: "Minha Fé Contempla a Ti", subtitle: "olhar para a cruz", palette: ["#fef2f2", "#f87171", "#450a0a"], symbol: "cross" },
+  { id: "anjos-das-alturas", title: "Anjos das Alturas", subtitle: "cantai a glória", palette: ["#e0f2fe", "#7dd3fc", "#082f49"], symbol: "trumpet" },
+  { id: "como-um-pastor", title: "Como um Pastor", subtitle: "cuidado e direção", palette: ["#f0fdf4", "#86efac", "#052e16"], symbol: "steps" },
+  { id: "abre-meus-olhos", title: "Abre Meus Olhos", subtitle: "luz para ver", palette: ["#fefce8", "#fde047", "#422006"], symbol: "light" },
+  { id: "jesus-chama", title: "Jesus Chama", subtitle: "vinde a mim", palette: ["#ecfeff", "#67e8f9", "#083344"], symbol: "river" },
+  { id: "doxologia", title: "Doxologia", subtitle: "louvor ao Deus trino", palette: ["#fffbeb", "#fbbf24", "#451a03"], symbol: "halo" },
+  { id: "comigo-habita", title: "Comigo Habita", subtitle: "paz ao entardecer", palette: ["#eef2ff", "#818cf8", "#1e1b4b"], symbol: "dove" },
 ];
 
 function escapeXml(value) {

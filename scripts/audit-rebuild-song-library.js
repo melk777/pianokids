@@ -3,6 +3,7 @@ const path = require("path");
 const canonicalSongs = require("../music-sources/rebuild/canonical-songs");
 const pianoRange = require("../config/piano-range.json");
 const { verifyFrozenMusicPilot } = require("./verify-frozen-music-pilot");
+const ownerApprovals = require("./owner-review-approvals");
 const {
   buildArrangements,
   noteSignature,
@@ -78,7 +79,8 @@ function auditSong(entry) {
   const song = JSON.parse(fs.readFileSync(songPath, "utf8"));
   if (song.id !== entry.id) errors.push("ID final diverge do manifesto canonico.");
   if (song.musicalSchemaVersion !== 3) errors.push("Schema musical nao e a versao 3.");
-  if (song.reviewStatus !== "pending_owner_review") errors.push("Musica nao esta bloqueada para revisao do proprietario.");
+  const expectedStatus = ownerApprovals[entry.id] ? "published" : "pending_owner_review";
+  if (song.reviewStatus !== expectedStatus) errors.push(`Estado editorial deveria ser ${expectedStatus}.`);
   if (!song.sourceProvenance?.canonical) errors.push("Procedencia canonica nao incorporada ao JSON.");
   if (!song.sourceProvenance?.license || !song.sourceProvenance?.sourceUrl) errors.push("Licenca ou URL da fonte ausente.");
 

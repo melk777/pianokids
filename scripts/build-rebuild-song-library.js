@@ -6,6 +6,7 @@ const pianoRange = require("../config/piano-range.json");
 const songCatalogMetadata = require("./song-catalog-metadata");
 const { verifyFrozenMusicPilot } = require("./verify-frozen-music-pilot");
 const { buildArrangements } = require("./rebuild-song-utils");
+const ownerApprovals = require("./owner-review-approvals");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const SONGS_DIR = path.join(ROOT_DIR, "data", "songs");
@@ -103,7 +104,8 @@ function buildSong(entry) {
     isPremium: metadata.isPremium ?? true,
     coverUrl: existingCoverUrl(entry.outputFile),
     musicalSchemaVersion: 3,
-    reviewStatus: "pending_owner_review",
+    reviewStatus: ownerApprovals[entry.id] ? "published" : "pending_owner_review",
+    ownerReview: ownerApprovals[entry.id] ?? undefined,
     sourceProvenance: publicProvenance(entry),
     pedagogy: {
       easyStrategy: entry.easyStrategy,
