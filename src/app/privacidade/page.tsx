@@ -111,7 +111,7 @@ export default function PrivacidadePage() {
               Seus Direitos
             </h2>
             <p className="text-white/60 leading-relaxed">
-              De acordo com a LGPD, você tem direito a acessar, corrigir, portar ou solicitar a exclusão de seus dados a qualquer momento através de nossa central de suporte.
+              De acordo com a LGPD, você tem direito a acessar, corrigir, portar ou excluir seus dados a qualquer momento. No seu perfil, &quot;Baixar meus dados&quot; entrega uma cópia completa e &quot;Excluir minha conta&quot; apaga a conta na hora, cancelando a assinatura. Contas de professor parceiro abrem um pedido de exclusão, concluído em até 15 dias após o acerto de comissões e saques. Correções e demais pedidos podem ser feitos pela central de suporte.
             </p>
             <p className="mt-4 text-white/60 leading-relaxed">
               Envie a solicitação para contato@pianify.com.br usando o e-mail da conta. Podemos pedir confirmação de identidade. A solicitação é gratuita; alguns registros podem ser preservados quando houver obrigação legal ou necessidade de exercício regular de direitos.

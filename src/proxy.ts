@@ -31,7 +31,8 @@ function isAlwaysPublicRoute(pathname: string) {
     pathname.startsWith("/termos") ||
     pathname.startsWith("/reembolso") ||
     pathname.startsWith("/creditos") ||
-    pathname.startsWith("/contato")
+    pathname.startsWith("/contato") ||
+    pathname.startsWith("/conta-excluida")
   );
 }
 

@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import DeleteAccountSection from "@/components/DeleteAccountSection";
 import {
   buildPracticeAchievements,
   buildPracticeGoals,
@@ -615,8 +616,9 @@ export default function ProfilePage() {
             Baixar meus dados
           </a>
           <p className="mt-4 text-xs text-white/35">
-            Para corrigir ou excluir dados, envie uma solicitação autenticada pela central de contato. Registros que precisem ser mantidos por obrigação legal podem ser preservados pelo prazo aplicável.
+            Para corrigir dados, envie uma solicitação autenticada pela central de contato. Registros que precisem ser mantidos por obrigação legal podem ser preservados pelo prazo aplicável.
           </p>
+          <DeleteAccountSection isTeacher={profile?.role === "teacher"} />
         </section>
       </div>
     </main>
