@@ -30,8 +30,8 @@ const practiceModeCards: Array<{
   description: string;
   iconClassName?: string;
 }> = [
-  { id: "right", label: "Mao direita", description: "Melodia guiada com acompanhamento da esquerda." },
-  { id: "left", label: "Mao esquerda", description: "Baixo e harmonia com a direita como apoio." },
+  { id: "right", label: "Mão direita", description: "Melodia guiada com acompanhamento da esquerda." },
+  { id: "left", label: "Mão esquerda", description: "Baixo e harmonia com a direita como apoio." },
   { id: "both", label: "Duas mãos", description: "Versão completa, sem acompanhamento automático." },
 ];
 
@@ -115,8 +115,9 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-8">
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={onClose}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain">
+          {/* A janela rola quando é mais alta que a tela (celular), e o botão de tocar fica fixo embaixo. */}
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm" onClick={onClose}>
             <div
               className="pointer-events-none absolute inset-0 opacity-40"
               style={{
@@ -127,22 +128,23 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
             />
           </div>
 
+          <div className="relative flex min-h-full items-center justify-center px-4 pb-4 pt-16 md:p-8" onClick={onClose}>
           <motion.div
             initial={{ scale: 0.9, y: 20, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.9, y: 20, opacity: 0 }}
-            className="relative flex w-full max-w-5xl flex-col items-center gap-6 md:flex-row"
+            className="relative flex w-full max-w-5xl flex-col items-center gap-5 md:flex-row md:gap-6"
             onClick={(event) => event.stopPropagation()}
           >
-            <button onClick={onClose} className="absolute left-0 -top-12 text-white/40 transition-colors hover:text-white md:-left-16 md:top-0">
+            <button onClick={onClose} aria-label="Voltar" className="absolute left-0 -top-12 text-white/40 transition-colors hover:text-white md:-left-16 md:top-0">
               <ArrowLeft size={32} />
             </button>
 
-            <div className="group perspective-1000 relative">
+            <div className="group perspective-1000 relative [@media(max-height:500px)]:hidden">
               <div className="animate-pulse-slow absolute -inset-4 rounded-full border border-white/5" />
               <div className="absolute -inset-8 rounded-full border border-white/5 opacity-50" />
 
-              <div className="relative h-48 w-48 overflow-hidden rounded-full border-8 border-zinc-800 shadow-[0_0_50px_rgba(0,0,0,1)] ring-2 ring-white/10 transition-transform duration-500 group-hover:scale-[1.02] md:h-72 md:w-72">
+              <div className="relative h-32 w-32 overflow-hidden rounded-full border-8 sm:h-48 sm:w-48 border-zinc-800 shadow-[0_0_50px_rgba(0,0,0,1)] ring-2 ring-white/10 transition-transform duration-500 group-hover:scale-[1.02] md:h-72 md:w-72">
                 <Image
                   src={song.coverUrl || "/images/covers/default.png"}
                   alt={song.title}
@@ -153,16 +155,16 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
               </div>
             </div>
 
-            <div className="flex w-full flex-1 flex-col gap-6 rounded-[32px] border border-white/10 bg-zinc-900/60 p-6 shadow-2xl backdrop-blur-2xl md:p-8">
+            <div className="flex w-full flex-1 flex-col gap-5 rounded-[28px] border border-white/10 bg-zinc-900/60 p-4 shadow-2xl backdrop-blur-2xl sm:p-6 md:gap-6 md:rounded-[32px] md:p-8">
               <div className="space-y-2">
                 <span className="block text-xs font-bold uppercase tracking-widest text-cyan/60">{categoryLabel}</span>
-                <h2 className="text-3xl font-black text-[#FDFCF0] md:text-4xl">{song.title}</h2>
+                <h2 className="text-2xl font-black text-[#FDFCF0] sm:text-3xl md:text-4xl">{song.title}</h2>
                 <p className="text-lg font-medium text-white/40">{song.artist}</p>
               </div>
 
               <div className="space-y-5">
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-sm font-bold uppercase tracking-[4px] text-white/30">Nível e modo de prática</h3>
+                <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+                  <h3 className="text-xs font-bold uppercase tracking-[3px] text-white/30 sm:text-sm sm:tracking-[4px]">Nível e modo de prática</h3>
                   <div className="flex items-center gap-3">
                     <span className={`text-[10px] font-black tracking-widest ${difficultyAccent}`}>NÍVEL {DIFFICULTY_LABELS[selectedDifficulty].toUpperCase()}</span>
                     <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/5">
@@ -187,7 +189,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                           playClick();
                           setSelectedDifficulty(level.id);
                         }}
-                        className={`rounded-2xl border px-3 py-3 text-center transition-all ${
+                        className={`rounded-2xl border px-1.5 py-3 text-center transition-all sm:px-3 ${
                           isActive
                             ? level.tone === "emerald"
                               ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-300"
@@ -197,13 +199,13 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                             : "border-white/8 bg-white/[0.03] text-white/40 hover:border-white/15 hover:text-white/70"
                         }`}
                       >
-                        <span className="block text-[11px] font-black uppercase tracking-[0.22em]">{level.label}</span>
+                        <span className="block text-[10px] font-black uppercase tracking-[0.08em] sm:text-[11px] sm:tracking-[0.22em]">{level.label}</span>
                       </button>
                     );
                   })}
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-2 sm:gap-4 md:grid-cols-3">
                   {practiceModeCards.map((mode) => {
                     const isActive = practiceHandMode === mode.id;
 
@@ -214,7 +216,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                           playClick();
                           setPracticeHandMode(mode.id);
                         }}
-                        className={`relative rounded-2xl border-2 p-5 text-left transition-all duration-300 ${
+                        className={`relative rounded-2xl border-2 p-3 text-left transition-all duration-300 sm:p-5 ${
                           isActive
                             ? "border-white bg-zinc-100 text-zinc-900 shadow-[0_0_30px_rgba(255,255,255,0.1)] outline outline-4 outline-white/10"
                             : "border-white/5 bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80"
@@ -222,7 +224,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                       >
                         <div className="flex items-start gap-4">
                           <div
-                            className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-300 ${
+                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 sm:h-12 sm:w-12 sm:rounded-2xl ${
                               isActive ? "bg-zinc-900 text-white" : "bg-white/5 text-white/40"
                             }`}
                           >
@@ -257,14 +259,14 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
               </div>
 
               <div
-                className="group flex cursor-pointer items-center justify-between rounded-3xl border border-white/5 bg-white/[0.03] p-6 transition-all hover:bg-white/[0.05]"
+                className="group flex cursor-pointer items-center justify-between gap-3 rounded-3xl border border-white/5 bg-white/[0.03] p-4 transition-all hover:bg-white/[0.05] sm:p-6"
                 onClick={() => {
                   playClick();
                   setMicEnabled(!micEnabled);
                 }}
               >
-                <div className="flex items-center gap-6">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-500 ${micEnabled ? "bg-cyan text-black shadow-[0_0_20px_rgba(0,234,255,0.4)]" : "bg-white/5 text-white/20"}`}>
+                <div className="flex items-center gap-3 sm:gap-6">
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all duration-500 ${micEnabled ? "bg-cyan text-black shadow-[0_0_20px_rgba(0,234,255,0.4)]" : "bg-white/5 text-white/20"}`}>
                     {micEnabled ? <Mic size={24} /> : <MicOff size={24} />}
                   </div>
                   <div>
@@ -282,13 +284,13 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                 type="button"
                 onClick={handleStart}
                 disabled={isStarting}
-                className={`group relative mt-2 h-16 w-full overflow-hidden rounded-full shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] transition-all duration-500 ${
+                className={`group sticky bottom-3 z-10 mt-2 h-16 w-full shrink-0 overflow-hidden rounded-full shadow-[0_20px_40px_-10px_rgba(249,115,22,0.45)] transition-all duration-500 md:relative md:bottom-auto ${
                   isStarting ? "cursor-wait opacity-90" : "opacity-100 hover:scale-[1.02] active:scale-[0.98]"
                 }`}
               >
                 <div className="absolute inset-0 animate-gradient-slow bg-gradient-to-r from-orange-500 via-orange-400 to-red-500 bg-[length:200%_100%]" />
 
-                <div className="relative flex h-full items-center justify-between px-8">
+                <div className="relative flex h-full items-center justify-between px-6 sm:px-8">
                   <div className="flex flex-col items-start">
                     <span className="text-lg font-black tracking-[2px] text-white">Começar a tocar.</span>
                     <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">
@@ -301,7 +303,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
                 </div>
               </button>
 
-              <div className="flex justify-center gap-8 text-[10px] font-black uppercase tracking-widest text-white/10">
+              <div className="flex flex-wrap justify-center gap-x-8 gap-y-1 text-[10px] font-black uppercase tracking-widest text-white/10">
                 <span>MIDI SUPPORT: ON</span>
                 <span>BPM: {song.bpm}</span>
                 <span>
@@ -310,6 +312,7 @@ export default function SongSummaryModal({ song, isOpen, onClose }: SongSummaryM
               </div>
             </div>
           </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

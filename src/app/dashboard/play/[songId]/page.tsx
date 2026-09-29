@@ -40,6 +40,7 @@ import {
   Play,
   Repeat,
   RotateCcw,
+  SlidersHorizontal,
   Target,
   Timer,
   TimerReset,
@@ -53,7 +54,9 @@ const FINGERING_STORAGE_KEY = "pianify.showFingering";
 const NON_STARTING_KEYS =new Set(["Enter", "Tab", "Escape", "Shift", "Control", "Alt", "Meta", "CapsLock"]);
 
 // Shared toolbar styles keep every control the same height and contrast.
-const TOOLBAR_GROUP = "flex h-10 items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-1";
+// No celular os grupos quebram linha dentro do painel "Ajustes"; no computador ficam numa linha só.
+const TOOLBAR_GROUP =
+  "flex min-h-10 flex-wrap items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-1 py-1 lg:h-10 lg:flex-nowrap lg:py-0";
 const TOOLBAR_BUTTON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors";
 const TOOLBAR_IDLE = "text-white/65 hover:bg-white/8 hover:text-white";
 const TOOLBAR_ACTIVE = "bg-cyan/15 text-cyan";
@@ -248,6 +251,8 @@ function PlayPageContent() {
   const [showMicHint, setShowMicHint] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showCalibration, setShowCalibration] = useState(false);
+  // Celular e tablet: os controles ficam num painel que abre em "Ajustes", em vez de sair da tela.
+  const [showToolsPanel, setShowToolsPanel] = useState(false);
   const [inputLatencyMs, setInputLatencyMs] = useState(0);
   const [showFingering, setShowFingering] = useState(true);
 
@@ -963,7 +968,7 @@ function PlayPageContent() {
   }
 
   return (
-    <div ref={pageRef} className="relative flex min-h-screen flex-col overflow-hidden bg-black font-sans text-white">
+    <div ref={pageRef} className="relative flex h-[100dvh] flex-col overflow-hidden bg-black font-sans text-white">
 
       {showTutorial ? (
         <GameTutorialOverlay
@@ -984,10 +989,10 @@ function PlayPageContent() {
       ) : null}
 
       <header
-        className="z-20 flex h-14 shrink-0 items-center gap-3 overflow-hidden border-b border-white/[0.08] px-2 md:px-4"
+        className="relative z-40 flex h-14 shrink-0 items-center gap-2 [@media(max-height:500px)]:h-11 border-b border-white/[0.08] px-2 md:px-4 lg:z-20 lg:gap-3 lg:overflow-hidden"
         style={{ background: "rgba(0, 0, 0, 0.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
       >
-        <div className="flex min-w-0 shrink items-center gap-2.5">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 lg:flex-none lg:shrink">
           <Link
             href="/dashboard/songs"
             aria-label="Voltar para a biblioteca"
@@ -995,7 +1000,7 @@ function PlayPageContent() {
           >
             <ArrowLeft size={18} />
           </Link>
-          <div className="min-w-0 max-w-[11rem] lg:max-w-[16rem]">
+          <div className="min-w-0 flex-1 lg:max-w-[16rem] lg:flex-none">
             <h1 className="truncate text-sm font-bold leading-tight">{song.title}</h1>
             <p className="truncate text-[11px] leading-tight text-white/50">{song.artist}</p>
           </div>
@@ -1024,9 +1029,27 @@ function PlayPageContent() {
           </button>
         </div>
 
+        <button
+          type="button"
+          onClick={() => setShowToolsPanel((open) => !open)}
+          aria-expanded={showToolsPanel || isTutorialSimulation}
+          aria-controls="piano-top-controls"
+          className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition-colors lg:hidden ${
+            showToolsPanel || isTutorialSimulation
+              ? "border-cyan/40 bg-cyan/15 text-cyan"
+              : "border-white/12 bg-white/[0.04] text-white/80 hover:bg-white/10"
+          }`}
+        >
+          {showToolsPanel && !isTutorialSimulation ? <X size={15} /> : <SlidersHorizontal size={15} />}
+          Ajustes
+        </button>
+
         <div
+          id="piano-top-controls"
           data-testid="piano-top-controls"
-          className="flex min-w-0 flex-1 items-center justify-start gap-2 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0 md:[&>*:first-child]:ml-auto"
+          className={`${
+            showToolsPanel || isTutorialSimulation ? "flex" : "hidden"
+          } absolute inset-x-0 top-full z-30 max-h-[calc(100dvh-3.5rem)] [@media(max-height:500px)]:max-h-[calc(100dvh-2.75rem)] flex-wrap items-center justify-center gap-2 overflow-y-auto border-b border-white/10 bg-[#05060b]/[0.97] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl [&>*]:shrink-0 lg:static lg:inset-auto lg:z-auto lg:flex lg:max-h-none lg:min-w-0 lg:flex-1 lg:flex-nowrap lg:justify-start lg:overflow-x-auto lg:overflow-y-visible lg:overscroll-x-contain lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden lg:[&>*:first-child]:ml-auto`}
         >
           {isTutorialSimulation && currentTutorialAction === "keyboard" && (
             <div className="hidden items-center gap-2 rounded-lg border border-cyan/30 bg-cyan/10 px-2.5 py-1.5 text-xs font-bold text-cyan md:flex">
@@ -1101,7 +1124,7 @@ function PlayPageContent() {
               </button>
             </div>
 
-            <span className="h-5 w-px bg-white/10" aria-hidden />
+            <span className="hidden h-5 w-px bg-white/10 lg:block" aria-hidden />
 
             <button
               ref={waitingControlRef}
@@ -1128,7 +1151,7 @@ function PlayPageContent() {
 
             {((!isFreePlay && song.duration > 0) || isTutorialSimulation) && (
               <>
-                <span className="h-5 w-px bg-white/10" aria-hidden />
+                <span className="hidden h-5 w-px bg-white/10 lg:block" aria-hidden />
                 <div ref={loopControlRef} className="flex items-center gap-1">
                   <button
                     data-testid="control-loop-toggle"
@@ -1398,10 +1421,10 @@ function PlayPageContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex h-full select-none flex-col items-center justify-center px-6 py-10 text-center"
+              className="flex h-full select-none flex-col items-center justify-center overflow-y-auto px-6 py-10 text-center [@media(max-height:500px)]:py-3"
             >
               {activeLesson && (
-                <div className="mb-6 flex max-w-md items-center gap-3 rounded-2xl border border-cyan/30 bg-cyan/10 px-4 py-3 text-left">
+                <div className="mb-6 flex max-w-md items-center gap-3 rounded-2xl border border-cyan/30 bg-cyan/10 px-4 py-3 text-left [@media(max-height:500px)]:mb-3 [@media(max-height:500px)]:py-2">
                   <Target size={18} className="shrink-0 text-cyan" />
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan">Aula {activeLesson.id}</p>
@@ -1413,16 +1436,16 @@ function PlayPageContent() {
                 type="button"
                 onClick={startGame}
                 aria-label="Começar a tocar"
-                className="group relative grid h-24 w-24 place-items-center rounded-full border border-cyan/40 bg-cyan/10 text-white shadow-[0_0_60px_rgba(34,211,238,0.25)] transition hover:scale-105 hover:bg-cyan/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+                className="group relative grid h-24 w-24 shrink-0 place-items-center rounded-full border border-cyan/40 bg-cyan/10 text-white shadow-[0_0_60px_rgba(34,211,238,0.25)] transition hover:scale-105 hover:bg-cyan/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan [@media(max-height:500px)]:h-16 [@media(max-height:500px)]:w-16"
               >
                 <span className="absolute inset-0 animate-ping rounded-full border border-cyan/30 opacity-40 [animation-duration:2.4s]" aria-hidden />
                 <Play size={38} className="ml-1 fill-white" />
               </button>
 
-              <h2 className="mt-7 text-2xl font-black tracking-tight md:text-3xl">
+              <h2 className="mt-7 text-2xl font-black tracking-tight md:text-3xl [@media(max-height:500px)]:mt-3 [@media(max-height:500px)]:text-xl">
                 {isLoopEnabled ? "Trecho pronto para praticar" : "Pronto para tocar?"}
               </h2>
-              <p className="mt-2 max-w-md text-sm leading-relaxed text-white/65">
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-white/65 [@media(max-height:500px)]:mt-1 [@media(max-height:500px)]:text-xs">
                 {isLoopEnabled
                   ? `Vamos repetir ${formatLoopTime(loopStart)} – ${formatLoopTime(loopEnd)} a ${Math.round(playbackSpeed * 100)}% da velocidade.`
                   : isCompactScreen
@@ -1430,7 +1453,7 @@ function PlayPageContent() {
                     : "Aperte qualquer tecla do piano ou clique no botão para começar. As notas vão cair até o teclado."}
               </p>
 
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-white/70">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-white/70 [@media(max-height:500px)]:mt-3">
                 {!isCompactScreen && (
                   <>
                     <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">

@@ -93,7 +93,7 @@ export default function LearningPathPage() {
   const { progress, completed, total, current, todaySeconds, loading } = useLearningPath();
 
   return (
-    <main className="min-h-screen bg-black px-4 pb-20 pt-28 text-white sm:px-6">
+    <main className="min-h-screen bg-black px-4 pb-20 pt-28 [@media(max-height:500px)]:pt-16 text-white sm:px-6">
       <div className="mx-auto max-w-3xl">
         <header className="mb-8">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan">Minha trilha</p>

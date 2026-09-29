@@ -185,7 +185,7 @@ export default function ProfilePage() {
   }[progressInsight.tone];
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-12 px-6">
+    <main className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-12 [@media(max-height:500px)]:pt-16 px-6">
       <div className="max-w-4xl mx-auto">
         {/* Back Link */}
         <div 

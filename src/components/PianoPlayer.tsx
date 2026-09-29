@@ -1212,7 +1212,7 @@ export default function PianoPlayer({
       {!isFreePlay && songDuration > 0 && (
         <div
           data-testid="piano-progress"
-          className="absolute left-1/2 top-4 z-40 flex h-6 w-[80%] max-w-2xl -translate-x-1/2 items-center overflow-hidden rounded-full border border-cyan/15 bg-black/55 px-1 shadow-[0_12px_34px_rgba(0,0,0,0.35),0_0_24px_rgba(34,211,238,0.08)] backdrop-blur-md"
+          className="absolute left-1/2 top-4 z-40 flex h-6 w-[80%] max-w-2xl -translate-x-1/2 items-center [@media(max-height:500px)]:top-3 [@media(max-height:500px)]:h-4 [@media(max-height:500px)]:w-[44%] overflow-hidden rounded-full border border-cyan/15 bg-black/55 px-1 shadow-[0_12px_34px_rgba(0,0,0,0.35),0_0_24px_rgba(34,211,238,0.08)] backdrop-blur-md"
         >
           <div className="pointer-events-none absolute inset-0 flex justify-between px-4 opacity-20">
             {Array.from({ length: 40 }).map((_, index) => (
@@ -1232,7 +1232,7 @@ export default function PianoPlayer({
 
       <div
         ref={liveFeedbackRef}
-        className="pointer-events-none absolute left-1/2 top-20 z-40 -translate-x-1/2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-white opacity-0 shadow-2xl backdrop-blur-md transition-all duration-200"
+        className="pointer-events-none absolute left-1/2 top-20 z-40 -translate-x-1/2 rounded-full [@media(max-height:500px)]:top-10 border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-white opacity-0 shadow-2xl backdrop-blur-md transition-all duration-200"
       />
 
       <div className="absolute inset-0 z-10 overflow-hidden">
@@ -1273,17 +1273,18 @@ export default function PianoPlayer({
         </div>
       </div>
 
-      <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex items-center justify-between md:left-6 md:right-6 md:top-6">
-        <div data-testid="piano-hud-score" className="rounded-xl border border-white/10 bg-black/35 px-3 py-2 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md md:rounded-2xl md:px-5 md:py-3">
-          <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px]">Pontos</p>
-          <p ref={scoreUIRef} className="text-gradient text-lg font-black tabular-nums md:text-2xl">
+      {/* Celular deitado (tela baixa): placares compactos nos cantos e sem o card de combos, para sobrar espaço às notas. */}
+      <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex items-center justify-between md:left-6 md:right-6 md:top-6 [@media(max-height:500px)]:left-2 [@media(max-height:500px)]:right-2 [@media(max-height:500px)]:top-1.5">
+        <div data-testid="piano-hud-score" className="rounded-xl border border-white/10 bg-black/35 px-3 py-2 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md md:rounded-2xl md:px-5 md:py-3 [@media(max-height:500px)]:rounded-lg [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1">
+          <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px] [@media(max-height:500px)]:mb-0 [@media(max-height:500px)]:text-[8px]">Pontos</p>
+          <p ref={scoreUIRef} className="text-gradient text-lg font-black tabular-nums md:text-2xl [@media(max-height:500px)]:text-sm">
             0
           </p>
         </div>
 
         <div
           data-testid="piano-hud-combo"
-          className="min-w-[100px] rounded-xl border border-cyan/15 bg-black/40 px-5 py-2 text-center shadow-[0_18px_48px_rgba(0,0,0,0.42),0_0_24px_rgba(34,211,238,0.08)] backdrop-blur-md md:min-w-[130px] md:rounded-2xl md:px-8 md:py-4"
+          className="min-w-[100px] rounded-xl border border-cyan/15 bg-black/40 px-5 py-2 text-center [@media(max-height:500px)]:hidden shadow-[0_18px_48px_rgba(0,0,0,0.42),0_0_24px_rgba(34,211,238,0.08)] backdrop-blur-md md:min-w-[130px] md:rounded-2xl md:px-8 md:py-4"
         >
           <p className="mb-0 text-[9px] font-black uppercase tracking-[3px] text-white/40 md:mb-1 md:text-xs">Combos</p>
           <p ref={comboUIRef} className="text-2xl font-black tabular-nums text-white/30 md:text-4xl">
@@ -1293,10 +1294,10 @@ export default function PianoPlayer({
 
         <div
           data-testid="piano-hud-accuracy"
-          className="rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-right shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md md:rounded-2xl md:px-5 md:py-3"
+          className="rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-right shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-md md:rounded-2xl md:px-5 md:py-3 [@media(max-height:500px)]:rounded-lg [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1"
         >
-          <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px]">Precisão</p>
-          <p ref={accuracyUIRef} className="text-lg font-black tabular-nums text-white md:text-2xl">
+          <p className="mb-0 text-[8px] font-bold uppercase tracking-widest text-white/40 md:mb-1 md:text-[10px] [@media(max-height:500px)]:mb-0 [@media(max-height:500px)]:text-[8px]">Precisão</p>
+          <p ref={accuracyUIRef} className="text-lg font-black tabular-nums text-white md:text-2xl [@media(max-height:500px)]:text-sm">
             100%
           </p>
         </div>
