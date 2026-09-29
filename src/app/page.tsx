@@ -7,6 +7,7 @@ import { Music, Star, BarChart3, ChevronDown, Piano, Library, AudioWaveform, Tro
 import Link from "next/link";
 
 import HeroVideo from "@/components/HeroVideo";
+import HomeInstallApp from "@/components/HomeInstallApp";
 import { trackEvent } from "@/lib/analytics";
 const PricingCard = dynamic(() => import("@/components/PricingCard"), {
   loading: () => <div className="h-[32rem] rounded-2xl border border-white/10 bg-white/[0.03]" />,
@@ -404,6 +405,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ── App no celular ─────────────────────────── */}
+        <HomeInstallApp />
 
         {/* ── Testimonials Carousel ──────────────────── */}
         {SHOW_VERIFIED_TESTIMONIALS && (
