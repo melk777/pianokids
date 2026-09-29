@@ -60,7 +60,6 @@ const TOOLBAR_ACTIVE = "bg-cyan/15 text-cyan";
 const TOOLBAR_ACTIVE_GREEN = "bg-emerald-500/15 text-emerald-300";
 const TOOLBAR_STEPPER =
   "grid h-7 min-w-7 place-items-center rounded-md bg-white/8 px-1.5 text-sm font-bold text-white/80 transition-colors hover:bg-white/15 hover:text-white";
-import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useProfile } from "@/hooks/useProfile";
 import { trackEvent } from "@/lib/analytics";
 import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
@@ -188,15 +187,7 @@ function PlayPageContent() {
   } = useAudioInput();
   const midi = useMIDI();
 
-  const { pauseBackgroundMusic } = useBackgroundMusic();
   const audio = useAudioEngine();
-
-  useEffect(() => {
-    pauseBackgroundMusic();
-    return () => {
-      // Intentionally keep background music paused after leaving the game.
-    };
-  }, [pauseBackgroundMusic]);
 
   useEffect(() => {
     if (isFreePlay) {
