@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { AudioProvider } from "@/contexts/AudioContext";
 import Header from "@/components/Header";
 import GlobalEnhancements from "@/components/GlobalEnhancements";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
@@ -95,7 +94,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${pianoRegular.variable} ${pianoBold.variable} font-sans antialiased bg-[#0a0a0a] text-white min-h-screen`}
         suppressHydrationWarning
       >
-        <AudioProvider>
           <Header />
           <GlobalEnhancements />
           <ServiceWorkerRegister />
@@ -110,7 +108,6 @@ export default function RootLayout({
               </linearGradient>
             </defs>
           </svg>
-        </AudioProvider>
       </body>
     </html>
   );

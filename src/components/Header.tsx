@@ -9,8 +9,6 @@ import {
   X,
   LayoutDashboard,
   LogOut,
-  Volume2,
-  VolumeX,
   Piano,
   GraduationCap,
   LifeBuoy,
@@ -18,7 +16,6 @@ import {
 } from "lucide-react";
 import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
 import { User as AuthUser, Session } from "@supabase/supabase-js";
-import { useBackgroundMusic } from "@/contexts/AudioContext";
 import { useSFX } from "@/hooks/useSFX";
 import { usePathname, useRouter } from "next/navigation";
 import { useProfile } from "@/hooks/useProfile";
@@ -35,7 +32,6 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
-  const { isPlaying, toggleBackgroundMusic } = useBackgroundMusic();
   const { playClick } = useSFX();
   const { profile } = useProfile();
   const dashboardLabel = getDashboardLabel(profile?.role);
@@ -102,13 +98,6 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-2">
-            <button
-               onClick={() => { playClick(); toggleBackgroundMusic(); }}
-              className="mr-2 p-2.5 rounded-xl bg-white/[0.04] text-white/40 hover:text-magenta hover:bg-magenta/10 transition-all border border-white/[0.05]"
-            >
-              {isPlaying ? <Volume2 className="w-4 h-4 icon-gradient" /> : <VolumeX className="w-4 h-4" />}
-            </button>
-            
             {showPlanLink && (
               <button onClick={scrollToPricing} className={navLinkClass}>
                 <Sparkles className="w-3.5 h-3.5" />
