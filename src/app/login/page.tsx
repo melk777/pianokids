@@ -1,11 +1,13 @@
 import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
+import RotateDevicePrompt from "@/components/RotateDevicePrompt";
 
 export default function LoginPage() {
   const turnstileSiteKey = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim();
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <main className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-6 relative overflow-hidden [@media(max-height:500px)]:justify-start [@media(max-height:500px)]:pb-4 [@media(max-height:500px)]:pt-12">
+      <RotateDevicePrompt />
       {/* Background Orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan/10 blur-[120px] rounded-full" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 blur-[120px] rounded-full" />

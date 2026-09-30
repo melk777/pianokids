@@ -152,7 +152,7 @@ function SubscriptionContent() {
 
   return (
     <>
-      <main className="min-h-screen bg-black text-white pt-28 pb-20 px-6">
+      <main className="min-h-screen bg-black text-white pt-28 [@media(max-height:500px)]:pt-16 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           {checkoutNotice && (
             <div

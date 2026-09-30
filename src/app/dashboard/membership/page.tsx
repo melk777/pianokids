@@ -137,7 +137,7 @@ export default function MembershipPage() {
 
   return (
     <main className="min-h-screen bg-black">
-      <div className="pt-24 pb-16 px-6 max-w-3xl mx-auto">
+      <div className="pt-24 pb-16 [@media(max-height:500px)]:pt-16 px-6 max-w-3xl mx-auto">
         {/* Back */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}

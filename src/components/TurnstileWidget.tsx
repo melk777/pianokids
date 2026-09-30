@@ -82,11 +82,11 @@ export default function TurnstileWidget({
         onLoad={() => setApiReady(true)}
       />
       <div className="space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/35">
-          Verificacao anti-robo
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/35 [@media(max-height:500px)]:hidden">
+          Verificação anti-robô
         </p>
-        <div className="overflow-hidden rounded-2xl border border-white/8 bg-white/[0.03] p-3">
-          <div id={containerId} className="min-h-[70px]" />
+        <div className="overflow-hidden rounded-2xl border border-white/8 bg-white/[0.03] p-3 [@media(max-height:500px)]:p-1.5">
+          <div id={containerId} className="min-h-[70px] [@media(max-height:500px)]:min-h-[65px]" />
         </div>
       </div>
     </>

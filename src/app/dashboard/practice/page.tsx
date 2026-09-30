@@ -12,7 +12,7 @@ export default function PracticePage() {
 
   return (
     <main className="min-h-screen bg-black">
-      <div className="pt-28 pb-20 px-6 max-w-5xl mx-auto">
+      <div className="pt-28 pb-20 px-6 max-w-5xl mx-auto [@media(max-height:500px)]:pt-16">
         {/* Back + Header */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}

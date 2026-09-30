@@ -344,8 +344,8 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <TeacherTermsModal 
+    <div className="w-full max-w-md mx-auto [@media(max-height:500px)]:max-w-2xl">
+      <TeacherTermsModal
         isOpen={isTermsModalOpen} 
         onAccept={() => {
           setAgreedToTerms(true);
@@ -353,15 +353,16 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
         }} 
       />
 
-      <div className="glass rounded-3xl border border-white/10 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
-        <div className="mb-6 text-center">
+      <div className="glass rounded-3xl border border-white/10 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)] [@media(max-height:500px)]:p-5">
+        {/* Com o celular deitado o logo já aparece no topo; aqui ele só ocuparia altura. */}
+        <div className="mb-6 text-center [@media(max-height:500px)]:hidden">
           <span className="text-2xl font-semibold tracking-tight text-white/90">
             Pian<span className="text-gradient font-black">ify</span>
           </span>
         </div>
 
         {/* Role Toggle Selector */}
-        <div className="p-1 gap-1 flex bg-white/5 rounded-2xl mb-8 relative border border-white/5">
+        <div className="p-1 gap-1 flex bg-white/5 rounded-2xl mb-8 relative border border-white/5 [@media(max-height:500px)]:mb-3">
            <div
              className="absolute inset-y-1 bg-white rounded-xl shadow-lg"
              style={{
@@ -395,7 +396,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
               <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-6">
                 <Mail className="w-10 h-10 text-emerald-400 animate-bounce" />
               </div>
-              <h3 className="text-2xl font-black text-white mb-4">¡Tudo pronto!</h3>
+              <h3 className="text-2xl font-black text-white mb-4">Tudo pronto!</h3>
               <p className="text-white/60 leading-relaxed mb-10">
                 {message.text}
               </p>
@@ -411,10 +412,10 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
             </div>
           ) : (
             <>
-              <h2 className="text-2xl font-bold text-center text-white mb-2 tracking-tight uppercase">
+              <h2 className="text-2xl font-bold text-center text-white mb-2 tracking-tight uppercase [@media(max-height:500px)]:mb-3 [@media(max-height:500px)]:text-lg">
                 {isLogin ? "Acesse sua conta" : (role === "teacher" ? "Cadastro de Parceiro" : "Bora tocar piano!")}
               </h2>
-              <p className="text-white/50 text-center text-sm mb-8">
+              <p className="text-white/50 text-center text-sm mb-8 [@media(max-height:500px)]:hidden">
                 {isLogin
                   ? (role === "teacher" ? "Área exclusiva para professores parceiros." : "Continue sua jornada musical de onde parou.")
                   : role === "teacher" 
@@ -434,9 +435,9 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                 </div>
               )}
 
-              <form onSubmit={handleAuth} className="space-y-4">
-                {/* Email & Password (Always Visible) */}
-                <div className="space-y-4">
+              <form onSubmit={handleAuth} className="space-y-4 [@media(max-height:500px)]:space-y-3">
+                {/* Email & Password (Always Visible); side by side on a landscape phone */}
+                <div className="space-y-4 [@media(max-height:500px)]:grid [@media(max-height:500px)]:grid-cols-2 [@media(max-height:500px)]:gap-3 [@media(max-height:500px)]:space-y-0">
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-white/40 ml-1 uppercase tracking-wider">E-mail</label>
                     <div className="relative group">
@@ -483,7 +484,8 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
 
                 {/* Registration-only fields */}
                 {!isLogin && (
-                  <div className="space-y-4 pt-2">
+                  <div className="space-y-4 pt-2 [@media(max-height:500px)]:space-y-3 [@media(max-height:500px)]:pt-0">
+                    <div className="space-y-4 [@media(max-height:500px)]:grid [@media(max-height:500px)]:grid-cols-2 [@media(max-height:500px)]:gap-3 [@media(max-height:500px)]:space-y-0">
                     <div className="space-y-1.5">
                       <label className="text-xs font-medium text-white/40 ml-1 uppercase tracking-wider">Nome completo</label>
                       <div className="relative group">
@@ -517,15 +519,16 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                         />
                       </div>
                     </div>
+                    </div>
                     <p className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-relaxed text-white/45">
                       Nesta fase de lançamento, o cadastro está disponível apenas para maiores de 18 anos. O acesso de menores será aberto após a implantação da verificação do responsável legal.
                     </p>
 
                     {/* Teacher Exclusive Fields */}
                     {role === "teacher" && (
-                      <div className="space-y-4 mt-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                      <div className="space-y-4 mt-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 [@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:space-y-3">
                         <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold mb-2">Dados Bancários e Fiscais</p>
-                        
+                        <div className="space-y-4 [@media(max-height:500px)]:grid [@media(max-height:500px)]:grid-cols-3 [@media(max-height:500px)]:gap-3 [@media(max-height:500px)]:space-y-0">
                         <div className="space-y-1.5">
                           <label className="text-xs font-medium text-white/40 ml-1 uppercase">CPF</label>
                           <div className="relative group">
@@ -570,6 +573,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                             />
                           </div>
                         </div>
+                        </div>
 
                         {/* Teacher Terms Checkbox */}
                         <div className="flex items-center gap-3 pt-2">
@@ -604,6 +608,8 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                   </div>
                 )}
 
+                {/* Deitado, a verificação e o botão dividem a mesma linha para caber na tela. */}
+                <div className="space-y-4 [@media(max-height:500px)]:grid [@media(max-height:500px)]:grid-cols-2 [@media(max-height:500px)]:items-end [@media(max-height:500px)]:gap-3 [@media(max-height:500px)]:space-y-0">
                 <TurnstileWidget
                   siteKey={turnstileSiteKey}
                   onTokenChange={setCaptchaToken}
@@ -613,7 +619,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                 <button
                   type="submit"
                   disabled={loading || !supabase || !captchaToken || !turnstileSiteKey}
-                  className="w-full bg-white text-black font-bold py-4 rounded-2xl mt-4 flex items-center justify-center gap-2 hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed group shadow-[0_4px_20px_rgba(255,255,255,0.1)]"
+                  className="w-full bg-white text-black font-bold py-4 rounded-2xl mt-4 flex items-center justify-center gap-2 hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed group shadow-[0_4px_20px_rgba(255,255,255,0.1)] [@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:py-3"
                 >
                   {loading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -624,6 +630,7 @@ export default function AuthForm({ turnstileSiteKey: initialTurnstileSiteKey }: 
                     </>
                   )}
                 </button>
+                </div>
               </form>
 
               {canUseLocalTestAuth && (

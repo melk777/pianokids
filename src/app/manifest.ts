@@ -13,7 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     background_color: "#050505",
     theme_color: "#050505",
-    orientation: "any",
+    // O app instalado abre deitado no Android (o iPhone ignora e usa o aviso de girar).
+    orientation: "landscape",
     lang: "pt-BR",
     categories: ["education", "music"],
     icons: [

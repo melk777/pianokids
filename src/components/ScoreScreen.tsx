@@ -149,7 +149,7 @@ export default function ScoreScreen({
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 20, bounce: 0.24 }}
         data-testid="score-screen"
-        className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-cyan/15 bg-[#05070A] p-4 shadow-[0_28px_110px_rgba(0,0,0,0.72),0_0_60px_rgba(34,211,238,0.08)] md:p-6"
+        className="relative max-h-full w-full max-w-4xl overflow-y-auto overscroll-contain rounded-2xl border border-cyan/15 bg-[#05070A] p-4 shadow-[0_28px_110px_rgba(0,0,0,0.72),0_0_60px_rgba(34,211,238,0.08)] md:p-6"
       >
         <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-cyan/50 to-transparent" />
         <div className="pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full bg-cyan/10 blur-3xl" />

@@ -90,14 +90,14 @@ export default function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "bg-black/60 backdrop-blur-2xl border-b border-white/[0.06]" : "bg-transparent"}`}
       >
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 md:px-10">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 md:px-10 [@media(max-height:500px)]:py-2">
           <Link href="/" className="flex items-center gap-2.5 group select-none">
-            <span className="text-lg font-semibold tracking-tight text-white/90">
+            <span className="whitespace-nowrap text-lg font-semibold tracking-tight text-white/90">
               Pian<span className="text-gradient font-black">ify</span>
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden lg:flex items-center gap-2">
             {showPlanLink && (
               <button onClick={scrollToPricing} className={navLinkClass}>
                 <Sparkles className="w-3.5 h-3.5" />
@@ -172,15 +172,15 @@ export default function Header() {
             )}
           </nav>
 
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 rounded-xl text-white/60 hover:text-white" aria-label="Menu">
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-2 rounded-xl text-white/60 hover:text-white" aria-label="Menu">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </header>
 
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-[72px] z-40 md:hidden transition-all duration-200">
-            <div className="mx-4 rounded-2xl bg-black/80 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.5)] overflow-hidden">
+        <div className="fixed inset-x-0 top-[72px] z-40 lg:hidden transition-all duration-200 [@media(max-height:500px)]:top-14">
+            <div className="mx-4 max-h-[calc(100dvh-5.5rem)] overflow-y-auto overscroll-contain rounded-2xl bg-black/80 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.5)] sm:ml-auto sm:max-w-sm [@media(max-height:500px)]:max-h-[calc(100dvh-4rem)]">
               <nav className="flex flex-col p-3 gap-1">
                 {showPlanLink && (
                   <button onClick={scrollToPricing} className={mobileLinkClass}>

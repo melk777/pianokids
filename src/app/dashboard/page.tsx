@@ -208,7 +208,7 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-black text-white selection:bg-cyan/30">
-      <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto">
+      <div className="pt-28 pb-20 px-6 max-w-6xl mx-auto [@media(max-height:500px)]:pt-16">
           {/* ── Greeting ────────────────────────── */}
           <div className="mb-12">
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-3 text-balance">

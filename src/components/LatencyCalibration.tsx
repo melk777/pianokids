@@ -113,7 +113,7 @@ export default function LatencyCalibration({
         role="dialog"
         aria-modal="true"
         aria-labelledby="latency-title"
-        className="w-full max-w-md rounded-3xl border border-white/12 bg-zinc-950 p-6 text-white shadow-[0_30px_100px_rgba(0,0,0,0.7)]"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-3xl border border-white/12 bg-zinc-950 p-5 text-white shadow-[0_30px_100px_rgba(0,0,0,0.7)] sm:p-6"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">

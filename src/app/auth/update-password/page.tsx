@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { Loader2, Lock } from "lucide-react";
 import { createClientComponent, isSupabaseConfigured } from "@/lib/supabase";
+import RotateDevicePrompt from "@/components/RotateDevicePrompt";
 
 export default function UpdatePasswordPage() {
   const supabase = isSupabaseConfigured ? createClientComponent() : null;
@@ -46,11 +47,12 @@ export default function UpdatePasswordPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-      <div className="glass w-full max-w-md rounded-3xl border border-white/10 p-8">
-        <Lock className="mb-5 h-10 w-10 text-cyan" />
+    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white [@media(max-height:500px)]:pb-4 [@media(max-height:500px)]:pt-16">
+      <RotateDevicePrompt />
+      <div className="glass w-full max-w-md rounded-3xl border border-white/10 p-8 [@media(max-height:500px)]:p-5">
+        <Lock className="mb-5 h-10 w-10 text-cyan [@media(max-height:500px)]:hidden" />
         <h1 className="mb-2 text-2xl font-black">Criar nova senha</h1>
-        <p className="mb-7 text-sm text-white/50">Use pelo menos 8 caracteres e evite repetir uma senha antiga.</p>
+        <p className="mb-7 text-sm text-white/50 [@media(max-height:500px)]:mb-4">Use pelo menos 8 caracteres e evite repetir uma senha antiga.</p>
 
         {message && (
           <div className={`mb-5 rounded-xl border p-3 text-sm ${message.type === "success" ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200" : "border-red-400/30 bg-red-400/10 text-red-200"}`}>

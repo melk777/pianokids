@@ -65,20 +65,21 @@ export default function OnboardingWizard({ open, onComplete }: OnboardingWizardP
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/82 p-4 backdrop-blur-md">
-      <section className="w-full max-w-5xl overflow-hidden rounded-2xl border border-cyan/15 bg-[#07090D] shadow-[0_28px_110px_rgba(0,0,0,0.72)]">
-        <div className="border-b border-white/8 p-5 md:p-7">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/82 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md sm:p-4">
+      {/* A janela nunca passa da altura da tela: as opções rolam por dentro e os botões ficam sempre visíveis. */}
+      <section className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-cyan/15 bg-[#07090D] shadow-[0_28px_110px_rgba(0,0,0,0.72)]">
+        <div className="shrink-0 border-b border-white/8 p-4 sm:p-5 md:p-7">
           <p className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan">
             <Sparkles size={14} />
             Primeira configuração
           </p>
-          <h2 className="text-2xl font-black text-white md:text-3xl">Vamos montar sua primeira aula ideal</h2>
+          <h2 className="text-xl font-black text-white sm:text-2xl md:text-3xl">Vamos montar sua primeira aula ideal</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/55">
             Isso ajuda a Pianify escolher músicas, dificuldade e modo de prática com menos fricção.
           </p>
         </div>
 
-        <div className="grid gap-5 p-5 md:grid-cols-3 md:p-7">
+        <div className="grid min-h-0 flex-1 gap-5 overflow-y-auto overscroll-contain p-4 sm:p-5 md:grid-cols-3 md:p-7">
           <ChoiceGroup title="Nível" items={levels} selected={level} onSelect={setLevel} />
           <ChoiceGroup title="Objetivo" items={goals} selected={goal} onSelect={setGoal} />
 
@@ -111,7 +112,7 @@ export default function OnboardingWizard({ open, onComplete }: OnboardingWizardP
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-white/8 p-5 sm:flex-row sm:items-center sm:justify-between md:p-7">
+        <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-white/8 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:p-5 md:p-7">
           <button
             type="button"
             onClick={skip}

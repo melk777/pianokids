@@ -79,7 +79,7 @@ export default function SongsPage() {
           setOnboardingPreferences(getStoredOnboardingPreferences());
         }}
       />
-      <div className="mx-auto max-w-[1400px] overflow-hidden px-4 pb-32 pt-28 md:px-8">
+      <div className="mx-auto max-w-[1400px] overflow-hidden px-4 pb-32 pt-28 [@media(max-height:500px)]:pt-16 md:px-8">
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-10 px-2">
           <h1 className="mb-2 text-4xl font-bold tracking-tight text-white md:text-5xl">Biblioteca</h1>
           <p className="text-lg text-white/40">Explore nosso catalogo premium categorizado por dificuldade e estilos.</p>
@@ -213,7 +213,7 @@ function OnboardingRecommendation({
 }
 
 function LibraryRecommendation({ recommendation }: { recommendation: PracticeRecommendation }) {
-  const handLabel = recommendation.handMode === "both" ? "Duas maos" : recommendation.handMode === "left" ? "Mao esquerda" : "Mao direita";
+  const handLabel = recommendation.handMode === "both" ? "Duas mãos" : recommendation.handMode === "left" ? "Mão esquerda" : "Mão direita";
   const difficultyLabel = recommendation.difficulty === "pro" ? "Profissional" : recommendation.difficulty === "medium" ? "Intermediario" : "Iniciante";
 
   return (
