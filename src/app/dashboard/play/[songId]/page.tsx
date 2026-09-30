@@ -56,7 +56,7 @@ const NON_STARTING_KEYS =new Set(["Enter", "Tab", "Escape", "Shift", "Control", 
 // Shared toolbar styles keep every control the same height and contrast.
 // No celular os grupos quebram linha dentro do painel "Ajustes"; no computador ficam numa linha só.
 const TOOLBAR_GROUP =
-  "flex min-h-10 flex-wrap items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-1 py-1 lg:h-10 lg:flex-nowrap lg:py-0";
+  "flex min-h-10 flex-wrap items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-1 py-1 xl:h-10 xl:flex-nowrap xl:py-0";
 const TOOLBAR_BUTTON = "flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors";
 const TOOLBAR_IDLE = "text-white/65 hover:bg-white/8 hover:text-white";
 const TOOLBAR_ACTIVE = "bg-cyan/15 text-cyan";
@@ -989,10 +989,10 @@ function PlayPageContent() {
       ) : null}
 
       <header
-        className="relative z-40 flex h-14 shrink-0 items-center gap-2 [@media(max-height:500px)]:h-11 border-b border-white/[0.08] px-2 md:px-4 lg:z-20 lg:gap-3 lg:overflow-hidden"
+        className="relative z-40 flex h-14 shrink-0 items-center gap-2 [@media(max-height:500px)]:h-11 border-b border-white/[0.08] px-2 md:px-4 xl:z-20 xl:gap-3 xl:overflow-hidden"
         style={{ background: "rgba(0, 0, 0, 0.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-2.5 lg:flex-none lg:shrink">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 xl:flex-none xl:shrink">
           <Link
             href="/dashboard/songs"
             aria-label="Voltar para a biblioteca"
@@ -1000,7 +1000,7 @@ function PlayPageContent() {
           >
             <ArrowLeft size={18} />
           </Link>
-          <div className="min-w-0 flex-1 lg:max-w-[16rem] lg:flex-none">
+          <div className="min-w-0 flex-1 xl:max-w-[16rem] xl:flex-none">
             <h1 className="truncate text-sm font-bold leading-tight">{song.title}</h1>
             <p className="truncate text-[11px] leading-tight text-white/50">{song.artist}</p>
           </div>
@@ -1034,7 +1034,7 @@ function PlayPageContent() {
           onClick={() => setShowToolsPanel((open) => !open)}
           aria-expanded={showToolsPanel || isTutorialSimulation}
           aria-controls="piano-top-controls"
-          className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition-colors lg:hidden ${
+          className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition-colors xl:hidden ${
             showToolsPanel || isTutorialSimulation
               ? "border-cyan/40 bg-cyan/15 text-cyan"
               : "border-white/12 bg-white/[0.04] text-white/80 hover:bg-white/10"
@@ -1049,7 +1049,7 @@ function PlayPageContent() {
           data-testid="piano-top-controls"
           className={`${
             showToolsPanel || isTutorialSimulation ? "flex" : "hidden"
-          } absolute inset-x-0 top-full z-30 max-h-[calc(100dvh-3.5rem)] [@media(max-height:500px)]:max-h-[calc(100dvh-2.75rem)] flex-wrap items-center justify-center gap-2 overflow-y-auto border-b border-white/10 bg-[#05060b]/[0.97] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl [&>*]:shrink-0 lg:static lg:inset-auto lg:z-auto lg:flex lg:max-h-none lg:min-w-0 lg:flex-1 lg:flex-nowrap lg:justify-start lg:overflow-x-auto lg:overflow-y-visible lg:overscroll-x-contain lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden lg:[&>*:first-child]:ml-auto`}
+          } absolute inset-x-0 top-full z-30 max-h-[calc(100dvh-3.5rem)] [@media(max-height:500px)]:max-h-[calc(100dvh-2.75rem)] flex-wrap items-center justify-center gap-2 overflow-y-auto border-b border-white/10 bg-[#05060b]/[0.97] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl [&>*]:shrink-0 xl:static xl:inset-auto xl:z-auto xl:flex xl:max-h-none xl:min-w-0 xl:flex-1 xl:flex-nowrap xl:justify-start xl:overflow-x-auto xl:overflow-y-visible xl:overscroll-x-contain xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none xl:backdrop-blur-none xl:[scrollbar-width:none] xl:[&::-webkit-scrollbar]:hidden xl:[&>*:first-child]:ml-auto`}
         >
           {isTutorialSimulation && currentTutorialAction === "keyboard" && (
             <div className="hidden items-center gap-2 rounded-lg border border-cyan/30 bg-cyan/10 px-2.5 py-1.5 text-xs font-bold text-cyan md:flex">
@@ -1124,7 +1124,7 @@ function PlayPageContent() {
               </button>
             </div>
 
-            <span className="hidden h-5 w-px bg-white/10 lg:block" aria-hidden />
+            <span className="hidden h-5 w-px bg-white/10 xl:block" aria-hidden />
 
             <button
               ref={waitingControlRef}
@@ -1151,7 +1151,7 @@ function PlayPageContent() {
 
             {((!isFreePlay && song.duration > 0) || isTutorialSimulation) && (
               <>
-                <span className="hidden h-5 w-px bg-white/10 lg:block" aria-hidden />
+                <span className="hidden h-5 w-px bg-white/10 xl:block" aria-hidden />
                 <div ref={loopControlRef} className="flex items-center gap-1">
                   <button
                     data-testid="control-loop-toggle"
