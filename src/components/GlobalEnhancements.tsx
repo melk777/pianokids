@@ -16,7 +16,9 @@ const GlobalSocialOverlay = dynamic(() => import("@/components/Social/GlobalSoci
 
 export default function GlobalEnhancements() {
   const pathname = usePathname();
-  const shouldLoadEnhancements = pathname?.startsWith("/dashboard");
+  const isDashboard = pathname?.startsWith("/dashboard");
+  // The play screen draws its own stars inside the note canvas, so the animated layer stays off there.
+  const showStars = !pathname?.startsWith("/dashboard/play");
   const socialFeaturesEnabled = process.env.NEXT_PUBLIC_SOCIAL_FEATURES_ENABLED === "true";
 
   // Teacher invite links point at the home page (/?ref=CODE). Keep the code
@@ -32,14 +34,10 @@ export default function GlobalEnhancements() {
     }
   }, [pathname]);
 
-  if (!shouldLoadEnhancements) {
-    return null;
-  }
-
   return (
     <>
-      <StarryBackground />
-      {socialFeaturesEnabled && <GlobalSocialOverlay />}
+      {showStars && <StarryBackground />}
+      {isDashboard && socialFeaturesEnabled && <GlobalSocialOverlay />}
     </>
   );
 }
