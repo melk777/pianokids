@@ -6,7 +6,7 @@ import { type ISourceOptions } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
 import { usePathname } from "next/navigation";
 
-export default function StarryBackground() {
+export default function StarryBackground({ onPlayScreen = false }: { onPlayScreen?: boolean }) {
   const pathname = usePathname();
   const [init, setInit] = useState(false);
 
@@ -82,8 +82,8 @@ export default function StarryBackground() {
     []
   );
 
-  // Lógica de Exclusão Crítica: Não mostrar nas páginas de toca piano
-  const isPianoPage = pathname?.includes("/dashboard/practice") || pathname?.includes("/dashboard/play");
+  // Na tela de tocar a própria página decide quando mostrar (fora da música, que tem estrelas no canvas).
+  const isPianoPage = pathname?.includes("/dashboard/play") && !onPlayScreen;
 
   if (!init || isPianoPage) {
     return null;

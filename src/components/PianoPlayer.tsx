@@ -133,6 +133,31 @@ const HAND_COLORS = {
 
 const isBlackKey = (midi: number) => [1, 3, 6, 8, 10].includes(midi % 12);
 
+// Same starry look as the rest of the app, drawn on the note canvas so the game
+// does not pay for a second animated layer.
+const seeded = (index: number, salt: number) => {
+  const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+  return value - Math.floor(value);
+};
+const STAGE_STARS = Array.from({ length: 140 }, (_, index) => ({
+  x: seeded(index, 1),
+  y: seeded(index, 2),
+  r: seeded(index, 3) * 1 + 0.4,
+  alpha: seeded(index, 4) * 0.55 + 0.15,
+  phase: seeded(index, 5) * Math.PI * 2,
+  tint: ["255,255,255", "255,249,219", "227,250,255"][index % 3],
+}));
+
+function drawStageStars(ctx: CanvasRenderingContext2D, width: number, height: number, timeMs: number) {
+  for (const star of STAGE_STARS) {
+    const twinkle = 0.75 + 0.25 * Math.sin(timeMs / 900 + star.phase);
+    ctx.fillStyle = `rgba(${star.tint},${(star.alpha * twinkle).toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(star.x * width, star.y * height, star.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 function buildNoteGroups(notes: SongNote[]) {
   if (notes.length === 0) return [] as NoteGroup[];
 
@@ -499,6 +524,7 @@ export default function PianoPlayer({
         idleGradient.addColorStop(1, "#020617");
         ctx.fillStyle = idleGradient;
         ctx.fillRect(0, 0, width, height);
+        drawStageStars(ctx, width, height, 0);
         const keyboardHeight = Math.round(height * 0.3);
         ctx.fillStyle = COLORS.hitZoneLine;
         ctx.fillRect(0, height - keyboardHeight, width, 1.5);
@@ -586,6 +612,7 @@ export default function PianoPlayer({
       stageGradient.addColorStop(1, "#030712");
       ctx.fillStyle = stageGradient;
       ctx.fillRect(0, 0, width, height);
+      drawStageStars(ctx, width, height, nowMs);
 
       const centerGlow = ctx.createRadialGradient(width / 2, hitY, 0, width / 2, hitY, Math.max(width, height) * 0.72);
       centerGlow.addColorStop(0, "rgba(34, 211, 238, 0.15)");

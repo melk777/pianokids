@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useMemo, Suspense, useRef } from "rea
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import ScoreScreen from "@/components/ScoreScreen";
 import PianoPlayer from "@/components/PianoPlayer";
 import LatencyCalibration from "@/components/LatencyCalibration";
@@ -69,6 +70,8 @@ import { PIANO_END_MIDI, PIANO_START_MIDI } from "@/lib/pianoRange";
 import { focusedKeyboardRange } from "@/lib/keyboardRange";
 import { selectMicNotes } from "@/lib/micInput";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+
+const StarryBackground = dynamic(() => import("@/components/StarryBackground"), { ssr: false, loading: () => null });
 
 const FREE_PLAY_SONG: Song = {
   id: "freeplay",
@@ -941,6 +944,7 @@ function PlayPageContent() {
   if (songLoading) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-black p-8 text-white">
+        <StarryBackground onPlayScreen />
         <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-cyan/20 border-t-cyan" />
         <span className="text-xs font-bold uppercase tracking-[4px] opacity-40">Carregando música...</span>
       </div>
@@ -969,6 +973,8 @@ function PlayPageContent() {
 
   return (
     <div ref={pageRef} className="relative flex h-[100dvh] flex-col overflow-hidden bg-black font-sans text-white">
+      {/* While a song runs the note canvas draws its own stars; around it the app's starfield shows. */}
+      {gameState !== "playing" && <StarryBackground onPlayScreen />}
 
       {showTutorial ? (
         <GameTutorialOverlay
