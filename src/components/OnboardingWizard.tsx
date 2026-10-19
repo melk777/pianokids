@@ -23,10 +23,10 @@ const levels: Array<{ id: LearningLevel; title: string; text: string }> = [
 ];
 
 const goals: Array<{ id: LearningGoal; title: string; text: string }> = [
+  { id: "classic", title: "Clássicos", text: "Beethoven, Chopin, Mozart e outras peças famosas." },
+  { id: "popular", title: "Filmes e populares", text: "Temas conhecidos para manter a motivação." },
   { id: "kids", title: "Infantil", text: "Músicas simples para começar com confiança." },
-  { id: "worship", title: "Louvor", text: "Repertório religioso e prática para tocar em casa ou igreja." },
-  { id: "classic", title: "Clássico", text: "Peças tradicionais e progressão musical." },
-  { id: "popular", title: "Filmes", text: "Intros e temas conhecidos para manter motivação." },
+  { id: "worship", title: "Hinos e louvor", text: "Hinos tradicionais para tocar em casa ou na igreja." },
 ];
 
 const instruments: Array<{ id: InstrumentType; title: string; text: string; icon: React.ReactNode }> = [

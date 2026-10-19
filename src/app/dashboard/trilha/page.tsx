@@ -97,9 +97,9 @@ export default function LearningPathPage() {
       <div className="mx-auto max-w-3xl">
         <header className="mb-8">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan">Minha trilha</p>
-          <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Do zero ao louvor</h1>
+          <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Da primeira nota à sua música</h1>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/65">
-            Aulas curtas em ordem: da primeira nota a acompanhar hinos com as duas mãos. Cada aula libera a próxima
+            Aulas curtas em ordem: da primeira nota a tocar músicas conhecidas com as duas mãos. Cada aula libera a próxima
             quando você atinge a meta.
           </p>
         </header>

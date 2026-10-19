@@ -6,7 +6,7 @@ import { ALL_LESSONS, LEARNING_PATH } from "@/lib/learningPath";
 export const metadata: Metadata = {
   title: "Pianify para igrejas",
   description:
-    "Forme novos tecladistas para o louvor: trilha de aulas com hinos, acordes nas tonalidades mais usadas e acompanhamento do líder.",
+    "Forme novos tecladistas para o louvor: trilha de aulas, mais de 40 hinos, acordes nas tonalidades mais usadas e acompanhamento do líder.",
   alternates: { canonical: "/igrejas" },
 };
 
@@ -41,8 +41,8 @@ const BENEFITS = [
   },
   {
     icon: Church,
-    title: "Do zero ao louvor",
-    text: "Uma trilha com metas claras: da primeira nota a acompanhar um hino com as duas mãos, no ritmo de cada um.",
+    title: "Uma trilha do zero",
+    text: "Uma trilha com metas claras: da primeira nota a tocar com as duas mãos, no ritmo de cada um, e depois todos os hinos do catálogo.",
   },
 ];
 
@@ -117,7 +117,7 @@ export default function IgrejasPage() {
 
         <section aria-labelledby="trilha" className="mt-24 rounded-[2rem] border border-cyan/20 bg-cyan/[0.04] p-6 sm:p-10">
           <h2 id="trilha" className="text-3xl font-black">
-            A trilha “Do zero ao louvor”
+            A trilha de aulas
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65">
             {ALL_LESSONS.length} aulas em {LEARNING_PATH.length} níveis. Cada aula tem uma meta de precisão e libera a

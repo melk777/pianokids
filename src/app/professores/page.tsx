@@ -20,7 +20,7 @@ export default function ProfessoresPage() {
            animate={{ opacity: 1, y: 0 }}
            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan/20 bg-cyan/5 text-cyan text-sm font-semibold mb-8"
         >
-           Para professores de piano, teclado e líderes de louvor
+           Para professores de piano e teclado, escolas de música e líderes de louvor
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}

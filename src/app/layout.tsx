@@ -28,20 +28,20 @@ const pianoBold = localFont({
 });
 
 const siteDescription =
-  "Aprenda teclado do zero ao louvor: trilha de aulas com hinos e exercícios, notas na tela e dedilhado. Para igrejas, professores e iniciantes.";
+  "Aprenda teclado e piano tocando as músicas que você ama: trilha de aulas, mais de 100 músicas (clássicos, cantigas, temas de filmes e hinos), notas na tela e acertos reconhecidos pelo teclado MIDI ou microfone.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
   applicationName: "Pianify",
   title: {
-    default: "Pianify — Do zero ao louvor no teclado",
+    default: "Pianify — Aprenda teclado e piano com as músicas que você ama",
     template: "%s | Pianify",
   },
   description: siteDescription,
   keywords: [
     "aprender piano",
-    "teclado para igreja",
-    "aprender hinos no teclado",
+    "aprender piano online",
+    "músicas para piano",
     "aprender teclado",
     "aulas de piano online",
     "piano interativo",
@@ -56,13 +56,13 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: "/",
     siteName: "Pianify",
-    title: "Pianify — Do zero ao louvor no teclado",
+    title: "Pianify — Aprenda teclado e piano com as músicas que você ama",
     description: siteDescription,
     images: [{ url: "/logo.png", alt: "Pianify" }],
   },
   twitter: {
     card: "summary",
-    title: "Pianify — Do zero ao louvor no teclado",
+    title: "Pianify — Aprenda teclado e piano com as músicas que você ama",
     description: siteDescription,
     images: ["/logo.png"],
   },
