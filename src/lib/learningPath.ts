@@ -76,7 +76,7 @@ export const LEARNING_PATH: LearningUnit[] = [
     description: "Tocar melodia e baixo ao mesmo tempo.",
     lessons: [
       lesson("3-1", exerciseId("cadencia", "do", "maos"), "Acordes I–IV–V–I em Dó", "Os três acordes principais", "both", "beginner", 70),
-      lesson("3-2", "o-cravo-e-a-rosa", "O Cravo e a Rosa", "Primeira música com as duas mãos", "both", "medium", 65),
+      lesson("3-2", "ode-to-joy", "Ode à Alegria", "Primeira música com as duas mãos", "both", "medium", 65),
       lesson("3-3", "noite-feliz", "Noite Feliz", "Valsa lenta a duas mãos", "both", "medium", 65),
     ],
   },
@@ -88,7 +88,7 @@ export const LEARNING_PATH: LearningUnit[] = [
       lesson("4-1", exerciseId("cadencia", "sol", "maos"), "Acordes em Sol", "Acompanhar em Sol maior", "both", "beginner", 70),
       lesson("4-2", exerciseId("cadencia", "fa", "maos"), "Acordes em Fá", "Acompanhar em Fá maior", "both", "beginner", 70),
       lesson("4-3", "amazing-grace", "Amazing Grace", "Melodia com acompanhamento", "both", "medium", 70),
-      lesson("4-4", "se-essa-rua-fosse-minha", "Se Essa Rua Fosse Minha", "Canção brasileira a duas mãos", "both", "medium", 70),
+      lesson("4-4", "minueto-em-sol-maior", "Minueto em Sol", "Minueto clássico a duas mãos", "both", "medium", 65),
     ],
   },
   {
@@ -99,7 +99,7 @@ export const LEARNING_PATH: LearningUnit[] = [
       lesson("5-1", exerciseId("escala", "sol", "md"), "Escala de Sol maior", "O primeiro sustenido", "right", "beginner", 75),
       lesson("5-2", exerciseId("arpejo", "do", "md"), "Arpejo em Dó", "Abrir a mão com leveza", "right", "beginner", 75),
       lesson("5-3", "alegria-ao-mundo", "Alegria ao Mundo", "Melodia que desce pela escala", "both", "medium", 70),
-      lesson("5-4", "bella-ciao-lacasadepapel", "Bella Ciao", "Música popular completa a duas mãos", "both", "medium", 70),
+      lesson("5-4", "fur-elise", "Para Elisa", "O grande final: Beethoven a duas mãos", "both", "medium", 65),
     ],
   },
 ];
