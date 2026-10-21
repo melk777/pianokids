@@ -15,6 +15,7 @@ import { getExerciseById } from "../src/lib/exercises.ts";
 
 const catalog = JSON.parse(fs.readFileSync(new URL("../public/song-catalog-index.json", import.meta.url), "utf8")) as Array<{
   id: string;
+  category: string;
   isPremium: boolean;
 }>;
 
