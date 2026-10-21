@@ -3,10 +3,10 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "Pianify — Do zero ao louvor no teclado",
+    name: "Pianify — Aprenda teclado e piano",
     short_name: "Pianify",
     description:
-      "Aprenda teclado com uma trilha de aulas, hinos e exercícios, notas na tela e dedilhado.",
+      "Aprenda teclado e piano com uma trilha de aulas, mais de 100 músicas, notas na tela e dedilhado.",
     // Installed users are students: open straight into their dashboard.
     start_url: "/dashboard",
     scope: "/",

@@ -3,8 +3,8 @@ import type { Difficulty } from "@/lib/songFilters";
 import { exerciseId } from "./exercises.ts";
 
 /**
- * "Do zero ao louvor": a guided path from the first note to accompanying
- * hymns with both hands. Each lesson is a song or generated exercise with a
+ * "Do zero à sua música": a guided path from the first note to playing
+ * well-known songs with both hands. Each lesson is a song or generated exercise with a
  * concrete goal; the next lesson unlocks when the goal is met.
  */
 
@@ -56,7 +56,7 @@ export const LEARNING_PATH: LearningUnit[] = [
       lesson("1-1", exerciseId("cinco-dedos", "do", "md"), "Cinco dedos em Dó", "Cada dedo em uma tecla", "right", "beginner", 70),
       lesson("1-2", "parabens-pra-voce", "Parabéns pra Você", "Primeira melodia completa", "right", "beginner", 70),
       lesson("1-3", "twinkle-twinkle", "Brilha Brilha Estrelinha", "Saltos pequenos na mão direita", "right", "beginner", 75),
-      lesson("1-4", "amazing-grace", "Amazing Grace", "Seu primeiro hino", "right", "beginner", 70),
+      lesson("1-4", "ciranda-cirandinha", "Ciranda, Cirandinha", "Uma melodia que todo mundo conhece", "right", "beginner", 70),
     ],
   },
   {
@@ -67,7 +67,7 @@ export const LEARNING_PATH: LearningUnit[] = [
       lesson("2-1", exerciseId("cinco-dedos", "do", "me"), "Cinco dedos em Dó · esquerda", "Posição da mão esquerda", "left", "beginner", 70),
       lesson("2-2", exerciseId("escala", "do", "md"), "Escala de Dó maior", "Passagem do polegar", "right", "beginner", 75),
       lesson("2-3", exerciseId("escala", "do", "me"), "Escala de Dó · esquerda", "Passagem do polegar à esquerda", "left", "beginner", 70),
-      lesson("2-4", "noite-feliz", "Noite Feliz", "Notas longas e compasso ternário", "right", "beginner", 75),
+      lesson("2-4", "bella-ciao-lacasadepapel", "Bella Ciao", "Melodia popular com ritmo marcado", "right", "beginner", 70),
     ],
   },
   {
@@ -77,29 +77,29 @@ export const LEARNING_PATH: LearningUnit[] = [
     lessons: [
       lesson("3-1", exerciseId("cadencia", "do", "maos"), "Acordes I–IV–V–I em Dó", "Os três acordes principais", "both", "beginner", 70),
       lesson("3-2", "o-cravo-e-a-rosa", "O Cravo e a Rosa", "Primeira música com as duas mãos", "both", "medium", 65),
-      lesson("3-3", "rocha-eterna", "Rocha Eterna", "Hino a duas mãos", "both", "medium", 65),
+      lesson("3-3", "noite-feliz", "Noite Feliz", "Valsa lenta a duas mãos", "both", "medium", 65),
     ],
   },
   {
     id: "acordes-louvor",
-    title: "Acordes para o louvor",
-    description: "As tonalidades mais usadas nas igrejas e hinos completos.",
+    title: "Acordes e acompanhamento",
+    description: "Acompanhar melodias conhecidas nas tonalidades mais usadas.",
     lessons: [
       lesson("4-1", exerciseId("cadencia", "sol", "maos"), "Acordes em Sol", "Acompanhar em Sol maior", "both", "beginner", 70),
       lesson("4-2", exerciseId("cadencia", "fa", "maos"), "Acordes em Fá", "Acompanhar em Fá maior", "both", "beginner", 70),
-      lesson("4-3", "mais-perto-quero-estar", "Mais Perto Quero Estar", "Hino com acompanhamento", "both", "medium", 70),
-      lesson("4-4", "chuvas-de-graca", "Chuvas de Graça", "Ritmo de hino com as duas mãos", "both", "medium", 70),
+      lesson("4-3", "amazing-grace", "Amazing Grace", "Melodia com acompanhamento", "both", "medium", 70),
+      lesson("4-4", "se-essa-rua-fosse-minha", "Se Essa Rua Fosse Minha", "Canção brasileira a duas mãos", "both", "medium", 70),
     ],
   },
   {
     id: "novas-tonalidades",
     title: "Novas tonalidades",
-    description: "Escalas, arpejos e hinos em outras tonalidades.",
+    description: "Escalas, arpejos e músicas em outras tonalidades.",
     lessons: [
       lesson("5-1", exerciseId("escala", "sol", "md"), "Escala de Sol maior", "O primeiro sustenido", "right", "beginner", 75),
       lesson("5-2", exerciseId("arpejo", "do", "md"), "Arpejo em Dó", "Abrir a mão com leveza", "right", "beginner", 75),
-      lesson("5-3", "santo-santo-santo", "Santo, Santo, Santo", "Hino em andamento lento", "both", "medium", 70),
-      lesson("5-4", "deus-velara-por-ti", "Deus Velará por Ti", "Hino completo a duas mãos", "both", "medium", 75),
+      lesson("5-3", "alegria-ao-mundo", "Alegria ao Mundo", "Melodia que desce pela escala", "both", "medium", 70),
+      lesson("5-4", "bella-ciao-lacasadepapel", "Bella Ciao", "Música popular completa a duas mãos", "both", "medium", 70),
     ],
   },
 ];

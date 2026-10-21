@@ -32,7 +32,7 @@ const CLIENT_PLANS = {
     features: [
       "Todas as músicas do catálogo, incluindo os clássicos",
       "Exercícios de escalas, arpejos e acordes nas 12 tonalidades",
-      "Trilha guiada do zero ao louvor",
+      "Trilha guiada da primeira nota às músicas completas",
       "Dedilhado, microfone ou teclado MIDI",
       "Cancele quando quiser",
     ],
@@ -55,16 +55,16 @@ const SHOW_VERIFIED_TESTIMONIALS =
 
 const LIBRARY_PREVIEW = [
   {
-    title: "Amazing Grace",
-    composer: "Hino tradicional",
+    title: "Para Elisa",
+    composer: "Ludwig van Beethoven",
   },
   {
-    title: "Noite Feliz",
-    composer: "Franz Xaver Gruber",
+    title: "Bella Ciao",
+    composer: "Canção popular italiana",
   },
   {
-    title: "Rocha Eterna",
-    composer: "Thomas Hastings",
+    title: "Ciranda, Cirandinha",
+    composer: "Cantiga brasileira",
   },
 ] as const;
 
@@ -143,8 +143,8 @@ export default function Home() {
             <div className="text-center max-w-4xl mx-auto">
 
             {/* Title */}
-            <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
-              <span className="text-white">Do zero ao louvor </span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-8 leading-[1.1]">
+              <span className="text-white">Toque as músicas que você ama </span>
               <br />
               <span className="bg-gradient-to-r from-cyan to-magenta bg-clip-text text-transparent">
                 no seu teclado.
@@ -153,8 +153,8 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-              Aulas guiadas com hinos, exercícios e as notas caindo na tela. Para quem quer tocar na igreja e para
-              professores que querem alunos praticando em casa.
+              Aulas guiadas com as notas caindo na tela: clássicos, cantigas, temas de filmes e hinos. Para quem
+              sempre quis aprender, para crianças e para professores que querem alunos praticando em casa.
             </p>
 
 
@@ -168,11 +168,11 @@ export default function Home() {
               </button>
 
               <Link
-                href="/igrejas"
-                onClick={() => trackEvent("landing_cta_clicked", { source: "hero_secondary", target: "churches" })}
+                href="/professores"
+                onClick={() => trackEvent("landing_cta_clicked", { source: "hero_secondary", target: "teachers" })}
                 className="rounded-full border border-white/15 bg-white/[0.04] px-8 py-4 text-base font-bold text-white/75 transition hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
               >
-                Para igrejas e professores
+                Para professores
               </Link>
 
               <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-5 py-3 text-left backdrop-blur-md">
@@ -287,13 +287,13 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-[0.28em] text-magenta/70">Biblioteca Viva</p>
-                      <h3 className="mt-1 text-2xl font-black text-white">Hinos, cantigas, clássicos e exercícios</h3>
+                      <h3 className="mt-1 text-2xl font-black text-white">Clássicos, cantigas, filmes e hinos</h3>
                     </div>
                   </div>
 
                   <p className="text-base leading-relaxed text-white/60">
-                    Hinos tradicionais, cantigas brasileiras e clássicos em domínio público, com a fonte de cada obra
-                    documentada. Além das músicas, exercícios de escalas, arpejos e acordes em todas as tonalidades.
+                    Mais de 100 músicas: clássicos de Beethoven, Chopin e Mozart, cantigas brasileiras, temas que você
+                    reconhece dos filmes e hinos tradicionais, todas em domínio público e com a fonte documentada. Além das músicas, exercícios de escalas, arpejos e acordes em todas as tonalidades.
                   </p>
 
                   <div className="mt-6 grid gap-3 md:grid-cols-3">
@@ -319,7 +319,7 @@ export default function Home() {
 
                   <div className="mt-6 space-y-4">
                     {[
-                      "A trilha “Do zero ao louvor” tem 19 aulas em 5 níveis: da primeira nota a acompanhar hinos com as duas mãos.",
+                      "A trilha tem 19 aulas em 5 níveis: da primeira nota a tocar músicas conhecidas com as duas mãos.",
                       "Cada aula tem uma meta clara e libera a próxima quando você chega lá, com meta diária de 10 minutos.",
                       "O número em cada nota mostra qual dedo usar, e o modo Espera deixa a música no seu ritmo.",
                     ].map((item) => (
@@ -362,8 +362,8 @@ export default function Home() {
                 Por que <span className="text-gradient font-black">Pianify</span>?
               </h2>
               <p className="text-white/40 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                Feita para quem quer servir no louvor, para quem sempre quis aprender e para professores que
-                querem ver seus alunos evoluindo entre uma aula e outra.
+                Feita para quem sempre quis aprender, para quem quer voltar a tocar, para crianças e famílias e para
+                professores que querem ver seus alunos evoluindo entre uma aula e outra.
               </p>
             </div>
 
