@@ -6,6 +6,7 @@ const songsDir = path.join(rootDir, "data", "songs");
 const outputFile = path.join(rootDir, "public", "song-catalog-index.json");
 const manifestFile = path.join(rootDir, "data", "song-file-index.json");
 const metadata = require("./song-catalog-metadata.js");
+const { FREE_SONG_IDS } = require("./free-songs.js");
 const { repairMojibake } = require("./text-normalization");
 
 const SPECIAL_COVERS = {
@@ -89,7 +90,7 @@ function buildEntryFromJsonFile(fileName) {
     duration: Number(parsed.duration || 0),
     category,
     categories: null,
-    isPremium: meta.isPremium ?? Boolean(parsed.isPremium),
+    isPremium: !FREE_SONG_IDS.has(parsed.id),
     coverUrl,
     noteCount: Array.isArray(parsed.notes) ? parsed.notes.length : 0,
     jsonPath: `/api/songs/${encodeURIComponent(parsed.id)}`,

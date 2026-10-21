@@ -15,6 +15,7 @@ import { getExerciseById } from "../src/lib/exercises.ts";
 
 const catalog = JSON.parse(fs.readFileSync(new URL("../public/song-catalog-index.json", import.meta.url), "utf8")) as Array<{
   id: string;
+  category: string;
   isPremium: boolean;
 }>;
 
@@ -83,4 +84,18 @@ test("lesson links open the player with the lesson's hands and difficulty", () =
   assert.match(href, /lesson=1-1/);
   assert.equal(nextLessonAfter("1-1")?.id, "1-2");
   assert.equal(nextLessonAfter(ALL_LESSONS[ALL_LESSONS.length - 1].id), undefined);
+});
+
+test("the free catalog has at most 3 songs per genre and covers the learning path", async () => {
+  const { FREE_SONGS_BY_CATEGORY, FREE_SONG_IDS } = (await import("../scripts/free-songs.js")).default;
+  for (const [category, ids] of Object.entries(FREE_SONGS_BY_CATEGORY) as [string, string[]][]) {
+    assert.ok(ids.length <= 3, `${category} has ${ids.length} free songs`);
+    for (const id of ids) {
+      const song = catalog.find((entry) => entry.id === id);
+      assert.ok(song, `free song ${id} is missing from the catalog`);
+      assert.equal(song.category, category, `${id} is listed under the wrong genre`);
+    }
+  }
+  const freeInCatalog = catalog.filter((entry) => !entry.isPremium).map((entry) => entry.id).sort();
+  assert.deepEqual(freeInCatalog, [...FREE_SONG_IDS].sort(), "catalog index is out of date: run npm run build-song-catalog-index");
 });
